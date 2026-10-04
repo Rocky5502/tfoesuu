@@ -189,3 +189,97 @@ established information-theoretic problem \cite{CohenZhao2015}.  Its role here i
 to expose a software-regression decomposition: sound change-impact information
 removes the multiplicative location-search cost, while replayable old/new
 randomness changes the small-patch dependence from quadratic to linear.
+
+
+\subsection{When old certificate headroom does become useful}
+
+\Cref{prop:slack-no-free-lunch} rules out a minimax gain from old fairness slack
+when a patch is unrestricted.  The conclusion changes if program analysis
+provides a \emph{sound patch-effect envelope}.  For edge \(e=(u,v)\), let
+\[
+b_e
+\ge
+|(\mu_{1,u}-\mu_{0,u})-(\mu_{1,v}-\mu_{0,v})|
+=
+|\theta_u-\theta_v|.
+\]
+Such an envelope is deterministic side information about the patch; the theorem
+does not prescribe how it is obtained.
+
+\begin{proposition}[Zero-query certificate carryover]
+\label{prop:certificate-pruning}
+Let the old edge gap \(g_{0,e}\) and fairness threshold \(\tau_e\) be known.  If
+\[
+|g_{0,e}|+b_e\le\tau_e,
+\]
+then edge \(e\) is fair under \(P_1\) and requires no stochastic execution to
+re-certify.
+\end{proposition}
+
+\begin{proof}
+Using \(g_{1,e}=g_{0,e}+\theta_u-\theta_v\) and the triangle inequality,
+\[
+|g_{1,e}|
+\le
+|g_{0,e}|+|\theta_u-\theta_v|
+\le
+|g_{0,e}|+b_e
+\le
+\tau_e.
+\]
+\end{proof}
+
+Define the \emph{residual regression graph} \(H^\star\) to contain exactly the
+edges for which
+\[
+|g_{0,e}|+b_e>\tau_e.
+\]
+All other fairness comparisons are discharged by
+\Cref{prop:certificate-pruning} before any paired execution is performed.
+
+\begin{corollary}[Envelope-pruned Gaussian regression testing]
+\label{cor:envelope-gaussian}
+Suppose paired deltas are Gaussian with known vertex variances \(\nu_v^2\), the
+old gaps \(g_{0,e}\) are known, and the tester faces the separated promise
+\[
+\mathsf H_0:\ |g_{1,e}|\le\tau_e\quad\forall e,
+\]
+versus
+\[
+\mathsf H_1:\ |g_{1,e}|\ge\tau_e+\gamma
+\quad\text{for some }e,
+\]
+for \(\gamma>0\).  If \(m^\star=|E(H^\star)|>0\), a non-adaptive tester exists
+using at most
+\[
+\frac{8\log(2m^\star/\delta)}{\gamma^2}
+\Psi(H^\star,\nu)
++
+|V(H^\star)|
+\]
+paired-oracle calls with error probability at most \(\delta\).  If
+\(m^\star=0\), zero paired-oracle calls suffice.
+\end{corollary}
+
+\begin{proof}
+Edges outside \(H^\star\) are fair by
+\Cref{prop:certificate-pruning}.  On the residual graph, allocate paired samples
+exactly as in \Cref{thm:upper}.  For each residual edge \(e=(u,v)\), estimate
+\(\theta_u-\theta_v\), add the known offset \(g_{0,e}\), and reject if
+\[
+|g_{0,e}+\widehat\theta_u-\widehat\theta_v|
+\ge
+\tau_e+\gamma/2.
+\]
+The allocation makes every residual edge-difference estimation error at most
+\(\gamma/2\) simultaneously except with probability \(\delta\).  On this event,
+all fair instances are accepted and every alternative separated by \(\gamma\) is
+rejected.  The query count is the Gaussian allocation bound applied only to
+\(H^\star\).
+\end{proof}
+
+This result gives a precise role to retained certificate headroom.  Slack is not
+useful merely because it exists; it becomes computationally useful when coupled
+to sound information constraining what the patch can do.  Better static bounds
+shrink \(H^\star\), which can reduce both the number of tested comparisons and
+the graph allocation complexity \(\Psi\).
