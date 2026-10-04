@@ -1,0 +1,67 @@
+\section{Model}
+\label{sec:model}
+
+\subsection{Random-tape software semantics}
+Let $\X$ be a finite domain of valid software inputs, $\mathcal{R}$ a random-tape
+space, and $\Y\subseteq\mathbb{R}$ an outcome space.  Version $P_j$,
+$j\in\{0,1\}$, is a measurable map
+\[
+P_j:\X\times\mathcal{R}\to\Y.
+\]
+An execution on input $x$ draws $R\sim\mathcal{R}_x$ and returns $P_j(x;R)$.
+Define
+\[
+\mu_{j,x}=\E[P_j(x;R)],
+\qquad
+\sigma_{j,x}^2=\mathrm{Var}(P_j(x;R)).
+\]
+Deterministic software is the special case in which the output does not depend on
+$R$.
+
+\subsection{Counterfactual fairness graph}
+Let $G=(V,E)$ with $V\subseteq\X$.  An edge $e=(u,v)$ encodes a valid
+counterfactual comparison.  For scalar expected outcomes we require
+\[
+|\mu_{j,u}-\mu_{j,v}|\le\tau_e.
+\]
+
+\begin{definition}[Fairness on $G$]
+Version $P_j$ is fair on $G$ if the inequality above holds for every edge in $E$.
+\end{definition}
+
+\subsection{Patch and impact information}
+A patch $\Delta$ maps $P_0$ to $P_1$.  A change-impact analysis returns
+$\Impact\subseteq V$.
+
+\begin{definition}[Distributionally sound impact set]
+$\Impact$ is distributionally sound if
+\[
+x\notin\Impact\implies P_0(x;R)\overset{d}=P_1(x;R).
+\]
+\end{definition}
+
+\begin{definition}[Replay-sound impact set]
+$\Impact$ is replay-sound if
+\[
+x\notin\Impact\implies P_0(x;R)=P_1(x;R)
+\quad\text{almost surely under shared replay.}
+\]
+\end{definition}
+
+Define
+\[
+\ImpEdges=\{(u,v)\in E:u\in\Impact\text{ or }v\in\Impact\},
+\]
+and let $H$ contain exactly the vertices incident to $\ImpEdges$ and the impacted
+edges among them.
+
+\subsection{Patch effects}
+Define
+\[
+\theta_v=\mu_{1,v}-\mu_{0,v}.
+\]
+For edge $e=(u,v)$, if $g_{j,e}=\mu_{j,u}-\mu_{j,v}$, then
+\[
+g_{1,e}=g_{0,e}+(\theta_u-\theta_v).
+\]
+The identity separates previously certified behavior from the effect of the patch.

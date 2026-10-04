@@ -1,0 +1,81 @@
+\section{Introduction}
+\label{sec:intro}
+
+Software evolves continuously.  Regression testing is therefore not a secondary
+engineering convenience: it is the mechanism by which evidence about an earlier
+version is reused to decide whether a modified version still satisfies its
+requirements.  Classical regression-test selection and change-impact analysis
+make this reuse explicit \cite{RothermelHarrold1996,YooHarman2012,LiSunLeungZhang2013},
+and recent incremental-verification work similarly reuses proof artifacts across
+program versions \cite{YinEtAl2025}.
+
+Fairness creates a regression requirement with an additional statistical
+challenge.  Software fairness testing is established as a testing problem
+\cite{GalhotraBrunMeliou2017}, while active fairness auditing studies how many
+queries are needed to assess a fixed decision system \cite{YanZhang2022}.  Yet
+software may itself be nondeterministic even in the complete absence of learned
+models.  Randomized tie-breaking, task scheduling, concurrent interleavings,
+resource contention, random backoff, clocks, and other nondeterministic APIs can
+make repeated executions of the same code and input disagree.  Recent testing
+work continues to find nondeterminism central to flakiness \cite{YuanLinShi2026}.
+
+We ask a version-aware question:
+\begin{quote}
+\emph{Given a previously certified program, a patch, and stochastic execution
+access to the old and new versions, what is the minimum number of executions
+required to detect or rule out a fairness regression?}
+\end{quote}
+
+The regression setting contributes two pieces of information absent from fresh
+auditing.  First, a sound change-impact analysis can localize where behavior may
+have changed.  Second, the old version remains executable.  If stochastic choices
+can be replayed through a controlled seed or random tape, $P_0$ and $P_1$ can be
+run under the same execution randomness.  Their difference then estimates the
+patch itself.  This is related to the classical common-random-numbers principle in
+simulation \cite{GlassermanYao1992}, and to coupling as a formal technique for
+reasoning about pairs of probabilistic programs \cite{BartheEtAl2017}; our use is
+as an information model for regression testing.
+
+We represent fairness requirements by a counterfactual graph $G=(V,E)$.  A vertex
+is a valid software input and an edge is a pair whose expected outcomes should
+remain sufficiently close.  A patch produces expected behavioral changes
+$\theta_v=\mu_{1,v}-\mu_{0,v}$.  The central core problem asks whether
+$\theta_u=\theta_v$ on every impacted fairness edge or whether at least one edge
+has differential patch effect at least $\gamma$.  This \emph{patch-neutrality}
+problem is stronger than full thresholded fairness preservation but isolates the
+information-theoretic interaction among version reuse, graph structure, and
+stochastic execution.
+
+For Gaussian paired deltas we derive a graph complexity
+\[
+\Psi(H,\nu)=
+\min_{q_v>0}\left\{
+\sum_v q_v:
+\frac{\nu_u^2}{q_u}+\frac{\nu_v^2}{q_v}\le1
+\ \forall (u,v)\in E(H)
+\right\},
+\]
+where $\nu_v^2$ is the variance of the old--new behavioral difference at vertex
+$v$.  A static allocation based on $\Psi$ gives the upper bound, while an adaptive
+change-of-measure argument gives a matching dependence on $\Psi$ and
+$\gamma^{-2}$ in the lower bound.  We also derive the Lagrange dual, making clear
+that the same executions can support several incident counterfactual comparisons.
+
+The regression advantage appears directly in the variance.  If $Y_0,Y_1$ are old
+and new outcomes produced under the same random tape,
+\[
+\mathrm{Var}(Y_1-Y_0)
+=
+\mathrm{Var}(Y_1)+\mathrm{Var}(Y_0)-2\mathrm{Cov}(Y_1,Y_0).
+\]
+When nearby versions respond similarly to the same stochastic environment, the
+covariance can be large and the patch can be substantially easier to estimate
+than either absolute program behavior.  In a common-uniform Bernoulli model, a
+change from success probability $p$ to $p+d$ yields differential variance
+$d(1-d)$, which vanishes with patch size even when the marginal outcome variances
+remain bounded away from zero.
+
+The paper is deliberately theory-first and model-free.  No pretrained model,
+open-source model, proprietary API, or LLM is an experimental subject.  GPU
+computation is used only to falsify conjectures, validate implementations, and
+stress-test the proved complexity laws on large synthetic instances.

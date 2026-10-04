@@ -1,0 +1,89 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newtheorem{conjecture}{Conjecture}
+
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\Impact}{C_{\Delta}}
+\newcommand{\ImpEdges}{E_{\Delta}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prb}{\mathbb{P}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\kl}{\mathrm{kl}}
+\newcommand{\PsiG}{\Psi}
+
+\title{\textbf{Testing Fairness of Evolving Software under Uncertainty}}
+\author{Author name(s) and affiliation(s) to be finalized}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Software fairness is usually audited as if a program were a fixed deterministic
+object.  Real software evolves through patches and can be stochastic because of
+randomized logic, scheduling, concurrency, resource contention, and environmental
+state.  We study \emph{fairness regression testing}: after a previously certified
+program is modified, how many executions are fundamentally necessary to determine
+whether the patch has introduced a fairness violation?
+
+We model valid counterfactual comparisons by a graph whose vertices are software
+inputs and whose edges identify pairs that should receive sufficiently similar
+outcomes.  A patch is accompanied by a sound change-impact region.  Regression
+testing additionally exposes two executable program versions.  We therefore study
+a \emph{coupled differential execution oracle}: the old and new versions are run
+on the same input under a shared random tape, allowing the tester to estimate the
+patch-induced behavioral delta directly.
+
+For a Gaussian core problem, we identify an uncertainty-weighted graph quantity
+$\Psi(H,\nu)$ that captures how executions should be shared across counterfactual
+comparisons.  A non-adaptive tester has complexity
+$O(\Psi(H,\nu)\gamma^{-2}\log(|E(H)|/\delta))$, while every adaptive
+$\delta$-correct tester requires
+$\Omega(\Psi(H,\nu)\gamma^{-2}\log(1/\delta))$ expected executions on a
+null instance.  We give an equivalent dual optimization and exact values for
+several graph families.  Coupled replay changes the relevant uncertainty from
+outcome variance to patch-delta variance; for monotone-coupled Bernoulli software,
+a patch of size $d$ has differential variance $d(1-d)$ rather than the sum of the
+two marginal Bernoulli variances under independent replay.
+
+These results establish a tractable foundation for the broader objective of tight
+query complexity for fairness regression with retained certificates, patch
+locality, heterogeneous uncertainty, imperfect change-impact information, and
+multiple software versions.
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_model}
+\input{sections/03_localization}
+\input{sections/04_coupled_execution}
+\input{sections/05_gaussian_core}
+\input{sections/06_bernoulli_core}
+\input{sections/07_open_problems}
+\input{sections/08_related_work}
+
+\bibliographystyle{alpha}
+\bibliography{references}
+
+\section*{AI Methodology}
+ChatGPT (OpenAI) was used for substantive research ideation, literature triage,
+proof exploration, code drafting, and early manuscript structuring.  The human
+authors are responsible for independently verifying every theorem, proof,
+originality claim, citation, implementation, and final statement.  No generative
+AI model, pretrained model, open-source model, or model API is part of the
+research methodology or experimental system studied in this paper.
+
+\end{document}
