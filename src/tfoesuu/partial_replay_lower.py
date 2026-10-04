@@ -157,7 +157,7 @@ def fractional_replay_schedule(
             raise RuntimeError("rounded schedule failed an edge exposure constraint")
 
     total = float(c @ counts)
-    active = lp.query_weights > 1e-12
+    active = cover.weights > 1e-12
     rounding_cap = float(c[active].sum())
     return FractionalReplaySchedule(
         normalized_fractional_cost=cover.cost,
