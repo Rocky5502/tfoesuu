@@ -13,6 +13,43 @@ from .separations import binary_decision_kl
 
 
 @dataclass(frozen=True)
+class FractionalReplayCover:
+    """Minimum-cost fractional edge cover by legal replay groups."""
+
+    cost: float
+    weights: np.ndarray
+    success: bool
+    message: str
+
+
+def minimum_fractional_replay_cover(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+) -> FractionalReplayCover:
+    """Solve the replay-group fractional cover independently of any test bound."""
+    gs = _canonical_groups(graph, groups)
+    c = np.asarray(costs, dtype=float)
+    if c.shape != (len(gs),) or np.any(c <= 0) or np.any(~np.isfinite(c)):
+        raise ValueError("costs must be finite, positive, and match groups")
+    if graph.m == 0:
+        return FractionalReplayCover(0.0, np.zeros(len(gs)), True, "edgeless graph")
+    A = np.zeros((graph.m, len(gs)), dtype=float)
+    for ei, (u, v) in enumerate(graph.edges):
+        for gi, g in enumerate(gs):
+            if u in g and v in g:
+                A[ei, gi] = -1.0
+    if np.any((-A).sum(axis=1) == 0):
+        return FractionalReplayCover(float("inf"), np.zeros(len(gs)), False,
+                                     "some fairness edge is not jointly replayable")
+    res = linprog(c, A_ub=A, b_ub=-np.ones(graph.m),
+                  bounds=[(0.0, None)] * len(gs), method="highs")
+    if not res.success:
+        return FractionalReplayCover(float("inf"), np.zeros(len(gs)), False, str(res.message))
+    return FractionalReplayCover(float(res.fun), np.asarray(res.x), True, str(res.message))
+
+
+@dataclass(frozen=True)
 class FractionalReplayLowerBound:
     """LP consequence of edge-indexed transcript-KL constraints."""
 
@@ -52,41 +89,19 @@ def fractional_group_replay_lower_bound(
         raise ValueError("per_informative_query_kl must be positive")
 
     gs = _canonical_groups(graph, groups)
-    c = np.asarray(costs, dtype=float)
-    if c.shape != (len(gs),) or np.any(c <= 0) or np.any(~np.isfinite(c)):
-        raise ValueError("costs must be finite, positive, and match groups")
-
-    A = np.zeros((graph.m, len(gs)), dtype=float)
-    for ei, (u, v) in enumerate(graph.edges):
-        for gi, g in enumerate(gs):
-            S = set(g)
-            if u in S and v in S:
-                A[ei, gi] = -1.0
-    if np.any((-A).sum(axis=1) == 0):
+    cover = minimum_fractional_replay_cover(graph, gs, costs)
+    if not cover.success:
         return FractionalReplayLowerBound(
-            float("inf"), np.zeros(len(gs)), float("inf"), False,
-            "some fairness edge is not jointly replayable",
-        )
-
-    res = linprog(
-        c,
-        A_ub=A,
-        b_ub=-np.ones(graph.m),
-        bounds=[(0.0, None)] * len(gs),
-        method="highs",
-    )
-    if not res.success:
-        return FractionalReplayLowerBound(
-            float("inf"), np.zeros(len(gs)), float("inf"), False, str(res.message)
+            float("inf"), cover.weights, float("inf"), False, cover.message
         )
 
     scale = binary_decision_kl(beta) / per_informative_query_kl
     return FractionalReplayLowerBound(
-        normalized_cost=float(res.fun),
-        query_weights=np.asarray(res.x),
-        expected_cost_floor=float(res.fun) * scale,
+        normalized_cost=cover.cost,
+        query_weights=cover.weights,
+        expected_cost_floor=cover.cost * scale,
         success=True,
-        message=str(res.message),
+        message=cover.message,
     )
 
 
@@ -127,15 +142,11 @@ def fractional_replay_schedule(
     if graph.m == 0:
         return FractionalReplaySchedule(0.0, 0, np.zeros(len(gs), dtype=int), 0.0, 0.0)
 
-    # K=1 makes expected_cost_floor irrelevant here; the normalized LP solution
-    # is exactly the fractional cover we need for scheduling.
-    lp = fractional_group_replay_lower_bound(
-        graph, gs, c, per_informative_query_kl=1.0, beta=beta
-    )
-    if not lp.success:
-        raise ValueError(lp.message)
+    cover = minimum_fractional_replay_cover(graph, gs, c)
+    if not cover.success:
+        raise ValueError(cover.message)
     L = math.ceil(math.log(beta) / math.log1p(-d))
-    counts = np.ceil(L * lp.query_weights - 1e-12).astype(int)
+    counts = np.ceil(L * cover.weights - 1e-12).astype(int)
 
     # Defensive verification of the actual integer schedule.
     for u, v in graph.edges:
@@ -149,7 +160,7 @@ def fractional_replay_schedule(
     active = lp.query_weights > 1e-12
     rounding_cap = float(c[active].sum())
     return FractionalReplaySchedule(
-        normalized_fractional_cost=lp.normalized_cost,
+        normalized_fractional_cost=cover.cost,
         scale=L,
         counts=counts,
         total_cost=total,
