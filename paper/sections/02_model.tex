@@ -8,8 +8,8 @@ $j\in\{0,1\}$, is a measurable map
 \[
 P_j:\X\times\mathcal{R}\to\Y.
 \]
-An execution on input $x$ draws $R\sim\mathcal{R}_x$ and returns $P_j(x;R)$.
-Define
+A \emph{single-version execution} on input $x$ draws
+$R\sim\mathcal{R}_x$ and returns $P_j(x;R)$.  Define
 \[
 \mu_{j,x}=\E[P_j(x;R)],
 \qquad
@@ -17,6 +17,16 @@ Define
 \]
 Deterministic software is the special case in which the output does not depend on
 $R$.
+
+\paragraph{Cost convention.}
+Our primary information-theoretic cost unit is an \emph{oracle call}.  A
+single-version oracle call evaluates one program version once.  A
+\emph{paired-oracle call} (or \emph{paired replay round}) evaluates both $P_0$
+and $P_1$ on the same input under one shared random tape, and therefore comprises
+exactly two concrete program executions.  Bounds stated in paired-oracle calls can
+thus be converted to concrete program executions by multiplying by two.  This
+constant conversion never changes the asymptotic separations, but we keep the
+units explicit throughout.
 
 \subsection{Counterfactual fairness graph}
 Let $G=(V,E)$ with $V\subseteq\X$.  An edge $e=(u,v)$ encodes a valid
