@@ -10,13 +10,14 @@ P9-P12 establish the Bernoulli replay mechanism and the one-edge linear-vs-quadr
 P13 combines unknown patch location with replay on a matching: fixed-confidence cost scales as Theta(M log(1/delta)/d).
 P14 shows how sound static patch-effect envelopes prune fairness edges with zero new executions.
 P15 shows that four-way replay across both versions and both counterfactual endpoints cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1).
+P16 lifts synchronized replay to the full active fairness suite: round complexity is independent of edge count and concrete execution complexity is Theta(n_active log(1/delta)/d) in the audited homogeneous Bernoulli family.
 
 See docs/PROOF_STATUS.md for exact audit status.
 
 ## Immediate theorem queue
 
-### A. Graph-level four-way counterfactual replay
-Lift P15 from one fairness edge to general counterfactual graphs. The current `graph_replay.py` fractional-cover construction is a conjecture-hunting harness only. The next theorem must derive the correct graph quantity from the exact replay access model and prove matching upper/lower bounds before any formula is promoted.
+### A. Partial synchronized replay and the missing graph parameter
+P16 settles the strongest replay primitive, where one seed can be synchronized across every active input. The next target is the intermediate access model: only selected replay-compatible groups may share a tape, possibly with heterogeneous execution costs. Derive the correct covering/packing quantity from that oracle and prove matching upper/lower bounds. The existing `graph_replay.py` fractional-cover code remains a conjecture-hunting harness and is not a theorem.
 
 ### B. Retained certificate headroom
 Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Seek an instance-dependent theorem where patch restrictions and certified headroom interact nontrivially.
