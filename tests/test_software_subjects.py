@@ -60,3 +60,33 @@ def test_affected_vertex_matches_sparse_delta_formula():
     z = subject.sample_paired_delta(vertex, 500_000, rng)
     assert abs(float(z.mean()) - d) < 0.001
     assert abs(float(z.var()) - d * (1.0 - d)) < 0.001
+
+
+
+def test_four_way_subject_replay_cancels_common_shift():
+    d = 0.01
+    shared = 0.20
+    subject = RandomizedResourceAllocatorPair.from_sequences(
+        [0.35, 0.45, 0.55],
+        affected_contexts=[1],
+        delta=d,
+        common_shift=shared,
+    )
+
+    # A common shift changes both group variants, so both are in the replay-sound
+    # impact set even though only d creates the fairness gap.
+    assert subject.replay_sound_impact_vertices == (
+        subject.encode_vertex(1, 0),
+        subject.encode_vertex(1, 1),
+    )
+
+    rng = np.random.default_rng(91)
+    w = subject.sample_edge_coupled_fairness_delta(1, 500_000, rng)
+    assert float(w.mean()) == pytest.approx(d, abs=0.001)
+    assert float(w.var()) == pytest.approx(d * (1.0 - d), abs=0.001)
+
+    u = subject.encode_vertex(1, 0)
+    v = subject.encode_vertex(1, 1)
+    assert (
+        subject.probability(1, v) - subject.probability(1, u)
+    ) == pytest.approx(d)
