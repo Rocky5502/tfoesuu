@@ -41,3 +41,16 @@ When a figure/table becomes submission-facing:
 4. save command line and seed;
 5. compute SHA-256 checksums;
 6. never hand-edit result rows.
+
+
+## Publication-run provenance
+
+After each frozen long run, create a machine-readable provenance record with
+scripts/record_publication_run.py. For the P15 publication sweep, pass the frozen
+counterfactual benchmark JSONL, the merged result JSONL, the exact command string,
+and a provenance JSON output path.
+
+The record captures the source commit, dirty-tree status, benchmark and result
+SHA-256 hashes, platform/Python metadata, NVIDIA environment, and PyTorch/CUDA
+device information. Publication artifacts should be generated only from runs
+whose provenance records show a clean source tree and the intended frozen commit.
