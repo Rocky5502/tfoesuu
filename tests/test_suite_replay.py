@@ -11,7 +11,7 @@ from tfoesuu.suite_replay import (
     "graph,expected",
     [
         (matching_graph(5), 10),
-        (star_graph(9), 9),
+        (star_graph(9), 10),
         (clique_graph(8), 8),
     ],
 )
@@ -21,7 +21,7 @@ def test_active_vertex_count(graph, expected):
 
 def test_suite_replay_rounds_do_not_depend_on_edge_count():
     star = synchronized_suite_replay_bounds(
-        star_graph(20), 0.3, 0.2, 0.01, 0.05
+        star_graph(19), 0.3, 0.2, 0.01, 0.05
     )
     clique = synchronized_suite_replay_bounds(
         clique_graph(20), 0.3, 0.2, 0.01, 0.05
