@@ -39,7 +39,9 @@ The live source of truth is [docs/PROOF_STATUS.md](docs/PROOF_STATUS.md). Curren
 - no minimax gain from old certificate slack alone under unrestricted patches;
 - a Bernoulli **linear-vs-quadratic small-patch separation**: paired replay scales as Theta(d^-1 log(1/delta)), while independent/fresh replay scales as Theta(d^-2 log(1/delta));
 - unknown patch location on an M-edge matching costs Theta(M d^-1 log(1/delta)) under common-uniform replay;
-- sound patch-effect envelopes can prune already-safe fairness edges with **zero new executions**, leaving only a residual graph for stochastic testing.
+- sound patch-effect envelopes can prune already-safe fairness edges with **zero new executions**, leaving only a residual graph for stochastic testing;
+- four-way counterfactual replay cancels a nonzero fairness-neutral common patch and changes the differential-gap exponent from quadratic to linear;
+- synchronized suite replay tests all fairness edges from one shared-seed suite execution, giving `Theta(n_active log(1/delta)/d)` concrete-execution scaling in the audited Bernoulli family, independent of edge count.
 
 Claims enter the abstract only after proof/audit gates.
 
@@ -57,6 +59,8 @@ src/tfoesuu/
   replay_benchmarks.py       Bernoulli replay benchmark specifications
   subject_benchmarks.py      Executable-subject benchmark specifications
   testers.py                 Gaussian patch-neutrality/full-regression testers
+  counterfactual_benchmarks.py  Frozen P15 four-way replay benchmark grid
+  suite_replay.py             P16 synchronized-suite replay bounds
 
 experiments/
   run_gaussian_core.py
@@ -66,11 +70,13 @@ experiments/
   run_allocator_subject.py
   gpu_sweep.py
   gpu_replay_sweep.py
+  gpu_counterfactual_sweep.py  Two-GPU P15 shared-patch stress sweep
 
 scripts/
   generate_benchmark.py
   generate_replay_benchmark.py
   generate_subject_benchmark.py
+  generate_counterfactual_benchmark.py
   check_bibliography.py
   check_paper_consistency.py
   verify_environment.py
@@ -79,6 +85,7 @@ data/
   benchmark_v1.jsonl
   replay_benchmark_v1.jsonl
   software_subject_benchmark_v1.jsonl
+  counterfactual_replay_benchmark_v1.jsonl  144 frozen P15 configurations
 
 paper/                       Overleaf-ready STOC manuscript
 docs/                        proof audits, novelty matrix, roadmap, GPU runbook
@@ -104,11 +111,13 @@ python scripts/check_paper_consistency.py
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_subject_benchmark.py --output data/software_subject_benchmark_v1.jsonl
+python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
 
 python experiments/run_gaussian_core.py --graph star --n 10 --trials 10000
 python experiments/run_replay_separation.py --p 0.5 --d 0.01 --trials 100000
 python experiments/run_location_replay.py --candidates 64 --p 0.5 --d 0.01 --trials 100000
 python experiments/run_allocator_subject.py --contexts 64 --changed-context 17 --delta 0.01 --trials 100000
+python experiments/run_counterfactual_replay.py --p 0.35 --shared-patch 0.20 --d 0.01 --trials 100000
 ```
 
 ## Two local NVIDIA GPUs
@@ -132,6 +141,7 @@ Then use both GPUs:
 ```bash
 python experiments/gpu_sweep.py --devices 0,1 --trials 1000000 --benchmark data/benchmark_v1.jsonl --output results/gpu_sweep_1m.jsonl
 python experiments/gpu_replay_sweep.py --devices 0,1 --trials 1000000 --benchmark data/replay_benchmark_v1.jsonl --output results/replay_gpu_sweep_1m.jsonl
+python experiments/gpu_counterfactual_sweep.py --devices 0,1 --trials 1000000 --benchmark data/counterfactual_replay_benchmark_v1.jsonl --output results/counterfactual_gpu_sweep_1m.jsonl
 ```
 
 See [docs/GPU_RUNBOOK.md](docs/GPU_RUNBOOK.md) before any long run. The policy is staged: 10^3 -> 10^4 -> 10^5 -> 10^6-10^7 trials/config only after earlier gates are clean.
