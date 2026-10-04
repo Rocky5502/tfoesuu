@@ -35,12 +35,167 @@ formula follows by adding the two independent Bernoulli variances.
 \end{proof}
 
 If $p_{0,v}$ stays in the interior of $(0,1)$ while $d_v\to0$, the paired variance
-is $\Theta(d_v)$ whereas the independent-replay variance is $\Theta(1)$.  Thus the
-variance ratio tends to zero with patch size.  This captures a regression-specific
-principle: a small code change can be statistically easy to measure even when the
-underlying software outcome remains noisy.
+is $\Theta(d_v)$ whereas the independent-replay variance is $\Theta(1)$.  The
+variance observation by itself is classical in spirit: pairing and common random
+numbers are established variance-reduction ideas \cite{GlassermanYao1992}, and
+paired binary outcomes have a long statistical literature \cite{Connor1987}.
+The regression question is whether executable old/new coupling changes the
+\emph{query complexity} of detecting a software fairness regression.
 
-The next theoretical target is a graph-level fixed-confidence characterization for
-these bounded deltas that is as sharp as \Cref{thm:upper,thm:lower} but exploits
-variance-sensitive concentration rather than replacing $d_v(1-d_v)$ by a uniform
-worst-case bound.
+\subsection{A linear-versus-quadratic small-patch separation}
+
+Consider one counterfactual edge $e=(u,v)$ with threshold $\tau_e=0$.  Fix
+$p\in(0,1)$ and $d\in(0,1-p)$.  In both hypotheses the old version is perfectly
+fair:
+\[
+p_{0,u}=p_{0,v}=p.
+\]
+Under the null the patch changes neither endpoint,
+\[
+\mathsf H_0:
+\quad
+p_{1,u}=p_{1,v}=p,
+\]
+whereas under the alternative it changes only $u$,
+\[
+\mathsf H_1:
+\quad
+p_{1,u}=p+d,
+\qquad
+p_{1,v}=p.
+\]
+Thus $\mathsf H_1$ introduces a fairness regression of magnitude exactly $d$.
+
+\begin{theorem}[Replay changes small-patch complexity]
+\label{thm:bernoulli-separation}
+Fix $p\in(0,1)$ and $\delta\in(0,1/2)$.  For the one-edge family above:
+
+\begin{enumerate}[label=(\roman*)]
+\item Under common-uniform paired replay, there is a test using
+\[
+n_{\rm pair}
+=
+\left\lceil
+\frac{\log \delta}{\log(1-d)}
+\right\rceil
+\]
+paired rounds with zero type-I error and type-II error at most $\delta$.
+Moreover, every adaptive $\delta$-correct paired-replay tester with finite
+expected stopping time satisfies, on the null,
+\[
+\E_0[T]
+\ge
+\frac{\kl(1-\delta,\delta)}
+{(1-p)\log\!\left(\frac{1-p}{1-p-d}\right)}.
+\]
+
+\item Under independent/fresh replay, a test using
+\[
+n_{\rm ind}
+=
+\left\lceil
+\frac{2\log(1/\delta)}{d^2}
+\right\rceil
+\]
+new-version samples at $u$ is $\delta$-correct when the retained old baseline
+$p$ is known.  Conversely, every adaptive $\delta$-correct independent-replay
+tester with finite expected stopping time satisfies
+\[
+\E_0[T]
+\ge
+\frac{\kl(1-\delta,\delta)}
+{\kl(p,p+d)}.
+\]
+\end{enumerate}
+
+Consequently, for every fixed interior $p$,
+\[
+Q_{\rm pair}(d,\delta)
+=
+\Theta\!\left(
+\frac{\log(1/\delta)}{d}
+\right),
+\qquad
+Q_{\rm ind}(d,\delta)
+=
+\Theta\!\left(
+\frac{\log(1/\delta)}{d^2}
+\right)
+\]
+as $d\to0$, up to constants depending on $p$ and the standard
+$\kl(1-\delta,\delta)$ versus $\log(1/\delta)$ equivalence.
+\end{theorem}
+
+\begin{proof}
+For paired replay, run $P_0$ and $P_1$ on $u$ using the same
+$U\sim\mathrm{Unif}[0,1]$ and reject upon observing a discordant pair
+$(Y_0,Y_1)=(0,1)$.  Under $\mathsf H_0$ discordance is impossible.  Under
+$\mathsf H_1$ it occurs exactly when $U\in(p,p+d]$, hence independently with
+probability $d$ each round.  The miss probability after $n$ rounds is therefore
+$(1-d)^n$, proving the upper bound.
+
+For the paired lower bound, one informative query at $u$ has null law
+\[
+Q_0(1,1)=p,
+\qquad
+Q_0(0,0)=1-p,
+\]
+and alternative law
+\[
+Q_1(1,1)=p,
+\qquad
+Q_1(0,0)=1-p-d,
+\qquad
+Q_1(0,1)=d.
+\]
+Thus
+\[
+\KL(Q_0\|Q_1)
+=
+(1-p)\log\!\left(\frac{1-p}{1-p-d}\right).
+\]
+Queries to $v$ have identical laws in both hypotheses.  The adaptive transcript
+chain rule and data processing through the terminal accept/reject decision give
+\[
+\E_0[N_u]\KL(Q_0\|Q_1)
+\ge
+\kl(1-\delta,\delta),
+\]
+which yields the stated lower bound.
+
+For independent replay, giving the tester the exact old baseline $p$ can only make
+the problem easier.  Sampling the new version at $u$ and rejecting when its
+empirical mean is at least $p+d/2$ has each one-sided error bounded by
+$\exp(-nd^2/2)$ by Hoeffding's inequality, proving the upper bound.
+For the lower bound, the old-version observation has the same distribution under
+both hypotheses and contributes no information.  Each informative new-version
+sample contributes
+\[
+\KL(\mathrm{Bern}(p)\|\mathrm{Bern}(p+d))
+=
+\kl(p,p+d).
+\]
+The same transcript change-of-measure argument yields the claimed expected-sample
+lower bound.
+
+Finally,
+\[
+(1-p)\log\!\left(\frac{1-p}{1-p-d}\right)
+=
+d+O(d^2),
+\]
+whereas
+\[
+\kl(p,p+d)
+=
+\frac{d^2}{2p(1-p)}+O(d^3).
+\]
+The asymptotic separation follows.
+\end{proof}
+
+\Cref{thm:bernoulli-separation} is deliberately stated on the smallest possible
+fairness graph.  Its role is to isolate a version-specific information advantage
+that cannot be attributed to graph allocation: replayability changes the
+small-patch exponent from two to one.  The next target is to lift this phenomenon
+to graph-structured fairness regression, where sparse patch deltas and shared
+vertices interact.
