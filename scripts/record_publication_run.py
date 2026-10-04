@@ -4,20 +4,13 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import platform
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-
-def sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as fh:
-        for block in iter(lambda: fh.read(1024 * 1024), b""):
-            h.update(block)
-    return h.hexdigest()
+from tfoesuu.provenance import sha256_file
 
 
 def command_output(cmd: list[str]) -> str | None:
@@ -69,12 +62,12 @@ def main() -> None:
         "command": args.command,
         "benchmark": {
             "path": str(args.benchmark),
-            "sha256": sha256(args.benchmark),
+            "sha256": sha256_file(args.benchmark),
             "bytes": args.benchmark.stat().st_size,
         },
         "result": {
             "path": str(args.result),
-            "sha256": sha256(args.result),
+            "sha256": sha256_file(args.result),
             "bytes": args.result.stat().st_size,
         },
         "python": platform.python_version(),
