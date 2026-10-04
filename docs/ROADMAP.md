@@ -8,13 +8,15 @@ P1-P3 establish localization, the need for a statistical margin, and paired-delt
 P4-P8 establish the Gaussian graph-allocation core around Psi(H,nu).
 P9-P12 establish the Bernoulli replay mechanism and the one-edge linear-vs-quadratic small-patch separation.
 P13 combines unknown patch location with replay on a matching: fixed-confidence cost scales as Theta(M log(1/delta)/d).
+P14 shows how sound static patch-effect envelopes prune fairness edges with zero new executions.
+P15 shows that four-way replay across both versions and both counterfactual endpoints cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1).
 
 See docs/PROOF_STATUS.md for exact audit status.
 
 ## Immediate theorem queue
 
-### A. Graph-level Bernoulli replay
-Lift the one-edge sparse-discordance mechanism to general counterfactual graphs. The key question is whether the right complexity is a weighted cover/packing quantity, and whether shared vertices can beat edgewise testing.
+### A. Graph-level four-way counterfactual replay
+Lift P15 from one fairness edge to general counterfactual graphs. The current `graph_replay.py` fractional-cover construction is a conjecture-hunting harness only. The next theorem must derive the correct graph quantity from the exact replay access model and prove matching upper/lower bounds before any formula is promoted.
 
 ### B. Retained certificate headroom
 Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Seek an instance-dependent theorem where patch restrictions and certified headroom interact nontrivially.
