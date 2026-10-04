@@ -93,7 +93,7 @@ def run_one(spec: BenchmarkSpec, trials: int, device: str) -> dict:
         "device": device,
         "trials": trials,
         "psi": alloc.objective,
-        "total_queries": int(counts.sum()),
+        "total_queries": int(counts.sum()),  # backward-compatible alias\n        "total_paired_oracle_calls": int(counts.sum()),\n        "concrete_program_executions": 2 * int(counts.sum()),
         "null_error_rate": null_errors / trials,
         "alternative_error_rate": alt_errors / trials,
     }
