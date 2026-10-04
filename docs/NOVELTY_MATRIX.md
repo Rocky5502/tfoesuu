@@ -5,19 +5,25 @@
 | Regression test selection | IEEE TSE; STVR survey | Inventing regression selection | Query complexity of a fairness property after a stochastic patch |
 | Change-impact analysis | STVR survey and extensive SE work | Inventing impact analysis | Treating sound impact as information that changes statistical testing complexity |
 | Fairness testing | ESEC/FSE Themis | Inventing fairness testing | Fairness **regression** under stochastic execution and reusable prior certificates |
+| Probabilistic fairness verification | OOPSLA/PACMPL FairSquare | First verification of program fairness | Statistical re-certification of an evolving version rather than whole-program probabilistic verification |
 | Query-efficient fairness auditing | ICML active fairness auditing | First query-efficient fairness audit | Version-aware old/new coupled execution and patch-local information |
 | Property testing | STOC/CCC/ToC literature | First graph/property tester | New evolving-software oracle/property pair |
 | Common random numbers | Management Science and simulation literature | Inventing common-random-number variance reduction | Using replay coupling as an information primitive for software fairness regression |
+| Paired Bernoulli / matched proportions | Biometrics and classical matched-pairs statistics | Inventing paired binary inference or McNemar-style efficiency | Linear-vs-quadratic small-patch complexity under two software execution oracles |
 | Probabilistic coupling | POPL and probability/program logics | Inventing coupling | Query complexity consequences of executable old/new coupling |
 | Pairwise graph design | Scandinavian Journal of Statistics and older design literature | Inventing graph allocation | Regression-specific `Psi` plus lower bounds in the coupled software oracle |
 | Incremental verification | ISSTA/PACMSE and prior verification literature | Inventing incremental verification | Statistical rather than proof-reuse complexity for fairness under execution noise |
 
 ## Submission-level novelty test
 
-The paper is strong only if the final theorem package makes at least one statement that cannot be obtained by simply substituting “software inputs” into a known pairwise experimental-design theorem. The high-value targets are:
+The paper is strong only if the final theorem package makes statements that cannot be obtained by simply substituting “software inputs” into a known pairwise experimental-design theorem.
 
-1. a full fairness-regression complexity using old-certificate headroom;
-2. a separation between version-aware coupled testing and fresh auditing;
-3. a separation caused by patch locality under a matched oracle;
-4. an amortized theorem across multiple software versions;
-5. a bounded/Bernoulli result where small patch size itself collapses uncertainty.
+Current high-value results/targets:
+
+1. **proved:** sound patch location gives an Omega(M) advantage on an M-edge matching under a matched execution oracle;
+2. **proved:** common-uniform old/new replay yields Theta(d^-1) rather than Theta(d^-2) small-patch complexity on a Bernoulli fairness-regression family;
+3. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
+4. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
+5. **open:** amortized complexity across multiple software versions.
+
+A reviewer should be able to remove every generic ingredient above and still identify a theorem whose statement fundamentally depends on **software evolution and version-aware access**.
