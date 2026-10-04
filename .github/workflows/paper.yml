@@ -1,0 +1,47 @@
+name: paper
+
+on:
+  push:
+    paths:
+      - "paper/**"
+      - "scripts/check_paper_consistency.py"
+      - ".github/workflows/paper.yml"
+  pull_request:
+    paths:
+      - "paper/**"
+      - "scripts/check_paper_consistency.py"
+      - ".github/workflows/paper.yml"
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Static manuscript consistency
+        run: python scripts/check_paper_consistency.py
+
+      - name: Install TeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-science
+
+      - name: Compile manuscript
+        working-directory: paper
+        run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stoc-manuscript-pdf
+          path: paper/main.pdf
+          if-no-files-found: error
