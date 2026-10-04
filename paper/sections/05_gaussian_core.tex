@@ -1,11 +1,11 @@
 \section{A Gaussian Core Characterization}
 \label{sec:gaussian}
 
-Suppose a coupled query to $v\in V(H)$ returns
+Suppose a paired-oracle call to $v\in V(H)$ returns
 \[
 Z_v\sim\mathcal{N}(\theta_v,\nu_v^2),
 \]
-independently across queries, with known $\nu_v^2>0$.  We test
+independently across paired-oracle calls, with known $\nu_v^2>0$.  We test
 \[
 \mathsf H_0:\theta_u=\theta_v\ \forall (u,v)\in E(H)
 \]
@@ -26,7 +26,7 @@ against
 \]
 \end{definition}
 
-The program is convex.  One execution at a vertex supports every incident edge,
+The program is convex.  One paired-oracle call at a vertex supports every incident edge,
 which is why the optimum depends on graph structure rather than simply $|E(H)|$.
 
 \begin{theorem}[Static upper bound]
@@ -36,7 +36,7 @@ most
 \[
 \frac{8\log(2m/\delta)}{\gamma^2}\Psi(H,\nu)+|V(H)|
 \]
-coupled executions and having error probability at most $\delta$.
+paired-oracle calls and having error probability at most $\delta$.
 \end{theorem}
 
 \begin{proof}
@@ -51,7 +51,7 @@ variance at most $\gamma^2/(8\log(2m/\delta))$.  Reject if an empirical edge
 difference has magnitude at least $\gamma/2$.  Under the null, a Gaussian tail
 bound followed by a union bound controls all edges.  Under the alternative, an
 edge with true difference at least $\gamma$ can be missed only if its estimation
-error is at least $\gamma/2$.  The ceilings contribute at most $|V(H)|$ queries.
+error is at least $\gamma/2$.  The ceilings contribute at most $|V(H)|$ paired-oracle calls.
 \end{proof}
 
 Let $\kl(a,b)$ denote binary relative entropy.
@@ -59,7 +59,7 @@ Let $\kl(a,b)$ denote binary relative entropy.
 \begin{theorem}[Adaptive lower bound]
 \label{thm:lower}
 For $\delta\in(0,1/2)$, every adaptive $\delta$-correct tester with finite
-expected stopping time has, on the null instance $\theta\equiv0$,
+expected stopping time (measured in paired-oracle calls) has, on the null instance $\theta\equiv0$,
 \[
 \E_0[T]
 \ge
