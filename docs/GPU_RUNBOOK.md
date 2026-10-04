@@ -34,6 +34,7 @@ python scripts/verify_environment.py
 pytest -q
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
+python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
 python experiments/gpu_sweep.py --devices 0 --trials 10000 --benchmark data/benchmark_v1.jsonl --output results/smoke_gaussian.jsonl
 python experiments/gpu_replay_sweep.py --devices 0 --trials 10000 --benchmark data/replay_benchmark_v1.jsonl --output results/smoke_replay.jsonl
 ```
@@ -54,6 +55,12 @@ Bernoulli replay separation:
 python experiments/gpu_replay_sweep.py --devices 0,1 --trials 1000000 --benchmark data/replay_benchmark_v1.jsonl --output results/replay_gpu_sweep_1m.jsonl
 ```
 
+Four-way counterfactual replay with nonzero shared patch effects (P15):
+
+```powershell
+python experiments/gpu_counterfactual_sweep.py --devices 0,1 --trials 1000000 --benchmark data/counterfactual_replay_benchmark_v1.jsonl --output results/counterfactual_gpu_sweep_1m.jsonl
+```
+
 Each launcher writes one shard per GPU and merges them deterministically. Completed benchmark IDs are skipped on restart, so interrupted runs resume rather than overwrite completed work.
 
 ## 5. Month-scale policy
@@ -71,7 +78,7 @@ For the replay theorem, prioritize shrinking patch sizes `d` before merely incre
 - paired replay: cost proportional to `d^-1`;
 - independent replay: cost proportional to `d^-2`.
 
-The committed replay grid already spans `d=0.1` down to `d=0.002` and several interior baselines.
+The original replay grid spans `d=0.1` down to `d=0.002`. The frozen P15 counterfactual grid adds 144 configurations over multiple baselines, shared-patch sizes, `d` down to `0.001`, and two confidence levels.
 
 Record:
 
