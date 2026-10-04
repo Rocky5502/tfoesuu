@@ -1,0 +1,33 @@
+\section{From the Core Problem to Full Fairness Regression}
+\label{sec:open}
+
+The preceding theorems deliberately isolate the cleanest core.  Several extensions
+are required for the final paper.
+
+\paragraph{Retained fairness headroom.}
+For edge $e$, the old version has a certified gap $g_{0,e}$ and threshold $\tau_e$.
+The quantity $\tau_e-|g_{0,e}|$ is reusable statistical headroom.  A full tester
+should spend little effort on an edge whose old certificate is far from the
+boundary and whose observed patch delta points inward.
+
+\paragraph{Unknown delta variance.}
+The oracle quantity $\Psi(H,\nu)$ assumes known $\nu_v^2$.  A practical sequential
+tester must estimate variance and maintain anytime-valid confidence while adapting
+its sample allocation.
+
+\paragraph{Imperfect change impact.}
+A sound but imprecise impact set wastes tests on false-positive vertices.  A
+separate controlled-unsoundness model can reserve a small sentinel budget for
+behavior outside the reported impact set.
+
+\paragraph{Multi-patch amortization.}
+For a release sequence $P_0\to P_1\to\cdots\to P_T$, fairness certificates and
+paired-delta evidence should be reusable across several versions.  The objective
+is an amortized bound governed by cumulative impacted structure rather than
+$T|E|$.
+
+\paragraph{Adaptivity.}
+Property testing can exhibit large adaptive/non-adaptive gaps in other settings
+\cite{CanonneGur2018,Hurwitz2011}.  Whether full fairness regression admits such a
+separation remains open; the Gaussian patch-neutrality lower bound already shows
+that adaptivity cannot erase the $\Psi$ cost on the zero-delta null instance.

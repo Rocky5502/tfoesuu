@@ -1,0 +1,46 @@
+\section{Small Patches under Common-Uniform Bernoulli Replay}
+\label{sec:bernoulli}
+
+The Gaussian model makes the graph allocation exact, but a bounded model exposes
+a stronger regression phenomenon.  Consider binary software outcomes represented
+as threshold functions of a replayable uniform random tape:
+\[
+Y_j(v)=\mathbf 1\{U\le p_{j,v}\},
+\qquad U\sim\mathrm{Unif}[0,1].
+\]
+This is a monotone coupling of Bernoulli marginals.
+
+\begin{proposition}[Sparse differential uncertainty]
+\label{prop:bernoulli}
+Let $d_v=|p_{1,v}-p_{0,v}|$.  Under common-uniform replay,
+\[
+\E[Y_1(v)-Y_0(v)]=p_{1,v}-p_{0,v}
+\]
+and
+\[
+\mathrm{Var}(Y_1(v)-Y_0(v))=d_v(1-d_v).
+\]
+Under independent old/new replay, the difference has variance
+\[
+p_{0,v}(1-p_{0,v})+p_{1,v}(1-p_{1,v}).
+\]
+\end{proposition}
+
+\begin{proof}
+If $p_{1,v}\ge p_{0,v}$, the paired difference equals one exactly when
+$U\in(p_{0,v},p_{1,v}]$, an event of probability $d_v$, and is otherwise zero.
+Thus it is Bernoulli$(d_v)$.  If the ordering is reversed, the difference is the
+negative of a Bernoulli$(d_v)$ variable, with the same variance.  The independent
+formula follows by adding the two independent Bernoulli variances.
+\end{proof}
+
+If $p_{0,v}$ stays in the interior of $(0,1)$ while $d_v\to0$, the paired variance
+is $\Theta(d_v)$ whereas the independent-replay variance is $\Theta(1)$.  Thus the
+variance ratio tends to zero with patch size.  This captures a regression-specific
+principle: a small code change can be statistically easy to measure even when the
+underlying software outcome remains noisy.
+
+The next theoretical target is a graph-level fixed-confidence characterization for
+these bounded deltas that is as sharp as \Cref{thm:upper,thm:lower} but exploits
+variance-sensitive concentration rather than replacing $d_v(1-d_v)$ by a uniform
+worst-case bound.

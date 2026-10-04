@@ -1,0 +1,56 @@
+\section{Related Work and Novelty Boundary}
+\label{sec:related}
+
+\paragraph{Regression testing and change impact.}
+Regression-test selection has long been studied as a way to reuse tests after
+software modification \cite{RothermelHarrold1996,YooHarman2012}.  Code-based
+change-impact analysis identifies which behavior may be affected by a change
+\cite{LiSunLeungZhang2013}.  Our model treats sound impact information as side
+information in a statistical query problem rather than proposing a new static
+impact analysis.
+
+\paragraph{Fairness testing and auditing.}
+Themis established automated software fairness testing as a software-engineering
+problem \cite{GalhotraBrunMeliou2017}.  Active fairness auditing gives theoretical
+query-efficient algorithms for assessing fixed learned systems
+\cite{YanZhang2022}.  We do not claim novelty for fairness testing or active
+fairness auditing in isolation; our target is version-aware stochastic regression.
+
+\paragraph{Property testing.}
+Property testing provides the surrounding query-complexity framework.
+Optimal monotonicity/Lipschitz testing on hypercubes and hypergrids is a canonical
+example of graph-structured local checks determining a global property
+\cite{ChakrabartySeshadhri2013}; tolerant testing can be much harder than ordinary
+testing \cite{FischerFortnow2006}; and adaptivity hierarchies are known
+\cite{CanonneGur2018}.  Our property and access model are different: observations
+are stochastic executions of two evolving software versions, and old-version and
+impact information are first-class inputs.
+
+\paragraph{Adaptive information lower bounds.}
+Adaptive fixed-confidence sampling is commonly analyzed through transcript-level
+change-of-measure arguments.  We use the generic information-theoretic technique
+of Kaufmann, Capp{\'e}, and Garivier \cite{KaufmannCappeGarivier2016} and
+specialize the alternatives to counterfactual patch effects on graph edges.
+
+\paragraph{Pairwise experimental design.}
+Optimal design for selected pairwise mean comparisons has a substantial
+statistical literature, including recent graph-based formulations
+\cite{SinghSinghDavidov2025}.  Therefore the existence of a graph allocation
+problem by itself is not a novelty claim.  The role of $\Psi$ here is as the core
+information quantity arising from a regression-specific coupled execution oracle;
+the intended contribution is the complete software-evolution query model and its
+upper/lower complexity theory.
+
+\paragraph{Incremental and probabilistic verification.}
+Incremental verification seeks to reuse proof information from earlier program
+versions \cite{YinEtAl2025}.  Couplings are a standard tool for relational
+reasoning about probabilistic programs \cite{BartheEtAl2017}.  We combine the
+version-reuse viewpoint with statistical testing of a fairness property rather
+than attempting full formal equivalence verification.
+
+\paragraph{Nondeterministic software testing.}
+Flaky tests demonstrate that stochastic and environment-dependent execution is a
+practical testing concern.  Recent OOPSLA work controls nondeterministic APIs to
+expose flakiness \cite{YuanLinShi2026}.  Our theory abstracts such uncertainty as
+an execution oracle and asks how it changes the fundamental cost of fairness
+regression certification.

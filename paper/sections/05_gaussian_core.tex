@@ -1,0 +1,150 @@
+\section{A Gaussian Core Characterization}
+\label{sec:gaussian}
+
+Suppose a coupled query to $v\in V(H)$ returns
+\[
+Z_v\sim\mathcal{N}(\theta_v,\nu_v^2),
+\]
+independently across queries, with known $\nu_v^2>0$.  We test
+\[
+\mathsf H_0:\theta_u=\theta_v\ \forall (u,v)\in E(H)
+\]
+against
+\[
+\mathsf H_1:\exists (u,v)\in E(H)
+\text{ such that }|\theta_u-\theta_v|\ge\gamma.
+\]
+
+\begin{definition}[Uncertainty-weighted graph complexity]
+\label{def:psi}
+\[
+\Psi(H,\nu)=
+\min_{q_v>0}\sum_{v\in V(H)}q_v
+\quad\text{s.t.}\quad
+\frac{\nu_u^2}{q_u}+\frac{\nu_v^2}{q_v}\le1
+\quad\forall (u,v)\in E(H).
+\]
+\end{definition}
+
+The program is convex.  One execution at a vertex supports every incident edge,
+which is why the optimum depends on graph structure rather than simply $|E(H)|$.
+
+\begin{theorem}[Static upper bound]
+\label{thm:upper}
+Let $m=|E(H)|\ge1$.  For $\delta\in(0,1)$, a non-adaptive tester exists using at
+most
+\[
+\frac{8\log(2m/\delta)}{\gamma^2}\Psi(H,\nu)+|V(H)|
+\]
+coupled executions and having error probability at most $\delta$.
+\end{theorem}
+
+\begin{proof}
+Take an optimal solution $q^\star$ and set
+\[
+n_v=\left\lceil
+\frac{8\log(2m/\delta)}{\gamma^2}q_v^\star
+\right\rceil.
+\]
+For each edge $(u,v)$, the empirical difference of the two vertex means has
+variance at most $\gamma^2/(8\log(2m/\delta))$.  Reject if an empirical edge
+difference has magnitude at least $\gamma/2$.  Under the null, a Gaussian tail
+bound followed by a union bound controls all edges.  Under the alternative, an
+edge with true difference at least $\gamma$ can be missed only if its estimation
+error is at least $\gamma/2$.  The ceilings contribute at most $|V(H)|$ queries.
+\end{proof}
+
+Let $\kl(a,b)$ denote binary relative entropy.
+
+\begin{theorem}[Adaptive lower bound]
+\label{thm:lower}
+For $\delta\in(0,1/2)$, every adaptive $\delta$-correct tester with finite
+expected stopping time has, on the null instance $\theta\equiv0$,
+\[
+\E_0[T]
+\ge
+\frac{2\kl(1-\delta,\delta)}{\gamma^2}\Psi(H,\nu).
+\]
+\end{theorem}
+
+\begin{proof}
+Let $n_v=\E_0[N_v]$.  Fix an edge $(u,v)$ and consider an alternative changing
+only its endpoints to $\theta_u=a$ and $\theta_v=-b$, where $a,b\ge0$ and
+$a+b=\gamma$.  The adaptive transcript KL from the null to this alternative is
+\[
+\frac{n_u a^2}{2\nu_u^2}+\frac{n_v b^2}{2\nu_v^2}.
+\]
+The standard adaptive change-of-measure argument for sequential sampling
+\cite{KaufmannCappeGarivier2016}, followed by data processing through the final
+accept/reject decision, lower-bounds this by $\kl(1-\delta,\delta)$.  Minimizing over $a+b=\gamma$ yields
+\[
+\frac{\nu_u^2}{n_u}+\frac{\nu_v^2}{n_v}
+\le
+\frac{\gamma^2}{2\kl(1-\delta,\delta)}.
+\]
+This holds for every edge.  Scaling $n_v$ by
+$\gamma^2/(2\kl(1-\delta,\delta))$ therefore gives a feasible solution to
+\Cref{def:psi}, proving the claim.
+\end{proof}
+
+\subsection{Dual characterization}
+
+\begin{theorem}[Dual representation]
+\label{thm:dual}
+\[
+\Psi(H,\nu)
+=
+\max_{\lambda_e\ge0}
+\left[
+2\sum_{v\in V(H)}\nu_v
+\sqrt{\sum_{e\ni v}\lambda_e}
+-
+\sum_{e\in E(H)}\lambda_e
+\right].
+\]
+\end{theorem}
+
+\begin{proof}
+Introduce one multiplier $\lambda_e\ge0$ for each edge constraint.  The Lagrangian
+separates across vertices as
+\[
+\sum_v\left(q_v+
+\frac{\nu_v^2\sum_{e\ni v}\lambda_e}{q_v}\right)-\sum_e\lambda_e.
+\]
+For fixed multipliers, minimizing over $q_v>0$ gives
+$2\nu_v\sqrt{\sum_{e\ni v}\lambda_e}$.  Strong duality follows from Slater's
+condition because choosing all $q_v$ sufficiently large makes every inequality
+strict.
+\end{proof}
+
+\subsection{Exact unit-variance families}
+Assume $\nu_v^2=1$.
+
+\begin{proposition}[Closed forms]
+\label{prop:families}
+\begin{enumerate}[label=(\roman*)]
+\item one edge: $\Psi=4$;
+\item a matching of $k$ edges: $\Psi=4k$;
+\item a clique $K_n$: $\Psi=2n$;
+\item a complete bipartite graph $K_{a,b}$:
+\[
+\Psi=(\sqrt a+\sqrt b)^2.
+\]
+In particular, a $k$-leaf star has $\Psi=(1+\sqrt{k})^2$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+The edge case follows by symmetry.  Disjoint components add, giving the matching.
+For a clique, convexity and vertex symmetry imply an optimal symmetric solution,
+so $q_v=2$ for all $v$.  For $K_{a,b}$, symmetry within each side gives variables
+$x,y$ with $1/x+1/y=1$ and objective $ax+by$.  Minimization yields
+$x=1+\sqrt{b/a}$ and $y=1+\sqrt{a/b}$, giving the stated value.
+\end{proof}
+
+\begin{corollary}[Homogeneous scaling]
+If every vertex variance is multiplied by $c>0$, then
+\[
+\Psi(H,c\nu^2)=c\Psi(H,\nu^2).
+\]
+\end{corollary}
