@@ -83,3 +83,52 @@ comparisons among several stochastic systems; group testing studies subset
 queries and feedback. Those ingredients are prior art. Any eventual novelty
 claim must concern this software-version/fairness-regression replay oracle and
 its proved complexity, not CRN, set cover, or subset querying themselves.
+
+
+## Stronger candidate: fractional scheduling may close the static integrality gap
+
+The transcript-KL floor suggests a stronger design than repeating an integral
+cover in every macro-round. Let a_S >= 0 be a fractional cover satisfying
+
+  sum_{S: e subset S} a_S >= 1  for every edge e.
+
+For a target exposure L, query group S approximately L a_S times. For an edge e,
+the number of independent same-tape opportunities is then at least L up to
+rounding. Since each opportunity misses the sparse witness with probability
+1-d, the edge miss probability is at most (1-d)^L.
+
+For the *union* alternative "some edge changed", correctness is pointwise in the
+unknown alternative: the tester does not need a union bound over all edges when
+there is only one adversarial alternative to miss. Thus choosing
+
+  L = ceil(log(beta)/log(1-d))
+
+is sufficient for every single-edge alternative. The total cost is approximately
+
+  L * C_frac(H,S,c) + rounding overhead.
+
+This means the current integral-cover macro-round construction is generally not
+the sharpest static upper bound. The fractional lower LP may be asymptotically
+attainable up to integer rounding, at least in the homogeneous single-edge
+witness family.
+
+### Proof obligations before promotion
+
+1. State the schedule in integer counts n_S=ceil(L a_S), not randomized expected
+   counts, so the fixed-confidence guarantee is deterministic.
+2. Verify that repeated queries to each group use independent tapes; dependence
+   is only within a group query.
+3. For every edge alternative e, show sum_{S contains e} n_S >= L and hence
+   miss probability <= (1-d)^L.
+4. Compare the exact finite cost sum c(S) ceil(L a_S) with L C_frac plus the
+   explicit additive rounding term sum c(S) over groups with a_S>0.
+5. Match the lower bound using the exact P15 per-informative-query KL
+   K(d)=r log(r/(r-d)), not merely d.
+6. Keep the distinction between finite-sample constants and the d->0 asymptotic:
+   L ~ log(1/beta)/d while K(d)~d.
+7. Check whether a basic optimal fractional solution can be chosen with support
+   at most |E|, which would control the additive rounding overhead.
+
+If these gates pass, P17 should be reformulated around a fractional replay-cover
+complexity rather than an integral set cover. The integral cover remains a simple
+special-case construction, not the main theorem.
