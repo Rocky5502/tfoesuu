@@ -154,21 +154,6 @@ class RandomizedResourceAllocatorPair:
         return (u <= p1).astype(np.int8) - (u <= p0).astype(np.int8)
 
 
-def linear_baseline(
-    contexts: int,
-    low: float = 0.25,
-    high: float = 0.75,
-) -> np.ndarray:
-    """Deterministic baseline profile used by reproducibility experiments."""
-
-    if contexts < 1:
-        raise ValueError("contexts must be >= 1")
-    if not (0.0 < low <= high < 1.0):
-        raise ValueError("require 0 < low <= high < 1")
-    if contexts == 1:
-        return np.asarray([(low + high) / 2.0])
-    return np.linspace(low, high, contexts, dtype=float)
-
 
     def sample_edge_coupled_fairness_delta(
         self,
@@ -205,3 +190,19 @@ def linear_baseline(
             - (u <= self.probability(0, v1)).astype(np.int8)
         )
         return z1 - z0
+
+
+def linear_baseline(
+    contexts: int,
+    low: float = 0.25,
+    high: float = 0.75,
+) -> np.ndarray:
+    """Deterministic baseline profile used by reproducibility experiments."""
+
+    if contexts < 1:
+        raise ValueError("contexts must be >= 1")
+    if not (0.0 < low <= high < 1.0):
+        raise ValueError("require 0 < low <= high < 1")
+    if contexts == 1:
+        return np.asarray([(low + high) / 2.0])
+    return np.linspace(low, high, contexts, dtype=float)
