@@ -1,0 +1,112 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+import math
+
+
+@dataclass(frozen=True)
+class ReplaySeparationBounds:
+    """Finite-sample bounds for the one-edge Bernoulli replay separation."""
+
+    paired_upper_rounds: int
+    paired_null_expected_lower: float
+    independent_upper_rounds: int
+    independent_null_expected_lower: float
+    paired_per_round_kl: float
+    independent_per_round_kl: float
+
+
+def binary_kl(a: float, b: float) -> float:
+    """KL(Bernoulli(a) || Bernoulli(b)) with boundary-safe conventions."""
+
+    if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+        raise ValueError("Bernoulli parameters must lie in [0,1]")
+    if a == b:
+        return 0.0
+    if b == 0.0:
+        return math.inf if a > 0.0 else 0.0
+    if b == 1.0:
+        return math.inf if a < 1.0 else 0.0
+
+    out = 0.0
+    if a > 0.0:
+        out += a * math.log(a / b)
+    if a < 1.0:
+        out += (1.0 - a) * math.log((1.0 - a) / (1.0 - b))
+    return out
+
+
+def binary_decision_kl(beta: float) -> float:
+    """kl(1-beta, beta), the data-processing term in fixed-confidence tests."""
+
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0, 1/2)")
+    return binary_kl(1.0 - beta, beta)
+
+
+def _validate(p: float, d: float, beta: float) -> None:
+    if not (0.0 < p < 1.0):
+        raise ValueError("p must lie in (0,1)")
+    if not (0.0 < d < 1.0 - p):
+        raise ValueError("d must lie in (0,1-p)")
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+
+
+def paired_per_round_kl(p: float, d: float) -> float:
+    """Null-to-alternative KL for common-uniform replay at the changed endpoint.
+
+    H0 pair probabilities are:
+      (1,1): p, (0,0): 1-p.
+    H1 adds the discordant pair (0,1) with probability d:
+      (1,1): p, (0,0): 1-p-d, (0,1): d.
+
+    Hence KL(H0 || H1) is linear in d to first order.
+    """
+
+    if not (0.0 < p < 1.0 and 0.0 < d < 1.0 - p):
+        raise ValueError("require p in (0,1) and d in (0,1-p)")
+    return (1.0 - p) * math.log((1.0 - p) / (1.0 - p - d))
+
+
+def independent_per_round_kl(p: float, d: float) -> float:
+    """Null-to-alternative KL under independent/fresh replay.
+
+    The old-version observation has the same law under both hypotheses, so only
+    the new Bernoulli(p) versus Bernoulli(p+d) sample contributes information.
+    """
+
+    if not (0.0 < p < 1.0 and 0.0 < d < 1.0 - p):
+        raise ValueError("require p in (0,1) and d in (0,1-p)")
+    return binary_kl(p, p + d)
+
+
+def replay_separation_bounds(p: float, d: float, beta: float) -> ReplaySeparationBounds:
+    """Return proved upper/lower bounds for the one-edge separation family.
+
+    The fairness threshold is zero. The old version has probabilities (p,p).
+    Under H0 the new version remains (p,p). Under H1 the first endpoint changes
+    to p+d while the second remains p.
+
+    A coupled query is one replay round that executes old and new versions on the
+    same uniform random tape. Individual program executions differ only by a
+    constant factor of two from paired-round counts.
+    """
+
+    _validate(p, d, beta)
+
+    paired_kl = paired_per_round_kl(p, d)
+    independent_kl = independent_per_round_kl(p, d)
+    decision_kl = binary_decision_kl(beta)
+
+    paired_upper = math.ceil(math.log(beta) / math.log1p(-d))
+    independent_upper = math.ceil(2.0 * math.log(1.0 / beta) / (d * d))
+
+    return ReplaySeparationBounds(
+        paired_upper_rounds=paired_upper,
+        paired_null_expected_lower=decision_kl / paired_kl,
+        independent_upper_rounds=independent_upper,
+        independent_null_expected_lower=decision_kl / independent_kl,
+        paired_per_round_kl=paired_kl,
+        independent_per_round_kl=independent_kl,
+    )
