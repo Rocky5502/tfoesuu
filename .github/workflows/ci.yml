@@ -25,3 +25,4 @@ jobs:
       - run: python experiments/run_replay_separation.py --p 0.5 --d 0.05 --beta 0.05 --trials 1000
       - run: python experiments/run_location_replay.py --candidates 8 --p 0.5 --d 0.05 --beta 0.05 --trials 1000
       - run: python experiments/run_allocator_subject.py --contexts 8 --changed-context 2 --delta 0.05 --beta 0.05 --trials 1000
+      - run: python experiments/search_graph_replay_complexity.py --max-n 5 --top 5
