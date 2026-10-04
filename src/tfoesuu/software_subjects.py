@@ -14,6 +14,7 @@ class AllocationPatch:
 
     affected_contexts: tuple[int, ...]
     delta: float
+    common_shift: float = 0.0
 
     def __post_init__(self) -> None:
         if self.delta == 0.0:
@@ -43,6 +44,7 @@ class RandomizedResourceAllocatorPair:
         baseline_probabilities: Sequence[float],
         affected_contexts: Iterable[int],
         delta: float,
+        common_shift: float = 0.0,
     ) -> "RandomizedResourceAllocatorPair":
         p = np.asarray(baseline_probabilities, dtype=float)
         if p.ndim != 1 or len(p) < 1:
@@ -52,11 +54,16 @@ class RandomizedResourceAllocatorPair:
         affected = tuple(sorted(int(c) for c in affected_contexts))
         if any(c < 0 or c >= len(p) for c in affected):
             raise ValueError("affected context outside range")
-        patch = AllocationPatch(affected, float(delta))
+        patch = AllocationPatch(
+            affected,
+            float(delta),
+            float(common_shift),
+        )
         for c in affected:
-            q = p[c] + delta
-            if not (0.0 < q < 1.0):
-                raise ValueError("patched probability must remain in (0,1)")
+            q0 = p[c] + common_shift
+            q1 = p[c] + common_shift + delta
+            if not (0.0 < q0 < 1.0 and 0.0 < q1 < 1.0):
+                raise ValueError("patched probabilities must remain in (0,1)")
         return cls(p.copy(), patch)
 
     @property
@@ -93,6 +100,12 @@ class RandomizedResourceAllocatorPair:
 
     @property
     def replay_sound_impact_vertices(self) -> tuple[int, ...]:
+        if self.patch.common_shift != 0.0:
+            return tuple(
+                self.encode_vertex(c, group)
+                for c in self.patch.affected_contexts
+                for group in (0, 1)
+            )
         return tuple(
             self.encode_vertex(c, 1) for c in self.patch.affected_contexts
         )
@@ -111,12 +124,10 @@ class RandomizedResourceAllocatorPair:
             raise ValueError("version must be 0 or 1")
         context, group = self.decode_vertex(vertex)
         p = float(self.baseline_probabilities[context])
-        if (
-            version == 1
-            and group == 1
-            and context in self.patch.affected_contexts
-        ):
-            p += self.patch.delta
+        if version == 1 and context in self.patch.affected_contexts:
+            p += self.patch.common_shift
+            if group == 1:
+                p += self.patch.delta
         return p
 
     def execute(self, version: int, vertex: int, random_tape: float) -> int:
@@ -157,3 +168,40 @@ def linear_baseline(
     if contexts == 1:
         return np.asarray([(low + high) / 2.0])
     return np.linspace(low, high, contexts, dtype=float)
+
+
+    def sample_edge_coupled_fairness_delta(
+        self,
+        context: int,
+        count: int,
+        rng: np.random.Generator,
+    ) -> np.ndarray:
+        """Sample the four-way replay differential on one counterfactual edge.
+
+        The same uniform random tape is used for:
+          old group 0, new group 0, old group 1, new group 1.
+
+        The returned value is
+          (new-old)_group1 - (new-old)_group0.
+
+        A common shift therefore cancels pathwise.
+        """
+
+        if not (0 <= context < self.contexts):
+            raise ValueError("context outside subject domain")
+        if count < 1:
+            raise ValueError("count must be >= 1")
+
+        u = rng.random(count)
+        v0 = self.encode_vertex(context, 0)
+        v1 = self.encode_vertex(context, 1)
+
+        z0 = (
+            (u <= self.probability(1, v0)).astype(np.int8)
+            - (u <= self.probability(0, v0)).astype(np.int8)
+        )
+        z1 = (
+            (u <= self.probability(1, v1)).astype(np.int8)
+            - (u <= self.probability(0, v1)).astype(np.int8)
+        )
+        return z1 - z0
