@@ -15,6 +15,7 @@ from .separations import (
 )
 from .software_subjects import RandomizedResourceAllocatorPair, linear_baseline
 from .suite_replay import SuiteReplayBounds, active_vertex_count, synchronized_suite_replay_bounds
+from .partial_replay import ReplayGroupCover, GroupReplayUpperBound, minimum_replay_group_cover, partial_synchronized_replay_upper_bound
 from .subject_benchmarks import (
     SoftwareSubjectBenchmarkSpec,
     software_subject_benchmark_v1,
@@ -42,6 +43,10 @@ __all__ = [
     "SuiteReplayBounds",
     "active_vertex_count",
     "synchronized_suite_replay_bounds",
+    "ReplayGroupCover",
+    "GroupReplayUpperBound",
+    "minimum_replay_group_cover",
+    "partial_synchronized_replay_upper_bound",
     "linear_baseline",
     "SoftwareSubjectBenchmarkSpec",
     "software_subject_benchmark_v1",
