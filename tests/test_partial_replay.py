@@ -29,8 +29,10 @@ def test_overlapping_groups_choose_cheapest_valid_cover():
     groups = [(0, 1, 2), (1, 2, 3), (0, 1), (2, 3)]
     r = minimum_replay_group_cover(g, groups, costs=[2.0, 2.0, 1.5, 1.5])
     assert r.success
-    assert r.objective == pytest.approx(3.0)
-    assert set(r.selected) == {2, 3}
+    assert r.objective == pytest.approx(3.5)
+    # Edge (1,2) forces one three-vertex group (cost 2); the remaining endpoint
+    # edge needs one cost-1.5 pair group. No cost-3 cover exists.
+    assert len(r.selected) == 2
 
 
 def test_uncovered_edge_is_rejected():
