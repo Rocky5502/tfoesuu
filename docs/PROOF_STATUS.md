@@ -13,14 +13,15 @@ This file is the source of truth for mathematical claims. A result is not promot
 | P7 | Unit-variance exact values: edge, matching, clique, star, complete bipartite | PROVED, numerical audit passed | Symmetry/convexity; star is `K_{1,k}`. |
 | P8 | Homogeneous variance scaling: `Psi(H,lambda nu^2)=lambda Psi(H,nu^2)` | PROVED + AUDITED | Direct rescaling. |
 | P9 | Common-uniform Bernoulli delta variance `d(1-d)` | PROVED + AUDITED | Delta is signed Bernoulli on interval between probabilities. |
-| P10 | Linear patch-locality separation on an M-edge matching | PROVED, second audit pending | Direct upper/lower corollary from P4/P5 and exact matching Psi. |
-| P11 | Old certificate slack alone gives no minimax speedup under unrestricted patches | PROVED, second audit pending | Boundary-null reduction cancels old slack. |
-| T1 | Full thresholded fairness regression with retained old-version headroom | OPEN | Need tight instance-dependent formulation. |
+| P10 | Linear patch-locality separation on an M-edge matching | PROVED + AUDITED | Re-derived from P4/P5; matched execution oracle; exact matching `Psi`. |
+| P11 | Old certificate slack alone gives no minimax speedup under unrestricted patches | PROVED + AUDITED | Independent boundary-null reduction; lower bound is slack-independent. |
+| P12 | Common-uniform Bernoulli replay gives linear-vs-quadratic small-patch query complexity | PROVED + AUDITED | One-edge fairness regression; paired KL is Theta(d), independent KL is Theta(d^2). |
+| T1 | Full thresholded fairness regression with retained old-version headroom | OPEN | Need tight instance-dependent formulation beyond minimax no-free-lunch. |
 | T2 | Unknown-variance anytime-valid tester | OPEN | Avoid optional-stopping mistakes. |
-| T3 | Tight bounded/Bernoulli graph complexity | OPEN | Gaussian exactness may not transfer verbatim. |
+| T3 | Tight graph-level bounded/Bernoulli complexity | OPEN | Lift P12 beyond one edge while exploiting sparse delta variance. |
 | T4 | Sound-but-imprecise and mildly unsound impact analysis | OPEN | Separate deterministic soundness from sentinel model. |
 | T5 | Adaptive instance-dependent stopping advantage | OPEN | Need matching lower bound or separation. |
-| T6 | Version-aware patch-locality separation vs fresh auditing | OPEN | Access models must be identical except for version information. |
+| T6 | Version-aware patch-locality separation vs fresh auditing | OPEN | P10 settles location information on a matching; broader fresh-audit comparison remains open. |
 | T7 | Multi-patch amortized complexity | OPEN | Potential dynamic graph/certificate theorem. |
 
 ## Audit protocol
