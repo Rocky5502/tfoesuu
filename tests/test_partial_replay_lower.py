@@ -2,7 +2,7 @@ import pytest
 
 from tfoesuu.graphs import clique_graph, matching_graph, path_graph
 from tfoesuu.partial_replay import minimum_replay_group_cover
-from tfoesuu.partial_replay_lower import fractional_group_replay_lower_bound
+from tfoesuu.partial_replay_lower import fractional_group_replay_lower_bound, fractional_replay_schedule
 
 
 def test_full_suite_fractional_floor_is_one_group():
@@ -37,3 +37,20 @@ def test_fractional_relaxation_never_exceeds_integral_cover():
     hi = minimum_replay_group_cover(g, groups, costs=costs)
     assert lo.success and hi.success
     assert lo.normalized_cost <= hi.objective + 1e-9
+
+
+def test_fractional_schedule_covers_every_edge_at_target_exposure():
+    g = clique_graph(5)
+    groups = [tuple(x for x in range(g.n) if x != omitted) for omitted in range(g.n)]
+    costs = [1.0] * len(groups)
+    s = fractional_replay_schedule(g, groups, costs, d=0.05, beta=0.01)
+    assert s.scale > 0
+    for u, v in g.edges:
+        exposure = sum(
+            int(s.counts[i]) for i, group in enumerate(groups)
+            if u in group and v in group
+        )
+        assert exposure >= s.scale
+    assert s.total_cost <= (
+        s.scale * s.normalized_fractional_cost + s.additive_rounding_cap + 1e-8
+    )
