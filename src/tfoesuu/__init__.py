@@ -14,6 +14,7 @@ from .separations import (
     replay_separation_bounds,
 )
 from .software_subjects import RandomizedResourceAllocatorPair, linear_baseline
+from .suite_replay import SuiteReplayBounds, active_vertex_count, synchronized_suite_replay_bounds
 from .subject_benchmarks import (
     SoftwareSubjectBenchmarkSpec,
     software_subject_benchmark_v1,
@@ -38,6 +39,9 @@ __all__ = [
     "counterfactual_replay_bounds",
     "location_replay_bounds",
     "RandomizedResourceAllocatorPair",
+    "SuiteReplayBounds",
+    "active_vertex_count",
+    "synchronized_suite_replay_bounds",
     "linear_baseline",
     "SoftwareSubjectBenchmarkSpec",
     "software_subject_benchmark_v1",
