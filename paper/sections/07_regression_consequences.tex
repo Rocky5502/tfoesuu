@@ -1,0 +1,109 @@
+\section{What Version Information Actually Buys}
+\label{sec:consequences}
+
+The Gaussian core lets us separate three kinds of version information that are
+often conflated in regression testing: localization of where a change may occur,
+statistical coupling of old and new executions, and numerical slack in the old
+fairness certificate.  The first two can change query complexity directly.  The
+third, by itself, does not improve the worst-case rate when patch effects are
+unrestricted.
+
+\subsection{A linear separation from patch localization}
+
+Consider a fairness graph that is a matching of $M$ counterfactual edges and
+assume unit paired-delta variance at every vertex.  Compare two testers with the
+same coupled execution oracle.  A \emph{patch-aware} tester receives a sound
+impact set identifying the unique edge on which behavior may have changed.  A
+\emph{location-unaware} tester is only promised that at most one edge changed,
+but is not told which edge.
+
+\begin{corollary}[Linear patch-locality separation]
+\label{cor:locality-separation}
+Fix $\delta\in(0,1/2)$ and $\gamma>0$.  On the $M$-edge matching family above:
+\begin{enumerate}[label=(\roman*)]
+\item a patch-aware tester uses at most
+\[
+\frac{32\log(2/\delta)}{\gamma^2}+2
+\]
+coupled executions; while
+\item every adaptive location-unaware $\delta$-correct tester with finite expected
+stopping time uses, on the all-neutral null instance,
+\[
+\E_0[T]\ge
+\frac{8M\,\kl(1-\delta,\delta)}{\gamma^2}.
+\]
+\end{enumerate}
+Consequently, for every fixed $\delta$, the worst-case separation is
+$\Omega(M)$.
+\end{corollary}
+
+\begin{proof}
+With a revealed sound impact edge, the relevant graph $H$ consists of one edge,
+for which \Cref{prop:families} gives $\Psi(H)=4$.  Substitution into
+\Cref{thm:upper} gives the first claim.
+
+Without the edge location, correctness must hold against an alternative on every
+one of the $M$ disjoint edges.  The relevant testing graph is therefore the full
+matching, for which \Cref{prop:families} gives $\Psi=4M$.  Applying
+\Cref{thm:lower} yields the second claim.  The ratio is linear in $M$ for fixed
+confidence.
+\end{proof}
+
+The comparison does not give the patch-aware algorithm a stronger execution
+oracle: its only additional information is the sound impact location.  Thus the
+separation quantifies, in a clean family, the statistical value of software
+change-impact information.
+
+\subsection{Old certificate slack is not enough in the minimax sense}
+
+Suppose an old edge $e=(u,v)$ is certified with gap
+$g_{0,e}=\mu_{0,u}-\mu_{0,v}$ satisfying $|g_{0,e}|\le\tau_e$.  It is tempting to
+expect large headroom $\tau_e-|g_{0,e}|$ to reduce the worst-case cost of testing
+the new version.  This intuition is false without a restriction on the patch.
+
+\begin{proposition}[No minimax gain from old slack alone]
+\label{prop:slack-no-free-lunch}
+Consider a single fairness edge with Gaussian paired-delta observations of known
+variances $\nu_u^2,\nu_v^2>0$.  The old gap $g_0$ and threshold $\tau$ may be known
+exactly, with arbitrary slack $|g_0|\le\tau$.  A tester must distinguish
+\[
+\mathsf H_0:\ |g_0+\theta_u-\theta_v|\le\tau
+\]
+from
+\[
+\mathsf H_1:\ |g_0+\theta_u-\theta_v|\ge\tau+\gamma.
+\]
+For every adaptive $\delta$-correct tester with finite expected stopping time,
+there is a boundary null instance for which
+\[
+\E[T]\ge
+\frac{2\kl(1-\delta,\delta)}{\gamma^2}
+\min_{q_u,q_v>0}
+\left\{q_u+q_v:
+\frac{\nu_u^2}{q_u}+\frac{\nu_v^2}{q_v}\le1
+\right\}.
+\]
+In particular, the lower bound is independent of the old certificate slack.
+\end{proposition}
+
+\begin{proof}
+Choose a sign $s\in\{-1,+1\}$ and a null patch effect whose edge difference is
+\[
+\theta_u^{(0)}-\theta_v^{(0)}=s\tau-g_0,
+\]
+so the new program lies exactly on the fairness boundary.  Construct an
+alternative by increasing the signed edge difference by $\gamma$:
+\[
+\theta_u^{(1)}-\theta_v^{(1)}=s(\tau+\gamma)-g_0.
+\]
+The two hypotheses therefore differ by exactly $\gamma$ in the endpoint mean
+difference, regardless of $g_0$.  Splitting this $\gamma$ shift adversarially
+between the two endpoints and applying the same adaptive change-of-measure
+calculation as in \Cref{thm:lower} gives the stated bound.
+\end{proof}
+
+\Cref{prop:slack-no-free-lunch} does not say that historical certificates are
+useless.  They can yield instance-dependent savings when the observed patch stays
+well inside the boundary, and they become powerful under structural assumptions
+that limit patch magnitude or direction.  The proposition says that such savings
+cannot be claimed as a uniform minimax consequence of old slack alone.

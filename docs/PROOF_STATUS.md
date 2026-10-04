@@ -13,6 +13,8 @@ This file is the source of truth for mathematical claims. A result is not promot
 | P7 | Unit-variance exact values: edge, matching, clique, star, complete bipartite | PROVED, numerical audit passed | Symmetry/convexity; star is `K_{1,k}`. |
 | P8 | Homogeneous variance scaling: `Psi(H,lambda nu^2)=lambda Psi(H,nu^2)` | PROVED + AUDITED | Direct rescaling. |
 | P9 | Common-uniform Bernoulli delta variance `d(1-d)` | PROVED + AUDITED | Delta is signed Bernoulli on interval between probabilities. |
+| P10 | Linear patch-locality separation on an M-edge matching | PROVED, second audit pending | Direct upper/lower corollary from P4/P5 and exact matching Psi. |
+| P11 | Old certificate slack alone gives no minimax speedup under unrestricted patches | PROVED, second audit pending | Boundary-null reduction cancels old slack. |
 | T1 | Full thresholded fairness regression with retained old-version headroom | OPEN | Need tight instance-dependent formulation. |
 | T2 | Unknown-variance anytime-valid tester | OPEN | Avoid optional-stopping mistakes. |
 | T3 | Tight bounded/Bernoulli graph complexity | OPEN | Gaussian exactness may not transfer verbatim. |
