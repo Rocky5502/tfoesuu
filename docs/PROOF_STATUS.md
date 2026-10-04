@@ -19,6 +19,7 @@ This file is the source of truth for mathematical claims. A result is not promot
 | P13 | Unknown-location Bernoulli replay on an M-edge matching has Theta(M/d) fixed-confidence scaling | PROVED + AUDITED | Edgewise transcript KL sums under the common null; active anomaly-search collision boundary documented. |
 | P14 | Sound patch-effect envelopes prune certified-safe edges; Gaussian testing runs only on the residual graph | PROVED + AUDITED | Triangle-inequality carryover plus P4 allocation on residual graph. |
 | P15 | Four-way counterfactual replay cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1) | PROVED + AUDITED | Four-output KL versus vertex-paired KL; CRN/coupling prior art explicitly fenced. |
+| P16 | Synchronized suite replay tests all fairness edges at once; rounds are Theta(log(1/delta)/d) and concrete executions Theta(n_active log(1/delta)/d), independent of edge count | PROVED + AUDITED | Fixed-alternative KL lower bound + pathwise common-patch cancellation; stronger suite-replay access model stated explicitly. |
 | T1 | Full thresholded fairness regression with retained old-version headroom | PARTIAL | P11 gives minimax no-free-lunch; P14 gives a sound envelope-pruned upper bound. Tight instance-dependent lower characterization remains open. |
 | T2 | Unknown-variance anytime-valid tester | OPEN | Avoid optional-stopping mistakes. |
 | T3 | Tight graph-level bounded/Bernoulli complexity | OPEN | Lift P12 beyond one edge while exploiting sparse delta variance. |
