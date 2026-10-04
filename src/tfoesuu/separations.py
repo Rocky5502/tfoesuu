@@ -148,3 +148,86 @@ def location_replay_bounds(candidates: int, p: float, d: float, beta: float) -> 
         null_expected_lower=lower,
         paired_per_round_kl=k_pair,
     )
+
+
+
+@dataclass(frozen=True)
+class CounterfactualReplayBounds:
+    """Bounds for four-way counterfactual replay versus vertex-paired replay."""
+
+    edge_coupled_upper_rounds: int
+    edge_coupled_null_expected_lower: float
+    vertex_paired_upper_rounds: int
+    vertex_paired_null_expected_lower: float
+    edge_coupled_per_round_kl: float
+    vertex_paired_per_round_kl: float
+
+
+def _validate_common_patch(p: float, s: float, d: float, beta: float) -> None:
+    if not (0.0 < p < 1.0):
+        raise ValueError("p must lie in (0,1)")
+    if not (0.0 < s < 1.0 - p):
+        raise ValueError("s must lie in (0,1-p)")
+    if not (0.0 < d < 1.0 - p - s):
+        raise ValueError("d must lie in (0,1-p-s)")
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+
+
+def edge_coupled_common_patch_kl(p: float, s: float, d: float) -> float:
+    """Null-to-alternative KL for one four-way common-uniform edge replay.
+
+    Old endpoints both use threshold p. Under H0 both new endpoints use p+s.
+    Under H1 the first new endpoint uses p+s+d and the second remains p+s.
+    """
+
+    if not (0.0 < p < 1.0 and 0.0 < s < 1.0 - p and 0.0 < d < 1.0 - p - s):
+        raise ValueError("require p>0, s>0, d>0, and p+s+d<1")
+    r = 1.0 - p - s
+    return r * math.log(r / (r - d))
+
+
+def vertex_paired_common_patch_kl(p: float, s: float, d: float) -> float:
+    """Null-to-alternative KL for one old/new paired call at the changed endpoint."""
+
+    if not (0.0 < p < 1.0 and 0.0 < s < 1.0 - p and 0.0 < d < 1.0 - p - s):
+        raise ValueError("require p>0, s>0, d>0, and p+s+d<1")
+    r = 1.0 - p - s
+    return s * math.log(s / (s + d)) + r * math.log(r / (r - d))
+
+
+def counterfactual_replay_bounds(
+    p: float,
+    s: float,
+    d: float,
+    beta: float,
+) -> CounterfactualReplayBounds:
+    """Finite-sample bounds for common-patch cancellation by four-way replay.
+
+    H0:
+      old endpoints (p,p), new endpoints (p+s,p+s).
+    H1:
+      old endpoints (p,p), new endpoints (p+s+d,p+s).
+
+    Four-way edge replay shares one uniform tape across both versions and both
+    endpoints. The fairness differential is then nonzero with probability d.
+    Vertex-paired replay shares randomness only across versions at one endpoint;
+    when s>0 it must distinguish an interior Bernoulli(s) from Bernoulli(s+d).
+    """
+
+    _validate_common_patch(p, s, d, beta)
+    decision_kl = binary_decision_kl(beta)
+    edge_kl = edge_coupled_common_patch_kl(p, s, d)
+    vertex_kl = vertex_paired_common_patch_kl(p, s, d)
+
+    edge_upper = math.ceil(math.log(beta) / math.log1p(-d))
+    vertex_upper = math.ceil(2.0 * math.log(1.0 / beta) / (d * d))
+
+    return CounterfactualReplayBounds(
+        edge_coupled_upper_rounds=edge_upper,
+        edge_coupled_null_expected_lower=decision_kl / edge_kl,
+        vertex_paired_upper_rounds=vertex_upper,
+        vertex_paired_null_expected_lower=decision_kl / vertex_kl,
+        edge_coupled_per_round_kl=edge_kl,
+        vertex_paired_per_round_kl=vertex_kl,
+    )
