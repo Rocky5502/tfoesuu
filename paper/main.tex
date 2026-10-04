@@ -62,9 +62,14 @@ has a nonzero fairness-neutral common effect $s$ and a smaller differential
 fairness effect $d$, four-way replay cancels the common effect pathwise and has
 $\Theta(d^{-1}\log(1/\delta))$ fixed-confidence complexity, whereas
 vertex-paired replay requires
-$\Theta(d^{-2}\log(1/\delta))$ calls for fixed interior $s$.  Thus
-version-aware counterfactual replay can change not only constants but the
-asymptotic cost of detecting a small fairness regression.
+$\Theta(d^{-2}\log(1/\delta))$ calls for fixed interior $s$.  Under the stronger
+synchronized-suite replay primitive, one shared random tape is applied to both
+versions at every fairness-active input.  In the corresponding homogeneous
+Bernoulli family, all fairness edges are tested simultaneously: round complexity
+is $\Theta(d^{-1}\log(1/\delta))$ and concrete execution complexity is
+$\Theta(n_+d^{-1}\log(1/\delta))$, independent of the number of fairness edges.
+Thus version-aware replay can change both the small-effect exponent and the graph
+scaling of fairness-regression testing.
 
 These results establish a tractable foundation for the broader objective of tight
 query complexity for fairness regression with retained certificates, heterogeneous
