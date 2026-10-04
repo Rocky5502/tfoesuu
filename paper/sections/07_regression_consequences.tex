@@ -12,7 +12,7 @@ unrestricted.
 
 Consider a fairness graph that is a matching of $M$ counterfactual edges and
 assume unit paired-delta variance at every vertex.  Compare two testers with the
-same coupled execution oracle.  A \emph{patch-aware} tester receives a sound
+same paired execution oracle.  A \emph{patch-aware} tester receives a sound
 impact set identifying the unique edge on which behavior may have changed.  A
 \emph{location-unaware} tester is only promised that at most one edge changed,
 but is not told which edge.
@@ -25,7 +25,7 @@ Fix $\delta\in(0,1/2)$ and $\gamma>0$.  On the $M$-edge matching family above:
 \[
 \frac{32\log(2/\delta)}{\gamma^2}+2
 \]
-coupled executions; while
+paired-oracle calls; while
 \item every adaptive location-unaware $\delta$-correct tester with finite expected
 stopping time uses, on the all-neutral null instance,
 \[
