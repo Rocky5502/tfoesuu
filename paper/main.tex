@@ -54,16 +54,17 @@ comparisons.  A non-adaptive tester has complexity
 $O(\Psi(H,\nu)\gamma^{-2}\log(|E(H)|/\delta))$, while every adaptive
 $\delta$-correct tester requires
 $\Omega(\Psi(H,\nu)\gamma^{-2}\log(1/\delta))$ expected executions on a
-null instance.  We give an equivalent dual optimization and exact values for
-several graph families.  Coupled replay changes the relevant uncertainty from
-outcome variance to patch-delta variance; for monotone-coupled Bernoulli software,
-a patch of size $d$ has differential variance $d(1-d)$ rather than the sum of the
-two marginal Bernoulli variances under independent replay.
+null instance.  Sound patch localization yields a linear separation on a matching
+family.  In a one-edge Bernoulli fairness-regression family with a fixed interior
+baseline, common-uniform old/new replay changes the small-patch complexity from
+$\Theta(d^{-2}\log(1/\delta))$ under independent replay to
+$\Theta(d^{-1}\log(1/\delta))$ paired rounds.  Thus software-version
+information can change not only constants but the asymptotic cost of detecting a
+small fairness regression.
 
 These results establish a tractable foundation for the broader objective of tight
-query complexity for fairness regression with retained certificates, patch
-locality, heterogeneous uncertainty, imperfect change-impact information, and
-multiple software versions.
+query complexity for fairness regression with retained certificates, heterogeneous
+uncertainty, imperfect change-impact information, and multiple software versions.
 \end{abstract}
 
 \input{sections/01_introduction}
