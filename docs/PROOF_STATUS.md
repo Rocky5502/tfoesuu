@@ -1,0 +1,33 @@
+# Proof status ledger
+
+This file is the source of truth for mathematical claims. A result is not promoted to the abstract or contribution list unless its status is **PROVED + AUDITED**.
+
+| ID | Statement | Status | Notes |
+|---|---|---|---|
+| P1 | Sound change-impact localization of newly introduced fairness violations | PROVED + AUDITED | Elementary reuse argument. |
+| P2 | No uniform finite-query sharp-threshold certification under stochastic execution | PROVED + AUDITED | Two-point KL/TV argument. |
+| P3 | Differential variance identity under paired old/new replay | PROVED + AUDITED | Variance expansion. |
+| P4 | Gaussian static-allocation upper bound using `Psi(H,nu)` | PROVED, second audit pending | Union bound + Gaussian tails. |
+| P5 | Adaptive Gaussian lower bound using the same `Psi(H,nu)` | PROVED, second audit pending | Adaptive transcript KL + edgewise alternatives. |
+| P6 | Lagrange dual representation of `Psi` | PROVED, second audit pending | Slater condition + separable minimization over q. |
+| P7 | Unit-variance exact values: edge, matching, clique, star, complete bipartite | PROVED, numerical audit passed | Symmetry/convexity; star is `K_{1,k}`. |
+| P8 | Homogeneous variance scaling: `Psi(H,lambda nu^2)=lambda Psi(H,nu^2)` | PROVED + AUDITED | Direct rescaling. |
+| P9 | Common-uniform Bernoulli delta variance `d(1-d)` | PROVED + AUDITED | Delta is signed Bernoulli on interval between probabilities. |
+| T1 | Full thresholded fairness regression with retained old-version headroom | OPEN | Need tight instance-dependent formulation. |
+| T2 | Unknown-variance anytime-valid tester | OPEN | Avoid optional-stopping mistakes. |
+| T3 | Tight bounded/Bernoulli graph complexity | OPEN | Gaussian exactness may not transfer verbatim. |
+| T4 | Sound-but-imprecise and mildly unsound impact analysis | OPEN | Separate deterministic soundness from sentinel model. |
+| T5 | Adaptive instance-dependent stopping advantage | OPEN | Need matching lower bound or separation. |
+| T6 | Version-aware patch-locality separation vs fresh auditing | OPEN | Access models must be identical except for version information. |
+| T7 | Multi-patch amortized complexity | OPEN | Potential dynamic graph/certificate theorem. |
+
+## Audit protocol
+
+For each theorem:
+
+1. freeze definitions and quantifiers;
+2. derive the proof independently at least twice;
+3. search nearest theorem literature for collision;
+4. build finite-instance numerical checks where meaningful;
+5. add adversarial tests designed to break assumptions;
+6. only then mark **PROVED + AUDITED**.

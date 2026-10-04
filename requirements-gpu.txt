@@ -1,0 +1,4 @@
+-r requirements.txt
+# PyTorch 2.12+ supports current Blackwell-era CUDA builds. On NVIDIA systems,
+# install the wheel matching the local driver/CUDA runtime before long runs.
+torch>=2.12

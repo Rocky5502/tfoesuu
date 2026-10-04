@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: "Testing Fairness of Evolving Software under Uncertainty"
+message: "If you use this repository, please cite the eventual archival paper."
+type: software
+authors:
+  - family-names: "Sah"
+    given-names: "Chandan"
+repository-code: "https://github.com/Rocky5502/tfoesuu"
+version: "0.1.0"
+date-released: "2026-10-04"
