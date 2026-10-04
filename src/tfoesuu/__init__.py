@@ -6,8 +6,10 @@ from .graphs import GraphSpec
 from .oracles import BernoulliCommonUniformPair, GaussianVersionPair
 from .replay_benchmarks import ReplayBenchmarkSpec, replay_benchmark_v1
 from .separations import (
+    CounterfactualReplayBounds,
     LocationReplayBounds,
     ReplaySeparationBounds,
+    counterfactual_replay_bounds,
     location_replay_bounds,
     replay_separation_bounds,
 )
@@ -31,7 +33,9 @@ __all__ = [
     "replay_benchmark_v1",
     "ReplaySeparationBounds",
     "LocationReplayBounds",
+    "CounterfactualReplayBounds",
     "replay_separation_bounds",
+    "counterfactual_replay_bounds",
     "location_replay_bounds",
     "RandomizedResourceAllocatorPair",
     "linear_baseline",
