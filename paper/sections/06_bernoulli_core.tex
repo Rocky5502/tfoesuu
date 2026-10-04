@@ -394,3 +394,116 @@ fairness-regression access model: sharing randomness across \emph{both} software
 versions and \emph{both} counterfactual inputs makes fairness-neutral patch
 behavior cancel pathwise, changing the information rate for the differential
 fairness effect.
+
+
+\subsection{Synchronized suite replay removes edge-count dependence}
+
+Four-way replay can be lifted to a software-test-suite primitive when the
+programmer controls the random seed.  Let
+\[
+V_+=\{v\in V:\deg_H(v)>0\},
+\qquad
+n_+=|V_+|.
+\]
+A \emph{synchronized suite-replay round} draws one random tape
+\(U\sim\mathrm{Unif}[0,1]\) and executes both \(P_0\) and \(P_1\) on every
+\(v\in V_+\) using that same tape.  One round therefore costs \(2n_+\) concrete
+program executions and exposes the patch delta at every fairness-relevant input.
+
+Consider the homogeneous Bernoulli threshold family in which every active vertex
+has old threshold \(p\).  Under the null, every active vertex receives the same
+fairness-neutral patch shift \(s>0\).  Under an alternative indexed by an edge
+\(e=(u,v)\), one endpoint of \(e\) receives an additional differential shift
+\(d>0\), with \(p+s+d<1\).
+
+\begin{theorem}[Synchronized suite replay]
+\label{thm:suite-replay}
+Let \(H=(V,E)\) contain at least one fairness edge and fix
+\(\delta\in(0,1/2)\).  In the family above, there is a test that distinguishes
+the null from the union of all single-edge differential alternatives using
+\[
+T_{\rm suite}
+=
+\left\lceil
+\frac{\log\delta}{\log(1-d)}
+\right\rceil
+\]
+synchronized suite-replay rounds, with zero type-I error and type-II error at
+most \(\delta\) for every alternative.  Hence its concrete execution cost is
+\[
+2n_+
+\left\lceil
+\frac{\log\delta}{\log(1-d)}
+\right\rceil.
+\]
+Moreover, every adaptive \(\delta\)-correct tester whose primitive observation is
+a synchronized suite-replay round and whose stopping time has finite expectation
+satisfies, on the null,
+\[
+\E_0[T]
+\ge
+\frac{\kl(1-\delta,\delta)}
+{r\log\!\left(\frac{r}{r-d}\right)},
+\qquad
+r=1-p-s.
+\]
+Consequently, for fixed interior \(p,s,r\),
+\[
+Q_{\rm suite}^{\rm rounds}
+=
+\Theta\!\left(\frac{\log(1/\delta)}{d}\right),
+\qquad
+Q_{\rm suite}^{\rm exec}
+=
+\Theta\!\left(
+\frac{n_+\log(1/\delta)}{d}
+\right)
+\]
+as \(d\to0\).  The bound is independent of \(|E|\).
+\end{theorem}
+
+\begin{proof}
+In one suite round, form the old/new delta at every active vertex and compare
+those deltas across every fairness edge.  Under the null, all vertex deltas are
+identical pathwise because every vertex uses the same \(U\), old threshold
+\(p\), and new threshold \(p+s\).  Therefore the tester never rejects.
+
+Under an alternative, let \(u\) be the endpoint receiving the additional shift
+\(d\).  Whenever
+\[
+U\in(p+s,p+s+d],
+\]
+the delta at \(u\) equals one while every unchanged neighboring endpoint has
+delta zero.  At least one incident fairness edge therefore witnesses a
+differential.  This event has probability \(d\) in every suite round, so the
+probability of missing it for \(T\) rounds is \((1-d)^T\).  The stated upper
+bound follows.
+
+For the lower bound, fix any one legal alternative.  Under the null, the suite
+observation has an all-common state of mass \(r=1-p-s\).  Under the fixed
+alternative, mass \(d\) is split from this state into a new state identifying the
+differential endpoint; all other masses are unchanged.  Hence the
+null-to-alternative KL of one suite round is
+\[
+K_{\rm suite}
+=
+r\log\!\left(\frac{r}{r-d}\right).
+\]
+The standard adaptive transcript change-of-measure argument and data processing
+through the terminal decision give
+\[
+\E_0[T]K_{\rm suite}
+\ge
+\kl(1-\delta,\delta).
+\]
+Finally \(K_{\rm suite}=d+O(d^2)\), proving the asymptotic statement.  Each suite
+round performs two version executions at each of the \(n_+\) active inputs.
+\end{proof}
+
+The theorem does not claim that synchronized common random numbers are new;
+their use across multiple simulated systems is classical
+\cite{YangNelson1991,NelsonMatejcik1995}.  The contribution here is the
+fairness-regression consequence of treating replayable software execution as the
+query primitive: all counterfactual edges are inspected from one synchronized
+test-suite replay, so dense fairness graphs do not incur an additional
+edge-count factor.
