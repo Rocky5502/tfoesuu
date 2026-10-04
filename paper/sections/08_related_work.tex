@@ -9,12 +9,15 @@ change-impact analysis identifies which behavior may be affected by a change
 information in a statistical query problem rather than proposing a new static
 impact analysis.
 
-\paragraph{Fairness testing and auditing.}
+\paragraph{Fairness testing and verification.}
 Themis established automated software fairness testing as a software-engineering
-problem \cite{GalhotraBrunMeliou2017}.  Active fairness auditing gives theoretical
-query-efficient algorithms for assessing fixed learned systems
-\cite{YanZhang2022}.  We do not claim novelty for fairness testing or active
-fairness auditing in isolation; our target is version-aware stochastic regression.
+problem \cite{GalhotraBrunMeliou2017}.  FairSquare showed that important fairness
+definitions can be formulated as probabilistic program properties and verified
+with probabilistic-program analysis \cite{AlbarghouthiEtAl2017}.  Active fairness
+auditing gives theoretical query-efficient algorithms for assessing fixed learned
+systems \cite{YanZhang2022}.  We do not claim novelty for fairness testing,
+probabilistic fairness verification, or active fairness auditing in isolation; our
+target is version-aware stochastic \emph{regression} testing.
 
 \paragraph{Property testing.}
 Property testing provides the surrounding query-complexity framework.
@@ -31,6 +34,16 @@ Adaptive fixed-confidence sampling is commonly analyzed through transcript-level
 change-of-measure arguments.  We use the generic information-theoretic technique
 of Kaufmann, Capp{\'e}, and Garivier \cite{KaufmannCappeGarivier2016} and
 specialize the alternatives to counterfactual patch effects on graph edges.
+
+\paragraph{Pairing, matched binary outcomes, and common random numbers.}
+Common random numbers are a classical simulation technique for comparing
+stochastic systems \cite{GlassermanYao1992}, and sample-size analysis for paired
+binary proportions is classical statistics \cite{Connor1987}.  Consequently,
+neither pairing nor the efficiency of matched Bernoulli observations is a novelty
+claim.  \Cref{thm:bernoulli-separation} instead treats replayability of two
+software versions as an access primitive in a fairness-regression problem and
+compares it with an independent/fresh execution oracle under the same patch
+family.
 
 \paragraph{Pairwise experimental design.}
 Optimal design for selected pairwise mean comparisons has a substantial
