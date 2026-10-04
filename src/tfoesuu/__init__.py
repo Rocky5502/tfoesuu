@@ -2,7 +2,9 @@
 
 from .allocation import AllocationResult, solve_psi, solve_psi_dual
 from .graphs import GraphSpec
-from .oracles import GaussianVersionPair, BernoulliCommonUniformPair
+from .oracles import BernoulliCommonUniformPair, GaussianVersionPair
+from .replay_benchmarks import ReplayBenchmarkSpec, replay_benchmark_v1
+from .separations import ReplaySeparationBounds, replay_separation_bounds
 
 __all__ = [
     "AllocationResult",
@@ -11,6 +13,10 @@ __all__ = [
     "GraphSpec",
     "GaussianVersionPair",
     "BernoulliCommonUniformPair",
+    "ReplayBenchmarkSpec",
+    "replay_benchmark_v1",
+    "ReplaySeparationBounds",
+    "replay_separation_bounds",
 ]
 
 __version__ = "0.1.0"
