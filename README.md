@@ -36,7 +36,7 @@ For positively correlated versions, the uncertainty of the change can be far bel
     pip install -r requirements.txt
     pip install -e .
     pytest -q
-    python experiments/run_graph_sweep.py --output results/graph_sweep.csv
+    python experiments/run_gaussian_core.py --graph star --n 10 --trials 10000\n    python experiments/run_replay_separation.py --p 0.5 --d 0.01 --trials 100000\n    python experiments/run_location_replay.py --candidates 64 --p 0.5 --d 0.01 --trials 100000
 
 For NVIDIA simulation, first install the PyTorch build matching the local CUDA stack, then:
 
@@ -47,4 +47,4 @@ For NVIDIA simulation, first install the PyTorch build matching the local CUDA s
 
 No invented results. Conjectures stay conjectures. Synthetic benchmarks are identified as synthetic. Every long experiment must record configuration, seed, environment and source commit. External datasets/software require provenance and license records.
 
-See docs/THEOREM_LEDGER.md and docs/ROADMAP.md.
+See `docs/PROOF_STATUS.md` for the live theorem ledger and `docs/ROADMAP.md` for the research program.
