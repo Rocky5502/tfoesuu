@@ -199,3 +199,198 @@ that cannot be attributed to graph allocation: replayability changes the
 small-patch exponent from two to one.  The next target is to lift this phenomenon
 to graph-structured fairness regression, where sparse patch deltas and shared
 vertices interact.
+
+
+\subsection{Four-way counterfactual replay cancels common patch effects}
+
+The one-edge separation above uses a null in which the patch has no effect.  We
+next show that a fairness-specific replay design preserves the linear small-patch
+rate even when both counterfactual inputs undergo a nonzero common change.
+
+Consider one edge \(e=(u,v)\).  Fix
+\[
+p>0,\qquad s>0,\qquad d>0,\qquad p+s+d<1.
+\]
+Both hypotheses use the same fair old version,
+\[
+p_{0,u}=p_{0,v}=p.
+\]
+Under the null, the patch changes both endpoints equally:
+\[
+\mathsf H_0:
+\qquad
+p_{1,u}=p_{1,v}=p+s.
+\]
+Under the alternative, \(u\) receives an additional differential effect \(d\):
+\[
+\mathsf H_1:
+\qquad
+p_{1,u}=p+s+d,
+\qquad
+p_{1,v}=p+s.
+\]
+Thus the common patch effect \(s\) is fairness-neutral, while \(d\) is precisely
+the introduced fairness gap.
+
+A \emph{vertex-paired} call shares a random tape between \(P_0\) and \(P_1\) at
+one endpoint.  A \emph{four-way counterfactual replay} call goes further: the same
+\(U\sim\mathrm{Unif}[0,1]\) is reused across both versions and both endpoints,
+requiring four concrete program executions.
+
+\begin{theorem}[Counterfactual replay changes the small-gap exponent]
+\label{thm:counterfactual-replay}
+Fix \(p,s\) as above and \(\delta\in(0,1/2)\).
+
+\begin{enumerate}[label=(\roman*)]
+\item Under four-way counterfactual replay, there is a test using
+\[
+n_{\rm edge}
+=
+\left\lceil
+\frac{\log\delta}{\log(1-d)}
+\right\rceil
+\]
+replay rounds with zero type-I error and type-II error at most \(\delta\).
+Every adaptive \(\delta\)-correct tester with finite expected stopping time
+satisfies, on the null,
+\[
+\E_0[T]
+\ge
+\frac{\kl(1-\delta,\delta)}
+{r\log\!\left(\frac{r}{r-d}\right)},
+\qquad
+r=1-p-s.
+\]
+
+\item Under vertex-paired replay, even granting the tester \(p\), \(s\), and the
+identity of the endpoint that may receive the differential effect, a
+\(\delta\)-correct test exists using
+\[
+n_{\rm vertex}
+=
+\left\lceil
+\frac{2\log(1/\delta)}{d^2}
+\right\rceil
+\]
+paired-oracle calls.  Conversely, every adaptive \(\delta\)-correct
+vertex-paired tester with finite expected stopping time satisfies
+\[
+\E_0[T]
+\ge
+\frac{\kl(1-\delta,\delta)}
+{
+s\log\!\left(\frac{s}{s+d}\right)
++
+r\log\!\left(\frac{r}{r-d}\right)
+}.
+\]
+\end{enumerate}
+
+Consequently, for fixed \(p,s,r>0\),
+\[
+Q_{\rm edge}(d,\delta)
+=
+\Theta\!\left(
+\frac{\log(1/\delta)}{d}
+\right),
+\qquad
+Q_{\rm vertex}(d,\delta)
+=
+\Theta\!\left(
+\frac{\log(1/\delta)}{d^2}
+\right)
+\]
+as \(d\to0\), up to constant factors.  Counting concrete program executions
+multiplies the two costs by four and two, respectively, and therefore does not
+change the exponent separation.
+\end{theorem}
+
+\begin{proof}
+Under four-way replay, define the pathwise differential
+\[
+W
+=
+\bigl(P_1(u;U)-P_0(u;U)\bigr)
+-
+\bigl(P_1(v;U)-P_0(v;U)\bigr).
+\]
+Under \(\mathsf H_0\), the two endpoint deltas are identical for every \(U\), so
+\(W=0\) almost surely.  Under \(\mathsf H_1\),
+\[
+W=1
+\quad\Longleftrightarrow\quad
+U\in(p+s,p+s+d],
+\]
+which occurs with probability \(d\).  Rejecting upon the first \(W=1\) therefore
+has zero type-I error and miss probability \((1-d)^n\), proving the upper bound.
+
+For the lower bound, the four-output observation has the same mass \(p\) on the
+all-one state and the same mass \(s\) on the state in which both new-version
+outputs are one while both old-version outputs are zero.  Under the null, the
+remaining all-zero state has mass \(r=1-p-s\).  Under the alternative, mass \(d\)
+is split from that state into a new state witnessing the counterfactual
+differential.  Hence the null-to-alternative KL of one four-way round is
+\[
+K_{\rm edge}
+=
+r\log\!\left(\frac{r}{r-d}\right).
+\]
+Adaptive transcript change of measure followed by data processing through the
+terminal decision gives
+\[
+\E_0[T]K_{\rm edge}
+\ge
+\kl(1-\delta,\delta).
+\]
+
+For vertex-paired replay, querying the potentially changed endpoint \(u\) produces
+the pair distribution
+\[
+(p,\ s,\ r)
+\]
+on states \((1,1),(0,1),(0,0)\) under the null, and
+\[
+(p,\ s+d,\ r-d)
+\]
+under the alternative.  Its KL is therefore
+\[
+K_{\rm vertex}
+=
+s\log\!\left(\frac{s}{s+d}\right)
++
+r\log\!\left(\frac{r}{r-d}\right).
+\]
+Queries to \(v\) carry no information, so the same transcript argument proves the
+lower bound.  For the upper bound, ignore the extra pair information and retain
+only the discordance indicator.  It is Bernoulli\((s)\) under the null and
+Bernoulli\((s+d)\) under the alternative.  Thresholding its empirical mean at
+\(s+d/2\) and applying Hoeffding's inequality bounds each one-sided error by
+\(\exp(-nd^2/2)\).
+
+Finally,
+\[
+K_{\rm edge}
+=
+d+O(d^2),
+\]
+while the first-order terms in \(K_{\rm vertex}\) cancel and
+\[
+K_{\rm vertex}
+=
+\frac{d^2}{2}
+\left(
+\frac{1}{s}+\frac{1}{r}
+\right)
++
+O(d^3).
+\]
+The claimed asymptotic rates follow.
+\end{proof}
+
+The mechanism is a specialized use of common randomness, not a claim that common
+random numbers or probabilistic couplings are new
+\cite{GlassermanYao1992,BartheEtAl2017}.  The result concerns the
+fairness-regression access model: sharing randomness across \emph{both} software
+versions and \emph{both} counterfactual inputs makes fairness-neutral patch
+behavior cancel pathwise, changing the information rate for the differential
+fairness effect.
