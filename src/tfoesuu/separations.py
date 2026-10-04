@@ -110,3 +110,41 @@ def replay_separation_bounds(p: float, d: float, beta: float) -> ReplaySeparatio
         paired_per_round_kl=paired_kl,
         independent_per_round_kl=independent_kl,
     )
+
+
+@dataclass(frozen=True)
+class LocationReplayBounds:
+    """Bounds for the unknown patch-location matching family (P13)."""
+
+    candidates: int
+    per_candidate_upper_rounds: int
+    total_upper_rounds: int
+    null_expected_lower: float
+    paired_per_round_kl: float
+
+
+def location_replay_bounds(candidates: int, p: float, d: float, beta: float) -> LocationReplayBounds:
+    """Finite-sample P13 bounds for M possible changed endpoints.
+
+    The graph is a matching with M candidate endpoints u_i. Under H0 no endpoint
+    changes. Under alternative i only u_i changes from Bernoulli(p) to
+    Bernoulli(p+d), observed through common-uniform old/new replay.
+
+    Sampling every candidate for n=ceil(log(beta)/log(1-d)) rounds gives zero
+    type-I error and miss probability at most beta for every alternative.
+    Transcript change of measure under the common null yields the summed adaptive
+    lower bound M*kl(1-beta,beta)/K_pair.
+    """
+    if candidates < 1:
+        raise ValueError("candidates must be >= 1")
+    _validate(p, d, beta)
+    per_candidate = math.ceil(math.log(beta) / math.log1p(-d))
+    k_pair = paired_per_round_kl(p, d)
+    lower = candidates * binary_decision_kl(beta) / k_pair
+    return LocationReplayBounds(
+        candidates=candidates,
+        per_candidate_upper_rounds=per_candidate,
+        total_upper_rounds=candidates * per_candidate,
+        null_expected_lower=lower,
+        paired_per_round_kl=k_pair,
+    )
