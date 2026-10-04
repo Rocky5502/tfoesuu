@@ -33,6 +33,8 @@ subject to
 
 The current manuscript proves an upper bound and an adaptive lower bound matching in their dependence on `Psi(H,nu)` and the separation margin `gamma`, up to confidence/logarithmic factors.
 
+A second core result is a **small-patch replay separation**. On a one-edge Bernoulli fairness-regression family with patch magnitude `d`, common-uniform paired replay has `Theta(d^-1 log(1/delta))` complexity, while independent/fresh replay has `Theta(d^-2 log(1/delta))` complexity for a fixed interior baseline. This is a version-aware information advantage, not a claim that paired binary inference itself is new.
+
 ## Repository map
 
 ```text
@@ -40,11 +42,13 @@ src/tfoesuu/                 Reusable research code
   allocation.py              Psi primal/dual solvers and exact special cases
   graphs.py                  Counterfactual graph generators
   oracles.py                 Coupled Gaussian/Bernoulli version oracles
+  separations.py             Finite-sample replay-separation bounds
   testers.py                 Static Gaussian patch-neutrality tester
   benchmarks.py              Reproducible synthetic benchmark specifications
 experiments/
   run_gaussian_core.py       CPU/GPU Monte Carlo validation
   run_bernoulli_coupling.py  Coupled-vs-independent variance experiment
+  run_replay_separation.py   CPU/GPU linear-vs-quadratic replay check
   gpu_sweep.py               Multi-GPU, resumable theorem-stress sweep
 scripts/
   generate_benchmark.py      Materialize benchmark manifest
@@ -52,6 +56,8 @@ scripts/
 paper/                       Overleaf-ready STOC manuscript sources
 docs/
   PROOF_STATUS.md            Theorem ledger: proved / conjecture / open
+  PROOF_AUDIT_REPLAY_SEPARATION.md
+                              Independent audit of the Bernoulli separation
   RESEARCH_BLUEPRINT.md      Research program and milestone order
   GPU_RUNBOOK.md             Long-run local NVIDIA workflow
   REPRODUCIBILITY.md         Exact reproduction protocol
@@ -70,6 +76,7 @@ pip install -e .
 pytest -q
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python experiments/run_gaussian_core.py --graph star --n 10 --trials 10000
+python experiments/run_replay_separation.py --p 0.5 --d 0.01 --trials 100000
 ```
 
 For GPU runs, install the current NVIDIA-compatible PyTorch build first, then:
@@ -78,6 +85,7 @@ For GPU runs, install the current NVIDIA-compatible PyTorch build first, then:
 pip install -r requirements-gpu.txt
 python scripts/verify_environment.py
 python experiments/gpu_sweep.py --devices 0,1 --trials 1000000 --output results/gpu_sweep.jsonl
+python experiments/run_replay_separation.py --device cuda:0 --p 0.5 --d 0.005 --trials 1000000
 ```
 
 See `docs/GPU_RUNBOOK.md` before month-scale execution.
@@ -86,7 +94,8 @@ See `docs/GPU_RUNBOOK.md` before month-scale execution.
 
 This repository keeps three categories separate:
 
-- **PROVED:** a statement has a written proof in the manuscript and a proof-audit note.
+- **PROVED:** a statement has a written proof in the manuscript.
+- **PROVED + AUDITED:** the proof has been independently re-derived, collision-checked, and stress-tested where applicable.
 - **COMPUTATIONALLY CHECKED:** numerical experiments agree with the statement on tested instances; this is not a proof.
 - **CONJECTURE / OPEN:** a research target that must not be described as a result.
 
@@ -101,7 +110,10 @@ See `docs/PROOF_STATUS.md` for the live ledger.
 - Adaptive information-theoretic lower bound parameterized by the same `Psi(H,nu)`.
 - Exact `Psi` values for a single edge, matchings, cliques, stars, and complete bipartite graphs under unit variance.
 - A primal/dual characterization of `Psi` implemented and numerically cross-checked.
-- Common-uniform Bernoulli coupling formula showing that a small behavioral patch can have much lower differential variance than independent replay.
+- Linear patch-locality advantage on an M-edge matching under a matched oracle.
+- No minimax speedup from old-certificate slack alone when patches are unrestricted.
+- Common-uniform Bernoulli coupling formula `d(1-d)`.
+- Linear-vs-quadratic small-patch replay separation for one-edge Bernoulli fairness regression.
 
 ## Reproducibility philosophy
 
@@ -119,6 +131,6 @@ Empirical curves never substitute for theorem statements.
 
 The `paper/` directory is Overleaf-ready. Upload that directory as a project or connect it through your preferred Git workflow.
 
-## Citation
+## Citation policy
 
-A citation file is provided in `CITATION.cff`. Bibliography entries in `paper/references.bib` are restricted to peer-reviewed or otherwise essential canonical sources; the live policy is in `docs/LITERATURE_POLICY.md`.
+A citation file is provided in `CITATION.cff`. The manuscript prioritizes peer-reviewed archival sources. Classical matched-pairs statistics, common-random-number simulation, fairness verification, regression testing, and graph experimental design are explicitly cited so the paper's novelty boundary remains conservative and reviewable.
