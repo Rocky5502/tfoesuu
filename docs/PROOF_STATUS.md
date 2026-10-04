@@ -17,7 +17,8 @@ This file is the source of truth for mathematical claims. A result is not promot
 | P11 | Old certificate slack alone gives no minimax speedup under unrestricted patches | PROVED + AUDITED | Independent boundary-null reduction; lower bound is slack-independent. |
 | P12 | Common-uniform Bernoulli replay gives linear-vs-quadratic small-patch query complexity | PROVED + AUDITED | One-edge fairness regression; paired KL is Theta(d), independent KL is Theta(d^2). |
 | P13 | Unknown-location Bernoulli replay on an M-edge matching has Theta(M/d) fixed-confidence scaling | PROVED + AUDITED | Edgewise transcript KL sums under the common null; active anomaly-search collision boundary documented. |
-| T1 | Full thresholded fairness regression with retained old-version headroom | OPEN | Need tight instance-dependent formulation beyond minimax no-free-lunch. |
+| P14 | Sound patch-effect envelopes prune certified-safe edges; Gaussian testing runs only on the residual graph | PROVED + AUDITED | Triangle-inequality carryover plus P4 allocation on residual graph. |
+| T1 | Full thresholded fairness regression with retained old-version headroom | PARTIAL | P11 gives minimax no-free-lunch; P14 gives a sound envelope-pruned upper bound. Tight instance-dependent lower characterization remains open. |
 | T2 | Unknown-variance anytime-valid tester | OPEN | Avoid optional-stopping mistakes. |
 | T3 | Tight graph-level bounded/Bernoulli complexity | OPEN | Lift P12 beyond one edge while exploiting sparse delta variance. |
 | T4 | Sound-but-imprecise and mildly unsound impact analysis | OPEN | Separate deterministic soundness from sentinel model. |
