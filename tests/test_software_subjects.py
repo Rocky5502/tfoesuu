@@ -32,7 +32,7 @@ def test_patch_impact_and_new_fairness_regression():
     for context in [2, 6]:
         u = subject.encode_vertex(context, 0)
         v = subject.encode_vertex(context, 1)
-        assert abs(subject.probability(1, u) - subject.probability(1, v)) == 0.03
+        assert abs(subject.probability(1, u) - subject.probability(1, v)) == pytest.approx(0.03)
 
 
 def test_unaffected_vertex_has_zero_paired_delta():
