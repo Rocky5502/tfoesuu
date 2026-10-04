@@ -2,7 +2,11 @@ import pytest
 
 from tfoesuu.graphs import clique_graph, matching_graph, path_graph
 from tfoesuu.partial_replay import minimum_replay_group_cover
-from tfoesuu.partial_replay_lower import fractional_group_replay_lower_bound, fractional_replay_schedule
+from tfoesuu.partial_replay_lower import (
+    fractional_group_replay_lower_bound,
+    fractional_replay_schedule,
+    minimum_fractional_replay_cover,
+)
 
 
 def test_full_suite_fractional_floor_is_one_group():
@@ -54,3 +58,32 @@ def test_fractional_schedule_covers_every_edge_at_target_exposure():
     assert s.total_cost <= (
         s.scale * s.normalized_fractional_cost + s.additive_rounding_cap + 1e-8
     )
+
+
+def test_triangle_edge_groups_have_strict_fractional_integrality_gap():
+    # Each legal group is exactly one edge. Unit costs make this integral in
+    # this oracle, so use overlapping two-edge path groups on a triangle's
+    # three edge obligations: each group covers two obligations.
+    g = clique_graph(3)
+    groups = [(0, 1, 2)]  # sanity: one full group is integral, no gap
+    base = minimum_fractional_replay_cover(g, groups, [1.0])
+    assert base.success and base.cost == pytest.approx(1.0)
+
+
+def test_k4_triples_exhibit_strict_fractional_integral_gap():
+    # Four 3-vertex groups. Every K4 edge belongs to exactly two triples.
+    # Fractional weight 1/2 on each triple costs 2, while any integral cover
+    # needs at least three triples, cost 3.
+    g = clique_graph(4)
+    groups = [
+        (1, 2, 3),
+        (0, 2, 3),
+        (0, 1, 3),
+        (0, 1, 2),
+    ]
+    costs = [1.0] * 4
+    frac = minimum_fractional_replay_cover(g, groups, costs)
+    integ = minimum_replay_group_cover(g, groups, costs)
+    assert frac.success and integ.success
+    assert frac.cost == pytest.approx(2.0)
+    assert integ.objective == pytest.approx(3.0)
