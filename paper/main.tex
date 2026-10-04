@@ -55,12 +55,16 @@ $O(\Psi(H,\nu)\gamma^{-2}\log(|E(H)|/\delta))$, while every adaptive
 $\delta$-correct tester requires
 $\Omega(\Psi(H,\nu)\gamma^{-2}\log(1/\delta))$ expected paired-oracle calls on a
 null instance.  Sound patch localization yields a linear separation on a matching
-family.  In a one-edge Bernoulli fairness-regression family with a fixed interior
-baseline, common-uniform old/new replay changes the small-patch complexity from
-$\Theta(d^{-2}\log(1/\delta))$ under independent replay to
-$\Theta(d^{-1}\log(1/\delta))$ paired rounds.  Thus software-version
-information can change not only constants but the asymptotic cost of detecting a
-small fairness regression.
+family.  For Bernoulli software, we further distinguish ordinary old/new pairing
+from \emph{four-way counterfactual replay}, which synchronizes the random tape
+across both software versions and both endpoints of a fairness edge.  When a patch
+has a nonzero fairness-neutral common effect $s$ and a smaller differential
+fairness effect $d$, four-way replay cancels the common effect pathwise and has
+$\Theta(d^{-1}\log(1/\delta))$ fixed-confidence complexity, whereas
+vertex-paired replay requires
+$\Theta(d^{-2}\log(1/\delta))$ calls for fixed interior $s$.  Thus
+version-aware counterfactual replay can change not only constants but the
+asymptotic cost of detecting a small fairness regression.
 
 These results establish a tractable foundation for the broader objective of tight
 query complexity for fairness regression with retained certificates, heterogeneous
