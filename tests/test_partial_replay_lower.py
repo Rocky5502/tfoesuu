@@ -5,6 +5,8 @@ from tfoesuu.graphs import clique_graph, matching_graph, path_graph
 from tfoesuu.partial_replay import minimum_replay_group_cover
 from tfoesuu.separations import binary_decision_kl
 from tfoesuu.partial_replay_lower import (
+    active_vertex_replay_schedule,
+    group_patch_delta_heterogeneous,
     fractional_group_replay_lower_bound,
     fractional_replay_schedule,
     minimum_fractional_active_vertex_cover,
@@ -160,3 +162,54 @@ def test_raw_information_floor_is_scaled_active_vertex_cover():
     scale = binary_decision_kl(0.05) / k_sync
     assert raw.expected_cost_floor == pytest.approx(scale * cover.cost)
     assert np.allclose(raw.expected_query_counts, scale * cover.weights)
+
+
+def test_active_vertex_schedule_covers_every_changed_endpoint():
+    g = clique_graph(4)
+    groups = [(1, 2, 3), (0, 2, 3), (0, 1, 3), (0, 1, 2)]
+    costs = [1.0] * 4
+    s = active_vertex_replay_schedule(g, groups, costs, d=0.05, beta=0.01)
+    assert s.normalized_fractional_cost == pytest.approx(4.0 / 3.0)
+    assert s.scale > 0
+    for x in range(g.n):
+        exposure = sum(
+            int(s.counts[i]) for i, group in enumerate(groups) if x in group
+        )
+        assert exposure >= s.scale
+    assert s.total_cost <= (
+        s.scale * s.normalized_fractional_cost + s.additive_rounding_cap + 1e-8
+    )
+
+
+def test_group_delta_heterogeneity_is_pathwise_zero_under_homogeneous_null():
+    # Shared tape positions represented by the possible old/new threshold regions.
+    null_states = [
+        ([1, 1, 1], [1, 1, 1]),
+        ([0, 0, 0], [1, 1, 1]),
+        ([0, 0, 0], [0, 0, 0]),
+    ]
+    for old, new in null_states:
+        assert not group_patch_delta_heterogeneous(old, new)
+
+
+def test_group_delta_heterogeneity_detects_changed_endpoint_without_partner():
+    # Vertices 0 and 1 may be a fairness edge, but group (0,2) is sufficient:
+    # on U in (p+s,p+s+d], only changed endpoint 0 flips in P1.
+    assert group_patch_delta_heterogeneous([0, 0], [1, 0])
+    assert group_patch_delta_heterogeneous([0, 0, 0], [0, 1, 0])
+
+
+def test_group_delta_heterogeneity_ignores_uniform_patch_motion():
+    assert not group_patch_delta_heterogeneous([0, 0], [1, 1])
+    assert not group_patch_delta_heterogeneous([1, 1], [1, 1])
+
+
+def test_active_vertex_schedule_beats_edge_witness_schedule_on_k4_triples():
+    g = clique_graph(4)
+    groups = [(1, 2, 3), (0, 2, 3), (0, 1, 3), (0, 1, 2)]
+    costs = [1.0] * 4
+    raw = active_vertex_replay_schedule(g, groups, costs, d=0.02, beta=0.05)
+    edge = fractional_replay_schedule(g, groups, costs, d=0.02, beta=0.05)
+    assert raw.normalized_fractional_cost == pytest.approx(4.0 / 3.0)
+    assert edge.normalized_fractional_cost == pytest.approx(2.0)
+    assert raw.normalized_fractional_cost < edge.normalized_fractional_cost
