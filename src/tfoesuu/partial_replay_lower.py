@@ -149,6 +149,62 @@ def fractional_replay_schedule(
 
 
 @dataclass(frozen=True)
+class FractionalActiveVertexCover:
+    """Minimum-cost fractional cover of fairness-active vertices by legal groups."""
+
+    cost: float
+    weights: np.ndarray
+    active_vertices: tuple[int, ...]
+    success: bool
+    message: str
+
+
+def minimum_fractional_active_vertex_cover(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+) -> FractionalActiveVertexCover:
+    """Solve the active-vertex/group incidence LP used by the P17 information floor."""
+    gs = _canonical_groups(graph, groups)
+    c = np.asarray(costs, dtype=float)
+    if c.shape != (len(gs),) or np.any(c <= 0) or np.any(~np.isfinite(c)):
+        raise ValueError("costs must be finite, positive, and match groups")
+
+    active = tuple(sorted({v for edge in graph.edges for v in edge}))
+    if not active:
+        return FractionalActiveVertexCover(
+            0.0, np.zeros(len(gs)), active, True, "edgeless graph"
+        )
+
+    B = np.zeros((len(active), len(gs)), dtype=float)
+    for xi, x in enumerate(active):
+        for gi, group in enumerate(gs):
+            if x in group:
+                B[xi, gi] = 1.0
+
+    if np.any(B.sum(axis=1) == 0.0):
+        return FractionalActiveVertexCover(
+            float("inf"), np.zeros(len(gs)), active, False,
+            "some fairness-active vertex is absent from every legal replay group",
+        )
+
+    res = linprog(
+        c,
+        A_ub=-B,
+        b_ub=-np.ones(len(active)),
+        bounds=[(0.0, None)] * len(gs),
+        method="highs",
+    )
+    if not res.success:
+        return FractionalActiveVertexCover(
+            float("inf"), np.zeros(len(gs)), active, False, str(res.message)
+        )
+    return FractionalActiveVertexCover(
+        float(res.fun), np.asarray(res.x), active, True, str(res.message)
+    )
+
+
+@dataclass(frozen=True)
 class RawOutputInformationLowerBound:
     """Transcript-KL allocation floor for the homogeneous raw-output P17 oracle."""
 
@@ -218,24 +274,19 @@ def raw_output_information_lower_bound(
             if changed in S:
                 K[gi, ai] = k_joint
 
-    if np.any(K.sum(axis=0) <= 0.0):
+    cover = minimum_fractional_active_vertex_cover(graph, gs, cost)
+    if not cover.success:
         return RawOutputInformationLowerBound(
-            float("inf"), np.zeros(len(gs)), alternatives, K, False,
-            "some oriented edge alternative has zero information under all legal groups",
+            float("inf"), np.zeros(len(gs)), alternatives, K, False, cover.message
         )
 
     target = binary_decision_kl(beta)
-    res = linprog(
-        cost,
-        A_ub=-K.T,
-        b_ub=-target * np.ones(len(alternatives)),
-        bounds=[(0.0, None)] * len(gs),
-        method="highs",
-    )
-    if not res.success:
-        return RawOutputInformationLowerBound(
-            float("inf"), np.zeros(len(gs)), alternatives, K, False, str(res.message)
-        )
+    scale = target / k_joint
     return RawOutputInformationLowerBound(
-        float(res.fun), np.asarray(res.x), alternatives, K, True, str(res.message)
+        expected_cost_floor=float(scale * cover.cost),
+        expected_query_counts=scale * cover.weights,
+        alternatives=alternatives,
+        information_matrix=K,
+        success=True,
+        message=cover.message,
     )
