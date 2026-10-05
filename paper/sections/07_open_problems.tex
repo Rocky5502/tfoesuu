@@ -26,6 +26,79 @@ paired-delta evidence should be reusable across several versions.  The objective
 is an amortized bound governed by cumulative impacted structure rather than
 $T|E|$.
 
+\paragraph{Partial synchronized replay.}
+Between edgewise four-way replay and full synchronized-suite replay lies an
+intermediate oracle in which only declared groups of fairness-relevant inputs can
+share a random tape.  Let $\mathcal G=\{S_1,\ldots,S_k\}$ be the legal replay
+groups, each of size at least two, with query costs $c_i>0$.  Two incidence
+matrices arise naturally.  The edge-by-group witness matrix
+[
+A_{e,i}=\mathbf 1\{e\subseteq S_i\}
+]
+governs certified four-way witnesses, whereas the active-vertex matrix
+[
+B_{x,i}=\mathbf 1\{x\in S_i\},
+\qquad x\in V_+,
+]
+governs raw transcript information in the homogeneous Bernoulli family.
+
+For the witness construction, define
+[
+C_{\rm edge}
+=
+\min_{a\ge0}
+\left\{
+c^\top a: Aa\ge\mathbf 1
+\right\}.
+]
+If
+[
+L=
+\left\lceil
+\frac{\log\delta}{\log(1-d)}
+\right\rceil,
+\qquad
+n_i=\lceil L a_i^\star\rceil,
+]
+then querying group $S_i$ exactly $n_i$ times gives every fairness edge at least
+$L$ independent legal witness opportunities.  The resulting fixed design has
+zero type-I error in the frozen common-patch model, pointwise type-II error at
+most $\delta$, and declared cost at most
+[
+L C_{\rm edge}
++
+\sum_{i:a_i^\star>0} c_i.
+]
+
+The raw-output lower geometry is different.  For an oriented alternative whose
+changed endpoint is $x$, every legal group containing $x$ has one-query
+null-to-alternative KL
+[
+K_{\rm sync}
+=
+r\log\!\left(\frac r{r-d}\right),
+\qquad r=1-p-s,
+]
+regardless of whether the second synchronized vertex is the fairness partner.
+Thus transcript change of measure reduces to the active-vertex fractional cover
+[
+C_{\rm vert}
+=
+\min_{q\ge0}
+\left\{
+c^\top q:Bq\ge\mathbf 1
+\right\},
+]
+yielding the necessary expected-cost floor
+[
+\frac{\kl(1-\delta,\delta)}{K_{\rm sync}}C_{\rm vert}.
+]
+Every feasible edge-cover vector is also feasible for the active-vertex cover,
+so $C_{\rm vert}\le C_{\rm edge}$.  The unresolved question is whether this
+two-geometry gap is an artifact of the current witness tester or a fundamental
+separation in partial replay.  We therefore do not claim a matching minimax
+characterization.
+
 \paragraph{Adaptivity.}
 Property testing can exhibit large adaptive/non-adaptive gaps in other settings
 \cite{CanonneGur2018,Hurwitz2011}.  Whether full fairness regression admits such a
