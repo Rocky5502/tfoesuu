@@ -166,3 +166,96 @@ def fractional_replay_schedule(
         total_cost=total,
         additive_rounding_cap=rounding_cap,
     )
+
+
+@dataclass(frozen=True)
+class RawOutputInformationLowerBound:
+    """Transcript-KL allocation floor for the homogeneous raw-output P17 oracle."""
+
+    expected_cost_floor: float
+    expected_query_counts: np.ndarray
+    alternatives: tuple[tuple[int, int, int], ...]
+    information_matrix: np.ndarray
+    success: bool
+    message: str
+
+
+def raw_output_information_lower_bound(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+    *,
+    p: float,
+    shared_patch: float,
+    d: float,
+    beta: float,
+) -> RawOutputInformationLowerBound:
+    """Lower-bound null expected cost using the *actual raw-output* group KL.
+
+    Alternatives are oriented fairness edges: (u,v,u) and (u,v,v), meaning one
+    endpoint receives the additional differential shift d.  Under the homogeneous
+    threshold family, a group has:
+      * zero KL if it omits the changed endpoint;
+      * vertex-paired KL if it is the singleton changed endpoint;
+      * joint KL if it contains the changed endpoint and any second unchanged
+        vertex.
+
+    The last case is important: the second vertex need not be the fairness
+    partner.  This is exactly why the earlier edge-incidence fractional-cover
+    lower bound is invalid for the raw-output oracle.
+    """
+    s = float(shared_patch)
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+    if not (p > 0.0 and s > 0.0 and d > 0.0 and p + s + d < 1.0):
+        raise ValueError("require p>0, shared_patch>0, d>0, and p+shared_patch+d<1")
+
+    gs = _canonical_groups(graph, groups)
+    cost = np.asarray(costs, dtype=float)
+    if cost.shape != (len(gs),) or np.any(cost <= 0) or np.any(~np.isfinite(cost)):
+        raise ValueError("costs must be finite, positive, and match groups")
+
+    alternatives = tuple(
+        (u, v, changed)
+        for (u, v) in graph.edges
+        for changed in (u, v)
+    )
+    if not alternatives:
+        return RawOutputInformationLowerBound(
+            0.0, np.zeros(len(gs)), alternatives,
+            np.zeros((len(gs), 0)), True, "edgeless graph"
+        )
+
+    r = 1.0 - p - s
+    k_joint = r * math.log(r / (r - d))
+    k_vertex = s * math.log(s / (s + d)) + r * math.log(r / (r - d))
+
+    K = np.zeros((len(gs), len(alternatives)), dtype=float)
+    for gi, group in enumerate(gs):
+        S = set(group)
+        for ai, (_, _, changed) in enumerate(alternatives):
+            if changed not in S:
+                continue
+            K[gi, ai] = k_vertex if len(S) == 1 else k_joint
+
+    if np.any(K.sum(axis=0) <= 0.0):
+        return RawOutputInformationLowerBound(
+            float("inf"), np.zeros(len(gs)), alternatives, K, False,
+            "some oriented edge alternative has zero information under all legal groups",
+        )
+
+    target = binary_decision_kl(beta)
+    res = linprog(
+        cost,
+        A_ub=-K.T,
+        b_ub=-target * np.ones(len(alternatives)),
+        bounds=[(0.0, None)] * len(gs),
+        method="highs",
+    )
+    if not res.success:
+        return RawOutputInformationLowerBound(
+            float("inf"), np.zeros(len(gs)), alternatives, K, False, str(res.message)
+        )
+    return RawOutputInformationLowerBound(
+        float(res.fun), np.asarray(res.x), alternatives, K, True, str(res.message)
+    )
