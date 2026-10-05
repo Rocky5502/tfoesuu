@@ -262,3 +262,35 @@ def test_active_vertex_schedule_rounding_remains_valid_across_d(d):
             int(sched.counts[i]) for i, group in enumerate(groups) if x in group
         )
         assert exposure >= sched.scale
+
+
+def _threshold_pair(u, old_threshold, new_threshold):
+    return int(u <= old_threshold), int(u <= new_threshold)
+
+
+@pytest.mark.parametrize("group_size", [2, 3, 5])
+def test_candidate_heterogeneity_rule_exhausts_threshold_regions(group_size):
+    p, shared, d = 0.2, 0.1, 0.05
+    representatives = [
+        0.10,                 # U <= p
+        0.25,                 # p < U <= p+s
+        0.325,                # p+s < U <= p+s+d
+        0.60,                 # U > p+s+d
+    ]
+    for changed in range(group_size):
+        for u in representatives:
+            old = []
+            null_new = []
+            alt_new = []
+            for v in range(group_size):
+                o, n0 = _threshold_pair(u, p, p + shared)
+                _, n1 = _threshold_pair(
+                    u, p, p + shared + (d if v == changed else 0.0)
+                )
+                old.append(o)
+                null_new.append(n0)
+                alt_new.append(n1)
+
+            assert not group_patch_delta_heterogeneous(old, null_new)
+            expected = (p + shared) < u <= (p + shared + d)
+            assert group_patch_delta_heterogeneous(old, alt_new) is expected
