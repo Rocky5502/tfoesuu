@@ -13,15 +13,21 @@ The project should not become a broad empirical fairness paper. The intended STO
 3. **Core characterization:** a graph-and-uncertainty complexity quantity with upper and lower bounds.
 4. **Regression advantage:** paired old/new execution can reduce uncertainty from outcome variance to patch-delta variance.
 5. **Patch advantage:** sound change information removes unaffected comparisons from the query problem.
-6. **Generalization:** bounded outputs, retained certificates, unknown variance, and multiple patches.
+6. **Replay hierarchy:** edgewise, partial-group, and full-suite synchronization expose different graph/information geometries.
+7. **Generalization:** retained certificates, unknown variance, imperfect impact information, and multiple patches.
 
 ## Work order
 
 ### Phase A — theorem core
-- Re-audit Gaussian lower bound under adaptive stopping.
-- Add rigorous dual theorem and strong-duality proof.
-- Generalize exact `Psi` families where they reveal structure rather than decorative algebra.
-- Derive the Bernoulli coupled-delta analogue.
+- Keep P1--P16 frozen unless a genuine audit issue appears.
+- Maintain the corrected P17 partial-replay split:
+  edge-by-group witness matrix A for the proved schedule and active-vertex/group
+  information matrix B for the necessary transcript-KL floor.
+- Attack the P17 attainability question: characterize equality conditions,
+  construct a rigorous separation family, or identify the sharper oracle
+  parameter that lies between C_vert and C_edge.
+- Generalize only where the theorem exposes new evolving-software structure,
+  rather than adding decorative graph algebra.
 
 ### Phase B — full fairness regression
 - Carry forward old edge certificates rather than only testing patch neutrality.
@@ -34,11 +40,11 @@ The project should not become a broad empirical fairness paper. The intended STO
 - Add sentinel sampling for controlled unsoundness.
 - Study a sequence of patches and amortized certificate reuse.
 
-### Phase D — GPU falsification campaign
-- Exhaust graph families and heterogeneous variance profiles.
-- Search for gaps between primal/dual/numerical conjectures.
-- Estimate rare error rates at theorem constants.
-- Search for candidate adaptivity-separation instances.
+### Phase D — computational falsification campaign
+- Exhaust graph families, legal replay-group families, and heterogeneous cost/variance profiles.
+- Search for gaps between C_vert, C_edge, integral witness covers, and any candidate achievable complexity.
+- Estimate rare error rates only for theorem-backed executable testers.
+- Search for candidate adaptivity/separation instances; treat every computational pattern as a conjecture until proved.
 
 ### Phase E — paper hardening
 - Keep the first 10–12 pages theorem/story dense.
@@ -51,7 +57,7 @@ The project should not become a broad empirical fairness paper. The intended STO
 We should pivot rather than force the idea if any of these occurs:
 
 - the final complexity theorem reduces immediately to a known experimental-design theorem with no new regression structure;
-- coupled replay adds only a trivial implementation observation and no new query result;
+- the replay hierarchy collapses to generic CRN/set-cover facts with no theorem that depends on evolving-software fairness access;
 - the full fairness problem cannot exploit old-version information beyond ordinary two-sample testing;
 - lower bounds do not distinguish the evolving-software access model from static auditing.
 
