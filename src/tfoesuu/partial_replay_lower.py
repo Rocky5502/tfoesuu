@@ -205,6 +205,101 @@ def minimum_fractional_active_vertex_cover(
 
 
 @dataclass(frozen=True)
+class ActiveVertexReplaySchedule:
+    """Candidate fixed-design P17 schedule using raw within-group heterogeneity."""
+
+    normalized_fractional_cost: float
+    scale: int
+    counts: np.ndarray
+    total_cost: float
+    additive_rounding_cap: float
+    active_vertices: tuple[int, ...]
+
+
+def active_vertex_replay_schedule(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+    d: float,
+    beta: float,
+) -> ActiveVertexReplaySchedule:
+    """Construct the candidate C_vert schedule for the frozen homogeneous family.
+
+    The schedule covers each fairness-active vertex rather than each fairness
+    edge.  A queried group is informative for an alternative exactly when it
+    contains the changed endpoint.  Because legal groups contain at least two
+    vertices and the frozen alternative changes only one endpoint, every such
+    group also contains an unchanged synchronized reference.
+
+    The executable decision rule paired with this schedule rejects when the
+    old/new patch deltas are not identical across all vertices of a queried
+    group.  The proof of that decision rule is maintained separately until the
+    P17 attainability audit is complete.
+    """
+    if not (0.0 < d < 1.0):
+        raise ValueError("d must lie in (0,1)")
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+
+    gs = _canonical_groups(graph, groups)
+    cost = np.asarray(costs, dtype=float)
+    if cost.shape != (len(gs),) or np.any(cost <= 0) or np.any(~np.isfinite(cost)):
+        raise ValueError("costs must be finite, positive, and match groups")
+    if graph.m == 0:
+        return ActiveVertexReplaySchedule(
+            0.0, 0, np.zeros(len(gs), dtype=int), 0.0, 0.0, tuple()
+        )
+
+    cover = minimum_fractional_active_vertex_cover(graph, gs, cost)
+    if not cover.success:
+        raise ValueError(cover.message)
+
+    L = math.ceil(math.log(beta) / math.log1p(-d))
+    counts = np.ceil(L * cover.weights - 1e-12).astype(int)
+
+    for x in cover.active_vertices:
+        exposure = sum(
+            int(counts[i]) for i, group in enumerate(gs) if x in group
+        )
+        if exposure < L:
+            raise RuntimeError(
+                "rounded active-vertex schedule failed a vertex exposure constraint"
+            )
+
+    total = float(cost @ counts)
+    support = cover.weights > 1e-12
+    rounding_cap = float(cost[support].sum())
+    return ActiveVertexReplaySchedule(
+        normalized_fractional_cost=cover.cost,
+        scale=L,
+        counts=counts,
+        total_cost=total,
+        additive_rounding_cap=rounding_cap,
+        active_vertices=cover.active_vertices,
+    )
+
+
+def group_patch_delta_heterogeneous(
+    old_outputs: Sequence[int | bool],
+    new_outputs: Sequence[int | bool],
+) -> bool:
+    """Return whether a synchronized group exposes non-identical patch deltas.
+
+    This helper is intentionally deterministic.  It does not simulate an oracle;
+    callers supply one synchronized old/new observation for every member of the
+    same legal replay group.
+    """
+    old = np.asarray(old_outputs, dtype=int)
+    new = np.asarray(new_outputs, dtype=int)
+    if old.ndim != 1 or new.ndim != 1 or old.shape != new.shape or old.size < 2:
+        raise ValueError("old_outputs and new_outputs must be equal-length 1-D groups")
+    if np.any((old != 0) & (old != 1)) or np.any((new != 0) & (new != 1)):
+        raise ValueError("group outputs must be binary")
+    delta = new - old
+    return bool(np.any(delta != delta[0]))
+
+
+@dataclass(frozen=True)
 class RawOutputInformationLowerBound:
     """Transcript-KL allocation floor for the homogeneous raw-output P17 oracle."""
 
