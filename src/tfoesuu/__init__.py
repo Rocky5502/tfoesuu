@@ -15,7 +15,26 @@ from .separations import (
 )
 from .software_subjects import RandomizedResourceAllocatorPair, linear_baseline
 from .suite_replay import SuiteReplayBounds, active_vertex_count, synchronized_suite_replay_bounds
-from .partial_replay import ReplayGroupCover, GroupReplayUpperBound, minimum_replay_group_cover, partial_synchronized_replay_upper_bound
+from .partial_replay import (
+    GroupReplayUpperBound,
+    ReplayGroupCover,
+    minimum_replay_group_cover,
+    partial_synchronized_replay_upper_bound,
+)
+from .partial_replay_benchmarks import (
+    PartialReplayBenchmarkSpec,
+    partial_replay_benchmark_v1,
+)
+from .partial_replay_lower import (
+    FractionalActiveVertexCover,
+    FractionalReplayCover,
+    FractionalReplaySchedule,
+    RawOutputInformationLowerBound,
+    fractional_replay_schedule,
+    minimum_fractional_active_vertex_cover,
+    minimum_fractional_replay_cover,
+    raw_output_information_lower_bound,
+)
 from .subject_benchmarks import (
     SoftwareSubjectBenchmarkSpec,
     software_subject_benchmark_v1,
@@ -47,6 +66,16 @@ __all__ = [
     "GroupReplayUpperBound",
     "minimum_replay_group_cover",
     "partial_synchronized_replay_upper_bound",
+    "PartialReplayBenchmarkSpec",
+    "partial_replay_benchmark_v1",
+    "FractionalActiveVertexCover",
+    "FractionalReplayCover",
+    "FractionalReplaySchedule",
+    "RawOutputInformationLowerBound",
+    "minimum_fractional_active_vertex_cover",
+    "minimum_fractional_replay_cover",
+    "fractional_replay_schedule",
+    "raw_output_information_lower_bound",
     "linear_baseline",
     "SoftwareSubjectBenchmarkSpec",
     "software_subject_benchmark_v1",
