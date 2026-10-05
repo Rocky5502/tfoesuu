@@ -11,13 +11,27 @@ P13 combines unknown patch location with replay on a matching: fixed-confidence 
 P14 shows how sound static patch-effect envelopes prune fairness edges with zero new executions.
 P15 shows that four-way replay across both versions and both counterfactual endpoints cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1).
 P16 lifts synchronized replay to the full active fairness suite: round complexity is independent of edge count and concrete execution complexity is Theta(n_active log(1/delta)/d) in the audited homogeneous Bernoulli family.
+P17 now has a corrected two-matrix formulation for partial synchronized replay: an edge-by-group matrix governs the proved witness-scheduling upper bound, while an active-vertex/group matrix governs the necessary raw-information floor. A matching minimax characterization is still open.
 
-See docs/PROOF_STATUS.md for exact audit status.
+See docs/PROOF_STATUS.md and docs/PROOF_AUDIT_P17_FRACTIONAL_REPLAY.md for exact audit status.
 
 ## Immediate theorem queue
 
-### A. Partial synchronized replay and the missing graph parameter
-P16 settles the strongest replay primitive, where one seed can be synchronized across every active input. The next target is the intermediate access model: only selected replay-compatible groups may share a tape, possibly with heterogeneous execution costs. Derive the correct covering/packing quantity from that oracle and prove matching upper/lower bounds. The existing `graph_replay.py` fractional-cover code remains a conjecture-hunting harness and is not a theorem.
+### A. Partial synchronized replay: close the two-geometry gap
+The intermediate access model is now frozen. Legal replay groups have size at least two and may have heterogeneous costs. The proved fixed-design upper construction is governed by the edge-by-group fractional cover
+
+  C_edge = min c^T a  subject to A a >= 1, a >= 0,
+
+while raw transcript change-of-measure reduces exactly to the active-vertex/group cover
+
+  C_vert = min c^T q  subject to B q >= 1, q >= 0.
+
+The corrected necessary lower floor is [kl(1-beta,beta)/K_sync] C_vert and C_vert <= C_edge. The highest-value theorem target is no longer to resurrect the withdrawn edge-cover lower bound. It is to prove either:
+1. structural conditions under which the active-vertex information floor is attainable;
+2. a rigorous family separating achievable cost from C_vert; or
+3. a sharper oracle-dependent parameter that interpolates between the two matrices.
+
+Keep the current manuscript claim scoped to the proved upper construction and necessary information floor until one of these attainability questions is closed.
 
 ### B. Retained certificate headroom
 Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Seek an instance-dependent theorem where patch restrictions and certified headroom interact nontrivially.
@@ -34,10 +48,10 @@ Study P0 -> P1 -> ... -> PT with reusable certificates. Target a dynamic complex
 ## Experiment queue
 
 1. Run all CPU CI and theorem checks.
-2. Materialize deterministic Gaussian and replay benchmark manifests.
+2. Materialize deterministic Gaussian, replay, counterfactual, and partial-replay benchmark manifests.
 3. Run 10^4-trial single-GPU smoke tests.
 4. Stress the replay exponent at shrinking d.
-5. Search heterogeneous variance profiles and graph families for counterexamples to candidate graph-level formulas.
+5. Search heterogeneous variance profiles and partial-replay group families for counterexamples to candidate graph-level formulas and C_vert/C_edge attainability conjectures.
 6. Only after theorem freeze, run 10^6-10^7 publication sweeps on both GPUs.
 
 ## Paper gate
