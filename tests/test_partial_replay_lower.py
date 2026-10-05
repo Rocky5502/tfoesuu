@@ -6,6 +6,7 @@ from tfoesuu.partial_replay import minimum_replay_group_cover
 from tfoesuu.partial_replay_lower import (
     fractional_group_replay_lower_bound,
     fractional_replay_schedule,
+    minimum_fractional_active_vertex_cover,
     minimum_fractional_replay_cover,
     raw_output_information_lower_bound,
 )
@@ -28,6 +29,18 @@ def test_fractional_cover_is_only_a_scheduling_object():
     integ = minimum_replay_group_cover(g, groups, costs)
     assert frac.success and integ.success
     assert frac.cost <= integ.objective + 1e-9
+
+
+def test_active_vertex_cover_never_exceeds_edge_cover():
+    g = clique_graph(4)
+    groups = [(1, 2, 3), (0, 2, 3), (0, 1, 3), (0, 1, 2)]
+    costs = [1.0] * 4
+    vertex = minimum_fractional_active_vertex_cover(g, groups, costs)
+    edge = minimum_fractional_replay_cover(g, groups, costs)
+    assert vertex.success and edge.success
+    assert vertex.cost == pytest.approx(4.0 / 3.0)
+    assert edge.cost == pytest.approx(2.0)
+    assert vertex.cost <= edge.cost
 
 
 def test_fractional_schedule_covers_every_edge_at_target_exposure():
@@ -131,3 +144,19 @@ def test_edge_rewiring_with_same_active_vertices_preserves_raw_information_floor
     b = _raw(g_match, groups)
     assert a.success and b.success
     assert a.expected_cost_floor == pytest.approx(b.expected_cost_floor)
+
+
+def test_raw_information_floor_is_scaled_active_vertex_cover():
+    g = clique_graph(4)
+    groups = [(1, 2, 3), (0, 2, 3), (0, 1, 3), (0, 1, 2)]
+    costs = [1.0] * 4
+    cover = minimum_fractional_active_vertex_cover(g, groups, costs)
+    raw = raw_output_information_lower_bound(
+        g, groups, costs, p=0.2, shared_patch=0.1, d=0.05, beta=0.05
+    )
+    assert cover.success and raw.success
+    k_sync = raw.information_matrix[raw.information_matrix > 0.0][0]
+    from tfoesuu.separations import binary_decision_kl
+    scale = binary_decision_kl(0.05) / k_sync
+    assert raw.expected_cost_floor == pytest.approx(scale * cover.cost)
+    assert np.allclose(raw.expected_query_counts, scale * cover.weights)
