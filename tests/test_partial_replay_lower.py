@@ -76,6 +76,16 @@ def test_legal_synchronized_endpoint_group_has_positive_information():
     assert r.information_matrix[0, 0] > 0.0
 
 
+def test_every_informative_legal_group_has_the_same_kl():
+    g = clique_graph(4)
+    groups = [(0, 1), (0, 2, 3), (1, 2), (2, 3)]
+    r = _raw(g, groups)
+    assert r.success
+    positive = r.information_matrix[r.information_matrix > 0.0]
+    assert positive.size > 0
+    assert np.allclose(positive, positive[0])
+
+
 def test_unrelated_synchronized_reference_matches_partner_information():
     # In K3, alternative (0,1; changed=0) can be observed with either vertex 1
     # (the fairness partner) or vertex 2 (an unrelated synchronized reference).
