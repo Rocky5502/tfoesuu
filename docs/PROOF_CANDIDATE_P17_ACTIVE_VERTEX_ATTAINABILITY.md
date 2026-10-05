@@ -17,12 +17,13 @@ A group query to S_i draws a fresh U~Unif[0,1] and returns both program versions
 at every v in S_i under that same U. Different group queries use independent
 tapes.
 
-The homogeneous Bernoulli family is:
+The homogeneous Bernoulli family is defined on every vertex that may appear in
+a legal replay group (in particular every active vertex):
 
-- old version: threshold p at every active vertex;
-- null new version: threshold p+s at every active vertex;
+- old version: threshold p at every queryable vertex;
+- null new version: threshold p+s at every queryable vertex;
 - alternative indexed by active endpoint x: threshold p+s+d at x and p+s at
-  every other active vertex;
+  every other queryable vertex;
 
 with p>0, s>0, d>0, and p+s+d<1.
 
@@ -224,7 +225,8 @@ The construction can fail outside the frozen family.
 
 - If several vertices in the same group change identically, raw heterogeneity may
   disappear.
-- If null patch effects differ by vertex, the rule can have false positives.
+- If old thresholds or null patch effects differ by vertex, the pathwise
+  constant-delta property can fail and the rule can have false positives.
 - If group outputs are aggregated and per-vertex old/new outcomes are hidden, the
   rule may be unavailable.
 - If tapes are not aligned across vertices, pathwise cancellation disappears.
