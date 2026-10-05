@@ -98,7 +98,34 @@ Because Bb*>=1, every active endpoint x receives
 
 independent detection opportunities.
 
-## 4. Candidate upper theorem
+## 4. Exact finite deterministic schedule
+
+For an integer target exposure L define the active-vertex multicover
+
+  M_L(B,c)
+    = min c^T n
+      subject to B n >= L 1,
+                 n in Z_+^k.
+
+This is the exact minimum declared cost among deterministic nonadaptive schedules
+that guarantee at least L informative group queries for every active endpoint.
+The repository now solves this integer program directly with
+minimum_active_vertex_multicover.
+
+The fractional solution b* gives the deterministic rounding bound
+
+  M_L(B,c)
+    <= sum_i c_i ceil(L b_i*)
+    <= L C_vert + sum_{i:b_i*>0} c_i,
+
+while LP relaxation gives
+
+  M_L(B,c) >= L C_vert.
+
+Thus integer effects are cleanly separated from the underlying active-vertex
+information geometry.
+
+## 5. Candidate upper theorem
 
 **Candidate theorem (active-vertex partial-replay tester).**
 In the frozen model above, the fixed schedule n_i=ceil(L b_i*) with the
@@ -126,7 +153,7 @@ uses ceil(z)<=z+1 on the support of b*.
 No union bound over alternatives is needed: fixed-confidence correctness is
 pointwise in the unknown alternative.
 
-## 5. Existing information lower bound
+## 6. Existing information lower bound
 
 For an oriented alternative changing endpoint x, a legal group query has
 null-to-alternative KL
@@ -145,9 +172,9 @@ for q_i=E_0[N_i]. Minimizing expected cost gives
 
 This is the already corrected raw-information lower program.
 
-## 6. Candidate matching characterization
+## 7. Candidate matching characterization
 
-Combining Sections 4 and 5 gives the finite-sample sandwich
+Combining Sections 5 and 6 gives the finite-sample sandwich
 
   [kl(1-beta,beta)/K_sync] C_vert
       <= Q*
@@ -185,7 +212,7 @@ A basic optimal solution can be chosen with support at most |V_+|, so the
 rounding term needs at most |V_+| group costs; this support statement should be
 independently checked before being used in a polished theorem.
 
-## 7. Why this does not contradict P15
+## 8. Why this does not contradict P15
 
 P15 studies the information gain from synchronizing the two endpoints of one
 fairness edge relative to vertex-paired old/new replay. Here each legal group
@@ -200,7 +227,7 @@ Thus:
 - C_vert may characterize the stronger raw-output P17 oracle in the homogeneous
   single-endpoint family.
 
-## 8. Adversarial obligations before promotion
+## 9. Adversarial obligations before promotion
 
 1. Verify pathwise null constancy for every tape region.
 2. Verify alternative heterogeneity occurs iff U is in (p+s,p+s+d].
@@ -219,7 +246,7 @@ Thus:
     do not silently generalize to multiple changed endpoints or heterogeneous
     null patch effects.
 
-## 9. Potential failure boundaries
+## 10. Potential failure boundaries
 
 The construction can fail outside the frozen family.
 
@@ -234,7 +261,7 @@ The construction can fail outside the frozen family.
 Any promoted theorem must state these boundaries explicitly.
 
 
-## 10. Prior-art collision audit
+## 11. Prior-art collision audit
 
 This candidate must be positioned conservatively.
 
