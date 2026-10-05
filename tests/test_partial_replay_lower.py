@@ -9,6 +9,7 @@ from tfoesuu.partial_replay_lower import (
     group_patch_delta_heterogeneous,
     fractional_group_replay_lower_bound,
     fractional_replay_schedule,
+    minimum_active_vertex_multicover,
     minimum_fractional_active_vertex_cover,
     minimum_fractional_replay_cover,
     raw_output_information_lower_bound,
@@ -294,3 +295,49 @@ def test_candidate_heterogeneity_rule_exhausts_threshold_regions(group_size):
             assert not group_patch_delta_heterogeneous(old, null_new)
             expected = (p + shared) < u <= (p + shared + d)
             assert group_patch_delta_heterogeneous(old, alt_new) is expected
+
+
+def test_exact_active_vertex_multicover_matches_k4_counting_bound():
+    g = clique_graph(4)
+    groups = [(1, 2, 3), (0, 2, 3), (0, 1, 3), (0, 1, 2)]
+    target = 59
+    exact = minimum_active_vertex_multicover(
+        g, groups, [1.0] * 4, target_exposure=target
+    )
+    assert exact.success
+    # Each query covers exactly three of four active vertices, so at least
+    # ceil(4L/3) total queries are necessary; balanced triple counts attain it.
+    assert exact.cost == pytest.approx(np.ceil(4.0 * target / 3.0))
+    total = int(exact.counts.sum())
+    assert total == int(np.ceil(4.0 * target / 3.0))
+    for x in range(g.n):
+        exposure = sum(
+            int(exact.counts[i]) for i, group in enumerate(groups) if x in group
+        )
+        assert exposure >= target
+
+
+def test_exact_multicover_never_costs_more_than_fractional_rounding_schedule():
+    g = clique_graph(5)
+    groups = [tuple(x for x in range(g.n) if x != omitted) for omitted in range(g.n)]
+    costs = [1.0, 1.5, 2.0, 2.5, 3.0]
+    rounded = active_vertex_replay_schedule(g, groups, costs, d=0.05, beta=0.05)
+    exact = minimum_active_vertex_multicover(
+        g, groups, costs, target_exposure=rounded.scale
+    )
+    assert exact.success
+    assert exact.cost <= rounded.total_cost + 1e-9
+
+
+def test_exact_multicover_fractional_relaxation_lower_bound():
+    g = path_graph(5)
+    groups = [(0, 1, 2), (1, 2, 3), (2, 3, 4)]
+    costs = [1.0, 1.2, 1.0]
+    fractional = minimum_fractional_active_vertex_cover(g, groups, costs)
+    assert fractional.success
+    for target in [1, 3, 10]:
+        exact = minimum_active_vertex_multicover(
+            g, groups, costs, target_exposure=target
+        )
+        assert exact.success
+        assert exact.cost + 1e-9 >= target * fractional.cost
