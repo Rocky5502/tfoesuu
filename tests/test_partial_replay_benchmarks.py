@@ -19,3 +19,6 @@ def test_partial_replay_grid_roundtrip(tmp_path: Path):
     out = tmp_path / "partial_replay.jsonl"
     write_partial_replay_jsonl(rows, out)
     assert read_partial_replay_jsonl(out) == rows
+
+    committed = read_partial_replay_jsonl("data/partial_replay_benchmark_v1.jsonl")
+    assert committed == rows
