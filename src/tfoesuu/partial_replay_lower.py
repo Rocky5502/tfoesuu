@@ -67,41 +67,21 @@ def fractional_group_replay_lower_bound(
     per_informative_query_kl: float,
     beta: float,
 ) -> FractionalReplayLowerBound:
-    """Compute a rigorous lower-bound relaxation under the frozen P17 oracle.
+    """Withdrawn P17 lower-bound helper.
 
-    For every edge alternative e, only legal groups containing both endpoints
-    have a changed observation law. If each such query contributes exactly K
-    null-to-alternative KL and all other groups contribute zero, adaptive
-    transcript change of measure implies
+    This routine used an edge-by-group incidence relaxation that is valid for
+    witness scheduling but is not a lower bound for the frozen raw-output
+    oracle: a legal group containing the perturbed endpoint can carry KL even
+    when it omits the endpoint's fairness partner.
 
-        sum_{S contains e} E_0[N_S] >= kl(1-beta,beta)/K.
-
-    Minimizing expected query cost under all edge constraints gives the
-    fractional edge-by-group cover LP below. This function does not claim that
-    the floor is achievable.
+    Use raw_output_information_lower_bound for the audited necessary
+    information-allocation floor. Keeping this symbol as an explicit failure
+    prevents older scripts from silently reporting the withdrawn quantity as a
+    theorem-level lower bound.
     """
-
-    if graph.m == 0:
-        return FractionalReplayLowerBound(0.0, np.zeros(0), 0.0, True, "edgeless graph")
-    if not (0.0 < beta < 0.5):
-        raise ValueError("beta must lie in (0,1/2)")
-    if per_informative_query_kl <= 0:
-        raise ValueError("per_informative_query_kl must be positive")
-
-    gs = _canonical_groups(graph, groups)
-    cover = minimum_fractional_replay_cover(graph, gs, costs)
-    if not cover.success:
-        return FractionalReplayLowerBound(
-            float("inf"), cover.weights, float("inf"), False, cover.message
-        )
-
-    scale = binary_decision_kl(beta) / per_informative_query_kl
-    return FractionalReplayLowerBound(
-        normalized_cost=cover.cost,
-        query_weights=cover.weights,
-        expected_cost_floor=cover.cost * scale,
-        success=True,
-        message=cover.message,
+    raise RuntimeError(
+        "fractional_group_replay_lower_bound is withdrawn for the raw-output "
+        "P17 oracle; use raw_output_information_lower_bound instead"
     )
 
 
