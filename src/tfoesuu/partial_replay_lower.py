@@ -67,41 +67,21 @@ def fractional_group_replay_lower_bound(
     per_informative_query_kl: float,
     beta: float,
 ) -> FractionalReplayLowerBound:
-    """Compute a rigorous lower-bound relaxation under the frozen P17 oracle.
+    """Withdrawn P17 lower-bound helper.
 
-    For every edge alternative e, only legal groups containing both endpoints
-    have a changed observation law. If each such query contributes exactly K
-    null-to-alternative KL and all other groups contribute zero, adaptive
-    transcript change of measure implies
+    This routine used an edge-by-group incidence relaxation that is valid for
+    witness scheduling but is not a lower bound for the frozen raw-output
+    oracle: a legal group containing the perturbed endpoint can carry KL even
+    when it omits the endpoint's fairness partner.
 
-        sum_{S contains e} E_0[N_S] >= kl(1-beta,beta)/K.
-
-    Minimizing expected query cost under all edge constraints gives the
-    fractional edge-by-group cover LP below. This function does not claim that
-    the floor is achievable.
+    Use raw_output_information_lower_bound for the audited necessary
+    information-allocation floor. Keeping this symbol as an explicit failure
+    prevents older scripts from silently reporting the withdrawn quantity as a
+    theorem-level lower bound.
     """
-
-    if graph.m == 0:
-        return FractionalReplayLowerBound(0.0, np.zeros(0), 0.0, True, "edgeless graph")
-    if not (0.0 < beta < 0.5):
-        raise ValueError("beta must lie in (0,1/2)")
-    if per_informative_query_kl <= 0:
-        raise ValueError("per_informative_query_kl must be positive")
-
-    gs = _canonical_groups(graph, groups)
-    cover = minimum_fractional_replay_cover(graph, gs, costs)
-    if not cover.success:
-        return FractionalReplayLowerBound(
-            float("inf"), cover.weights, float("inf"), False, cover.message
-        )
-
-    scale = binary_decision_kl(beta) / per_informative_query_kl
-    return FractionalReplayLowerBound(
-        normalized_cost=cover.cost,
-        query_weights=cover.weights,
-        expected_cost_floor=cover.cost * scale,
-        success=True,
-        message=cover.message,
+    raise RuntimeError(
+        "fractional_group_replay_lower_bound is withdrawn for the raw-output "
+        "P17 oracle; use raw_output_information_lower_bound instead"
     )
 
 
@@ -169,6 +149,62 @@ def fractional_replay_schedule(
 
 
 @dataclass(frozen=True)
+class FractionalActiveVertexCover:
+    """Minimum-cost fractional cover of fairness-active vertices by legal groups."""
+
+    cost: float
+    weights: np.ndarray
+    active_vertices: tuple[int, ...]
+    success: bool
+    message: str
+
+
+def minimum_fractional_active_vertex_cover(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+) -> FractionalActiveVertexCover:
+    """Solve the active-vertex/group incidence LP used by the P17 information floor."""
+    gs = _canonical_groups(graph, groups)
+    c = np.asarray(costs, dtype=float)
+    if c.shape != (len(gs),) or np.any(c <= 0) or np.any(~np.isfinite(c)):
+        raise ValueError("costs must be finite, positive, and match groups")
+
+    active = tuple(sorted({v for edge in graph.edges for v in edge}))
+    if not active:
+        return FractionalActiveVertexCover(
+            0.0, np.zeros(len(gs)), active, True, "edgeless graph"
+        )
+
+    B = np.zeros((len(active), len(gs)), dtype=float)
+    for xi, x in enumerate(active):
+        for gi, group in enumerate(gs):
+            if x in group:
+                B[xi, gi] = 1.0
+
+    if np.any(B.sum(axis=1) == 0.0):
+        return FractionalActiveVertexCover(
+            float("inf"), np.zeros(len(gs)), active, False,
+            "some fairness-active vertex is absent from every legal replay group",
+        )
+
+    res = linprog(
+        c,
+        A_ub=-B,
+        b_ub=-np.ones(len(active)),
+        bounds=[(0.0, None)] * len(gs),
+        method="highs",
+    )
+    if not res.success:
+        return FractionalActiveVertexCover(
+            float("inf"), np.zeros(len(gs)), active, False, str(res.message)
+        )
+    return FractionalActiveVertexCover(
+        float(res.fun), np.asarray(res.x), active, True, str(res.message)
+    )
+
+
+@dataclass(frozen=True)
 class RawOutputInformationLowerBound:
     """Transcript-KL allocation floor for the homogeneous raw-output P17 oracle."""
 
@@ -193,16 +229,15 @@ def raw_output_information_lower_bound(
     """Lower-bound null expected cost using the *actual raw-output* group KL.
 
     Alternatives are oriented fairness edges: (u,v,u) and (u,v,v), meaning one
-    endpoint receives the additional differential shift d.  Under the homogeneous
-    threshold family, a group has:
+    endpoint receives the additional differential shift d.  The frozen P17 oracle
+    permits replay groups of size at least two.  Under the homogeneous threshold
+    family, a legal group therefore has:
       * zero KL if it omits the changed endpoint;
-      * vertex-paired KL if it is the singleton changed endpoint;
-      * joint KL if it contains the changed endpoint and any second unchanged
-        vertex.
+      * joint KL if it contains the changed endpoint.
 
-    The last case is important: the second vertex need not be the fairness
-    partner.  This is exactly why the earlier edge-incidence fractional-cover
-    lower bound is invalid for the raw-output oracle.
+    The second synchronized vertex need not be the fairness partner.  This is
+    exactly why the earlier edge-incidence fractional-cover lower bound is invalid
+    for the raw-output oracle.
     """
     s = float(shared_patch)
     if not (0.0 < beta < 0.5):
@@ -228,34 +263,30 @@ def raw_output_information_lower_bound(
 
     r = 1.0 - p - s
     k_joint = r * math.log(r / (r - d))
-    k_vertex = s * math.log(s / (s + d)) + r * math.log(r / (r - d))
 
+    # Legal replay groups have size at least two, so every informative group has
+    # the same null-to-alternative KL.  The raw-output information geometry thus
+    # depends only on group-by-active-vertex incidence, not edge incidence.
     K = np.zeros((len(gs), len(alternatives)), dtype=float)
     for gi, group in enumerate(gs):
         S = set(group)
         for ai, (_, _, changed) in enumerate(alternatives):
-            if changed not in S:
-                continue
-            K[gi, ai] = k_vertex if len(S) == 1 else k_joint
+            if changed in S:
+                K[gi, ai] = k_joint
 
-    if np.any(K.sum(axis=0) <= 0.0):
+    cover = minimum_fractional_active_vertex_cover(graph, gs, cost)
+    if not cover.success:
         return RawOutputInformationLowerBound(
-            float("inf"), np.zeros(len(gs)), alternatives, K, False,
-            "some oriented edge alternative has zero information under all legal groups",
+            float("inf"), np.zeros(len(gs)), alternatives, K, False, cover.message
         )
 
     target = binary_decision_kl(beta)
-    res = linprog(
-        cost,
-        A_ub=-K.T,
-        b_ub=-target * np.ones(len(alternatives)),
-        bounds=[(0.0, None)] * len(gs),
-        method="highs",
-    )
-    if not res.success:
-        return RawOutputInformationLowerBound(
-            float("inf"), np.zeros(len(gs)), alternatives, K, False, str(res.message)
-        )
+    scale = target / k_joint
     return RawOutputInformationLowerBound(
-        float(res.fun), np.asarray(res.x), alternatives, K, True, str(res.message)
+        expected_cost_floor=float(scale * cover.cost),
+        expected_query_counts=scale * cover.weights,
+        alternatives=alternatives,
+        information_matrix=K,
+        success=True,
+        message=cover.message,
     )

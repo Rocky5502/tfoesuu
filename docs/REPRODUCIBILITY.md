@@ -14,6 +14,9 @@ Every experiment is determined by:
 
 ```bash
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
+python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
+python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
+python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 ```
 
 The generator is deterministic. The manifest contains parameter specifications rather than giant sampled arrays.
@@ -54,3 +57,22 @@ The record captures the source commit, dirty-tree status, benchmark and result
 SHA-256 hashes, platform/Python metadata, NVIDIA environment, and PyTorch/CUDA
 device information. Publication artifacts should be generated only from runs
 whose provenance records show a clean source tree and the intended frozen commit.
+
+
+## P17 partial-replay theorem checks
+
+The P17 manifest is deterministic specification data. It spans graph family,
+legal replay-group size, cost scale, and small differential effects. It is used
+to stress the two incidence geometries without treating generated LP values as
+empirical evidence.
+
+Use:
+
+```bash
+python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
+pytest -q tests/test_partial_replay_lower.py tests/test_partial_replay_benchmarks.py
+```
+
+The witness-scheduling LP and raw-information LP have different meanings and
+must not be merged in reporting. The former uses edge-by-group incidence; the
+latter reduces to active-vertex/group incidence under the frozen P17 oracle.

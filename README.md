@@ -42,6 +42,7 @@ The live source of truth is [docs/PROOF_STATUS.md](docs/PROOF_STATUS.md). Curren
 - sound patch-effect envelopes can prune already-safe fairness edges with **zero new executions**, leaving only a residual graph for stochastic testing;
 - four-way counterfactual replay cancels a nonzero fairness-neutral common patch and changes the differential-gap exponent from quadratic to linear;
 - synchronized suite replay tests all fairness edges from one shared-seed suite execution, giving `Theta(n_active log(1/delta)/d)` concrete-execution scaling in the audited Bernoulli family, independent of edge count.
+- partial synchronized replay now has a corrected two-matrix formulation: a fractional edge-by-group cover gives a proved fixed-design witness-scheduling upper bound, while the raw transcript-information floor reduces exactly to an active-vertex/group cover; the matching minimax characterization remains open.
 
 Claims enter the abstract only after proof/audit gates.
 
@@ -61,6 +62,9 @@ src/tfoesuu/
   testers.py                 Gaussian patch-neutrality/full-regression testers
   counterfactual_benchmarks.py  Frozen P15 four-way replay benchmark grid
   suite_replay.py             P16 synchronized-suite replay bounds
+  partial_replay.py           Legal replay groups + integral P17 upper constructions
+  partial_replay_lower.py     Fractional witness schedule + active-vertex information floor
+  partial_replay_benchmarks.py Deterministic P17 theorem-falsification specifications
 
 experiments/
   run_gaussian_core.py
@@ -71,12 +75,14 @@ experiments/
   gpu_sweep.py
   gpu_replay_sweep.py
   gpu_counterfactual_sweep.py  Two-GPU P15 shared-patch stress sweep
+  search_partial_replay_gap.py P17 witness-cover gap / counterexample search
 
 scripts/
   generate_benchmark.py
   generate_replay_benchmark.py
   generate_subject_benchmark.py
   generate_counterfactual_benchmark.py
+  generate_partial_replay_benchmark.py
   check_bibliography.py
   check_paper_consistency.py
   verify_environment.py
@@ -86,6 +92,7 @@ data/
   replay_benchmark_v1.jsonl
   software_subject_benchmark_v1.jsonl
   counterfactual_replay_benchmark_v1.jsonl  144 frozen P15 configurations
+  partial_replay_benchmark_v1.jsonl          168 frozen P17 specification rows
 
 paper/                       Overleaf-ready STOC manuscript
 docs/                        proof audits, novelty matrix, roadmap, GPU runbook
@@ -112,12 +119,14 @@ python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_subject_benchmark.py --output data/software_subject_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
+python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 
 python experiments/run_gaussian_core.py --graph star --n 10 --trials 10000
 python experiments/run_replay_separation.py --p 0.5 --d 0.01 --trials 100000
 python experiments/run_location_replay.py --candidates 64 --p 0.5 --d 0.01 --trials 100000
 python experiments/run_allocator_subject.py --contexts 64 --changed-context 17 --delta 0.01 --trials 100000
 python experiments/run_counterfactual_replay.py --p 0.35 --shared-patch 0.20 --d 0.01 --trials 100000
+python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
 ```
 
 ## Two local NVIDIA GPUs
@@ -170,4 +179,4 @@ The `paper/` directory is directly Overleaf-ready. CI performs both static citat
 - Known adjacent theories—fairness testing, paired binary inference, common random numbers, active anomaly search, pairwise experimental design—are cited explicitly instead of being relabeled as novel.
 - Every long experiment records configuration, seed, environment, source commit, and output checksum.
 
-See [docs/ROADMAP.md](docs/ROADMAP.md), [docs/NOVELTY_MATRIX.md](docs/NOVELTY_MATRIX.md), and [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+See [docs/THEOREM_ALGORITHM_MATRIX.md](docs/THEOREM_ALGORITHM_MATRIX.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/NOVELTY_MATRIX.md](docs/NOVELTY_MATRIX.md), and [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
