@@ -3,6 +3,7 @@ import pytest
 
 from tfoesuu.graphs import clique_graph, matching_graph, path_graph
 from tfoesuu.partial_replay import minimum_replay_group_cover
+from tfoesuu.separations import binary_decision_kl
 from tfoesuu.partial_replay_lower import (
     fractional_group_replay_lower_bound,
     fractional_replay_schedule,
@@ -115,7 +116,7 @@ def test_missing_changed_endpoint_makes_oriented_alternative_unobservable():
     r = _raw(g, [(0, 2)])
     assert not r.success
     assert np.isinf(r.expected_cost_floor)
-    assert "zero information" in r.message
+    assert "absent from every legal replay group" in r.message
 
 
 def test_raw_information_columns_collapse_by_changed_vertex():
@@ -156,7 +157,6 @@ def test_raw_information_floor_is_scaled_active_vertex_cover():
     )
     assert cover.success and raw.success
     k_sync = raw.information_matrix[raw.information_matrix > 0.0][0]
-    from tfoesuu.separations import binary_decision_kl
     scale = binary_decision_kl(0.05) / k_sync
     assert raw.expected_cost_floor == pytest.approx(scale * cover.cost)
     assert np.allclose(raw.expected_query_counts, scale * cover.weights)
