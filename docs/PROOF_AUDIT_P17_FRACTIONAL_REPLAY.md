@@ -1,111 +1,135 @@
-# P17 fractional replay-cover proof audit
+# P17 partial synchronized replay — proof audit
 
-**Status: FIRST DERIVATION COMPLETE. Independent second audit and literature
-collision check remain mandatory before promotion.**
+**Status: CORRECTION IN PROGRESS. The fractional replay-cover construction is a
+proved fixed-design upper bound in the frozen homogeneous witness model. The
+previous matching fractional-cover lower bound is withdrawn for the raw-output
+oracle. Do not promote P17 to the abstract or theorem list until the raw-output
+lower bound and attainability gap pass independent audit.**
 
-## Frozen model
+## Frozen oracle
 
-Let H=(V,E) be a fairness graph and let G={S_1,...,S_k} be legal replay groups.
-A query to S_i draws a fresh tape U and executes both software versions on every
-v in S_i with that same tape. Different group queries use independent tapes.
+Let H=(V,E) be the fairness graph and let G={S_1,...,S_k} be the legal replay
+groups. A query to S_i draws a fresh tape U and executes both software versions
+on every v in S_i with that tape. Different queries use independent tapes.
 
-An edge e=(u,v) is informative in a group query iff {u,v} is a subset of S_i.
-In the homogeneous Bernoulli family, an informative query has zero pathwise
-differential under H0 and reveals the single-edge alternative with probability d.
-Its null-to-alternative KL is
+For the P15 four-way *witness*, an edge e=(u,v) is witnessed only by a query
+containing both u and v. This edge-incidence condition is sufficient for the
+zero-type-I construction below. It is **not** a statement that raw observations
+from other groups have zero information about an alternative.
 
-  K(d)=r log(r/(r-d)),  r=1-p-s.
+## Proved fractional scheduling upper bound
 
-Let c_i>0 be the declared cost of querying group S_i.
+Let c_i>0 and define
 
-Define the fractional replay cover
+  C_frac = min sum_i c_i a_i
+           s.t. sum_{i: e subset S_i} a_i >= 1 for every e,
+                a_i >= 0.
 
-  C* = min sum_i c_i a_i
-       s.t. sum_{i: e subset S_i} a_i >= 1 for every e,
-            a_i >= 0.
-
-## Lower bound
-
-For any adaptive beta-correct tester with finite null expected cost, fix an edge
-alternative e. Transcript KL and data processing imply
-
-  K(d) sum_{i: e subset S_i} E_0[N_i]
-      >= kl(1-beta,beta).
-
-Set
-
-  a_i = E_0[N_i] K(d) / kl(1-beta,beta).
-
-Then a is feasible for the fractional cover LP. Therefore
-
-  E_0[cost]
-  = sum_i c_i E_0[N_i]
-  >= C* kl(1-beta,beta)/K(d).
-
-This argument does not require a union bound and permits adaptive group choice.
-
-## Upper bound
-
-Let a* be an optimal fractional cover and define
+Let
 
   L = ceil(log(beta)/log(1-d)),
-  n_i = ceil(L a_i*).
+  n_i = ceil(L a_i*),
 
-Run group i exactly n_i times, independently across queries, and reject on any
-within-group fairness witness.
+for an optimal fractional cover a*. Query group i exactly n_i times and reject
+when any legal within-group four-way witness appears. Under H0 the witness is
+pathwise impossible. Under any frozen single-edge alternative e,
 
-For every edge alternative e,
+  sum_{i: e subset S_i} n_i >= L,
 
-  sum_{i: e subset S_i} n_i
-  >= L sum_{i: e subset S_i} a_i*
-  >= L.
+so independent misses have probability at most (1-d)^L <= beta. The declared
+cost obeys
 
-Each informative query misses independently with probability 1-d, hence the
-probability of missing alternative e is at most
+  sum_i c_i n_i <= L C_frac + sum_{i: a_i*>0} c_i.
 
-  (1-d)^L <= beta.
+This upper bound survives the correction.
 
-Under H0 a witness is pathwise impossible, so type-I error is zero.
+## Withdrawal of the old matching lower bound
 
-The concrete declared cost satisfies
+The earlier audit asserted that, for edge alternative e=(u,v), only groups
+containing both u and v have changed observation law. That premise is false for
+the **raw-output oracle**. A group containing the changed endpoint can carry KL
+information even when it omits the fairness partner. Therefore the old step
 
-  sum_i c_i n_i
-  <= L C* + sum_{i: a_i*>0} c_i.
+  K(d) sum_{i: e subset S_i} E_0[N_i] >= kl(1-beta,beta)
 
-Thus the finite upper/lower sandwich is
+is not a valid transcript-KL characterization of the raw oracle, and the claimed
+sandwich
 
-  C* kl(1-beta,beta)/K(d)
-  <= Q*
-  <= L C* + R(a*),
+  C_frac kl(1-beta,beta)/K(d) <= Q* <= ...
 
-where R(a*) is the explicit support-weighted rounding overhead.
+is withdrawn. No minimax equality or Theta(C_frac/d) theorem is currently
+certified for P17.
 
-For fixed beta and fixed interior p,s,r, as d->0,
+## Correct raw-output information lower program
 
-  K(d)=d+O(d^2),
-  L=Theta(log(1/beta)/d),
+Index alternatives by oriented fairness edges a=(u,v,x), where x in {u,v} is
+the changed endpoint. In the homogeneous threshold family set
 
-so, when the replay instance is fixed,
+  r = 1-p-s,
+  K_joint = r log(r/(r-d)),
+  K_single = s log(s/(s+d)) + r log(r/(r-d)).
 
-  Q* = Theta(C* log(1/beta)/d)
+For a legal group S,
 
-up to beta-dependent constant conventions and vanishing relative rounding cost.
+  K_{S,a} = 0          if x notin S,
+            K_single   if S={x},
+            K_joint    if x in S and |S|>=2.
 
-## Adversarial checks still required
+The second vertex in the final case need not be the fairness partner. Transcript
+change of measure therefore yields the necessary allocation program
 
-- infeasible edge not contained in any legal group;
-- one legal full-suite group recovers P16;
-- edge-only groups recover edgewise P15 scheduling;
-- overlapping groups with a strict fractional/integral gap;
-- heterogeneous positive costs;
-- duplicate/dominated groups;
-- support-size and rounding-overhead control;
-- beta and d boundary validation;
-- explicit test that endpoint-only groups cannot observe an edge.
+  minimize   sum_S c(S) q_S
+  subject to sum_S q_S K_{S,a} >= kl(1-beta,beta)  for every a,
+             q_S >= 0.
+
+This is implemented by raw_output_information_lower_bound(). It is a necessary
+information floor; the repository does not claim that it is attainable.
+
+### Constraint reduction
+
+For the frozen homogeneous family, K_{S,a} depends on an oriented alternative
+only through its changed endpoint x. Thus alternatives sharing x produce
+identical information columns. The 2|E| constraints reduce exactly to one
+constraint per non-isolated fairness vertex x:
+
+  K_single q_{ {x} }
+  + K_joint sum_{S contains x, |S|>=2} q_S
+  >= kl(1-beta,beta).
+
+This is an algebraic reduction of the lower program, not a new minimax theorem.
+It also shows why the raw-information geometry is vertex/group incidence while
+the certified witness upper construction is edge/group incidence.
+
+## Exact information separation
+
+For d>0 in the valid interior parameter range,
+
+  K_joint - K_single = s log(1+d/s) > 0.
+
+As d -> 0 with p,s,r fixed,
+
+  K_single = (d^2/2)(1/s + 1/r) + O(d^3),
+  K_joint  = d + d^2/(2r) + O(d^3).
+
+Hence singleton raw observations are second-order in d, while synchronizing the
+changed endpoint with any unchanged reference produces first-order information.
+This does not by itself prove an achievable tester at the information-LP cost.
+
+## Promotion gates
+
+P17 stays out of the manuscript theorem list until all of the following pass:
+
+1. adversarial unit tests independently verify the raw KL cases;
+2. an independent derivation checks the group laws and transcript-KL direction;
+3. the active-vertex constraint reduction is tested against edge rewiring;
+4. the attainability/adaptivity gap between the raw-information floor and
+   edge-witness schedule is resolved or stated as a proved separation;
+5. literature collision review is refreshed;
+6. paper and proof-status text are synchronized and the complete CI/paper build
+   is green.
 
 ## Novelty fence
 
-Set cover/fractional cover, common random numbers, couplings, and subset queries
-are established concepts. Any claim must be limited to the proved complexity
-characterization induced by this software-version/fairness-regression replay
-oracle.
+Fractional cover, common random numbers, coupling, change of measure, and subset
+queries are prior art. Any eventual claim must be restricted to a proved
+complexity statement for this software-version/fairness-regression replay oracle.
