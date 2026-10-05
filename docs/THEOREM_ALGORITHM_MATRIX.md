@@ -1,0 +1,190 @@
+# Theorem–algorithm–matrix crosswalk
+
+This document connects the mathematical spine of TFOESUU to the executable
+repository. It is a navigation and audit artifact, not an additional source of
+theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
+
+## Core notation
+
+- H=(V,E): counterfactual fairness graph.
+- V_+: non-isolated fairness-active vertices.
+- Psi(H,nu): Gaussian graph-allocation complexity.
+- A: P17 edge-by-group witness-incidence matrix.
+- B: P17 active-vertex/group information-incidence matrix.
+- c: replay-group query-cost vector.
+- beta or delta: target testing error.
+- d: differential fairness effect in the homogeneous Bernoulli replay family.
+
+## Theorem crosswalk
+
+| ID | Mathematical object / statement | Algorithmic object | Main code | Audit state |
+|---|---|---|---|---|
+| P1 | Sound change-impact localization | Remove edges outside the sound impact closure | certificate.py / graph utilities | Proved + audited |
+| P2 | No finite sharp-threshold certification without separation | Impossibility / no executable tester promised | proof only | Proved + audited |
+| P3 | Paired-delta variance identity | Estimate patch delta under common randomness | oracles.py | Proved + audited |
+| P4 | Gaussian static-allocation upper bound via Psi(H,nu) | Solve allocation and sample each active vertex | allocation.py, testers.py | Proved + audited |
+| P5 | Adaptive Gaussian lower bound via the same Psi | Transcript-KL lower program | allocation.py + proof audit | Proved + audited |
+| P6 | Lagrange dual representation of Psi | Primal/dual numerical agreement | allocation.py | Proved + audited |
+| P7 | Exact Psi values for canonical graph families | Closed-form sanity fixtures | graphs.py, tests | Proved + audited |
+| P8 | Homogeneous variance scaling of Psi | Rescaling sanity check | allocation.py | Proved + audited |
+| P9 | Common-uniform Bernoulli delta variance d(1-d) | Coupled Bernoulli replay | oracles.py, separations.py | Proved + audited |
+| P10 | Linear patch-locality separation on a matching | Patch-aware vs location-unaware allocation | separations.py | Proved + audited |
+| P11 | Old slack alone gives no minimax speedup | Boundary-null adversary | proof only | Proved + audited |
+| P12 | Paired replay d^-1 vs independent d^-2 | Replay-separation bound calculator | separations.py | Proved + audited |
+| P13 | Unknown-location matching complexity Theta(M/d) | Location replay tester/bounds | separations.py | Proved + audited |
+| P14 | Patch-effect envelopes prune safe edges | Residual graph construction | certificate.py | Proved + audited |
+| P15 | Four-way replay cancels a common patch | Counterfactual replay tester/bounds | separations.py, counterfactual benchmark | Proved + audited |
+| P16 | Synchronized suite replay removes edge-count dependence | Full active-suite shared-tape replay | suite_replay.py | Proved + audited |
+| P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; matching theorem open |
+| P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; do not claim attainability |
+| P17-M | Equality or separation between information and witness geometries | Open | none | Open |
+
+## P17 matrix package
+
+Let the legal replay groups be G={S_1,...,S_k}, each of size at least two.
+
+### Matrix A — witness geometry
+
+For e in E and group i,
+
+  A[e,i] = 1{ e subset S_i }.
+
+The fractional witness-cover LP is
+
+  C_edge = min c^T a
+           subject to A a >= 1,
+                      a >= 0.
+
+For
+
+  L = ceil(log(beta)/log(1-d)),
+
+the proved fixed schedule is
+
+  n_i = ceil(L a_i*).
+
+Each edge receives at least L independent legal four-way witness
+opportunities. The total declared cost satisfies
+
+  c^T n <= L C_edge + sum_{i:a_i*>0} c_i.
+
+Executable correspondence:
+
+- minimum_fractional_replay_cover
+- fractional_replay_schedule
+- experiments/search_partial_replay_gap.py
+
+### Matrix B — information geometry
+
+For x in V_+ and group i,
+
+  B[x,i] = 1{ x in S_i }.
+
+In the frozen homogeneous raw-output family,
+
+  r = 1-p-s,
+  K_sync = r log(r/(r-d)).
+
+Every legal group containing the changed endpoint contributes K_sync
+null-to-alternative KL, regardless of whether the other synchronized vertex is
+the fairness partner.
+
+Define
+
+  C_vert = min c^T q
+           subject to B q >= 1,
+                      q >= 0.
+
+The necessary transcript-information floor is
+
+  Q_info = [kl(1-beta,beta)/K_sync] C_vert.
+
+Executable correspondence:
+
+- minimum_fractional_active_vertex_cover
+- raw_output_information_lower_bound
+
+### Relation
+
+Every edge-cover feasible vector is active-vertex-cover feasible, so
+
+  C_vert <= C_edge.
+
+The currently certified partial-replay picture is therefore
+
+  [kl(1-beta,beta)/K_sync] C_vert
+      <= Q*
+      <= L C_edge + rounding overhead.
+
+The lower side is necessary information; the upper side is an executable
+witness schedule. No equality is claimed.
+
+## Algorithm A — fractional partial-replay witness scheduler
+
+Input: H, legal groups G, costs c, effect d, confidence beta.
+
+1. Construct A[e,i]=1{e subset S_i}.
+2. Solve min c^T a subject to A a >= 1 and a >= 0.
+3. Set L=ceil(log(beta)/log(1-d)).
+4. Set n_i=ceil(L a_i*).
+5. Query group S_i exactly n_i times using fresh tapes across queries.
+6. Within each group query, share the tape across both program versions and all
+   vertices in the group.
+7. Reject on the first legal four-way fairness witness; otherwise accept.
+
+Guarantee in the frozen homogeneous single-edge family: zero type-I error and
+pointwise type-II error at most beta.
+
+## Algorithm B — raw-information floor calculator
+
+Input: H, legal groups G, costs c, p, shared patch s, effect d, confidence beta.
+
+1. Construct V_+.
+2. Construct B[x,i]=1{x in S_i}.
+3. If an active vertex is absent from every legal group, report infeasible.
+4. Solve C_vert=min c^T q subject to Bq>=1 and q>=0.
+5. Compute K_sync=(1-p-s) log((1-p-s)/(1-p-s-d)).
+6. Return [kl(1-beta,beta)/K_sync] C_vert and the correspondingly scaled query
+   weights.
+7. Report this value only as a necessary information floor.
+
+## P17 adversarial test matrix
+
+| Failure mode | Required check |
+|---|---|
+| Old invalid edge-only KL assumption | Withdrawn legacy lower-bound API fails closed |
+| Illegal singleton replay group | Canonical group validation rejects it |
+| Fairness partner incorrectly treated as special | Unrelated synchronized reference gives the same KL |
+| Hidden oriented-edge dependence | Columns collapse by changed endpoint |
+| Hidden edge-topology dependence in raw LP | Rewiring with fixed V_+ preserves the raw-information floor |
+| Missing information channel | Active vertex absent from all groups makes the lower LP infeasible |
+| Edge-vs-vertex geometry conflation | K4 triples exhibit C_vert=4/3 and C_edge=2 at unit group cost |
+| Fractional schedule rounding bug | Every edge receives at least L integer witness opportunities |
+
+## Specification-data correspondence
+
+The checked-in data/partial_replay_benchmark_v1.jsonl manifest contains 168
+deterministic specification rows spanning:
+
+- clique, path, and matching graph families;
+- legal group-size caps 2--4 where valid;
+- two query-cost scales;
+- d in {0.05, 0.02, 0.01};
+- fixed interior p=0.20 and shared patch s=0.10;
+- immutable row seeds.
+
+These rows are theorem-falsification specifications, not empirical findings.
+The generator is scripts/generate_partial_replay_benchmark.py and CI regenerates
+the manifest schema on every push.
+
+## Promotion rule
+
+A P17 matching theorem may enter the abstract/contribution list only after:
+
+1. attainability of the information floor is proved, or a rigorous separation is
+   proved and stated instead;
+2. the independent proof audit is complete;
+3. nearest prior-art collision checks are refreshed;
+4. CI and the paper build are green at the frozen commit;
+5. code, benchmark specifications, proof ledger, manuscript, and references use
+   the same oracle and matrix definitions.
