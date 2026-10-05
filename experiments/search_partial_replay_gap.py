@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Search small partial-replay instances for integral/fractional cover gaps.
+"""Search small partial-replay instances for witness-scheduling cover gaps.
 
-This is theorem-falsification infrastructure, not empirical evidence.
+This is theorem-falsification infrastructure, not empirical evidence.  It
+compares the integral replay-group cover with its fractional relaxation for the
+*proved P17 witness-scheduling upper construction*.  It deliberately does not
+interpret the fractional cover as a raw-output information lower bound.
 """
 
 from __future__ import annotations
@@ -11,7 +14,7 @@ import itertools
 
 from tfoesuu.graphs import clique_graph
 from tfoesuu.partial_replay import minimum_replay_group_cover
-from tfoesuu.partial_replay_lower import fractional_group_replay_lower_bound
+from tfoesuu.partial_replay_lower import minimum_fractional_replay_cover
 
 
 def all_groups(n: int, max_group_size: int):
@@ -29,22 +32,23 @@ def main() -> None:
     groups = list(all_groups(args.n, args.max_group_size))
     costs = [2.0 * len(g) for g in groups]
 
-    upper = minimum_replay_group_cover(graph, groups, costs)
-    lower = fractional_group_replay_lower_bound(
-        graph, groups, costs, per_informative_query_kl=1.0, beta=0.05
-    )
-    if not upper.success or not lower.success:
-        raise RuntimeError(upper.message if not upper.success else lower.message)
+    integral = minimum_replay_group_cover(graph, groups, costs)
+    fractional = minimum_fractional_replay_cover(graph, groups, costs)
+    if not integral.success or not fractional.success:
+        raise RuntimeError(
+            integral.message if not integral.success else fractional.message
+        )
 
-    gap = upper.objective / lower.normalized_cost
+    gap = integral.objective / fractional.cost
     print(
         {
             "n": args.n,
             "max_group_size": args.max_group_size,
             "groups": len(groups),
-            "fractional_normalized": lower.normalized_cost,
-            "integral": upper.objective,
+            "fractional_witness_cover": fractional.cost,
+            "integral_witness_cover": integral.objective,
             "integrality_gap": gap,
+            "interpretation": "witness-scheduling upper construction only",
         }
     )
 
