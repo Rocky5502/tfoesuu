@@ -232,3 +232,38 @@ The construction can fail outside the frozen family.
 - If tapes are not aligned across vertices, pathwise cancellation disappears.
 
 Any promoted theorem must state these boundaries explicitly.
+
+
+## 10. Prior-art collision audit
+
+This candidate must be positioned conservatively.
+
+- Common random numbers for comparing multiple stochastic systems are classical.
+  Yang and Nelson (Operations Research, 1991, DOI 10.1287/opre.39.4.583),
+  Nelson and Hsu (Management Science, 1993, DOI 10.1287/mnsc.39.8.989), and
+  Nelson and Matejcik (Management Science, 1995,
+  DOI 10.1287/mnsc.41.12.1935) already exploit shared randomness across multiple
+  systems to sharpen simultaneous comparisons. Therefore the use of a
+  synchronized non-partner reference is not itself a novelty claim.
+
+- Sequential/active hypothesis testing with selectable experiments goes back to
+  Chernoff's sequential design of experiments, and subset sensing for a single
+  anomalous process is studied explicitly by Cohen and Zhao
+  (IEEE Transactions on Information Theory 61(3), 2015,
+  DOI 10.1109/TIT.2014.2387857). Therefore action-dependent KL allocation and
+  subset observation are also not generic novelty claims.
+
+- Group testing has a large literature on pooled/subset queries and
+  information-theoretic achievability/converse bounds. The P17 result must not
+  be framed as inventing group queries, fractional cover, or pooled detection.
+
+The possible contribution is narrower: in the frozen evolving-software fairness
+regression oracle, the shared-tape old/new outputs create a pathwise
+patch-delta-heterogeneity statistic whose legal-action geometry collapses from
+fairness edges to active endpoints. If the proof survives audit, the resulting
+C_vert characterization should be presented as an oracle-specific consequence,
+not as a new general theory of CRN or active hypothesis testing.
+
+Before promotion, compare the theorem statement directly against the controlled
+sensing/anomaly-detection literature to ensure the C_vert finite-confidence
+specialization is not already an immediate named corollary.
