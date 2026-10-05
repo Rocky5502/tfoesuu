@@ -173,16 +173,15 @@ def raw_output_information_lower_bound(
     """Lower-bound null expected cost using the *actual raw-output* group KL.
 
     Alternatives are oriented fairness edges: (u,v,u) and (u,v,v), meaning one
-    endpoint receives the additional differential shift d.  Under the homogeneous
-    threshold family, a group has:
+    endpoint receives the additional differential shift d.  The frozen P17 oracle
+    permits replay groups of size at least two.  Under the homogeneous threshold
+    family, a legal group therefore has:
       * zero KL if it omits the changed endpoint;
-      * vertex-paired KL if it is the singleton changed endpoint;
-      * joint KL if it contains the changed endpoint and any second unchanged
-        vertex.
+      * joint KL if it contains the changed endpoint.
 
-    The last case is important: the second vertex need not be the fairness
-    partner.  This is exactly why the earlier edge-incidence fractional-cover
-    lower bound is invalid for the raw-output oracle.
+    The second synchronized vertex need not be the fairness partner.  This is
+    exactly why the earlier edge-incidence fractional-cover lower bound is invalid
+    for the raw-output oracle.
     """
     s = float(shared_patch)
     if not (0.0 < beta < 0.5):
@@ -208,15 +207,16 @@ def raw_output_information_lower_bound(
 
     r = 1.0 - p - s
     k_joint = r * math.log(r / (r - d))
-    k_vertex = s * math.log(s / (s + d)) + r * math.log(r / (r - d))
 
+    # Legal replay groups have size at least two, so every informative group has
+    # the same null-to-alternative KL.  The raw-output information geometry thus
+    # depends only on group-by-active-vertex incidence, not edge incidence.
     K = np.zeros((len(gs), len(alternatives)), dtype=float)
     for gi, group in enumerate(gs):
         S = set(group)
         for ai, (_, _, changed) in enumerate(alternatives):
-            if changed not in S:
-                continue
-            K[gi, ai] = k_vertex if len(S) == 1 else k_joint
+            if changed in S:
+                K[gi, ai] = k_joint
 
     if np.any(K.sum(axis=0) <= 0.0):
         return RawOutputInformationLowerBound(
