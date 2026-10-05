@@ -5,7 +5,7 @@ import math
 from typing import Iterable, Sequence
 
 import numpy as np
-from scipy.optimize import linprog
+from scipy.optimize import Bounds, LinearConstraint, linprog, milp
 
 from .graphs import GraphSpec
 from .partial_replay import _canonical_groups
@@ -201,6 +201,76 @@ def minimum_fractional_active_vertex_cover(
         )
     return FractionalActiveVertexCover(
         float(res.fun), np.asarray(res.x), active, True, str(res.message)
+    )
+
+
+@dataclass(frozen=True)
+class ActiveVertexMultiCover:
+    """Exact integer multicover of active vertices by legal replay groups."""
+
+    cost: float
+    counts: np.ndarray
+    target_exposure: int
+    active_vertices: tuple[int, ...]
+    success: bool
+    message: str
+
+
+def minimum_active_vertex_multicover(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+    target_exposure: int,
+) -> ActiveVertexMultiCover:
+    """Solve the finite deterministic P17 active-vertex scheduling problem exactly."""
+    if target_exposure < 0:
+        raise ValueError("target_exposure must be nonnegative")
+    gs = _canonical_groups(graph, groups)
+    c = np.asarray(costs, dtype=float)
+    if c.shape != (len(gs),) or np.any(c <= 0) or np.any(~np.isfinite(c)):
+        raise ValueError("costs must be finite, positive, and match groups")
+
+    active = tuple(sorted({v for edge in graph.edges for v in edge}))
+    if not active or target_exposure == 0:
+        return ActiveVertexMultiCover(
+            0.0, np.zeros(len(gs), dtype=int), target_exposure, active, True,
+            "zero exposure required" if active else "edgeless graph",
+        )
+
+    B = np.zeros((len(active), len(gs)), dtype=float)
+    for xi, x in enumerate(active):
+        for gi, group in enumerate(gs):
+            if x in group:
+                B[xi, gi] = 1.0
+
+    if np.any(B.sum(axis=1) == 0.0):
+        return ActiveVertexMultiCover(
+            float("inf"), np.zeros(len(gs), dtype=int), target_exposure, active,
+            False, "some fairness-active vertex is absent from every legal replay group",
+        )
+
+    res = milp(
+        c=c,
+        integrality=np.ones(len(gs)),
+        bounds=Bounds(np.zeros(len(gs)), np.full(len(gs), np.inf)),
+        constraints=LinearConstraint(
+            B,
+            np.full(len(active), float(target_exposure)),
+            np.full(len(active), np.inf),
+        ),
+        options={"disp": False},
+    )
+    if not res.success:
+        return ActiveVertexMultiCover(
+            float("inf"), np.zeros(len(gs), dtype=int), target_exposure, active,
+            False, str(res.message),
+        )
+
+    counts = np.rint(res.x).astype(int)
+    if np.any(B @ counts < target_exposure - 1e-9):
+        raise RuntimeError("integer active-vertex multicover failed its constraints")
+    return ActiveVertexMultiCover(
+        float(c @ counts), counts, target_exposure, active, True, str(res.message)
     )
 
 
