@@ -66,14 +66,14 @@ def _raw(g, groups, costs=None):
     )
 
 
-def test_singleton_endpoint_has_positive_but_weaker_information():
+def test_legal_synchronized_endpoint_group_has_positive_information():
     g = matching_graph(1)
-    r = _raw(g, [(0,), (0, 1)])
+    r = _raw(g, [(0, 1)])
     assert r.success
     # Alternative 0 changes endpoint 0.
-    k_single = r.information_matrix[0, 0]
-    k_joint = r.information_matrix[1, 0]
-    assert 0.0 < k_single < k_joint
+    # Singleton groups are not legal in the frozen partial-replay oracle.
+    # The joint legal group still carries positive information.
+    assert r.information_matrix[0, 0] > 0.0
 
 
 def test_unrelated_synchronized_reference_matches_partner_information():
@@ -88,8 +88,8 @@ def test_unrelated_synchronized_reference_matches_partner_information():
 
 
 def test_missing_changed_endpoint_makes_oriented_alternative_unobservable():
-    g = matching_graph(1)
-    r = _raw(g, [(0,)])
+    g = path_graph(3)
+    r = _raw(g, [(0, 2)])
     assert not r.success
     assert np.isinf(r.expected_cost_floor)
     assert "zero information" in r.message
@@ -97,7 +97,7 @@ def test_missing_changed_endpoint_makes_oriented_alternative_unobservable():
 
 def test_raw_information_columns_collapse_by_changed_vertex():
     g = clique_graph(4)
-    groups = [(0,), (0, 1), (0, 2), (0, 3), (1, 2, 3)]
+    groups = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
     r = _raw(g, groups)
     assert r.success
     for changed in range(g.n):
