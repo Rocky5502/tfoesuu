@@ -1,135 +1,211 @@
-# P17 partial synchronized replay — proof audit
+# P17 partial synchronized replay — corrected proof audit
 
-**Status: CORRECTION IN PROGRESS. The fractional replay-cover construction is a
-proved fixed-design upper bound in the frozen homogeneous witness model. The
-previous matching fractional-cover lower bound is withdrawn for the raw-output
-oracle. Do not promote P17 to the abstract or theorem list until the raw-output
-lower bound and attainability gap pass independent audit.**
+**Status: UPPER BOUND PROVED; RAW-OUTPUT INFORMATION LOWER PROGRAM CORRECTED;
+MATCHING MINIMAX CHARACTERIZATION OPEN. Do not claim equality of the lower and
+upper programs.**
 
-## Frozen oracle
+## 1. Frozen oracle
 
 Let H=(V,E) be the fairness graph and let G={S_1,...,S_k} be the legal replay
-groups. A query to S_i draws a fresh tape U and executes both software versions
-on every v in S_i with that tape. Different queries use independent tapes.
+groups. Every legal replay group contains at least two vertices. A query to S_i
+draws a fresh random tape U and executes both software versions on every v in
+S_i using that same tape. Different group queries use independent tapes.
 
-For the P15 four-way *witness*, an edge e=(u,v) is witnessed only by a query
-containing both u and v. This edge-incidence condition is sufficient for the
-zero-type-I construction below. It is **not** a statement that raw observations
-from other groups have zero information about an alternative.
+For a P15 four-way fairness witness on edge e=(u,v), a query is witness-legal
+only when {u,v} is a subset of S_i. Raw-output information is different: a group
+containing the perturbed endpoint can have a changed distribution even when it
+omits that endpoint's fairness partner.
 
-## Proved fractional scheduling upper bound
+That distinction is the central correction to the earlier P17 lower-bound
+attempt.
 
-Let c_i>0 and define
+## 2. Edge-by-group witness matrix
 
-  C_frac = min sum_i c_i a_i
-           s.t. sum_{i: e subset S_i} a_i >= 1 for every e,
-                a_i >= 0.
+Define the witness-incidence matrix
+
+  A in {0,1}^{|E| x k},
+  A[e,i] = 1{ e subset S_i }.
+
+For positive query costs c, define
+
+  C_edge = min c^T a
+           subject to A a >= 1,
+                      a >= 0.
+
+This is a fractional scheduling object for legal four-way witnesses. It is not a
+raw-information lower bound.
+
+## 3. Proved fixed-design scheduling theorem
 
 Let
 
   L = ceil(log(beta)/log(1-d)),
   n_i = ceil(L a_i*),
 
-for an optimal fractional cover a*. Query group i exactly n_i times and reject
-when any legal within-group four-way witness appears. Under H0 the witness is
-pathwise impossible. Under any frozen single-edge alternative e,
+where a* is an optimal solution of the edge-cover LP.
 
-  sum_{i: e subset S_i} n_i >= L,
+Query group S_i exactly n_i times with independent tapes across queries and
+reject when any legal within-group four-way witness appears.
 
-so independent misses have probability at most (1-d)^L <= beta. The declared
-cost obeys
+For every fairness edge e,
 
-  sum_i c_i n_i <= L C_frac + sum_{i: a_i*>0} c_i.
+  sum_i A[e,i] n_i
+  >= L sum_i A[e,i] a_i*
+  >= L.
 
-This upper bound survives the correction.
+Under the frozen homogeneous single-edge alternative, each legal witness
+opportunity misses with probability 1-d; under the null, the witness is pathwise
+impossible. Therefore
 
-## Withdrawal of the old matching lower bound
+  P_0(reject) = 0,
+  sup_e P_e(accept) <= (1-d)^L <= beta.
 
-The earlier audit asserted that, for edge alternative e=(u,v), only groups
-containing both u and v have changed observation law. That premise is false for
-the **raw-output oracle**. A group containing the changed endpoint can carry KL
-information even when it omits the fairness partner. Therefore the old step
+The total declared cost satisfies
 
-  K(d) sum_{i: e subset S_i} E_0[N_i] >= kl(1-beta,beta)
+  c^T n <= L C_edge + sum_{i:a_i*>0} c_i.
 
-is not a valid transcript-KL characterization of the raw oracle, and the claimed
-sandwich
+This is the theorem-level P17 upper bound.
 
-  C_frac kl(1-beta,beta)/K(d) <= Q* <= ...
+## 4. Why the previous matching lower bound was invalid
 
-is withdrawn. No minimax equality or Theta(C_frac/d) theorem is currently
-certified for P17.
+The withdrawn proof assumed that, under an oriented edge alternative a=(u,v;x),
+only groups containing both u and v changed law. That is false for the raw-output
+oracle. A legal group containing x and any second synchronized vertex can carry
+nonzero KL even if the second vertex is not the fairness partner.
 
-## Correct raw-output information lower program
+Therefore the old edge-incidence transcript constraint
 
-Index alternatives by oriented fairness edges a=(u,v,x), where x in {u,v} is
-the changed endpoint. In the homogeneous threshold family set
+  K(d) sum_{i:e subset S_i} E_0[N_i] >= kl(1-beta,beta)
+
+is not valid for the raw-output oracle, and the claimed matching fractional-cover
+minimax lower bound is withdrawn.
+
+## 5. Correct raw-output information matrix
+
+Index alternatives by oriented fairness edges a=(u,v;x), where x is in {u,v} and
+is the changed endpoint. Let
 
   r = 1-p-s,
-  K_joint = r log(r/(r-d)),
-  K_single = s log(s/(s+d)) + r log(r/(r-d)).
+  K_sync = r log(r/(r-d)).
 
-For a legal group S,
+Because every legal replay group has size at least two, the exact
+null-to-alternative KL is
 
-  K_{S,a} = 0          if x notin S,
-            K_single   if S={x},
-            K_joint    if x in S and |S|>=2.
+  K[i,a] = K_sync * 1{x in S_i}.
 
-The second vertex in the final case need not be the fairness partner. Transcript
-change of measure therefore yields the necessary allocation program
+The synchronized reference need not be the fairness partner.
 
-  minimize   sum_S c(S) q_S
-  subject to sum_S q_S K_{S,a} >= kl(1-beta,beta)  for every a,
-             q_S >= 0.
+Transcript change of measure gives the necessary information-allocation program
 
-This is implemented by raw_output_information_lower_bound(). It is a necessary
-information floor; the repository does not claim that it is attainable.
+  minimize c^T q
+  subject to K^T q >= B_beta 1,
+             q >= 0,
 
-### Constraint reduction
+where B_beta = kl(1-beta,beta).
 
-For the frozen homogeneous family, K_{S,a} depends on an oriented alternative
-only through its changed endpoint x. Thus alternatives sharing x produce
-identical information columns. The 2|E| constraints reduce exactly to one
-constraint per non-isolated fairness vertex x:
+This program is a necessary expected-cost floor. It is not automatically
+attainable by a uniformly valid fairness-regression tester.
 
-  K_single q_{ {x} }
-  + K_joint sum_{S contains x, |S|>=2} q_S
-  >= kl(1-beta,beta).
+## 6. Exact reduction to the active-vertex matrix
 
-This is an algebraic reduction of the lower program, not a new minimax theorem.
-It also shows why the raw-information geometry is vertex/group incidence while
-the certified witness upper construction is edge/group incidence.
+Let
 
-## Exact information separation
+  V_+ = {x in V : degree_H(x) > 0}
 
-For d>0 in the valid interior parameter range,
+and define the active-vertex incidence matrix
 
-  K_joint - K_single = s log(1+d/s) > 0.
+  B in {0,1}^{|V_+| x k},
+  B[x,i] = 1{x in S_i}.
 
-As d -> 0 with p,s,r fixed,
+All oriented alternatives that perturb the same active vertex have identical
+columns in K. Hence the 2|E| transcript constraints reduce exactly to
 
-  K_single = (d^2/2)(1/s + 1/r) + O(d^3),
-  K_joint  = d + d^2/(2r) + O(d^3).
+  K_sync B q >= B_beta 1.
 
-Hence singleton raw observations are second-order in d, while synchronizing the
-changed endpoint with any unchanged reference produces first-order information.
-This does not by itself prove an achievable tester at the information-LP cost.
+Define
 
-## Promotion gates
+  C_vert = min c^T q
+           subject to B q >= 1,
+                      q >= 0.
 
-P17 stays out of the manuscript theorem list until all of the following pass:
+Then the corrected information lower program has exact value
 
-1. adversarial unit tests independently verify the raw KL cases;
-2. an independent derivation checks the group laws and transcript-KL direction;
-3. the active-vertex constraint reduction is tested against edge rewiring;
-4. the attainability/adaptivity gap between the raw-information floor and
-   edge-witness schedule is resolved or stated as a proved separation;
-5. literature collision review is refreshed;
-6. paper and proof-status text are synchronized and the complete CI/paper build
-   is green.
+  Q_info = (B_beta / K_sync) C_vert.
 
-## Novelty fence
+This is an exact simplification of the necessary information LP, not a matching
+minimax theorem.
 
-Fractional cover, common random numbers, coupling, change of measure, and subset
-queries are prior art. Any eventual claim must be restricted to a proved
-complexity statement for this software-version/fairness-regression replay oracle.
+## 7. Relation between the two geometries
+
+Every feasible edge-cover vector is also feasible for the active-vertex cover.
+For any x in V_+, choose an incident edge e=(x,y). Then
+
+  sum_{i:x in S_i} a_i
+  >= sum_{i:e subset S_i} a_i
+  >= 1.
+
+Therefore
+
+  C_vert <= C_edge.
+
+The corrected P17 picture is a two-geometry sandwich:
+
+  [kl(1-beta,beta)/K_sync] C_vert
+      <= Q*
+      <= L C_edge + sum_{i:a_i*>0} c_i.
+
+The left side is a valid information-theoretic necessary bound and the right
+side is the proved fixed-design witness schedule. No equality between the two
+sides is claimed.
+
+## 8. Small-d scaling
+
+For fixed interior p,s,r,
+
+  K_sync
+    = r log(r/(r-d))
+    = d + d^2/(2r) + O(d^3),
+
+while
+
+  L
+    = ceil(log(beta)/log(1-d))
+    = Theta(log(1/beta)/d).
+
+Thus both certified sides have first-order d^{-1} dependence for fixed
+confidence, but they can differ in the combinatorial factors C_vert and C_edge,
+as well as finite-sample constants and rounding overhead.
+
+## 9. Algorithm/proof correspondence
+
+The repository mapping is:
+
+- minimum_fractional_replay_cover solves the edge-by-group witness LP C_edge;
+- fractional_replay_schedule implements n_i = ceil(L a_i*);
+- raw_output_information_lower_bound implements the corrected raw-output
+  transcript-KL floor;
+- fractional_group_replay_lower_bound intentionally fails closed because its
+  former interpretation was invalid;
+- search_partial_replay_gap.py searches only witness-scheduling
+  integral/fractional cover gaps and makes no lower-bound claim.
+
+## 10. Promotion gates
+
+Before P17 can become a matching minimax theorem, all of the following must hold:
+
+1. complete CI and paper build are green;
+2. the edge and active-vertex matrix derivations are independently checked;
+3. adversarial tests cover missing endpoints, unrelated synchronized references,
+   active-vertex column collapse, and graph rewiring;
+4. attainability is proved for the information floor, or a rigorous separation
+   between C_vert and achievable testing cost is established;
+5. nearest prior-art collision review is refreshed;
+6. manuscript, proof ledger, code, experiments, and reproducibility notes use the
+   same oracle and matrix definitions.
+
+## 11. Novelty fence
+
+Common random numbers, coupling, fractional covers, subset/group querying,
+change of measure, and linear programming are prior art. Any eventual novelty
+claim must concern a proved complexity result for the specific evolving-software
+fairness-regression replay oracle, not the generic use of these tools.
