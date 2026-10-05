@@ -213,3 +213,52 @@ def test_active_vertex_schedule_beats_edge_witness_schedule_on_k4_triples():
     assert raw.normalized_fractional_cost == pytest.approx(4.0 / 3.0)
     assert edge.normalized_fractional_cost == pytest.approx(2.0)
     assert raw.normalized_fractional_cost < edge.normalized_fractional_cost
+
+
+def test_active_vertex_schedule_handles_heterogeneous_group_costs():
+    g = path_graph(3)
+    groups = [(0, 1), (1, 2), (0, 2), (0, 1, 2)]
+    costs = [3.0, 3.0, 3.0, 1.25]
+    cover = minimum_fractional_active_vertex_cover(g, groups, costs)
+    sched = active_vertex_replay_schedule(g, groups, costs, d=0.03, beta=0.05)
+    assert cover.success
+    assert cover.cost == pytest.approx(1.25)
+    assert sched.normalized_fractional_cost == pytest.approx(cover.cost)
+    assert sched.counts[3] == sched.scale
+    assert np.count_nonzero(sched.counts[:3]) == 0
+
+
+def test_active_vertex_schedule_ignores_dominated_duplicate_group():
+    g = path_graph(3)
+    groups = [(0, 1, 2), (0, 1, 2)]
+    costs = [1.0, 5.0]
+    cover = minimum_fractional_active_vertex_cover(g, groups, costs)
+    sched = active_vertex_replay_schedule(g, groups, costs, d=0.04, beta=0.05)
+    assert cover.success
+    assert cover.cost == pytest.approx(1.0)
+    assert cover.weights[0] == pytest.approx(1.0)
+    assert cover.weights[1] == pytest.approx(0.0)
+    assert sched.counts[0] == sched.scale
+    assert sched.counts[1] == 0
+
+
+def test_active_vertex_schedule_fails_if_active_endpoint_never_queried():
+    g = path_graph(3)
+    with pytest.raises(ValueError, match="absent from every legal replay group"):
+        active_vertex_replay_schedule(
+            g, [(0, 2)], [1.0], d=0.05, beta=0.05
+        )
+
+
+@pytest.mark.parametrize("d", [1e-4, 0.01, 0.2, 0.8])
+def test_active_vertex_schedule_rounding_remains_valid_across_d(d):
+    g = matching_graph(2)
+    groups = [(0, 2), (1, 3)]
+    sched = active_vertex_replay_schedule(
+        g, groups, [1.0, 1.0], d=d, beta=0.05
+    )
+    for x in range(g.n):
+        exposure = sum(
+            int(sched.counts[i]) for i, group in enumerate(groups) if x in group
+        )
+        assert exposure >= sched.scale
