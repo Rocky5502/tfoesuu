@@ -179,4 +179,4 @@ The `paper/` directory is directly Overleaf-ready. CI performs both static citat
 - Known adjacent theories—fairness testing, paired binary inference, common random numbers, active anomaly search, pairwise experimental design—are cited explicitly instead of being relabeled as novel.
 - Every long experiment records configuration, seed, environment, source commit, and output checksum.
 
-See [docs/ROADMAP.md](docs/ROADMAP.md), [docs/NOVELTY_MATRIX.md](docs/NOVELTY_MATRIX.md), and [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+See [docs/THEOREM_ALGORITHM_MATRIX.md](docs/THEOREM_ALGORITHM_MATRIX.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/NOVELTY_MATRIX.md](docs/NOVELTY_MATRIX.md), and [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
