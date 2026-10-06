@@ -174,6 +174,36 @@ homogeneous raw-contrast predicate fires. The broader theorem therefore needs
 additional controls or a different decision geometry rather than a relabeling
 of Algorithm C.
 
+## Group-coherent composite-null extension
+
+The homogeneous theorem can be broadened without allowing arbitrary
+heterogeneity.  Say the null is group-coherent when, for every legal replay
+group S_i, all members have the same pathwise patch delta D_v(U) almost surely.
+Different disconnected replay components may use different common patch-delta
+functions.  Suppose further that under an alternative indexed by active endpoint
+x, every legal group containing x produces a nonconstant patch-delta vector with
+probability at least d.
+
+Under these assumptions Algorithm C is still valid.  The null contrast
+probability is zero in every queried group, active-vertex rounding supplies at
+least L independent opportunities for every x, and the alternative miss
+probability is at most (1-d)^L <= beta.  The cost remains
+
+  L C_vert + sum_{i:q_i*>0} c_i.
+
+The extension is strict: in a four-vertex matching with replay groups {0,1} and
+{2,3}, one null component may use patch interval (0.20,0.30] while the other
+uses (0.40,0.45].  This is globally heterogeneous but group-coherent.  A
+single-endpoint extension of vertex 0 to threshold 0.35 yields contrast
+probability 0.05 in {0,1}.  The exact fixture is stored in
+data/partial_replay_group_coherent_cases_v1.jsonl.
+
+Because this broader class contains the homogeneous Bernoulli subfamily, the
+existing C_vert transcript-KL lower bound remains necessary for its minimax
+problem.  Thus C_vert appears on both certified combinatorial sides for the
+group-coherent/d-detectable class.  Arbitrary heterogeneous fair nulls that fail
+group coherence remain open and are not covered by Algorithm C.
+
 ## Algorithmic correspondence
 
 Algorithm A — witness scheduler:

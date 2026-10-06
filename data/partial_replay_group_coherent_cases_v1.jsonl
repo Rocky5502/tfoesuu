@@ -1,0 +1,1 @@
+{"beta": 0.05, "case_id": "p17-coherent-two-replay-components", "changed_vertex": 0, "component_a_p": 0.2, "component_a_s": 0.1, "component_b_p": 0.4, "component_b_s": 0.05, "d": 0.05, "expected_alt_contrast": true, "expected_c_vert": 2.0, "expected_null_contrast": false, "graph_family": "matching", "group_rule": "fairness_edges", "n": 4, "witness_u": 0.325}

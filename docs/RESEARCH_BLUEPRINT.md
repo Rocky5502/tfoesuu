@@ -24,10 +24,15 @@ The project should not become a broad empirical fairness paper. The intended STO
   executable raw-contrast schedule are both governed by C_vert, while C_edge is
   a valid witness-scheduling upper geometry that can be arbitrarily larger or
   infeasible.
-- Treat P17 attainability as solved only for the frozen homogeneous
-  single-changed-endpoint family.  The next P17 theorem frontier is the
-  heterogeneous/composite-null setting: identify sufficient replay/control
-  structure for valid group contrasts, or prove a sharper decision geometry.
+- Treat P17 attainability as solved for the frozen homogeneous
+  single-changed-endpoint family.  A group-coherent sufficient-condition
+  extension is currently under proof/audit gates: null patch deltas must be
+  pathwise equal inside every legal replay group, while heterogeneity may persist
+  across disconnected replay components.  Do not count it as a contribution
+  until the audit gates and manuscript synchronization pass.
+- The remaining P17 frontier is arbitrary heterogeneous/composite-null replay
+  beyond group coherence: identify extra control structure, a baseline-adjusted
+  statistic, or a sharper decision geometry.
 - Generalize only where the theorem exposes new evolving-software structure,
   rather than adding decorative graph algebra.
 

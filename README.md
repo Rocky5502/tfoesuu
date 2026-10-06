@@ -42,7 +42,7 @@ The live source of truth is [docs/PROOF_STATUS.md](docs/PROOF_STATUS.md). Curren
 - sound patch-effect envelopes can prune already-safe fairness edges with **zero new executions**, leaving only a residual graph for stochastic testing;
 - four-way counterfactual replay cancels a nonzero fairness-neutral common patch and changes the differential-gap exponent from quadratic to linear;
 - synchronized suite replay tests all fairness edges from one shared-seed suite execution, giving `Theta(n_active log(1/delta)/d)` concrete-execution scaling in the audited Bernoulli family, independent of edge count.
-- partial synchronized replay has a corrected two-matrix formulation. The edge-by-group LP gives a four-way-witness schedule, while the raw transcript-information floor reduces to an active-vertex/group cover. Exact structural fixtures separate those LPs. An audited raw-output contrast theorem attains the same active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family, including instances where the edge-witness LP is infeasible. A deterministic heterogeneous fair-null counterexample now guards the scope boundary: naive raw-contrast extension can false-positive, so broader heterogeneous/composite-null partial replay remains open.
+- partial synchronized replay has a corrected two-matrix formulation. The edge-by-group LP gives a four-way-witness schedule, while the raw transcript-information floor reduces to an active-vertex/group cover. Exact structural fixtures separate those LPs. An audited raw-output contrast theorem attains the same active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family, including instances where the edge-witness LP is infeasible. A deterministic heterogeneous fair-null counterexample guards the scope boundary. A stricter extension is nevertheless available under group-coherent nulls: patch effects may differ across disconnected replay components while remaining pathwise equal inside each legal group, in which case the same active-vertex schedule remains valid. Arbitrary heterogeneous/composite-null partial replay remains open.
 
 Claims enter the abstract only after proof/audit gates.
 
@@ -85,6 +85,7 @@ scripts/
   generate_partial_replay_benchmark.py
   generate_partial_replay_structural_cases.py
   generate_partial_replay_scope_cases.py
+  generate_partial_replay_group_coherent_cases.py
   check_bibliography.py
   check_paper_consistency.py
   freeze_submission_artifacts.py Whole-repository submission checksum manifest
@@ -99,6 +100,7 @@ data/
   partial_replay_benchmark_v1.jsonl          168 frozen P17 parameter-stress rows
   partial_replay_structural_cases_v1.jsonl   8 exact P17 structural theorem fixtures
   partial_replay_scope_cases_v1.jsonl        deterministic P17 scope counterexamples
+  partial_replay_group_coherent_cases_v1.jsonl group-coherent P17 theorem specifications
 
 paper/                       Overleaf-ready STOC manuscript
 docs/                        proof audits, novelty matrix, roadmap, GPU runbook
@@ -128,6 +130,7 @@ python scripts/generate_counterfactual_benchmark.py --output data/counterfactual
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
+python scripts/generate_partial_replay_group_coherent_cases.py --output data/partial_replay_group_coherent_cases_v1.jsonl
 
 python experiments/run_gaussian_core.py --graph star --n 10 --trials 10000
 python experiments/run_replay_separation.py --p 0.5 --d 0.01 --trials 100000

@@ -19,6 +19,7 @@ python scripts/generate_counterfactual_benchmark.py --output data/counterfactual
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
+python scripts/generate_partial_replay_group_coherent_cases.py --output data/partial_replay_group_coherent_cases_v1.jsonl
 ```
 
 The generator is deterministic. The manifest contains parameter specifications rather than giant sampled arrays.
@@ -102,6 +103,16 @@ new thresholds (0.30,0.45), and shared tape u=0.25. The new-version gap is
 raw-contrast predicate fires. Regenerate it with
 `scripts/generate_partial_replay_scope_cases.py`; it is specification data,
 not an empirical false-positive estimate.
+
+The group-coherent extension manifest
+`data/partial_replay_group_coherent_cases_v1.jsonl` records a globally
+heterogeneous but replay-group-coherent null together with a single changed
+endpoint.  Its v1 matching instance uses null patch intervals (0.20,0.30] and
+(0.40,0.45] in different replay components, d=0.05, and an exact witness tape
+u=0.325.  Tests require zero null contrast within each group, positive
+alternative contrast in the changed group, and agreement with the C_vert
+schedule.  Regenerate it with
+`scripts/generate_partial_replay_group_coherent_cases.py`.
 
 
 ## Whole-submission checksum manifest

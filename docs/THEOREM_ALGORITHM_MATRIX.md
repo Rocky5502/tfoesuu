@@ -40,7 +40,8 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
 | P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | PROVED + AUDITED for frozen homogeneous family; broader composite-null extension open |
 | P17-S | Scope counterexample for naive heterogeneous raw contrast | Heterogeneous fair-null deterministic witness | tests + partial_replay_scope_cases_v1.jsonl | Counterexample proved + tested; rules out silent generalization of P17-A |
-| P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open: needs controls/baseline adjustment/new geometry | none yet | Open |
+| P17-C | Group-coherent composite-null extension | Same C_vert schedule under pathwise within-group null coherence and d-detectable endpoint alternatives | partial_replay_lower.py + tests + group-coherent specification data | PROOF CANDIDATE; CI/paper audit gates pending; not manuscript-promoted |
+| P17-M | Arbitrary heterogeneous/composite-null partial-replay complexity | Open: needs controls/baseline adjustment/new geometry | none yet | Open |
 
 ## P17 matrix package
 
@@ -185,6 +186,8 @@ Input: H, legal groups G, costs c, p, shared patch s, effect d, confidence beta.
 | Equality condition regression | Group-coherent matching fixture verifies C_vert=C_edge |
 | Fractional schedule rounding bug | Every edge receives at least L integer witness opportunities |
 | Full 168-row stress-manifest drift | Every parameter row materializes and passes the LP/information/raw-contrast/rounding validator, including exact endpoint-wise miss probability <= beta |
+| Silent overextension beyond homogeneous null | Frozen heterogeneous fair-null scope case triggers raw contrast and must stay outside P17-A |
+| Candidate group-coherent extension regression | Globally heterogeneous two-component matching stays contrast-free under the null and produces exact d=0.05 contrast in the changed component |
 
 ## Specification-data correspondence
 

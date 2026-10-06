@@ -273,6 +273,26 @@ active-vertex exposure, the no-joint-edge path case, and the threshold intervals
 of the Bernoulli construction. Full CI, bibliography/manuscript checks, and the
 real LaTeX build passed before promotion.
 
+## 7c. Candidate group-coherent extension (not yet promoted)
+
+A sufficient-condition extension is under audit.  Under every null, require the
+patch-delta vector to be pathwise constant inside each legal replay group; the
+common function may differ across disconnected replay components.  Under an
+alternative indexed by active endpoint x, require every legal group containing
+x to produce a nonconstant patch-delta vector with probability at least d.
+With fresh independent tapes, the existing C_vert schedule then has zero
+type-I error and pointwise type-II error at most beta by the same exposure
+argument.  A four-vertex matching fixture demonstrates strict global
+heterogeneity across two disconnected replay components.
+
+The homogeneous Bernoulli family is a subfamily of this group-coherent class,
+so its existing transcript-KL lower bound remains a necessary minimax floor for
+the broader class.  This candidate therefore preserves C_vert on both certified
+combinatorial sides, but it is **not PROVED + AUDITED yet**.  The dedicated
+audit is docs/PROOF_AUDIT_P17_GROUP_COHERENT.md.  Promotion requires green
+candidate CI and a real LaTeX build, followed by a separate synchronized
+manuscript/status commit.
+
 ## 8. Small-d scaling
 
 For fixed interior p,s,r,

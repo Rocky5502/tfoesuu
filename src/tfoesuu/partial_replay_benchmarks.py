@@ -264,3 +264,69 @@ def read_partial_replay_scope_jsonl(
             if line.strip():
                 rows.append(PartialReplayScopeCase(**json.loads(line)))
     return rows
+
+
+@dataclass(frozen=True)
+class PartialReplayGroupCoherentCase:
+    """Deterministic specification for a group-coherent P17 extension case."""
+
+    case_id: str
+    graph_family: str
+    n: int
+    group_rule: str
+    component_a_p: float
+    component_a_s: float
+    component_b_p: float
+    component_b_s: float
+    d: float
+    beta: float
+    changed_vertex: int
+    witness_u: float
+    expected_c_vert: float
+    expected_null_contrast: bool
+    expected_alt_contrast: bool
+
+
+def partial_replay_group_coherent_cases_v1() -> list[PartialReplayGroupCoherentCase]:
+    """Frozen heterogeneous-but-group-coherent theorem specification."""
+    return [
+        PartialReplayGroupCoherentCase(
+            case_id="p17-coherent-two-replay-components",
+            graph_family="matching",
+            n=4,
+            group_rule="fairness_edges",
+            component_a_p=0.20,
+            component_a_s=0.10,
+            component_b_p=0.40,
+            component_b_s=0.05,
+            d=0.05,
+            beta=0.05,
+            changed_vertex=0,
+            witness_u=0.325,
+            expected_c_vert=2.0,
+            expected_null_contrast=False,
+            expected_alt_contrast=True,
+        )
+    ]
+
+
+def write_partial_replay_group_coherent_jsonl(
+    rows: Iterable[PartialReplayGroupCoherentCase],
+    path: str | Path,
+) -> None:
+    out = Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(asdict(row), sort_keys=True) + "\n")
+
+
+def read_partial_replay_group_coherent_jsonl(
+    path: str | Path,
+) -> list[PartialReplayGroupCoherentCase]:
+    rows: list[PartialReplayGroupCoherentCase] = []
+    with Path(path).open("r", encoding="utf-8") as fh:
+        for line in fh:
+            if line.strip():
+                rows.append(PartialReplayGroupCoherentCase(**json.loads(line)))
+    return rows

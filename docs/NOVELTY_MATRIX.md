@@ -29,9 +29,10 @@ Current high-value results/targets:
 5. **proved upper / necessary lower program:** partial synchronized replay separates an edge-by-group witness cover C_edge from an active-vertex/group information cover C_vert, with C_vert <= C_edge;
 6. **proved LP-geometry structure:** coherent group signatures give equality, K_n pair groups give C_edge/C_vert=n-1, and a path/reference construction gives finite C_vert with infeasible C_edge; these are not minimax statements;
 7. **proved + audited:** a within-group raw patch-delta contrast schedule attains the C_vert geometry in the frozen homogeneous single-changed-endpoint family, yielding matching lower/upper combinatorial geometry and d^-1 fixed-confidence order; CRN/multiple-comparison techniques themselves are established prior art;
-8. **open:** characterize partial replay under heterogeneous/composite fairness-preserving nulls, where arbitrary patch-delta disagreement is not a valid zero-type-I witness;
-9. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
-10. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
-11. **open:** amortized complexity across multiple software versions.
+8. **candidate under audit:** a group-coherent composite-null sufficient condition allows globally heterogeneous patch effects across disconnected replay components while preserving the C_vert schedule; this must not be called audited or manuscript-promoted until its gates pass;
+9. **open:** characterize arbitrary heterogeneous/composite fairness-preserving nulls that violate group coherence, where the frozen scope counterexample rules out naive raw contrast;
+10. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
+11. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
+12. **open:** amortized complexity across multiple software versions.
 
 A reviewer should be able to remove every generic ingredient above and still identify a theorem whose statement fundamentally depends on **software evolution and version-aware access**.

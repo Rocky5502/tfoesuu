@@ -36,7 +36,19 @@ same contrast under heterogeneity." It is to identify extra replay/control
 structure, a baseline-adjusted statistic, or a sharper decision geometry that
 restores uniform validity under the composite null.
 
-Keep the raw-contrast claim explicitly scoped to the homogeneous single-changed-endpoint family until a broader composite-null theorem passes its own proof/audit gates.
+A candidate sufficient-condition extension is now under audit: **group-coherent
+composite nulls**, where every legal replay group has a pathwise-constant null
+patch-delta vector, while different disconnected replay components may have
+different patch effects.  If every alternative indexed by active endpoint x
+creates a within-group contrast with probability at least d in every legal
+group containing x, the same C_vert rounding argument gives zero type-I error
+and type-II error at most beta.  The candidate has proof, adversarial code, and
+deterministic specification data, but it must remain outside the manuscript
+theorem set until CI and the real paper build pass.
+
+Arbitrary heterogeneous/composite nulls that violate group coherence remain
+open; the frozen scope counterexample proves that Algorithm C cannot simply be
+used there.
 
 ### B. Retained certificate headroom
 Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Seek an instance-dependent theorem where patch restrictions and certified headroom interact nontrivially.

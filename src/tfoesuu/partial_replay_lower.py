@@ -210,8 +210,13 @@ def raw_group_contrast_witness(
 ) -> bool:
     """Return whether synchronized group outputs expose unequal patch deltas.
 
-    The P17 homogeneous Bernoulli contrast tester rejects when the vector
-    P1(v;U)-P0(v;U) is nonconstant within a queried legal replay group.
+    The P17 contrast tester rejects when the vector P1(v;U)-P0(v;U) is
+    nonconstant within a queried legal replay group.  The audited homogeneous
+    Bernoulli theorem is one special case.  The same predicate is also valid
+    under the broader group-coherent theorem when null patch deltas are
+    pathwise equal within each legal replay group and endpoint alternatives
+    create a contrast with the stated per-query probability.
+
     Legal groups contain at least two vertices.  This predicate is deliberately
     observation-level and makes no distributional claim by itself.
     """
@@ -227,7 +232,7 @@ def raw_group_contrast_witness(
 
 @dataclass(frozen=True)
 class ActiveVertexContrastSchedule:
-    """Fixed-design raw-output contrast schedule for the frozen P17 family."""
+    """Fixed-design raw-output contrast schedule for audited P17 contrast models."""
 
     normalized_fractional_cost: float
     scale: int
@@ -246,20 +251,24 @@ def active_vertex_contrast_schedule(
 ) -> ActiveVertexContrastSchedule:
     """Schedule legal groups from the active-vertex cover.
 
-    This construction is valid for the frozen homogeneous P17 Bernoulli family:
-    under the null every active vertex has old threshold p and new threshold
-    p+s; under an oriented alternative exactly one fairness-active endpoint x
-    has new threshold p+s+d and every other vertex remains at p+s.
+    The deterministic schedule is valid for any scoped P17 contrast model with
+    these audited conditions:
 
-    In a legal group containing x, compare the old/new patch deltas across group
-    members.  Because every legal group has at least two vertices and x is the
-    unique changed endpoint, the group contains an unchanged synchronized
-    reference.  Under the null all patch deltas are identical pathwise.  Under
-    the alternative, a contrast witness appears with probability d on each
-    independent query containing x.
+    1. under every null, the old/new patch-delta vector is pathwise constant
+       within each legal replay group;
+    2. under an alternative indexed by active endpoint x, every legal group
+       containing x exposes a nonconstant patch-delta vector with probability
+       at least d; and
+    3. distinct group queries use independent fresh tapes.
 
-    The function returns only the deterministic query counts.  It does not claim
-    validity for broader heterogeneous fairness-preserving null classes.
+    The frozen homogeneous Bernoulli single-changed-endpoint family is a special
+    case.  A strictly broader group-coherent class may use different null patch
+    effects in disconnected replay-group components while satisfying condition
+    1 within every queried group.
+
+    The function returns only deterministic query counts.  It does not claim
+    validity for arbitrary heterogeneous fairness-preserving nulls that violate
+    group coherence.
     """
     if not (0.0 < d < 1.0):
         raise ValueError("d must lie in (0,1)")

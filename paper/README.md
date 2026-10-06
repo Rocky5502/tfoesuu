@@ -11,3 +11,13 @@ For a submission candidate, compile the PDF from the frozen commit and attach
 `paper/main.pdf` to the repository-wide submission checksum manifest using
 `scripts/freeze_submission_artifacts.py --require-clean --extra-file paper/main.pdf`.
 The PDF is intentionally git-ignored; the manifest records its SHA-256 digest.
+
+
+## Candidate-theorem audit note
+
+The group-coherent P17 extension is being audited outside the submission
+manuscript first.  Its proof, tests, and deterministic specification data live
+in the repository, but the theorem is intentionally not inserted into
+`main.tex` until candidate CI and a real LaTeX build pass.  This README change
+also ensures the paper workflow compiles the unchanged manuscript on the
+candidate branch as an explicit audit gate.

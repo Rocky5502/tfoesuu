@@ -318,3 +318,37 @@ def test_raw_contrast_is_not_valid_for_heterogeneous_composite_null():
     old = [int(u <= t) for t in old_thresholds]
     new = [int(u <= t) for t in new_thresholds]
     assert raw_group_contrast_witness(old, new)
+
+
+
+def test_group_coherent_heterogeneous_components_support_raw_contrast():
+    """A heterogeneous null can be valid when each legal group is coherent."""
+    g = matching_graph(2)
+    groups = [(0, 1), (2, 3)]
+    costs = [1.0, 1.0]
+    schedule = active_vertex_contrast_schedule(
+        g, groups, costs, d=0.05, beta=0.05
+    )
+    assert schedule.normalized_fractional_cost == pytest.approx(2.0)
+
+    # Replay component A has patch interval (0.20, 0.30]; component B has
+    # a different null patch interval (0.40, 0.45].  The null is globally
+    # heterogeneous but pathwise coherent inside each legal group.
+    for u in (0.10, 0.25, 0.425, 0.50):
+        old_a = [int(u <= 0.20), int(u <= 0.20)]
+        new_a = [int(u <= 0.30), int(u <= 0.30)]
+        old_b = [int(u <= 0.40), int(u <= 0.40)]
+        new_b = [int(u <= 0.45), int(u <= 0.45)]
+        assert not raw_group_contrast_witness(old_a, new_a)
+        assert not raw_group_contrast_witness(old_b, new_b)
+
+    # A single changed endpoint in component A extends only vertex 0 by d=0.05.
+    u = 0.325
+    old = [int(u <= 0.20), int(u <= 0.20)]
+    alt_new = [int(u <= 0.35), int(u <= 0.30)]
+    assert raw_group_contrast_witness(old, alt_new)
+
+    # The unrelated replay component remains contrast-free at the same tape.
+    old_b = [int(u <= 0.40), int(u <= 0.40)]
+    new_b = [int(u <= 0.45), int(u <= 0.45)]
+    assert not raw_group_contrast_witness(old_b, new_b)

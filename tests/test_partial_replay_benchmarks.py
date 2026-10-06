@@ -13,11 +13,14 @@ from tfoesuu.partial_replay_lower import (
 from tfoesuu.partial_replay_benchmarks import (
     materialize_partial_replay_spec,
     partial_replay_benchmark_v1,
+    partial_replay_group_coherent_cases_v1,
     partial_replay_scope_cases_v1,
     partial_replay_structural_cases_v1,
+    read_partial_replay_group_coherent_jsonl,
     read_partial_replay_jsonl,
     read_partial_replay_scope_jsonl,
     read_partial_replay_structural_jsonl,
+    write_partial_replay_group_coherent_jsonl,
     write_partial_replay_jsonl,
     write_partial_replay_scope_jsonl,
     write_partial_replay_structural_jsonl,
@@ -134,6 +137,51 @@ def test_partial_replay_scope_counterexample_manifest(tmp_path: Path):
     assert read_partial_replay_scope_jsonl(out) == rows
     committed = read_partial_replay_scope_jsonl(
         "data/partial_replay_scope_cases_v1.jsonl"
+    )
+    assert committed == rows
+
+
+def test_partial_replay_group_coherent_manifest(tmp_path: Path):
+    rows = partial_replay_group_coherent_cases_v1()
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.graph_family == "matching"
+    assert row.group_rule == "fairness_edges"
+
+    graph = matching_graph(row.n // 2)
+    groups = list(graph.edges)
+    costs = [1.0] * len(groups)
+    schedule = active_vertex_contrast_schedule(
+        graph, groups, costs, d=row.d, beta=row.beta
+    )
+    assert schedule.normalized_fractional_cost == pytest.approx(row.expected_c_vert)
+
+    u = row.witness_u
+    old_a = [int(u <= row.component_a_p), int(u <= row.component_a_p)]
+    null_new_a = [
+        int(u <= row.component_a_p + row.component_a_s),
+        int(u <= row.component_a_p + row.component_a_s),
+    ]
+    assert raw_group_contrast_witness(old_a, null_new_a) is row.expected_null_contrast
+
+    alt_new_a = [
+        int(u <= row.component_a_p + row.component_a_s + row.d),
+        int(u <= row.component_a_p + row.component_a_s),
+    ]
+    assert raw_group_contrast_witness(old_a, alt_new_a) is row.expected_alt_contrast
+
+    old_b = [int(u <= row.component_b_p), int(u <= row.component_b_p)]
+    null_new_b = [
+        int(u <= row.component_b_p + row.component_b_s),
+        int(u <= row.component_b_p + row.component_b_s),
+    ]
+    assert not raw_group_contrast_witness(old_b, null_new_b)
+
+    out = tmp_path / "partial_replay_group_coherent.jsonl"
+    write_partial_replay_group_coherent_jsonl(rows, out)
+    assert read_partial_replay_group_coherent_jsonl(out) == rows
+    committed = read_partial_replay_group_coherent_jsonl(
+        "data/partial_replay_group_coherent_cases_v1.jsonl"
     )
     assert committed == rows
 
