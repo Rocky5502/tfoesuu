@@ -26,7 +26,7 @@ while raw transcript change-of-measure reduces exactly to the active-vertex/grou
 
   C_vert = min c^T q  subject to B q >= 1, q >= 0.
 
-The corrected lower floor is [kl(1-beta,beta)/K_sync] C_vert. The active-vertex raw-contrast candidate uses q* from the same LP, L=ceil(log(beta)/log(1-d)), and n_i=ceil(L q_i*) to obtain zero type-I error and pointwise type-II error at most beta in the frozen homogeneous family, at cost at most L C_vert plus rounding support cost. After final promotion, the next theorem target is the genuinely broader problem: heterogeneous/composite fairness-preserving nulls, where within-group patch-delta disagreement need not imply unfairness.
+The corrected lower floor is [kl(1-beta,beta)/K_sync] C_vert. The audited active-vertex raw-contrast theorem uses q* from the same LP, L=ceil(log(beta)/log(1-d)), and n_i=ceil(L q_i*) to obtain zero type-I error and pointwise type-II error at most beta in the frozen homogeneous family, at cost at most L C_vert plus rounding support cost. The next theorem target is the genuinely broader problem: heterogeneous/composite fairness-preserving nulls, where within-group patch-delta disagreement need not imply unfairness.
 
 Keep the raw-contrast claim explicitly scoped to the homogeneous single-changed-endpoint family until a broader composite-null theorem is proved.
 
@@ -48,7 +48,7 @@ Study P0 -> P1 -> ... -> PT with reusable certificates. Target a dynamic complex
 2. Materialize deterministic Gaussian, replay, counterfactual, and partial-replay benchmark manifests.
 3. Run 10^4-trial single-GPU smoke tests.
 4. Stress the replay exponent at shrinking d.
-5. Search heterogeneous variance profiles and partial-replay group families for counterexamples to candidate graph-level formulas and C_vert/C_edge attainability conjectures.
+5. Search heterogeneous variance profiles and partial-replay group families for counterexamples to broader composite-null graph formulas and candidate extensions beyond the audited homogeneous C_vert theorem.
 6. Only after theorem freeze, run 10^6-10^7 publication sweeps on both GPUs.
 
 ## Paper gate
