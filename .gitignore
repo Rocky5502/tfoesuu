@@ -17,3 +17,6 @@ paper/*.log
 paper/*.out
 paper/*.toc
 paper/*.pdf
+*.egg-info/
+build/
+dist/
