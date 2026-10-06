@@ -158,6 +158,45 @@ The left side is a valid information-theoretic necessary bound and the right
 side is the proved fixed-design witness schedule. No equality between the two
 sides is claimed.
 
+## 7a. Exact structural regimes
+
+The two LP geometries are not universally equivalent.  Three exact regimes are
+now encoded in deterministic regression fixtures.
+
+**Group-coherent equality.**  Give each active vertex its legal-group incidence
+signature sigma(x)=(1{x in S_i})_i.  If every fairness edge (u,v) satisfies
+sigma(u)=sigma(v), then for every group i,
+
+  1{{u,v} subset S_i} = 1{u in S_i} = 1{v in S_i}.
+
+Equality propagates through each connected fairness component, so after duplicate
+constraints are removed the relevant edge-cover and active-vertex-cover rows
+coincide.  Therefore C_edge=C_vert.
+
+**Unbounded finite separation.**  Let H=K_n, let the legal replay groups be
+exactly the two-vertex fairness edges, and give every group unit cost.  Each group
+covers only its own fairness edge, hence
+
+  C_edge = |E(K_n)| = n(n-1)/2.
+
+For the active-vertex LP, summing all n vertex constraints counts each pair
+variable twice and gives C_vert >= n/2.  The uniform assignment
+q_e=1/(n-1) attains n/2, so
+
+  C_vert = n/2,
+  C_edge/C_vert = n-1.
+
+**Finite information with infeasible witness geometry.**  Let H be the path
+0-1-2 and let the only legal groups be {0,2} and {1,2}, both with unit cost.
+Every active vertex occurs in a legal group, and the active-vertex LP has value
+C_vert=2.  However edge {0,1} is contained in no legal group, so the witness LP
+is infeasible and C_edge=+infinity.
+
+Consequently there is no universal finite constant alpha satisfying
+C_edge <= alpha C_vert over the frozen P17 oracle class.  This is a theorem
+about the two LP geometries only.  It does not prove a testing-complexity or
+minimax separation, and it does not close the attainability question.
+
 ## 8. Small-d scaling
 
 For fixed interior p,s,r,
