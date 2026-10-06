@@ -20,12 +20,14 @@ The project should not become a broad empirical fairness paper. The intended STO
 
 ### Phase A — theorem core
 - Keep P1--P16 frozen unless a genuine audit issue appears.
-- Maintain the corrected P17 partial-replay split:
-  edge-by-group witness matrix A for the proved schedule and active-vertex/group
-  information matrix B for the necessary transcript-KL floor.
-- Attack the P17 attainability question: characterize equality conditions,
-  construct a rigorous separation family, or identify the sharper oracle
-  parameter that lies between C_vert and C_edge.
+- Freeze the audited homogeneous P17 result: the raw-output lower program and
+  executable raw-contrast schedule are both governed by C_vert, while C_edge is
+  a valid witness-scheduling upper geometry that can be arbitrarily larger or
+  infeasible.
+- Treat P17 attainability as solved only for the frozen homogeneous
+  single-changed-endpoint family.  The next P17 theorem frontier is the
+  heterogeneous/composite-null setting: identify sufficient replay/control
+  structure for valid group contrasts, or prove a sharper decision geometry.
 - Generalize only where the theorem exposes new evolving-software structure,
   rather than adding decorative graph algebra.
 
@@ -42,7 +44,9 @@ The project should not become a broad empirical fairness paper. The intended STO
 
 ### Phase D — computational falsification campaign
 - Exhaust graph families, legal replay-group families, and heterogeneous cost/variance profiles.
-- Search for gaps between C_vert, C_edge, integral witness covers, and any candidate achievable complexity.
+- For the homogeneous family, use the proved C_vert result as a regression test;
+  search heterogeneous/composite-null instances for failures of raw contrast and
+  candidate replacement decision geometries.
 - Estimate rare error rates only for theorem-backed executable testers.
 - Search for candidate adaptivity/separation instances; treat every computational pattern as a conjecture until proved.
 

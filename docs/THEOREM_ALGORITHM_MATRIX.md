@@ -35,7 +35,7 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P14 | Patch-effect envelopes prune safe edges | Residual graph construction | certificate.py | Proved + audited |
 | P15 | Four-way replay cancels a common patch | Counterfactual replay tester/bounds | separations.py, counterfactual benchmark | Proved + audited |
 | P16 | Synchronized suite replay removes edge-count dependence | Full active-suite shared-tape replay | suite_replay.py | Proved + audited |
-| P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; matching theorem open |
+| P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; valid but generally nonmatching for the homogeneous raw-output oracle |
 | P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; attained by P17-A in the frozen homogeneous family |
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
 | P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | PROVED + AUDITED for frozen homogeneous family; broader composite-null extension open |
@@ -207,15 +207,11 @@ rounding-cost bound.
 
 ## Promotion rule
 
-A P17 matching theorem may enter the abstract/contribution list only after:
-
-1. the homogeneous raw-contrast attainability theorem remains synchronized with
-   its proof, CI, paper-build, and scope audit gates;
-2. the independent proof audit is complete;
-3. nearest prior-art collision checks are refreshed;
-4. CI and the paper build are green at the frozen commit;
-5. code, benchmark specifications, proof ledger, manuscript, and references use
-   the same oracle and matrix definitions.
+Promotion of the scoped homogeneous P17 theorem is complete: proof audit,
+executable correspondence, adversarial tests, the 168-row exact-risk validator,
+prior-art fence, CI, paper build, and manuscript synchronization all passed.
+Any broader heterogeneous/composite-null P17 theorem must independently pass the
+same gates before entering the abstract or contribution list.
 
 
 ## P17 structural specification data
