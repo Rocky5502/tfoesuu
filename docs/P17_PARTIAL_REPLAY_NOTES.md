@@ -1,7 +1,8 @@
 # P17 — partial synchronized replay
 
-**Status: FRACTIONAL WITNESS-SCHEDULING UPPER BOUND PROVED; RAW-OUTPUT LOWER
-PROGRAM CORRECTED; MATCHING MINIMAX CHARACTERIZATION OPEN.**
+**Status: FRACTIONAL WITNESS-SCHEDULING UPPER PROVED; RAW-OUTPUT INFORMATION
+FLOOR CORRECTED; ACTIVE-VERTEX RAW-CONTRAST ATTAINABILITY CANDIDATE DERIVED FOR
+THE FROZEN HOMOGENEOUS SINGLE-ENDPOINT FAMILY; FINAL PROMOTION PENDING GATES.**
 
 ## Frozen oracle
 
@@ -129,6 +130,31 @@ The exact cases are checked in tests/test_partial_replay_lower.py and recorded
 as deterministic specification data in
 data/partial_replay_structural_cases_v1.jsonl.
 
+## Raw-contrast attainability candidate
+
+For the frozen homogeneous threshold family, every replay-eligible vertex has
+old threshold p and null-new threshold p+s. An alternative changes exactly one
+fairness-active endpoint x to p+s+d.
+
+A legal group containing x has at least one other, unchanged synchronized member.
+For a shared tape U, compare the patch deltas D_v=P1(v;U)-P0(v;U) within the
+group. Under the null they are identical pathwise. Under the alternative, a
+group containing x has a nonconstant delta vector exactly when U lies in
+(p+s,p+s+d], probability d.
+
+Thus the active-vertex LP can schedule an executable raw-output contrast test:
+if q* minimizes C_vert, take L=ceil(log(beta)/log(1-d)) and
+n_i=ceil(L q_i*). Reject on the first nonconstant within-group delta vector.
+This gives zero type-I error and pointwise type-II error at most beta in the
+frozen family, with cost
+
+  c^T n <= L C_vert + sum_{i:q_i*>0} c_i.
+
+Combined with the corrected transcript-KL lower floor, both certified sides use
+C_vert in this restricted family. The claim does **not** extend automatically
+to heterogeneous fairness-preserving nulls, where different vertices may have
+different pathwise patch deltas without violating fairness.
+
 ## Algorithmic correspondence
 
 Algorithm A — witness scheduler:
@@ -171,15 +197,11 @@ The test suite checks:
 
 ## What remains open
 
-The main mathematical question is no longer whether the obsolete edge-cover
-lower bound can be repaired. It cannot for the raw oracle. The right question is:
-
-  When is the active-vertex information floor attainable by a uniformly valid
-  fairness-regression tester, and when is the stronger edge-witness geometry
-  fundamentally necessary?
-
-A proof of equality under structural conditions, or a rigorous separation family,
-would be a stronger P17 result than the withdrawn matching-cover claim.
+The raw-contrast construction appears to attain the active-vertex geometry for
+the frozen homogeneous single-changed-endpoint family. The remaining P17
+question is broader: characterize partial replay under heterogeneous or otherwise
+composite fairness-preserving nulls, where arbitrary within-group patch-delta
+disagreement cannot be treated as a zero-type-I witness.
 
 ## Novelty fence
 
