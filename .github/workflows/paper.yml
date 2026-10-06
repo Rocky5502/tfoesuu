@@ -33,6 +33,7 @@ jobs:
             latexmk \
             texlive-latex-base \
             texlive-latex-extra \
+            texlive-pictures \
             texlive-fonts-recommended \
             texlive-science
 
