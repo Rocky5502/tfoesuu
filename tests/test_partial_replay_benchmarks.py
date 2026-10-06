@@ -7,8 +7,10 @@ from tfoesuu.partial_replay_lower import (
     active_vertex_contrast_schedule,
     minimum_fractional_active_vertex_cover,
     minimum_fractional_replay_cover,
+    raw_output_information_lower_bound,
 )
 from tfoesuu.partial_replay_benchmarks import (
+    materialize_partial_replay_spec,
     partial_replay_benchmark_v1,
     partial_replay_structural_cases_v1,
     read_partial_replay_jsonl,
@@ -98,3 +100,45 @@ def test_structural_manifest_matches_lp_implementation():
             assert edge.success
             assert edge.cost == pytest.approx(row.expected_c_edge)
             assert edge.cost / vertex.cost == pytest.approx(row.expected_ratio)
+
+
+
+def test_all_partial_replay_stress_rows_execute_theorem_geometry():
+    rows = partial_replay_benchmark_v1()
+    assert len(rows) == 168
+
+    for row in rows:
+        graph, groups, costs = materialize_partial_replay_spec(row)
+        assert groups
+        assert len(groups) == len(costs)
+        assert max(len(group) for group in groups) == row.max_group_size
+        assert all(cost == pytest.approx(row.cost_per_vertex * len(group))
+                   for group, cost in zip(groups, costs))
+
+        vertex = minimum_fractional_active_vertex_cover(graph, groups, costs)
+        edge = minimum_fractional_replay_cover(graph, groups, costs)
+        raw = raw_output_information_lower_bound(
+            graph,
+            groups,
+            costs,
+            p=row.p,
+            shared_patch=row.shared_patch,
+            d=row.d,
+            beta=row.beta,
+        )
+        contrast = active_vertex_contrast_schedule(
+            graph, groups, costs, d=row.d, beta=row.beta
+        )
+
+        assert vertex.success
+        assert edge.success
+        assert raw.success
+        assert vertex.cost <= edge.cost + 1e-9
+        assert contrast.normalized_fractional_cost == pytest.approx(vertex.cost)
+        assert raw.expected_cost_floor > 0.0
+        assert contrast.scale > 0
+        assert contrast.total_cost <= (
+            contrast.scale * vertex.cost
+            + contrast.additive_rounding_cap
+            + 1e-8
+        )
