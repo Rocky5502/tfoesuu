@@ -85,29 +85,38 @@ Then the corrected necessary raw-information floor is
 
 This is a necessary lower program, not an achievability theorem.
 
-## Two-geometry sandwich
+## Two geometries, and the homogeneous-family sharpening
 
 Every feasible edge-cover vector is feasible for the active-vertex cover, so
 
   C_vert <= C_edge.
 
-Hence the currently certified P17 bounds are
+The four-way witness scheduler remains a valid general upper construction:
 
   [kl(1-beta,beta)/K_sync] C_vert
-      <= Q*
+      <= Q*_hom
       <= L C_edge + sum_{i:a_i*>0} c_i.
 
-The left and right combinatorial objects are different. No matching equality is
-claimed.
+For the frozen homogeneous single-changed-endpoint family, the audited
+raw-contrast scheduler sharpens the upper side to
+
+  [kl(1-beta,beta)/K_sync] C_vert
+      <= Q*_hom
+      <= L C_vert + sum_{i:q_i*>0} c_i.
+
+Thus C_edge and C_vert remain genuinely different LP geometries, but C_vert is
+the necessary and achievable combinatorial geometry for the scoped homogeneous
+raw-output family. The broader heterogeneous/composite-null problem is still
+open.
 
 For fixed interior p,s,r and d -> 0,
 
   K_sync = d + d^2/(2r) + O(d^3),
   L = Theta(log(1/beta)/d).
 
-Thus both sides have first-order d^{-1} dependence for fixed confidence, while
-the remaining difficulty is the geometry/attainability gap between C_vert and
-C_edge.
+Hence the scoped lower and upper costs have the same first-order d^{-1}
+dependence governed by C_vert, up to finite-sample constants and rounding
+support cost.
 
 ## Exact structural regimes
 
@@ -170,13 +179,21 @@ Algorithm B — information-floor calculator:
 2. compute K_sync;
 3. solve the fractional active-vertex cover;
 4. multiply its optimum by kl(1-beta,beta)/K_sync;
-5. report the value only as a necessary expected-cost floor.
+5. report the value as the necessary expected-cost floor.
+
+Algorithm C — homogeneous raw-contrast scheduler:
+1. solve the same active-vertex LP for q*;
+2. set L=ceil(log(beta)/log(1-d)) and n_i=ceil(L q_i*);
+3. replay each group S_i exactly n_i times with fresh shared tapes;
+4. compute D_v=P1(v;U)-P0(v;U) within the group;
+5. reject on the first nonconstant within-group D vector.
 
 ## Code correspondence
 
 - minimum_fractional_replay_cover -> C_edge;
 - fractional_replay_schedule -> Algorithm A;
 - raw_output_information_lower_bound -> Algorithm B / transcript-KL floor;
+- active_vertex_contrast_schedule + raw_group_contrast_witness -> Algorithm C;
 - fractional_group_replay_lower_bound -> withdrawn and fails closed;
 - search_partial_replay_gap.py -> witness-scheduling gap search only.
 
