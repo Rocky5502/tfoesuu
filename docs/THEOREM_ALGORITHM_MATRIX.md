@@ -38,7 +38,8 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; matching theorem open |
 | P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; do not claim attainability |
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
-| P17-M | Achievable/minimax complexity between the information and witness geometries | Open | none | Open |
+| P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | Candidate derived/tested; final promotion pending CI/paper/audit gates |
+| P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open | none | Open |
 
 ## P17 matrix package
 
@@ -193,8 +194,8 @@ the manifest schema on every push.
 
 A P17 matching theorem may enter the abstract/contribution list only after:
 
-1. attainability of the information floor is proved, or a rigorous separation is
-   proved and stated instead;
+1. the homogeneous raw-contrast attainability candidate passes its proof, CI,
+   paper-build, and scope audit gates;
 2. the independent proof audit is complete;
 3. nearest prior-art collision checks are refreshed;
 4. CI and the paper build are green at the frozen commit;
@@ -210,3 +211,26 @@ grid.  It records the exact expected LP values for coherent equality, the
 K_n pair-group finite-gap family for n=3,...,8, and the
 finite-information/infeasible-witness path case.  These rows are mathematical
 specifications, not empirical measurements.
+
+## Algorithm C — active-vertex raw-contrast scheduler
+
+Scope: frozen homogeneous threshold family only. Every replay-eligible vertex
+has old threshold p and null-new threshold p+s; one active endpoint may instead
+have p+s+d.
+
+1. Solve C_vert=min c^T q subject to Bq>=1 and q>=0.
+2. Set L=ceil(log(beta)/log(1-d)).
+3. Set n_i=ceil(L q_i*).
+4. Query each legal group S_i exactly n_i times with a fresh shared tape per query.
+5. In each query compute D_v=P1(v;U)-P0(v;U) for every group member.
+6. Reject if the within-group D_v vector is nonconstant; otherwise continue.
+
+Under the homogeneous null every D_v is identical pathwise, so type-I error is
+zero. Under a single-changed-endpoint alternative x, every query containing x
+produces a contrast with probability d. Active-vertex exposure is at least L,
+so the pointwise miss probability is at most beta. The declared cost is at most
+
+  L C_vert + sum_{i:q_i*>0} c_i.
+
+This candidate matches the lower program's combinatorial geometry in the frozen
+family. It is not a theorem for arbitrary heterogeneous fairness-preserving nulls.
