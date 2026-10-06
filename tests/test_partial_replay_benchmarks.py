@@ -1,5 +1,12 @@
 from pathlib import Path
 
+import pytest
+
+from tfoesuu.graphs import clique_graph, matching_graph, path_graph
+from tfoesuu.partial_replay_lower import (
+    minimum_fractional_active_vertex_cover,
+    minimum_fractional_replay_cover,
+)
 from tfoesuu.partial_replay_benchmarks import (
     partial_replay_benchmark_v1,
     partial_replay_structural_cases_v1,
@@ -53,3 +60,34 @@ def test_partial_replay_structural_cases_roundtrip(tmp_path: Path):
         "data/partial_replay_structural_cases_v1.jsonl"
     )
     assert committed == rows
+
+
+
+def test_structural_manifest_matches_lp_implementation():
+    for row in partial_replay_structural_cases_v1():
+        if row.graph_family == "clique":
+            graph = clique_graph(row.n)
+            groups = list(graph.edges)
+        elif row.graph_family == "matching":
+            graph = matching_graph(row.n // 2)
+            groups = list(graph.edges)
+        elif row.graph_family == "path" and row.group_rule == "reference_pairs_02_12":
+            graph = path_graph(row.n)
+            groups = [(0, 2), (1, 2)]
+        else:
+            raise AssertionError(f"unsupported structural case: {row}")
+
+        costs = [1.0] * len(groups)
+        vertex = minimum_fractional_active_vertex_cover(graph, groups, costs)
+        edge = minimum_fractional_replay_cover(graph, groups, costs)
+
+        assert vertex.success
+        assert vertex.cost == pytest.approx(row.expected_c_vert)
+
+        if row.expected_c_edge is None:
+            assert not edge.success
+            assert edge.cost == float("inf")
+        else:
+            assert edge.success
+            assert edge.cost == pytest.approx(row.expected_c_edge)
+            assert edge.cost / vertex.cost == pytest.approx(row.expected_ratio)
