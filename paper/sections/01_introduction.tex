@@ -89,6 +89,22 @@ the number of active inputs rather than the number of fairness comparisons.
 This stronger oracle is stated explicitly: it is not assumed available to every
 software system.
 
+Between edgewise replay and full-suite replay lies a partial-replay regime in
+which only declared groups of inputs can share a tape.  Here two combinatorial
+objects diverge.  A four-way edge witness requires a replay group containing both
+fairness endpoints, whereas raw transcript information requires only the changed
+active endpoint plus a synchronized reference.  We show that the corresponding
+edge-cover geometry can exceed the active-vertex cover $C_{\rm vert}$ by an
+unbounded factor and can even be infeasible.  More importantly, for the frozen
+homogeneous single-changed-endpoint Bernoulli family, the raw information is
+operational: scheduling groups by $C_{\rm vert}$ and rejecting on a nonconstant
+within-group vector of old--new patch deltas yields zero type-I error and
+$O(C_{\rm vert}d^{-1}\log(1/\delta))$ fixed-design cost, while transcript
+change of measure gives the matching $C_{\rm vert}$ combinatorial lower
+geometry.  This theorem is deliberately not extended to heterogeneous
+fairness-preserving nulls, where unrelated synchronized references can undergo
+different benign patch effects.
+
 The paper is deliberately theory-first and model-free.  No pretrained model,
 open-source model, proprietary API, or LLM is an experimental subject.  GPU
 computation is used only to falsify conjectures, validate implementations, and
