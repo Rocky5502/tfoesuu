@@ -298,3 +298,23 @@ def test_raw_lower_and_contrast_upper_share_active_vertex_geometry():
     positive_kl = raw.information_matrix[raw.information_matrix > 0.0][0]
     lower_scale = binary_decision_kl(0.05) / positive_kl
     assert raw.expected_cost_floor == pytest.approx(lower_scale * cover.cost)
+
+
+def test_raw_contrast_is_not_valid_for_heterogeneous_composite_null():
+    """Scope guard: heterogeneous fair nulls can trigger the raw contrast.
+
+    Both new-version Bernoulli means are within tau=0.20 of one another, so the
+    state is fairness-preserving for the single edge.  Nevertheless unequal
+    old-to-new patch shifts make the synchronized delta vector nonconstant on a
+    positive-measure tape interval.  This is a constructive false-positive
+    witness against extending P17-A beyond its frozen homogeneous null.
+    """
+    tau = 0.20
+    old_thresholds = (0.20, 0.40)
+    new_thresholds = (0.30, 0.45)
+    assert abs(new_thresholds[0] - new_thresholds[1]) <= tau
+
+    u = 0.25
+    old = [int(u <= t) for t in old_thresholds]
+    new = [int(u <= t) for t in new_thresholds]
+    assert raw_group_contrast_witness(old, new)
