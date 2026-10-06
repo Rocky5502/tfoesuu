@@ -259,9 +259,13 @@ floor and the raw-contrast construction use the **same combinatorial geometry**:
       <= L C_vert + sum_{i:q_i*>0} c_i.
 
 This does not prove an exact finite-sample constant, and it does not extend to
-an arbitrary heterogeneous fairness-preserving null. Under such a broader null,
-within-group patch deltas may differ without any fairness violation, so the
-zero-type-I argument can fail.
+an arbitrary heterogeneous fairness-preserving null. The failure is
+constructive: with tau=0.20, old thresholds (0.20,0.40), new thresholds
+(0.30,0.45), and shared tape U=0.25, the new-version fairness gap is only 0.15
+but the patch-delta vector equals (1,0), so the homogeneous raw-contrast
+predicate rejects. The frozen scope-falsification manifest records this case.
+Thus within-group patch deltas may differ without any fairness violation, and
+the zero-type-I argument genuinely fails beyond the stated scope.
 
 The executable theorem correspondence is active_vertex_contrast_schedule; the
 observation predicate is raw_group_contrast_witness. Deterministic tests check

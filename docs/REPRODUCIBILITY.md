@@ -18,6 +18,7 @@ python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.js
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
+python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
 ```
 
 The generator is deterministic. The manifest contains parameter specifications rather than giant sampled arrays.
@@ -91,6 +92,16 @@ not empirical outcomes: one coherent-equality case, six K_n pair-group cases
 case. Regenerate it with `scripts/generate_partial_replay_structural_cases.py`.
 The test suite requires the committed manifest to equal the deterministic
 in-code specification exactly.
+
+The separate scope-falsification manifest
+`data/partial_replay_scope_cases_v1.jsonl` records deterministic counterexamples
+to invalid theorem generalizations. Its v1 case fixes a heterogeneous
+fairness-preserving null with tau=0.20, old Bernoulli thresholds (0.20,0.40),
+new thresholds (0.30,0.45), and shared tape u=0.25. The new-version gap is
+0.15 <= tau, yet the patch-delta vector is nonconstant and the homogeneous
+raw-contrast predicate fires. Regenerate it with
+`scripts/generate_partial_replay_scope_cases.py`; it is specification data,
+not an empirical false-positive estimate.
 
 
 ## Whole-submission checksum manifest

@@ -139,6 +139,12 @@ The exact cases are checked in tests/test_partial_replay_lower.py and recorded
 as deterministic specification data in
 data/partial_replay_structural_cases_v1.jsonl.
 
+The separate deterministic scope manifest
+data/partial_replay_scope_cases_v1.jsonl records the explicit heterogeneous
+fair-null counterexample used to prevent Algorithm C from being reported
+outside its homogeneous assumptions. Scope cases are logical falsification
+witnesses, not empirical error-rate measurements.
+
 ## Audited raw-contrast attainability
 
 For the frozen homogeneous threshold family, every replay-eligible vertex has
@@ -161,8 +167,12 @@ frozen family, with cost
 
 Combined with the corrected transcript-KL lower floor, both certified sides use
 C_vert in this restricted family. The claim does **not** extend automatically
-to heterogeneous fairness-preserving nulls, where different vertices may have
-different pathwise patch deltas without violating fairness.
+to heterogeneous fairness-preserving nulls. A frozen counterexample sets
+tau=0.20, old thresholds (0.20,0.40), new thresholds (0.30,0.45), and shared
+tape U=0.25. The new gap 0.15 is fair, but the patch deltas are (1,0), so the
+homogeneous raw-contrast predicate fires. The broader theorem therefore needs
+additional controls or a different decision geometry rather than a relabeling
+of Algorithm C.
 
 ## Algorithmic correspondence
 

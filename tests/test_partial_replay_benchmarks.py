@@ -7,15 +7,19 @@ from tfoesuu.partial_replay_lower import (
     active_vertex_contrast_schedule,
     minimum_fractional_active_vertex_cover,
     minimum_fractional_replay_cover,
+    raw_group_contrast_witness,
     raw_output_information_lower_bound,
 )
 from tfoesuu.partial_replay_benchmarks import (
     materialize_partial_replay_spec,
     partial_replay_benchmark_v1,
+    partial_replay_scope_cases_v1,
     partial_replay_structural_cases_v1,
     read_partial_replay_jsonl,
+    read_partial_replay_scope_jsonl,
     read_partial_replay_structural_jsonl,
     write_partial_replay_jsonl,
+    write_partial_replay_scope_jsonl,
     write_partial_replay_structural_jsonl,
 )
 
@@ -101,6 +105,37 @@ def test_structural_manifest_matches_lp_implementation():
             assert edge.cost == pytest.approx(row.expected_c_edge)
             assert edge.cost / vertex.cost == pytest.approx(row.expected_ratio)
 
+
+
+def test_partial_replay_scope_counterexample_manifest(tmp_path: Path):
+    rows = partial_replay_scope_cases_v1()
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.regime == "heterogeneous-null-false-positive"
+
+    fair_null = abs(row.new_threshold_0 - row.new_threshold_1) <= row.fairness_tau
+    assert fair_null is row.expected_fair_null
+    assert fair_null
+
+    old = [
+        int(row.tape_u <= row.old_threshold_0),
+        int(row.tape_u <= row.old_threshold_1),
+    ]
+    new = [
+        int(row.tape_u <= row.new_threshold_0),
+        int(row.tape_u <= row.new_threshold_1),
+    ]
+    contrast = raw_group_contrast_witness(old, new)
+    assert contrast is row.expected_raw_contrast
+    assert contrast
+
+    out = tmp_path / "partial_replay_scope.jsonl"
+    write_partial_replay_scope_jsonl(rows, out)
+    assert read_partial_replay_scope_jsonl(out) == rows
+    committed = read_partial_replay_scope_jsonl(
+        "data/partial_replay_scope_cases_v1.jsonl"
+    )
+    assert committed == rows
 
 
 def test_all_partial_replay_stress_rows_execute_theorem_geometry():

@@ -10,6 +10,7 @@
 - Added whole-submission checksum/freeze tooling and publication-run provenance guidance.
 - Promoted the audited P17 result into the STOC abstract/introduction and strengthened the CRN prior-art fence.
 - Synchronized the STOC 2027 checklist to the live CFP, including generative-AI and reviewer-LLM consent requirements.
+- Added a deterministic heterogeneous fair-null P17 scope counterexample and synchronized it across tests, specification data, proof audits, roadmap, and manuscript.
 
 ## 0.1.0 — 2026-10-04
 

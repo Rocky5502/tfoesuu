@@ -39,7 +39,8 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; attained by P17-A in the frozen homogeneous family |
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
 | P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | PROVED + AUDITED for frozen homogeneous family; broader composite-null extension open |
-| P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open | none | Open |
+| P17-S | Scope counterexample for naive heterogeneous raw contrast | Heterogeneous fair-null deterministic witness | tests + partial_replay_scope_cases_v1.jsonl | Counterexample proved + tested; rules out silent generalization of P17-A |
+| P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open: needs controls/baseline adjustment/new geometry | none yet | Open |
 
 ## P17 matrix package
 
