@@ -39,6 +39,8 @@ def main() -> None:
     family_counts: dict[str, int] = {}
     max_groups = 0
     max_geometry_ratio = 0.0
+    max_worst_case_miss = 0.0
+    max_miss_over_beta = 0.0
 
     for row in rows:
         graph, groups, costs = materialize_partial_replay_spec(row)
@@ -81,9 +83,29 @@ def main() -> None:
         if contrast.total_cost > upper_cap:
             raise RuntimeError(f"{row.benchmark_id}: contrast rounding bound failed")
 
+        row_worst_miss = 0.0
+        for x in contrast.active_vertices:
+            exposure = sum(
+                int(contrast.counts[i])
+                for i, group in enumerate(groups)
+                if x in group
+            )
+            if exposure < contrast.scale:
+                raise RuntimeError(
+                    f"{row.benchmark_id}: endpoint {x} exposure below target scale"
+                )
+            miss = (1.0 - row.d) ** exposure
+            row_worst_miss = max(row_worst_miss, miss)
+            if miss > row.beta + 1e-12:
+                raise RuntimeError(
+                    f"{row.benchmark_id}: endpoint {x} exact miss {miss} exceeds beta {row.beta}"
+                )
+
         family_counts[row.graph_family] = family_counts.get(row.graph_family, 0) + 1
         max_groups = max(max_groups, len(groups))
         max_geometry_ratio = max(max_geometry_ratio, edge.cost / vertex.cost)
+        max_worst_case_miss = max(max_worst_case_miss, row_worst_miss)
+        max_miss_over_beta = max(max_miss_over_beta, row_worst_miss / row.beta)
 
     print(
         json.dumps(
@@ -93,6 +115,8 @@ def main() -> None:
                 "families": dict(sorted(family_counts.items())),
                 "max_groups_per_row": max_groups,
                 "max_c_edge_over_c_vert": max_geometry_ratio,
+                "max_worst_case_exact_miss": max_worst_case_miss,
+                "max_exact_miss_over_beta": max_miss_over_beta,
                 "checks": [
                     "materialization",
                     "C_vert_feasible",
@@ -102,6 +126,8 @@ def main() -> None:
                     "raw_contrast_uses_C_vert",
                     "positive_information_floor",
                     "contrast_rounding_bound",
+                    "active_vertex_exposure_at_least_scale",
+                    "exact_worst_case_miss_le_beta",
                 ],
                 "empirical_results": False,
             },
