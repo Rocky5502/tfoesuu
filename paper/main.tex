@@ -68,8 +68,16 @@ versions at every fairness-active input.  In the corresponding homogeneous
 Bernoulli family, all fairness edges are tested simultaneously: round complexity
 is $\Theta(d^{-1}\log(1/\delta))$ and concrete execution complexity is
 $\Theta(n_+d^{-1}\log(1/\delta))$, independent of the number of fairness edges.
-Thus version-aware replay can change both the small-effect exponent and the graph
-scaling of fairness-regression testing.
+For intermediate \emph{partial replay}, where only declared input groups may
+share randomness, we identify two fractional-cover geometries.  Four-way
+edge-witness scheduling can be arbitrarily more expensive, or even infeasible,
+while the raw-output information geometry is an active-vertex cover
+$C_{\rm vert}$.  In the frozen homogeneous single-changed-endpoint family, a
+within-group patch-delta contrast test attains this same $C_{\rm vert}$ geometry,
+giving matching lower/upper combinatorial dependence and
+$\Theta(d^{-1}\log(1/\delta))$ fixed-confidence order up to constants and
+rounding.  Thus version-aware replay can change both the small-effect exponent
+and the graph geometry of fairness-regression testing.
 
 These results establish a tractable foundation for the broader objective of tight
 query complexity for fairness regression with retained certificates, heterogeneous
@@ -91,10 +99,11 @@ uncertainty, imperfect change-impact information, and multiple software versions
 
 \section*{AI Methodology}
 ChatGPT (OpenAI) was used for substantive research ideation, literature triage,
-proof exploration, code drafting, and early manuscript structuring.  The human
+proof exploration, code drafting, and manuscript drafting and structuring.  The human
 authors are responsible for independently verifying every theorem, proof,
 originality claim, citation, implementation, and final statement.  No generative
-AI model, pretrained model, open-source model, or model API is part of the
-research methodology or experimental system studied in this paper.
+AI model, pretrained model, open-source model, or model API is a study subject,
+research oracle or data source, or component of the experimental system analyzed
+in this paper.
 
 \end{document}
