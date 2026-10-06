@@ -35,6 +35,9 @@ pytest -q
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
+python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
+python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
+python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
 python experiments/gpu_sweep.py --devices 0 --trials 10000 --benchmark data/benchmark_v1.jsonl --output results/smoke_gaussian.jsonl
 python experiments/gpu_replay_sweep.py --devices 0 --trials 10000 --benchmark data/replay_benchmark_v1.jsonl --output results/smoke_replay.jsonl
 ```
@@ -62,6 +65,20 @@ python experiments/gpu_counterfactual_sweep.py --devices 0,1 --trials 1000000 --
 ```
 
 Each launcher writes one shard per GPU and merges them deterministically. Completed benchmark IDs are skipped on restart, so interrupted runs resume rather than overwrite completed work.
+
+### P17 partial replay does not need Monte Carlo for the scoped theorem
+
+For the frozen homogeneous single-changed-endpoint P17 family, the rounded
+raw-contrast schedule has an **exact** endpoint-wise miss probability:
+`(1-d)^N_x`.  The 168-row CPU validator computes this quantity directly for
+every active endpoint and verifies it is at most `beta`.  Do not spend GPU
+budget estimating this exact probability by Monte Carlo merely to reproduce the
+theorem.
+
+GPU work related to P17 should instead target questions that are genuinely
+unresolved: heterogeneous/composite fairness-preserving nulls, candidate
+contrast-safe control structures, and counterexamples to proposed broader
+decision geometries.
 
 ## 5. Month-scale policy
 
@@ -100,13 +117,15 @@ High-value computation:
 - Bernoulli small-patch regimes where the predicted linear-vs-quadratic exponents fail;
 - finite-`d` regimes where asymptotic constants are misleading;
 - numerical counterexamples to any proposed simplification of the dual;
-- candidate graph-level Bernoulli constructions for the next theorem.
+- candidate graph-level Bernoulli constructions for the next theorem;
+- heterogeneous/composite-null P17 instances that break naive raw-contrast extensions or suggest a sharper decision geometry.
 
 Low-value computation:
 
 - decorative large sweeps with no theorem question;
 - training or running AI models;
-- repeating already-settled curves only to obtain more points.
+- repeating already-settled curves only to obtain more points;
+- Monte Carlo estimation of the scoped homogeneous P17 miss probability, which is available exactly from the rounded schedule.
 
 ## 7. Publication gate
 
