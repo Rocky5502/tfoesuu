@@ -112,14 +112,23 @@ Every edge-cover feasible vector is active-vertex-cover feasible, so
 
   C_vert <= C_edge.
 
-The currently certified partial-replay picture is therefore
+The edge-witness construction remains valid and gives
 
   [kl(1-beta,beta)/K_sync] C_vert
-      <= Q*
+      <= Q*_hom
       <= L C_edge + rounding overhead.
 
-The lower side is necessary information; the upper side is an executable
-witness schedule. No minimax equality is claimed.
+For the frozen homogeneous single-changed-endpoint family, the audited
+raw-contrast construction sharpens the upper side to the same active-vertex
+geometry:
+
+  [kl(1-beta,beta)/K_sync] C_vert
+      <= Q*_hom
+      <= L C_vert + raw-contrast rounding support cost.
+
+This is a matching combinatorial/minimax-order characterization for the scoped
+homogeneous family, not an exact finite-sample equality and not a theorem for
+heterogeneous/composite fairness-preserving nulls.
 
 The LP geometries themselves are now sharply separated.  Under coherent endpoint
 group signatures their duplicate constraint rows coincide and C_vert=C_edge. For
@@ -232,5 +241,6 @@ so the pointwise miss probability is at most beta. The declared cost is at most
 
   L C_vert + sum_{i:q_i*>0} c_i.
 
-This candidate matches the lower program's combinatorial geometry in the frozen
-family. It is not a theorem for arbitrary heterogeneous fairness-preserving nulls.
+This audited construction matches the lower program's combinatorial geometry in
+the frozen family. It is not a theorem for arbitrary heterogeneous
+fairness-preserving nulls.
