@@ -10,6 +10,7 @@ from tfoesuu.partial_replay_lower import (
     fractional_replay_schedule,
     minimum_fractional_active_vertex_cover,
     minimum_fractional_replay_cover,
+    raw_group_contrast_witness,
     raw_output_information_lower_bound,
 )
 
@@ -241,3 +242,42 @@ def test_active_vertex_contrast_schedule_rejects_unobservable_active_vertex():
         active_vertex_contrast_schedule(
             g, [(0, 2)], [1.0], d=0.05, beta=0.05
         )
+
+
+
+def test_raw_group_contrast_witness_matches_frozen_threshold_intervals():
+    p, s, d = 0.20, 0.10, 0.05
+
+    def bit(threshold, u):
+        return int(u <= threshold)
+
+    # Two synchronized vertices. Vertex 0 is the uniquely changed endpoint.
+    for u in (0.10, 0.25, 0.325, 0.50):
+        old = [bit(p, u), bit(p, u)]
+        null_new = [bit(p + s, u), bit(p + s, u)]
+        alt_new = [bit(p + s + d, u), bit(p + s, u)]
+
+        assert not raw_group_contrast_witness(old, null_new)
+        assert raw_group_contrast_witness(old, alt_new) == (p + s < u <= p + s + d)
+
+
+def test_raw_group_contrast_witness_uses_unrelated_reference():
+    # This is the path-3 structural case: group {0,2} does not contain fairness
+    # edge {0,1}, yet vertex 2 is a valid synchronized control in the frozen
+    # homogeneous single-changed-endpoint family.
+    p, s, d = 0.20, 0.10, 0.05
+    u = 0.325
+
+    def bit(threshold):
+        return int(u <= threshold)
+
+    old = [bit(p), bit(p)]
+    new = [bit(p + s + d), bit(p + s)]
+    assert raw_group_contrast_witness(old, new)
+
+
+def test_raw_group_contrast_witness_validates_group_shape():
+    with pytest.raises(ValueError, match="at least two"):
+        raw_group_contrast_witness([0], [1])
+    with pytest.raises(ValueError, match="equal-length vectors"):
+        raw_group_contrast_witness([0, 0], [1])
