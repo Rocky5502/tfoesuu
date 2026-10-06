@@ -116,4 +116,6 @@ Do not treat a GPU curve as evidence of a theorem. A publication figure may illu
 2. the proof is audited;
 3. the exact repository commit is recorded;
 4. the sweep manifest is frozen;
-5. reruns on both GPUs agree within Monte Carlo uncertainty.
+5. reruns on both GPUs agree within Monte Carlo uncertainty;
+6. each publication result has a `record_publication_run.py` provenance record;
+7. the final bundle is hashed with `scripts/freeze_submission_artifacts.py --require-clean`, attaching the compiled PDF and real result/provenance files with `--extra-file`.
