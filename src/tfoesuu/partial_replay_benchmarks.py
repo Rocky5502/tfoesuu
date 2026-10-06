@@ -92,6 +92,7 @@ class PartialReplayStructuralCase:
     n: int
     group_rule: str
     expected_c_vert: float
+    expected_raw_contrast_cost: float
     expected_c_edge: float | None
     expected_ratio: float | None
 
@@ -111,6 +112,7 @@ def partial_replay_structural_cases_v1() -> list[PartialReplayStructuralCase]:
             n=4,
             group_rule="fairness_edges",
             expected_c_vert=2.0,
+            expected_raw_contrast_cost=2.0,
             expected_c_edge=2.0,
             expected_ratio=1.0,
         )
@@ -124,6 +126,7 @@ def partial_replay_structural_cases_v1() -> list[PartialReplayStructuralCase]:
                 n=n,
                 group_rule="fairness_edges",
                 expected_c_vert=n / 2.0,
+                expected_raw_contrast_cost=n / 2.0,
                 expected_c_edge=n * (n - 1) / 2.0,
                 expected_ratio=n - 1.0,
             )
@@ -136,6 +139,7 @@ def partial_replay_structural_cases_v1() -> list[PartialReplayStructuralCase]:
             n=3,
             group_rule="reference_pairs_02_12",
             expected_c_vert=2.0,
+            expected_raw_contrast_cost=2.0,
             expected_c_edge=None,
             expected_ratio=None,
         )
