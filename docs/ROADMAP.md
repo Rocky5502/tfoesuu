@@ -17,7 +17,7 @@ See docs/PROOF_STATUS.md and docs/PROOF_AUDIT_P17_FRACTIONAL_REPLAY.md for exact
 
 ## Immediate theorem queue
 
-### A. Partial synchronized replay: close the two-geometry gap
+### A. Partial synchronized replay: extend beyond the homogeneous theorem
 The intermediate access model is now frozen. Legal replay groups have size at least two and may have heterogeneous costs. The proved fixed-design upper construction is governed by the edge-by-group fractional cover
 
   C_edge = min c^T a  subject to A a >= 1, a >= 0,
