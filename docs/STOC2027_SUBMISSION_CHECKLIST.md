@@ -61,6 +61,7 @@ Before submission:
 ## Artifact/reproducibility gate
 
 - [ ] Freeze submission git SHA.
+- [ ] Generate the whole-submission checksum manifest with `scripts/freeze_submission_artifacts.py --require-clean`.
 - [ ] Freeze benchmark manifests and SHA-256 hashes, including the 168-row P17 stress grid and the separate 8-row P17 structural-case manifest.
 - [ ] Run CPU CI from a clean checkout.
 - [ ] Run staged GPU publication sweeps only on frozen theorem configurations.
