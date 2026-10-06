@@ -28,9 +28,10 @@ Current high-value results/targets:
 4. **proved:** synchronized suite replay removes explicit edge-count dependence in the audited homogeneous family;
 5. **proved upper / necessary lower program:** partial synchronized replay separates an edge-by-group witness cover C_edge from an active-vertex/group information cover C_vert, with C_vert <= C_edge;
 6. **proved LP-geometry structure:** coherent group signatures give equality, K_n pair groups give C_edge/C_vert=n-1, and a path/reference construction gives finite C_vert with infeasible C_edge; these are not minimax statements;
-7. **open:** characterize when the P17 active-vertex information floor is attainable, or identify the decision-theoretic geometry governing achievable cost;
-8. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
-9. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
-10. **open:** amortized complexity across multiple software versions.
+7. **candidate pending final gates:** a within-group raw patch-delta contrast schedule attains the C_vert geometry in the frozen homogeneous single-changed-endpoint family; CRN/multiple-comparison techniques themselves are established prior art;
+8. **open:** characterize partial replay under heterogeneous/composite fairness-preserving nulls, where arbitrary patch-delta disagreement is not a valid zero-type-I witness;
+9. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
+10. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
+11. **open:** amortized complexity across multiple software versions.
 
 A reviewer should be able to remove every generic ingredient above and still identify a theorem whose statement fundamentally depends on **software evolution and version-aware access**.
