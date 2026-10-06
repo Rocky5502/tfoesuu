@@ -198,7 +198,7 @@ C_edge <= alpha C_vert over the frozen P17 oracle class.  This is a theorem
 about the two LP geometries only.  It does not prove a testing-complexity or
 minimax separation, and it does not close the attainability question.
 
-## 7b. Active-vertex raw-contrast attainability candidate
+## 7b. Active-vertex raw-contrast attainability theorem
 
 The raw-output oracle exposes more than four-way fairness-edge witnesses. In
 the **frozen homogeneous threshold family**, let every vertex eligible for a
@@ -263,11 +263,11 @@ an arbitrary heterogeneous fairness-preserving null. Under such a broader null,
 within-group patch deltas may differ without any fairness violation, so the
 zero-type-I argument can fail.
 
-The executable candidate is active_vertex_contrast_schedule; the observation
-predicate is raw_group_contrast_witness. Deterministic tests check active
-vertex exposure, the no-joint-edge path case, and the four threshold intervals
-of the Bernoulli construction. Promotion remains gated on full CI, real LaTeX
-build, and a refreshed proof/status synchronization pass.
+The executable theorem correspondence is active_vertex_contrast_schedule; the
+observation predicate is raw_group_contrast_witness. Deterministic tests check
+active-vertex exposure, the no-joint-edge path case, and the threshold intervals
+of the Bernoulli construction. Full CI, bibliography/manuscript checks, and the
+real LaTeX build passed before promotion.
 
 ## 8. Small-d scaling
 
@@ -302,7 +302,7 @@ The repository mapping is:
 
 ## 10. Promotion gates
 
-Before P17 can become a matching minimax theorem, all of the following must hold:
+For any extension beyond the frozen homogeneous theorem, all of the following must hold:
 
 1. complete CI and paper build are green;
 2. the edge and active-vertex matrix derivations are independently checked;
