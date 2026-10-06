@@ -183,6 +183,7 @@ Input: H, legal groups G, costs c, p, shared patch s, effect d, confidence beta.
 | Witness feasibility confused with information feasibility | Path-3 reference fixture verifies finite C_vert with infeasible C_edge |
 | Equality condition regression | Group-coherent matching fixture verifies C_vert=C_edge |
 | Fractional schedule rounding bug | Every edge receives at least L integer witness opportunities |
+| Full 168-row stress-manifest drift | Every parameter row materializes and passes the LP/information/raw-contrast/rounding validator |
 
 ## Specification-data correspondence
 
@@ -197,8 +198,12 @@ deterministic specification rows spanning:
 - immutable row seeds.
 
 These rows are theorem-falsification specifications, not empirical findings.
-The generator is scripts/generate_partial_replay_benchmark.py and CI regenerates
-the manifest schema on every push.
+The generator is scripts/generate_partial_replay_benchmark.py. CI both regenerates
+the manifest and executes every one of its 168 rows through
+experiments/validate_partial_replay_manifest.py: canonical graph/group/cost
+materialization, C_vert and C_edge feasibility, C_vert <= C_edge, raw-information
+floor feasibility, C_vert raw-contrast correspondence, and the deterministic
+rounding-cost bound.
 
 ## Promotion rule
 

@@ -63,14 +63,17 @@ whose provenance records show a clean source tree and the intended frozen commit
 ## P17 partial-replay theorem checks
 
 The P17 manifest is deterministic specification data. It spans graph family,
-legal replay-group size, cost scale, and small differential effects. It is used
-to stress the two incidence geometries without treating generated LP values as
-empirical evidence.
+legal replay-group size, cost scale, and small differential effects. Every one of
+its 168 rows is now materialized into a canonical graph, all legal groups up to
+the row's size cap, and per-group costs. The validator executes both LP
+geometries, the raw-information floor, and the homogeneous raw-contrast schedule
+for every row. These are deterministic theorem checks, not empirical evidence.
 
 Use:
 
 ```bash
 python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
+python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
 pytest -q tests/test_partial_replay_lower.py tests/test_partial_replay_benchmarks.py
 ```
 

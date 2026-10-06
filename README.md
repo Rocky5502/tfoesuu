@@ -131,6 +131,7 @@ python experiments/run_location_replay.py --candidates 64 --p 0.5 --d 0.01 --tri
 python experiments/run_allocator_subject.py --contexts 64 --changed-context 17 --delta 0.01 --trials 100000
 python experiments/run_counterfactual_replay.py --p 0.35 --shared-patch 0.20 --d 0.01 --trials 100000
 python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
+python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
 ```
 
 ## Two local NVIDIA GPUs

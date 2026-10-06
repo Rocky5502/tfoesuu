@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import itertools
 import json
 from pathlib import Path
 from typing import Iterable
+
+from .graphs import GraphSpec, clique_graph, matching_graph, path_graph
 
 
 @dataclass(frozen=True)
@@ -58,6 +61,44 @@ def partial_replay_benchmark_v1() -> list[PartialReplayBenchmarkSpec]:
                         )
                     )
     return rows
+
+
+def materialize_partial_replay_spec(
+    spec: PartialReplayBenchmarkSpec,
+) -> tuple[GraphSpec, tuple[tuple[int, ...], ...], tuple[float, ...]]:
+    """Materialize one frozen P17 stress specification.
+
+    The v1 manifest semantics are:
+      * graph_family selects the canonical graph constructor;
+      * every vertex subset of size 2..max_group_size is a legal replay group;
+      * one group query costs cost_per_vertex times the group cardinality.
+
+    The seed belongs to downstream stochastic simulations; materialization of the
+    graph/group/cost geometry itself is deterministic.
+    """
+    if spec.graph_family == "clique":
+        graph = clique_graph(spec.n)
+    elif spec.graph_family == "path":
+        graph = path_graph(spec.n)
+    elif spec.graph_family == "matching":
+        if spec.n % 2:
+            raise ValueError("matching benchmark n must be even")
+        graph = matching_graph(spec.n // 2)
+    else:
+        raise ValueError(f"unsupported partial-replay graph family: {spec.graph_family}")
+
+    if not (2 <= spec.max_group_size <= spec.n):
+        raise ValueError("max_group_size must lie in [2,n]")
+    if not (spec.cost_per_vertex > 0.0):
+        raise ValueError("cost_per_vertex must be positive")
+
+    groups = tuple(
+        group
+        for size in range(2, spec.max_group_size + 1)
+        for group in itertools.combinations(range(spec.n), size)
+    )
+    costs = tuple(spec.cost_per_vertex * len(group) for group in groups)
+    return graph, groups, costs
 
 
 def write_partial_replay_jsonl(
