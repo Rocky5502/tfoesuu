@@ -120,7 +120,7 @@ heterogeneous/composite fairness-preserving nulls. That extension remains open.
 ## 7. Prior-art fence
 
 Common random numbers, multiple-system simulation comparison, control variates,
-and multiple-comparison procedures are established. The candidate does not claim
+and multiple-comparison procedures are established. The theorem does not claim
 those techniques. The research claim is the active-vertex fractional-cover query
 geometry induced by version-aware fairness-regression access in the frozen family.
 
