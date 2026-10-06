@@ -42,7 +42,7 @@ The live source of truth is [docs/PROOF_STATUS.md](docs/PROOF_STATUS.md). Curren
 - sound patch-effect envelopes can prune already-safe fairness edges with **zero new executions**, leaving only a residual graph for stochastic testing;
 - four-way counterfactual replay cancels a nonzero fairness-neutral common patch and changes the differential-gap exponent from quadratic to linear;
 - synchronized suite replay tests all fairness edges from one shared-seed suite execution, giving `Theta(n_active log(1/delta)/d)` concrete-execution scaling in the audited Bernoulli family, independent of edge count.
-- partial synchronized replay has a corrected two-matrix formulation. The edge-by-group LP gives a four-way-witness schedule, while the raw transcript-information floor reduces to an active-vertex/group cover. Exact structural fixtures separate those LPs. A gated raw-output contrast construction now uses the same active-vertex C_vert geometry for the frozen homogeneous single-changed-endpoint family, including instances where the edge-witness LP is infeasible; broader heterogeneous/composite-null partial replay remains open.
+- partial synchronized replay has a corrected two-matrix formulation. The edge-by-group LP gives a four-way-witness schedule, while the raw transcript-information floor reduces to an active-vertex/group cover. Exact structural fixtures separate those LPs. An audited raw-output contrast theorem attains the same active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family, including instances where the edge-witness LP is infeasible; broader heterogeneous/composite-null partial replay remains open.
 
 Claims enter the abstract only after proof/audit gates.
 
