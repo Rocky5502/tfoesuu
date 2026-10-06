@@ -37,7 +37,8 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P16 | Synchronized suite replay removes edge-count dependence | Full active-suite shared-tape replay | suite_replay.py | Proved + audited |
 | P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; matching theorem open |
 | P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; do not claim attainability |
-| P17-M | Equality or separation between information and witness geometries | Open | none | Open |
+| P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
+| P17-M | Achievable/minimax complexity between the information and witness geometries | Open | none | Open |
 
 ## P17 matrix package
 
@@ -117,7 +118,15 @@ The currently certified partial-replay picture is therefore
       <= L C_edge + rounding overhead.
 
 The lower side is necessary information; the upper side is an executable
-witness schedule. No equality is claimed.
+witness schedule. No minimax equality is claimed.
+
+The LP geometries themselves are now sharply separated.  Under coherent endpoint
+group signatures their duplicate constraint rows coincide and C_vert=C_edge. For
+K_n with legal groups equal to its unit-cost edges, C_vert=n/2 and
+C_edge=n(n-1)/2, giving ratio n-1. For the path 0-1-2 with legal groups {0,2}
+and {1,2}, C_vert=2 while the witness LP is infeasible. Thus no universal finite
+factor compares C_edge to C_vert over the frozen oracle class. This does not
+identify achievable testing complexity.
 
 ## Algorithm A — fractional partial-replay witness scheduler
 
@@ -159,6 +168,9 @@ Input: H, legal groups G, costs c, p, shared patch s, effect d, confidence beta.
 | Hidden edge-topology dependence in raw LP | Rewiring with fixed V_+ preserves the raw-information floor |
 | Missing information channel | Active vertex absent from all groups makes the lower LP infeasible |
 | Edge-vs-vertex geometry conflation | K4 triples exhibit C_vert=4/3 and C_edge=2 at unit group cost |
+| Hidden finite-factor assumption | K_n pair groups verify C_vert=n/2 and C_edge=n(n-1)/2 for n=3,...,8 |
+| Witness feasibility confused with information feasibility | Path-3 reference fixture verifies finite C_vert with infeasible C_edge |
+| Equality condition regression | Group-coherent matching fixture verifies C_vert=C_edge |
 | Fractional schedule rounding bug | Every edge receives at least L integer witness opportunities |
 
 ## Specification-data correspondence
@@ -188,3 +200,13 @@ A P17 matching theorem may enter the abstract/contribution list only after:
 4. CI and the paper build are green at the frozen commit;
 5. code, benchmark specifications, proof ledger, manuscript, and references use
    the same oracle and matrix definitions.
+
+
+## P17 structural specification data
+
+`data/partial_replay_structural_cases_v1.jsonl` is a deterministic
+8-row theorem-fixture manifest separate from the 168-row P17 parameter stress
+grid.  It records the exact expected LP values for coherent equality, the
+K_n pair-group finite-gap family for n=3,...,8, and the
+finite-information/infeasible-witness path case.  These rows are mathematical
+specifications, not empirical measurements.
