@@ -174,8 +174,11 @@ $\lceil Lq_i^\star\rceil\le Lq_i^\star+1$ on the positive support,
 which gives the stated cost bound.
 \end{proof}
 
-Combining Proposition~\ref{prop:p17-active-contrast} with the transcript-KL
-floor yields
+Let $Q^\star_{\rm hom}$ denote the infimum, over tests with type-I and
+pointwise type-II error at most $\delta$ on this homogeneous family, of the
+worst-case expected declared query cost.  The transcript lower bound applies in
+particular to the null expected cost, while the construction above has a
+deterministic declared cost.  Combining the two therefore yields
 \[
 \frac{\kl(1-\delta,\delta)}{K_{\rm sync}}C_{\rm vert}
 \;\le\;
