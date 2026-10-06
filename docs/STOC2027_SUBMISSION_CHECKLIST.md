@@ -1,7 +1,7 @@
 # STOC 2027 submission compliance checklist
 
 Source of truth: official STOC 2027 Call for Papers. Re-check the live CFP before
-submission in case instructions change.
+submission in case instructions change. Last live-CFP verification: **2026-10-06**.
 
 ## Dates
 
@@ -15,9 +15,11 @@ submission in case instructions change.
 - [ ] Confirm every listed author is human and accepts responsibility for the complete submission.
 - [ ] Check that no author appears on more than five STOC 2027 submissions.
 - [ ] All authors consent to STOC publicly posting the submitted paper.
+- [ ] All authors explicitly consent in HotCRP to PC members/sub-reviewers using LLMs to assist with evaluation of the publicly posted paper.
 - [ ] Check prior/simultaneous-submission compliance immediately before upload.
 - [ ] Record all required conflicts of interest accurately.
 - [ ] Ensure authors have ORCID IDs for the ACM publication process.
+- [ ] Decide whether to mirror the public STOC submission in an established repository (e.g., arXiv/ECCC); this is recommended by STOC but not required.
 
 ## Submission manuscript
 
@@ -30,7 +32,7 @@ submission in case instructions change.
 - [ ] Title page contains final title, human authors/affiliations, and a contribution-focused abstract.
 - [ ] First 10–12 pages clearly explain importance, prior-work context, central technical ideas, theorem statements, and proof intuition to a broad TCS audience.
 - [ ] Main mathematical claims have proofs sufficient for verification.
-- [ ] References are placed at the end of the full submission.
+- [x] Bibliographic references are at the end of the technical manuscript; the mandatory AI Methodology disclosure follows them as the final paper statement.
 - [ ] Final PDF has no security restrictions on copying or printing.
 - [ ] Final manuscript consistency and bibliography checks pass.
 - [ ] Final LaTeX CI build passes from a clean checkout.
@@ -43,12 +45,12 @@ manuscript structuring, so the disclosure is mandatory.
 
 Before submission:
 
-- [ ] AI Methodology statement identifies ChatGPT/OpenAI.
-- [ ] It states which manuscript/research components were materially influenced.
+- [x] AI Methodology statement identifies ChatGPT/OpenAI.
+- [x] It states that research ideation, literature triage, proof exploration, code drafting, and manuscript drafting/structuring were materially influenced.
 - [ ] Every theorem and proof has been independently checked by the human authors.
 - [ ] Every citation has been independently verified against an archival source.
 - [ ] Every implementation/result used in the paper has been reproduced by the human authors from the frozen repository commit.
-- [ ] No AI system is listed as an author.
+- [x] No AI system is listed as an author.
 - [x] No pretrained model, open-source model, proprietary model API, or LLM is an experimental subject or research oracle.
 
 ## Required video
