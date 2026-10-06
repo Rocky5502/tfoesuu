@@ -44,8 +44,12 @@ python scripts/freeze_submission_artifacts.py \
 ```
 
 Repeat `--extra-file` for every submission-facing result, provenance record,
-or compiled artifact. Tracked benchmark JSONL files and paper sources are
-already included automatically.
+or compiled artifact. Tracked benchmark JSONL files and paper sources are already included
+automatically.  This includes all tracked P17 manifests: the 168-row stress
+grid, structural fixtures, heterogeneous scope counterexample, and
+group-coherent theorem specification.  The final freeze review should confirm
+that each expected manifest appears in `tracked_files`; no separate
+`--extra-file` flag is needed for tracked data.
 
 ## Integrity rules
 

@@ -21,3 +21,12 @@ push- and PR-triggered real LaTeX builds.  The subsequent promotion commit
 synchronizes the audited proposition with the proof ledger, code, deterministic
 specification data, and submission manuscript.  Arbitrary heterogeneous
 fairness-preserving nulls remain explicitly outside the claim.
+
+
+## Exact-head merge gate
+
+A pre-promotion green build does not substitute for validation of the promoted
+manuscript state.  Any theorem-promotion PR must have fresh green `ci` and
+`paper` workflows on the exact PR head before merge.  A workflow failure that
+occurs before runner setup or before any step executes is not counted as a
+scientific or build failure, but it is also not counted as a passed gate.
