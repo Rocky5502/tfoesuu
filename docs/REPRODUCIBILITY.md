@@ -67,7 +67,10 @@ legal replay-group size, cost scale, and small differential effects. Every one o
 its 168 rows is now materialized into a canonical graph, all legal groups up to
 the row's size cap, and per-group costs. The validator executes both LP
 geometries, the raw-information floor, and the homogeneous raw-contrast schedule
-for every row. These are deterministic theorem checks, not empirical evidence.
+for every row. For every possible changed active endpoint, it also computes the
+actual rounded exposure and verifies the exact miss probability
+`(1-d)^exposure <= beta`. These are deterministic theorem checks, not empirical
+evidence.
 
 Use:
 
