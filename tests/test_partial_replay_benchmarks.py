@@ -4,6 +4,7 @@ import pytest
 
 from tfoesuu.graphs import clique_graph, matching_graph, path_graph
 from tfoesuu.partial_replay_lower import (
+    active_vertex_contrast_schedule,
     minimum_fractional_active_vertex_cover,
     minimum_fractional_replay_cover,
 )
@@ -83,6 +84,12 @@ def test_structural_manifest_matches_lp_implementation():
 
         assert vertex.success
         assert vertex.cost == pytest.approx(row.expected_c_vert)
+        contrast = active_vertex_contrast_schedule(
+            graph, groups, costs, d=0.05, beta=0.05
+        )
+        assert contrast.normalized_fractional_cost == pytest.approx(
+            row.expected_raw_contrast_cost
+        )
 
         if row.expected_c_edge is None:
             assert not edge.success
