@@ -103,11 +103,12 @@ publication result/provenance files that actually exist. See
 `docs/ARTIFACT_FREEZE.md`. This mechanism records artifacts; it never creates or
 infers empirical results.
 
-### P17 raw-contrast candidate checks
+### P17 raw-contrast theorem checks
 
-The P17 test suite also exercises `active_vertex_contrast_schedule` and
+The P17 test suite exercises `active_vertex_contrast_schedule` and
 `raw_group_contrast_witness` for the frozen homogeneous single-changed-endpoint
 family. Deterministic checks cover active-vertex exposure, a finite-C_vert case
-with infeasible C_edge, and all four common-uniform threshold regions. These
-checks validate implementation correspondence; they do not replace the proof or
-extend the claim to heterogeneous/composite fairness-preserving nulls.
+with infeasible C_edge, and representative common-uniform threshold regions.
+These checks validate implementation correspondence to the audited theorem; they
+do not replace the proof or extend the claim to heterogeneous/composite
+fairness-preserving nulls.
