@@ -204,6 +204,27 @@ def minimum_fractional_active_vertex_cover(
     )
 
 
+def raw_group_contrast_witness(
+    old_outputs: Sequence[float],
+    new_outputs: Sequence[float],
+) -> bool:
+    """Return whether synchronized group outputs expose unequal patch deltas.
+
+    The P17 homogeneous Bernoulli contrast tester rejects when the vector
+    P1(v;U)-P0(v;U) is nonconstant within a queried legal replay group.
+    Legal groups contain at least two vertices.  This predicate is deliberately
+    observation-level and makes no distributional claim by itself.
+    """
+    old = np.asarray(old_outputs)
+    new = np.asarray(new_outputs)
+    if old.ndim != 1 or new.ndim != 1 or old.shape != new.shape:
+        raise ValueError("old_outputs and new_outputs must be equal-length vectors")
+    if old.size < 2:
+        raise ValueError("a contrast witness requires at least two group members")
+    delta = new - old
+    return bool(np.any(delta != delta[0]))
+
+
 @dataclass(frozen=True)
 class ActiveVertexContrastSchedule:
     """Fixed-design raw-output contrast schedule for the frozen P17 family."""
