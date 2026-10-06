@@ -11,7 +11,7 @@ P13 combines unknown patch location with replay on a matching: fixed-confidence 
 P14 shows how sound static patch-effect envelopes prune fairness edges with zero new executions.
 P15 shows that four-way replay across both versions and both counterfactual endpoints cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1).
 P16 lifts synchronized replay to the full active fairness suite: round complexity is independent of edge count and concrete execution complexity is Theta(n_active log(1/delta)/d) in the audited homogeneous Bernoulli family.
-P17 now has a corrected two-matrix formulation for partial synchronized replay: an edge-by-group matrix governs the proved witness-scheduling upper bound, while an active-vertex/group matrix governs the necessary raw-information floor. A matching minimax characterization is still open.
+P17 now has a corrected two-matrix formulation for partial synchronized replay: an edge-by-group matrix governs the proved witness-scheduling upper bound, while an active-vertex/group matrix governs the necessary raw-information floor. The LP geometries are now structurally separated by exact fixtures: equality under coherent group signatures, ratio n-1 on K_n pair groups, and finite C_vert with infeasible C_edge. These do not resolve minimax attainability.
 
 See docs/PROOF_STATUS.md and docs/PROOF_AUDIT_P17_FRACTIONAL_REPLAY.md for exact audit status.
 
@@ -26,7 +26,7 @@ while raw transcript change-of-measure reduces exactly to the active-vertex/grou
 
   C_vert = min c^T q  subject to B q >= 1, q >= 0.
 
-The corrected necessary lower floor is [kl(1-beta,beta)/K_sync] C_vert and C_vert <= C_edge. The highest-value theorem target is no longer to resurrect the withdrawn edge-cover lower bound. It is to prove either:
+The corrected necessary lower floor is [kl(1-beta,beta)/K_sync] C_vert and C_vert <= C_edge. There is no universal finite-factor equivalence between the two LP geometries: deterministic structural cases include equality, an n-1 finite ratio, and finite C_vert with C_edge=+infinity. The highest-value theorem target is therefore no longer to compare the two LPs by a constant factor. It is to prove either:
 1. structural conditions under which the active-vertex information floor is attainable;
 2. a rigorous family separating achievable cost from C_vert; or
 3. a sharper oracle-dependent parameter that interpolates between the two matrices.
