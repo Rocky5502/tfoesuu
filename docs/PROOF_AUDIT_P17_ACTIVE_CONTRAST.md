@@ -1,8 +1,9 @@
 # Proof audit — P17 active-vertex raw contrast
 
-**Candidate status:** theorem derived, executable correspondence and adversarial
-tests present. Promotion requires green full CI, green real LaTeX build, and a
-final cross-file scope audit.
+**Status: PROVED + AUDITED for the frozen homogeneous single-changed-endpoint
+family.** Full CI and the real LaTeX build are green on the synchronized proof
+branch. The theorem is explicitly not generalized to heterogeneous/composite
+fairness-preserving nulls.
 
 ## 1. Exact family
 
@@ -123,13 +124,10 @@ and multiple-comparison procedures are established. The candidate does not claim
 those techniques. The research claim is the active-vertex fractional-cover query
 geometry induced by version-aware fairness-regression access in the frozen family.
 
-## 8. Promotion rule
+## 8. Completed promotion audit
 
-Promote only after:
-
-1. all deterministic tests and full CI pass on the synchronized branch head;
-2. bibliography and manuscript consistency checks pass;
-3. the real LaTeX build passes;
-4. PROOF_STATUS, theorem/algorithm matrix, roadmap, novelty fence, README, data
-   documentation, and manuscript state the same homogeneous-family scope;
-5. no abstract-level language implies a theorem for heterogeneous/composite nulls.
+The synchronized branch passed all deterministic tests and full CI, bibliography
+and manuscript consistency checks, and the real LaTeX build. The status ledger,
+theorem/algorithm matrix, roadmap, novelty fence, README, data documentation,
+and manuscript use the same homogeneous-family scope. No claim is made for
+heterogeneous/composite fairness-preserving nulls.
