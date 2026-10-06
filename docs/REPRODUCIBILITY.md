@@ -17,6 +17,7 @@ python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
+python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 ```
 
 The generator is deterministic. The manifest contains parameter specifications rather than giant sampled arrays.
@@ -76,3 +77,11 @@ pytest -q tests/test_partial_replay_lower.py tests/test_partial_replay_benchmark
 The witness-scheduling LP and raw-information LP have different meanings and
 must not be merged in reporting. The former uses edge-by-group incidence; the
 latter reduces to active-vertex/group incidence under the frozen P17 oracle.
+
+The separate structural-case manifest
+`data/partial_replay_structural_cases_v1.jsonl` contains exact theorem fixtures,
+not empirical outcomes: one coherent-equality case, six K_n pair-group cases
+(n=3,...,8) with exact ratio n-1, and one finite-information/infeasible-witness
+case. Regenerate it with `scripts/generate_partial_replay_structural_cases.py`.
+The test suite requires the committed manifest to equal the deterministic
+in-code specification exactly.
