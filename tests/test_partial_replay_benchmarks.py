@@ -142,3 +142,13 @@ def test_all_partial_replay_stress_rows_execute_theorem_geometry():
             + contrast.additive_rounding_cap
             + 1e-8
         )
+
+        for x in contrast.active_vertices:
+            exposure = sum(
+                int(contrast.counts[i])
+                for i, group in enumerate(groups)
+                if x in group
+            )
+            assert exposure >= contrast.scale
+            exact_miss = (1.0 - row.d) ** exposure
+            assert exact_miss <= row.beta + 1e-12

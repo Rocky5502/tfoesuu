@@ -183,7 +183,7 @@ Input: H, legal groups G, costs c, p, shared patch s, effect d, confidence beta.
 | Witness feasibility confused with information feasibility | Path-3 reference fixture verifies finite C_vert with infeasible C_edge |
 | Equality condition regression | Group-coherent matching fixture verifies C_vert=C_edge |
 | Fractional schedule rounding bug | Every edge receives at least L integer witness opportunities |
-| Full 168-row stress-manifest drift | Every parameter row materializes and passes the LP/information/raw-contrast/rounding validator |
+| Full 168-row stress-manifest drift | Every parameter row materializes and passes the LP/information/raw-contrast/rounding validator, including exact endpoint-wise miss probability <= beta |
 
 ## Specification-data correspondence
 
