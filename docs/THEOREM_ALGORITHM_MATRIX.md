@@ -38,7 +38,7 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; matching theorem open |
 | P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; do not claim attainability |
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
-| P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | Candidate derived/tested; final promotion pending CI/paper/audit gates |
+| P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | PROVED + AUDITED for frozen homogeneous family; broader composite-null extension open |
 | P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open | none | Open |
 
 ## P17 matrix package
@@ -194,8 +194,8 @@ the manifest schema on every push.
 
 A P17 matching theorem may enter the abstract/contribution list only after:
 
-1. the homogeneous raw-contrast attainability candidate passes its proof, CI,
-   paper-build, and scope audit gates;
+1. the homogeneous raw-contrast attainability theorem remains synchronized with
+   its proof, CI, paper-build, and scope audit gates;
 2. the independent proof audit is complete;
 3. nearest prior-art collision checks are refreshed;
 4. CI and the paper build are green at the frozen commit;
