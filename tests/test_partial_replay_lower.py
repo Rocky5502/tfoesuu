@@ -5,6 +5,7 @@ from tfoesuu.graphs import clique_graph, matching_graph, path_graph
 from tfoesuu.partial_replay import minimum_replay_group_cover
 from tfoesuu.separations import binary_decision_kl
 from tfoesuu.partial_replay_lower import (
+    active_vertex_contrast_schedule,
     fractional_group_replay_lower_bound,
     fractional_replay_schedule,
     minimum_fractional_active_vertex_cover,
@@ -199,3 +200,44 @@ def test_raw_information_can_be_finite_when_witness_geometry_is_infeasible():
     assert np.isinf(edge.cost)
     assert raw.success
     assert np.isfinite(raw.expected_cost_floor)
+
+
+
+def test_active_vertex_contrast_schedule_covers_every_active_vertex():
+    g = clique_graph(5)
+    groups = list(g.edges)
+    costs = [1.0] * len(groups)
+    s = active_vertex_contrast_schedule(g, groups, costs, d=0.05, beta=0.01)
+    assert s.normalized_fractional_cost == pytest.approx(2.5)
+    assert s.scale > 0
+    for x in s.active_vertices:
+        exposure = sum(
+            int(s.counts[i]) for i, group in enumerate(groups) if x in group
+        )
+        assert exposure >= s.scale
+    assert s.total_cost <= (
+        s.scale * s.normalized_fractional_cost + s.additive_rounding_cap + 1e-8
+    )
+
+
+def test_active_vertex_contrast_schedule_works_without_joint_edge_replay():
+    g = path_graph(3)
+    groups = [(0, 2), (1, 2)]
+    costs = [1.0, 1.0]
+
+    edge = minimum_fractional_replay_cover(g, groups, costs)
+    assert not edge.success
+
+    s = active_vertex_contrast_schedule(g, groups, costs, d=0.05, beta=0.05)
+    assert s.normalized_fractional_cost == pytest.approx(2.0)
+    assert tuple(s.active_vertices) == (0, 1, 2)
+    assert np.all(s.counts >= s.scale)
+    assert s.total_cost == pytest.approx(2.0 * s.scale)
+
+
+def test_active_vertex_contrast_schedule_rejects_unobservable_active_vertex():
+    g = path_graph(3)
+    with pytest.raises(ValueError, match="absent from every legal replay group"):
+        active_vertex_contrast_schedule(
+            g, [(0, 2)], [1.0], d=0.05, beta=0.05
+        )
