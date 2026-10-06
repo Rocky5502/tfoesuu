@@ -17,7 +17,8 @@ jobs:
       - run: pip install -e .
       - run: pytest -q
       - run: python scripts/check_bibliography.py
-      - run: python scripts/check_paper_consistency.py\n      - run: python scripts/validate_benchmark_inventory.py
+      - run: python scripts/check_paper_consistency.py
+      - run: python scripts/validate_benchmark_inventory.py
       - run: python scripts/freeze_submission_artifacts.py --require-clean --output /tmp/submission_manifest.json
       - run: python scripts/generate_benchmark.py --output /tmp/benchmark_v1.jsonl
       - run: python scripts/generate_replay_benchmark.py --output /tmp/replay_benchmark_v1.jsonl
