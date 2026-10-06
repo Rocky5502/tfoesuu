@@ -1,0 +1,1 @@
+{"case_id": "p17-scope-heterogeneous-fair-null-raw-contrast", "expected_fair_null": true, "expected_raw_contrast": true, "fairness_tau": 0.2, "new_threshold_0": 0.3, "new_threshold_1": 0.45, "old_threshold_0": 0.2, "old_threshold_1": 0.4, "regime": "heterogeneous-null-false-positive", "tape_u": 0.25}

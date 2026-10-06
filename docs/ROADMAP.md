@@ -26,9 +26,17 @@ while raw transcript change-of-measure reduces exactly to the active-vertex/grou
 
   C_vert = min c^T q  subject to B q >= 1, q >= 0.
 
-The corrected lower floor is [kl(1-beta,beta)/K_sync] C_vert. The audited active-vertex raw-contrast theorem uses q* from the same LP, L=ceil(log(beta)/log(1-d)), and n_i=ceil(L q_i*) to obtain zero type-I error and pointwise type-II error at most beta in the frozen homogeneous family, at cost at most L C_vert plus rounding support cost. The next theorem target is the genuinely broader problem: heterogeneous/composite fairness-preserving nulls, where within-group patch-delta disagreement need not imply unfairness.
+The corrected lower floor is [kl(1-beta,beta)/K_sync] C_vert. The audited active-vertex raw-contrast theorem uses q* from the same LP, L=ceil(log(beta)/log(1-d)), and n_i=ceil(L q_i*) to obtain zero type-I error and pointwise type-II error at most beta in the frozen homogeneous family, at cost at most L C_vert plus rounding support cost.
 
-Keep the raw-contrast claim explicitly scoped to the homogeneous single-changed-endpoint family until a broader composite-null theorem is proved.
+A deterministic heterogeneous-null counterexample now closes off the naive
+generalization route: for tau=0.20, old thresholds (0.20,0.40), new thresholds
+(0.30,0.45), and U=0.25, the new program remains fair (gap 0.15) while the raw
+patch-delta contrast fires. The next theorem target is therefore not "reuse the
+same contrast under heterogeneity." It is to identify extra replay/control
+structure, a baseline-adjusted statistic, or a sharper decision geometry that
+restores uniform validity under the composite null.
+
+Keep the raw-contrast claim explicitly scoped to the homogeneous single-changed-endpoint family until a broader composite-null theorem passes its own proof/audit gates.
 
 ### B. Retained certificate headroom
 Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Seek an instance-dependent theorem where patch restrictions and certified headroom interact nontrivially.

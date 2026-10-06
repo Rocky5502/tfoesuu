@@ -208,3 +208,59 @@ def read_partial_replay_structural_jsonl(
             if line.strip():
                 rows.append(PartialReplayStructuralCase(**json.loads(line)))
     return rows
+
+
+@dataclass(frozen=True)
+class PartialReplayScopeCase:
+    """Deterministic falsification case for the scope of a P17 tester."""
+
+    case_id: str
+    regime: str
+    fairness_tau: float
+    old_threshold_0: float
+    old_threshold_1: float
+    new_threshold_0: float
+    new_threshold_1: float
+    tape_u: float
+    expected_fair_null: bool
+    expected_raw_contrast: bool
+
+
+def partial_replay_scope_cases_v1() -> list[PartialReplayScopeCase]:
+    """Frozen counterexample showing why P17-A needs a homogeneous null."""
+    return [
+        PartialReplayScopeCase(
+            case_id="p17-scope-heterogeneous-fair-null-raw-contrast",
+            regime="heterogeneous-null-false-positive",
+            fairness_tau=0.20,
+            old_threshold_0=0.20,
+            old_threshold_1=0.40,
+            new_threshold_0=0.30,
+            new_threshold_1=0.45,
+            tape_u=0.25,
+            expected_fair_null=True,
+            expected_raw_contrast=True,
+        )
+    ]
+
+
+def write_partial_replay_scope_jsonl(
+    rows: Iterable[PartialReplayScopeCase],
+    path: str | Path,
+) -> None:
+    out = Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(asdict(row), sort_keys=True) + "\n")
+
+
+def read_partial_replay_scope_jsonl(
+    path: str | Path,
+) -> list[PartialReplayScopeCase]:
+    rows: list[PartialReplayScopeCase] = []
+    with Path(path).open("r", encoding="utf-8") as fh:
+        for line in fh:
+            if line.strip():
+                rows.append(PartialReplayScopeCase(**json.loads(line)))
+    return rows

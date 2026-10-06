@@ -94,15 +94,20 @@ first-order d^{-1} dependence governed by C_vert, up to rounding support cost.
 The zero-type-I argument requires a homogeneous pathwise null across all group
 members, not merely that the fairness graph has no violating edge.
 
-For example, let the fairness graph contain only edge (0,1), while legal group
-{0,2} uses vertex 2 as an unrelated synchronized reference. A broader null may
-leave the fairness relation between 0 and 1 unchanged while software behavior at
-the fairness-irrelevant reference 2 has a different patch effect. Then D_0 and
-D_2 can be nonconstant even though no fairness regression occurred. A raw
-contrast rejection rule would false-positive.
+A concrete two-vertex counterexample already suffices. Let the fairness graph
+contain only edge (0,1), let the fairness tolerance be tau=0.20, take old
+Bernoulli thresholds (0.20,0.40), and new thresholds (0.30,0.45). The new
+fairness gap is 0.15 <= tau, so this is a fairness-preserving null. At shared
+tape U=0.25 the old outputs are (0,1), the new outputs are (1,1), and therefore
+the patch deltas are (1,0). The raw-group contrast predicate fires even though
+the fairness null is true.
 
-Thus this theorem does not establish a uniformly valid tester for arbitrary
-heterogeneous/composite fairness-preserving nulls. That extension remains open.
+This deterministic witness is encoded in
+data/partial_replay_scope_cases_v1.jsonl and exercised by both the direct
+scope-guard regression and the manifest round-trip test. It proves only that
+the naive homogeneous contrast rule is not uniformly valid for arbitrary
+heterogeneous/composite fairness-preserving nulls; it does not characterize the
+optimal broader tester. That extension remains open.
 
 ## 6. Adversarial implementation checks
 
@@ -113,6 +118,8 @@ heterogeneous/composite fairness-preserving nulls. That extension remains open.
   contrast event;
 - an unrelated synchronized reference triggers the alternative contrast;
 - malformed/singleton observation vectors fail closed;
+- a frozen heterogeneous fair-null scope case provably triggers the homogeneous
+  raw-contrast predicate, preventing silent theorem generalization;
 - raw lower and raw-contrast upper recompute the same C_vert optimum;
 - the 8-row structural specification manifest records and checks the exact
   normalized raw-contrast cost;
