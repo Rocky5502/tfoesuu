@@ -1,7 +1,8 @@
 # STOC 2027 submission compliance checklist
 
-Source of truth: official STOC 2027 Call for Papers. Re-check the live CFP before
-submission in case instructions change.
+Source of truth: official STOC 2027 Call for Papers. Policy snapshot re-checked
+on 2026-10-06; re-check the live CFP again immediately before submission in case
+instructions change.
 
 ## Dates
 
@@ -14,12 +15,18 @@ submission in case instructions change.
 - [ ] Replace the manuscript author placeholder with all human author names and affiliations. STOC 2027 is non-anonymous.
 - [ ] Confirm every listed author is human and accepts responsibility for the complete submission.
 - [ ] Check that no author appears on more than five STOC 2027 submissions.
-- [ ] All authors consent to STOC publicly posting the submitted paper.
+- [ ] All authors consent to STOC publicly posting the submitted paper through the conference submission process.
+- [ ] All authors explicitly consent to PC members/sub-reviewers using LLMs to assist with reviewing the public submission, as required by STOC 2027.
 - [ ] Check prior/simultaneous-submission compliance immediately before upload.
 - [ ] Record all required conflicts of interest accurately.
 - [ ] Ensure authors have ORCID IDs for the ACM publication process.
 
-## Submission manuscript
+## Submission channel and manuscript
+
+- [ ] Submit the final PDF through the official STOC 2027 HotCRP site by the deadline.
+- [ ] Confirm the uploaded PDF is the exact version approved by all authors for mandatory public posting.
+- External repository posting (for example arXiv, ECCC, or IACR ePrint) is **recommended but not required** by the current STOC 2027 CFP.
+
 
 - [x] 11-point type.
 - [x] Single-column submission format.
