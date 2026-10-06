@@ -7,8 +7,8 @@
   box/.style={draw=black!28, rounded corners=1.5pt, line width=0.55pt,
               fill=black!2, minimum height=1.45cm, text width=3.05cm,
               align=left, inner sep=6pt, font=\small},
-  focal/.style={box, draw=teal!55!black, fill=teal!7},
-  risk/.style={box, draw=red!62!black, fill=red!4},
+  focal/.style={box, draw=focalteal, fill=focalteal!7},
+  risk/.style={box, draw=risktone, fill=risktone!4},
   flow/.style={->, line width=0.75pt, draw=black!55},
   minor/.style={font=\scriptsize, text=black!62, align=left}
 ]
@@ -64,7 +64,7 @@
   Homogeneous partial-replay theorem is audited.
   A heterogeneous fair-null counterexample rules out a naive extension.
 };
-\draw[flow, draw=red!55!black] (replay.south) -- (scope.north);
+\draw[flow, draw=risktone] (replay.south) -- (scope.north);
 
 \node[minor, below=0.22cm of cert, text width=3.0cm] {
   Proofs establish the guarantees; synthetic benchmarks only falsify,
