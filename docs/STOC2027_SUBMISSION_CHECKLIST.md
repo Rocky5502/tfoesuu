@@ -64,6 +64,7 @@ Before submission:
 - [ ] Generate the whole-submission checksum manifest with `scripts/freeze_submission_artifacts.py --require-clean`.
 - [ ] Freeze benchmark manifests and SHA-256 hashes, including the 168-row P17 stress grid and the separate 8-row P17 structural-case manifest.
 - [ ] Run CPU CI from a clean checkout.
+- [ ] Run the 168-row P17 executable manifest validator and archive its deterministic validation summary.
 - [ ] Run staged GPU publication sweeps only on frozen theorem configurations.
 - [ ] Record GPU names, NVIDIA driver, CUDA/PyTorch versions, exact commands, benchmark hashes, output hashes, and git SHA.
 - [ ] Archive the exact Overleaf-ready paper source and compiled PDF.
