@@ -224,6 +224,7 @@ class PartialReplayScopeCase:
     tape_u: float
     expected_fair_null: bool
     expected_raw_contrast: bool
+    expected_false_positive_measure: float
 
 
 def partial_replay_scope_cases_v1() -> list[PartialReplayScopeCase]:
@@ -240,6 +241,7 @@ def partial_replay_scope_cases_v1() -> list[PartialReplayScopeCase]:
             tape_u=0.25,
             expected_fair_null=True,
             expected_raw_contrast=True,
+            expected_false_positive_measure=0.15,
         )
     ]
 
