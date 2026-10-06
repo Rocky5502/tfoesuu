@@ -160,3 +160,42 @@ def test_raw_information_floor_is_scaled_active_vertex_cover():
     scale = binary_decision_kl(0.05) / k_sync
     assert raw.expected_cost_floor == pytest.approx(scale * cover.cost)
     assert np.allclose(raw.expected_query_counts, scale * cover.weights)
+
+
+def test_group_coherent_matching_has_equal_vertex_and_edge_geometries():
+    g = matching_graph(2)
+    groups = [(0, 1), (2, 3)]
+    costs = [1.0, 1.0]
+    vertex = minimum_fractional_active_vertex_cover(g, groups, costs)
+    edge = minimum_fractional_replay_cover(g, groups, costs)
+    assert vertex.success and edge.success
+    assert vertex.cost == pytest.approx(2.0)
+    assert edge.cost == pytest.approx(2.0)
+
+
+@pytest.mark.parametrize("n", range(3, 9))
+def test_complete_graph_pair_groups_have_linear_geometry_gap(n):
+    g = clique_graph(n)
+    groups = list(g.edges)
+    costs = [1.0] * len(groups)
+    vertex = minimum_fractional_active_vertex_cover(g, groups, costs)
+    edge = minimum_fractional_replay_cover(g, groups, costs)
+    assert vertex.success and edge.success
+    assert vertex.cost == pytest.approx(n / 2.0)
+    assert edge.cost == pytest.approx(n * (n - 1) / 2.0)
+    assert edge.cost / vertex.cost == pytest.approx(n - 1.0)
+
+
+def test_raw_information_can_be_finite_when_witness_geometry_is_infeasible():
+    g = path_graph(3)
+    groups = [(0, 2), (1, 2)]
+    costs = [1.0, 1.0]
+    vertex = minimum_fractional_active_vertex_cover(g, groups, costs)
+    edge = minimum_fractional_replay_cover(g, groups, costs)
+    raw = _raw(g, groups, costs)
+    assert vertex.success
+    assert vertex.cost == pytest.approx(2.0)
+    assert not edge.success
+    assert np.isinf(edge.cost)
+    assert raw.success
+    assert np.isfinite(raw.expected_cost_floor)
