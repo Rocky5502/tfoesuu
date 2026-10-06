@@ -36,9 +36,10 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P15 | Four-way replay cancels a common patch | Counterfactual replay tester/bounds | separations.py, counterfactual benchmark | Proved + audited |
 | P16 | Synchronized suite replay removes edge-count dependence | Full active-suite shared-tape replay | suite_replay.py | Proved + audited |
 | P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; matching theorem open |
-| P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; do not claim attainability |
+| P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; attained by P17-A in the frozen homogeneous family |
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
-| P17-M | Achievable/minimax complexity between the information and witness geometries | Open | none | Open |
+| P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | PROVED + AUDITED for frozen homogeneous family; broader composite-null extension open |
+| P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open | none | Open |
 
 ## P17 matrix package
 
@@ -111,22 +112,32 @@ Every edge-cover feasible vector is active-vertex-cover feasible, so
 
   C_vert <= C_edge.
 
-The currently certified partial-replay picture is therefore
+The edge-witness construction remains valid and gives
 
   [kl(1-beta,beta)/K_sync] C_vert
-      <= Q*
+      <= Q*_hom
       <= L C_edge + rounding overhead.
 
-The lower side is necessary information; the upper side is an executable
-witness schedule. No minimax equality is claimed.
+For the frozen homogeneous single-changed-endpoint family, the audited
+raw-contrast construction sharpens the upper side to the same active-vertex
+geometry:
+
+  [kl(1-beta,beta)/K_sync] C_vert
+      <= Q*_hom
+      <= L C_vert + raw-contrast rounding support cost.
+
+This is a matching combinatorial/minimax-order characterization for the scoped
+homogeneous family, not an exact finite-sample equality and not a theorem for
+heterogeneous/composite fairness-preserving nulls.
 
 The LP geometries themselves are now sharply separated.  Under coherent endpoint
 group signatures their duplicate constraint rows coincide and C_vert=C_edge. For
 K_n with legal groups equal to its unit-cost edges, C_vert=n/2 and
 C_edge=n(n-1)/2, giving ratio n-1. For the path 0-1-2 with legal groups {0,2}
 and {1,2}, C_vert=2 while the witness LP is infeasible. Thus no universal finite
-factor compares C_edge to C_vert over the frozen oracle class. This does not
-identify achievable testing complexity.
+factor compares C_edge to C_vert over the frozen oracle class. This separation
+alone does not identify achievable testing complexity; P17-A supplies the
+achievable C_vert construction only for the scoped homogeneous family.
 
 ## Algorithm A — fractional partial-replay witness scheduler
 
@@ -193,8 +204,8 @@ the manifest schema on every push.
 
 A P17 matching theorem may enter the abstract/contribution list only after:
 
-1. attainability of the information floor is proved, or a rigorous separation is
-   proved and stated instead;
+1. the homogeneous raw-contrast attainability theorem remains synchronized with
+   its proof, CI, paper-build, and scope audit gates;
 2. the independent proof audit is complete;
 3. nearest prior-art collision checks are refreshed;
 4. CI and the paper build are green at the frozen commit;
@@ -210,3 +221,27 @@ grid.  It records the exact expected LP values for coherent equality, the
 K_n pair-group finite-gap family for n=3,...,8, and the
 finite-information/infeasible-witness path case.  These rows are mathematical
 specifications, not empirical measurements.
+
+## Algorithm C — active-vertex raw-contrast scheduler
+
+Scope: frozen homogeneous threshold family only. Every replay-eligible vertex
+has old threshold p and null-new threshold p+s; one active endpoint may instead
+have p+s+d.
+
+1. Solve C_vert=min c^T q subject to Bq>=1 and q>=0.
+2. Set L=ceil(log(beta)/log(1-d)).
+3. Set n_i=ceil(L q_i*).
+4. Query each legal group S_i exactly n_i times with a fresh shared tape per query.
+5. In each query compute D_v=P1(v;U)-P0(v;U) for every group member.
+6. Reject if the within-group D_v vector is nonconstant; otherwise continue.
+
+Under the homogeneous null every D_v is identical pathwise, so type-I error is
+zero. Under a single-changed-endpoint alternative x, every query containing x
+produces a contrast with probability d. Active-vertex exposure is at least L,
+so the pointwise miss probability is at most beta. The declared cost is at most
+
+  L C_vert + sum_{i:q_i*>0} c_i.
+
+This audited construction matches the lower program's combinatorial geometry in
+the frozen family. It is not a theorem for arbitrary heterogeneous
+fairness-preserving nulls.

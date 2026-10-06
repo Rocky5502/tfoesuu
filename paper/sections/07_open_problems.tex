@@ -122,10 +122,83 @@ but edge $\{0,1\}$ belongs to no legal group, so the witness LP is infeasible.
 \end{proof}
 
 Proposition~\ref{prop:p17-geometry-separation} concerns only the two LP
-geometries; it is not a testing-complexity separation.  The unresolved question
-is whether the active-vertex information floor is attainable, or whether a
-different decision-theoretic parameter governs achievable partial-replay
-testing cost.  We therefore do not claim a matching minimax characterization.
+geometries; it is not by itself a testing-complexity separation.  Raw outputs,
+however, permit a stronger construction in the same homogeneous family.
+
+\begin{proposition}[Active-vertex raw-contrast schedule]
+\label{prop:p17-active-contrast}
+Assume every vertex appearing in a legal replay group has old threshold $p$
+and, under the null, new threshold $p+s$.  Under each alternative, exactly one
+fairness-active endpoint $x$ instead has new threshold $p+s+d$, with
+$p,s,d>0$ and $p+s+d<1$.  Suppose $C_{\rm vert}<\infty$.  Let $q^\star$
+solve the active-vertex LP, set
+\[
+L=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil,
+\qquad
+n_i=\lceil Lq_i^\star\rceil,
+\]
+and query $S_i$ exactly $n_i$ times with independent tapes across queries.
+Within a query, define $D_v=P_1(v;U)-P_0(v;U)$ and reject if the vector
+$(D_v:v\in S_i)$ is nonconstant.  The test has zero type-I error and
+pointwise type-II error at most $\delta$, with declared cost at most
+\[
+L C_{\rm vert}+\sum_{i:q_i^\star>0}c_i.
+\]
+Consequently the corrected information lower bound and this executable upper
+construction use the same active-vertex combinatorial geometry in the frozen
+homogeneous single-changed-endpoint family.
+\end{proposition}
+
+\begin{proof}
+Under the null, common-uniform replay gives
+$D_v=\mathbf 1\{U\in(p,p+s]\}$ for every member of every legal group, so
+the within-group delta vector is constant pathwise and rejection is impossible.
+Under an alternative changing $x$, any legal group containing $x$ contains at
+least one distinct member $y$ because legal groups have size at least two.
+The alternative changes only $x$, hence
+\[
+D_x\ne D_y
+\quad\Longleftrightarrow\quad
+U\in(p+s,p+s+d],
+\]
+which has probability $d$.  For every active $x$, feasibility of $q^\star$
+and upward rounding give
+\[
+\sum_{i:x\in S_i}n_i
+\ge L\sum_{i:x\in S_i}q_i^\star
+\ge L.
+\]
+Independent tapes across group queries therefore make the miss probability for
+alternative $x$ at most $(1-d)^L\le\delta$.  Finally,
+$\lceil Lq_i^\star\rceil\le Lq_i^\star+1$ on the positive support,
+which gives the stated cost bound.
+\end{proof}
+
+Let $Q^\star_{\rm hom}$ denote the infimum, over tests with type-I and
+pointwise type-II error at most $\delta$ on this homogeneous family, of the
+worst-case expected declared query cost.  The transcript lower bound applies in
+particular to the null expected cost, while the construction above has a
+deterministic declared cost.  Combining the two therefore yields
+\[
+\frac{\kl(1-\delta,\delta)}{K_{\rm sync}}C_{\rm vert}
+\;\le\;
+Q^\star_{\rm hom}
+\;\le\;
+L C_{\rm vert}+\sum_{i:q_i^\star>0}c_i.
+\]
+This identifies the active-vertex geometry for the frozen homogeneous family
+up to finite-sample constants and rounding.  It also explains why the
+path/reference construction of Proposition~\ref{prop:p17-geometry-separation}
+remains testable even though its four-way witness LP is infeasible.
+
+The scope is essential.  For a heterogeneous fairness-preserving null, patch
+deltas at two vertices can differ pathwise without constituting a fairness
+regression, so the zero-type-I contrast argument need not hold.  Characterizing
+that broader composite-null setting remains open.  Common random numbers and
+their use in multiple-system comparisons are established simulation tools
+\cite{GlassermanYao1992,YangNelson1991}; the claim here is the resulting
+version-aware fairness-regression query geometry, not the invention of common
+randomness.
 
 \paragraph{Adaptivity.}
 Property testing can exhibit large adaptive/non-adaptive gaps in other settings

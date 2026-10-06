@@ -204,6 +204,102 @@ def minimum_fractional_active_vertex_cover(
     )
 
 
+def raw_group_contrast_witness(
+    old_outputs: Sequence[float],
+    new_outputs: Sequence[float],
+) -> bool:
+    """Return whether synchronized group outputs expose unequal patch deltas.
+
+    The P17 homogeneous Bernoulli contrast tester rejects when the vector
+    P1(v;U)-P0(v;U) is nonconstant within a queried legal replay group.
+    Legal groups contain at least two vertices.  This predicate is deliberately
+    observation-level and makes no distributional claim by itself.
+    """
+    old = np.asarray(old_outputs)
+    new = np.asarray(new_outputs)
+    if old.ndim != 1 or new.ndim != 1 or old.shape != new.shape:
+        raise ValueError("old_outputs and new_outputs must be equal-length vectors")
+    if old.size < 2:
+        raise ValueError("a contrast witness requires at least two group members")
+    delta = new - old
+    return bool(np.any(delta != delta[0]))
+
+
+@dataclass(frozen=True)
+class ActiveVertexContrastSchedule:
+    """Fixed-design raw-output contrast schedule for the frozen P17 family."""
+
+    normalized_fractional_cost: float
+    scale: int
+    counts: np.ndarray
+    total_cost: float
+    additive_rounding_cap: float
+    active_vertices: tuple[int, ...]
+
+
+def active_vertex_contrast_schedule(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+    d: float,
+    beta: float,
+) -> ActiveVertexContrastSchedule:
+    """Schedule legal groups from the active-vertex cover.
+
+    This construction is valid for the frozen homogeneous P17 Bernoulli family:
+    under the null every active vertex has old threshold p and new threshold
+    p+s; under an oriented alternative exactly one fairness-active endpoint x
+    has new threshold p+s+d and every other vertex remains at p+s.
+
+    In a legal group containing x, compare the old/new patch deltas across group
+    members.  Because every legal group has at least two vertices and x is the
+    unique changed endpoint, the group contains an unchanged synchronized
+    reference.  Under the null all patch deltas are identical pathwise.  Under
+    the alternative, a contrast witness appears with probability d on each
+    independent query containing x.
+
+    The function returns only the deterministic query counts.  It does not claim
+    validity for broader heterogeneous fairness-preserving null classes.
+    """
+    if not (0.0 < d < 1.0):
+        raise ValueError("d must lie in (0,1)")
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+
+    gs = _canonical_groups(graph, groups)
+    cost = np.asarray(costs, dtype=float)
+    if cost.shape != (len(gs),) or np.any(cost <= 0) or np.any(~np.isfinite(cost)):
+        raise ValueError("costs must be finite, positive, and match groups")
+
+    cover = minimum_fractional_active_vertex_cover(graph, gs, cost)
+    if not cover.success:
+        raise ValueError(cover.message)
+    if not cover.active_vertices:
+        return ActiveVertexContrastSchedule(
+            0.0, 0, np.zeros(len(gs), dtype=int), 0.0, 0.0, cover.active_vertices
+        )
+
+    L = math.ceil(math.log(beta) / math.log1p(-d))
+    counts = np.ceil(L * cover.weights - 1e-12).astype(int)
+
+    for x in cover.active_vertices:
+        exposure = sum(int(counts[i]) for i, group in enumerate(gs) if x in group)
+        if exposure < L:
+            raise RuntimeError("rounded contrast schedule failed an active-vertex exposure")
+
+    total = float(cost @ counts)
+    support = cover.weights > 1e-12
+    rounding_cap = float(cost[support].sum())
+    return ActiveVertexContrastSchedule(
+        normalized_fractional_cost=cover.cost,
+        scale=L,
+        counts=counts,
+        total_cost=total,
+        additive_rounding_cap=rounding_cap,
+        active_vertices=cover.active_vertices,
+    )
+
+
 @dataclass(frozen=True)
 class RawOutputInformationLowerBound:
     """Transcript-KL allocation floor for the homogeneous raw-output P17 oracle."""

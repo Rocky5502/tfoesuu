@@ -1,8 +1,9 @@
 # P17 partial synchronized replay — corrected proof audit
 
-**Status: UPPER BOUND PROVED; RAW-OUTPUT INFORMATION LOWER PROGRAM CORRECTED;
-MATCHING MINIMAX CHARACTERIZATION OPEN. Do not claim equality of the lower and
-upper programs.**
+**Status: EDGE-WITNESS UPPER PROVED; RAW-OUTPUT INFORMATION FLOOR CORRECTED;
+ACTIVE-VERTEX RAW-CONTRAST UPPER PROVED + AUDITED FOR THE FROZEN HOMOGENEOUS
+SINGLE-ENDPOINT FAMILY; BROADER HETEROGENEOUS/COMPOSITE-NULL PARTIAL REPLAY
+REMAINS OPEN.**
 
 ## 1. Frozen oracle
 
@@ -197,6 +198,77 @@ C_edge <= alpha C_vert over the frozen P17 oracle class.  This is a theorem
 about the two LP geometries only.  It does not prove a testing-complexity or
 minimax separation, and it does not close the attainability question.
 
+## 7b. Active-vertex raw-contrast attainability theorem
+
+The raw-output oracle exposes more than four-way fairness-edge witnesses. In
+the **frozen homogeneous threshold family**, let every vertex eligible for a
+legal replay group have old threshold p. Under the null every such vertex has
+new threshold p+s. Under an oriented alternative exactly one fairness-active
+endpoint x has new threshold p+s+d; every other vertex remains at p+s. Assume
+p>0, s>0, d>0, and p+s+d<1.
+
+For one synchronized group query S_i with tape U, define the patch delta
+
+  D_v(U) = P1(v;U) - P0(v;U).
+
+Under the null, D_v(U) is identical for every member of every legal group,
+pathwise. Hence a test that rejects only when the vector (D_v(U): v in S_i)
+is nonconstant has zero type-I error.
+
+Under an oriented alternative changing x, every legal group S_i containing x
+also contains at least one distinct vertex y because legal groups have size at
+least two. Since x is the unique changed endpoint, y remains at the common
+threshold p+s. Therefore
+
+  D_x(U) != D_y(U)
+    iff U is in (p+s, p+s+d],
+
+an event of probability d. Thus every independently replayed group query
+containing x provides a raw contrast witness with probability d, even when the
+group contains no fairness edge incident to x.
+
+Let q* solve the active-vertex cover and set
+
+  L = ceil(log(beta)/log(1-d)),
+  n_i = ceil(L q_i*).
+
+For every active vertex x,
+
+  sum_{i:x in S_i} n_i
+    >= L sum_{i:x in S_i} q_i*
+    >= L.
+
+Query each S_i exactly n_i times with independent tapes across queries and
+reject on the first nonconstant within-group patch-delta vector. The null
+rejection probability is zero. For any oriented single-endpoint alternative x,
+the miss probability is at most
+
+  (1-d)^{sum_{i:x in S_i} n_i}
+    <= (1-d)^L
+    <= beta.
+
+The declared cost satisfies
+
+  c^T n <= L C_vert + sum_{i:q_i*>0} c_i.
+
+Consequently, for this frozen homogeneous family, the corrected information
+floor and the raw-contrast construction use the **same combinatorial geometry**:
+
+  [kl(1-beta,beta)/K_sync] C_vert
+      <= Q*_hom
+      <= L C_vert + sum_{i:q_i*>0} c_i.
+
+This does not prove an exact finite-sample constant, and it does not extend to
+an arbitrary heterogeneous fairness-preserving null. Under such a broader null,
+within-group patch deltas may differ without any fairness violation, so the
+zero-type-I argument can fail.
+
+The executable theorem correspondence is active_vertex_contrast_schedule; the
+observation predicate is raw_group_contrast_witness. Deterministic tests check
+active-vertex exposure, the no-joint-edge path case, and the threshold intervals
+of the Bernoulli construction. Full CI, bibliography/manuscript checks, and the
+real LaTeX build passed before promotion.
+
 ## 8. Small-d scaling
 
 For fixed interior p,s,r,
@@ -230,14 +302,15 @@ The repository mapping is:
 
 ## 10. Promotion gates
 
-Before P17 can become a matching minimax theorem, all of the following must hold:
+For any extension beyond the frozen homogeneous theorem, all of the following must hold:
 
 1. complete CI and paper build are green;
 2. the edge and active-vertex matrix derivations are independently checked;
 3. adversarial tests cover missing endpoints, unrelated synchronized references,
    active-vertex column collapse, and graph rewiring;
-4. attainability is proved for the information floor, or a rigorous separation
-   between C_vert and achievable testing cost is established;
+4. the raw-contrast attainability proof is independently rechecked for the
+   frozen homogeneous family, and broader heterogeneous/composite-null scope is
+   kept explicitly outside the claim;
 5. nearest prior-art collision review is refreshed;
 6. manuscript, proof ledger, code, experiments, and reproducibility notes use the
    same oracle and matrix definitions.
