@@ -1,8 +1,8 @@
 # P17 — partial synchronized replay
 
-**Status: FRACTIONAL WITNESS-SCHEDULING UPPER PROVED; RAW-OUTPUT INFORMATION
-FLOOR CORRECTED; ACTIVE-VERTEX RAW-CONTRAST ATTAINABILITY CANDIDATE DERIVED FOR
-THE FROZEN HOMOGENEOUS SINGLE-ENDPOINT FAMILY; FINAL PROMOTION PENDING GATES.**
+**Status: PROVED + AUDITED FOR THE FROZEN HOMOGENEOUS SINGLE-CHANGED-ENDPOINT
+FAMILY. The active-vertex raw-information geometry C_vert is attainable there;
+heterogeneous/composite-null partial replay remains open.**
 
 ## Frozen oracle
 
@@ -130,7 +130,7 @@ The exact cases are checked in tests/test_partial_replay_lower.py and recorded
 as deterministic specification data in
 data/partial_replay_structural_cases_v1.jsonl.
 
-## Raw-contrast attainability candidate
+## Audited raw-contrast attainability
 
 For the frozen homogeneous threshold family, every replay-eligible vertex has
 old threshold p and null-new threshold p+s. An alternative changes exactly one
@@ -197,9 +197,8 @@ The test suite checks:
 
 ## What remains open
 
-The raw-contrast construction appears to attain the active-vertex geometry for
-the frozen homogeneous single-changed-endpoint family. The remaining P17
-question is broader: characterize partial replay under heterogeneous or otherwise
+The raw-contrast construction attains the active-vertex geometry for the frozen
+homogeneous single-changed-endpoint family. The remaining P17 question is broader: characterize partial replay under heterogeneous or otherwise
 composite fairness-preserving nulls, where arbitrary within-group patch-delta
 disagreement cannot be treated as a zero-type-I witness.
 
