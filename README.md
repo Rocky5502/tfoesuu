@@ -42,7 +42,7 @@ The live source of truth is [docs/PROOF_STATUS.md](docs/PROOF_STATUS.md). Curren
 - sound patch-effect envelopes can prune already-safe fairness edges with **zero new executions**, leaving only a residual graph for stochastic testing;
 - four-way counterfactual replay cancels a nonzero fairness-neutral common patch and changes the differential-gap exponent from quadratic to linear;
 - synchronized suite replay tests all fairness edges from one shared-seed suite execution, giving `Theta(n_active log(1/delta)/d)` concrete-execution scaling in the audited Bernoulli family, independent of edge count.
-- partial synchronized replay now has a corrected two-matrix formulation: a fractional edge-by-group cover gives a proved fixed-design witness-scheduling upper bound, while the raw transcript-information floor reduces exactly to an active-vertex/group cover; the matching minimax characterization remains open.
+- partial synchronized replay now has a corrected two-matrix formulation: a fractional edge-by-group cover gives a proved fixed-design witness-scheduling upper bound, while the raw transcript-information floor reduces exactly to an active-vertex/group cover. Exact structural fixtures prove coherent equality, an n-1 LP-geometry gap on K_n pair groups, and finite information with infeasible witness geometry; the matching minimax characterization remains open.
 
 Claims enter the abstract only after proof/audit gates.
 
@@ -92,7 +92,8 @@ data/
   replay_benchmark_v1.jsonl
   software_subject_benchmark_v1.jsonl
   counterfactual_replay_benchmark_v1.jsonl  144 frozen P15 configurations
-  partial_replay_benchmark_v1.jsonl          168 frozen P17 specification rows
+  partial_replay_benchmark_v1.jsonl          168 frozen P17 parameter-stress rows
+  partial_replay_structural_cases_v1.jsonl   8 exact P17 structural theorem fixtures
 
 paper/                       Overleaf-ready STOC manuscript
 docs/                        proof audits, novelty matrix, roadmap, GPU runbook
@@ -120,6 +121,7 @@ python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.js
 python scripts/generate_subject_benchmark.py --output data/software_subject_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
+python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 
 python experiments/run_gaussian_core.py --graph star --n 10 --trials 10000
 python experiments/run_replay_separation.py --p 0.5 --d 0.01 --trials 100000
