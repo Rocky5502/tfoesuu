@@ -85,3 +85,20 @@ not empirical outcomes: one coherent-equality case, six K_n pair-group cases
 case. Regenerate it with `scripts/generate_partial_replay_structural_cases.py`.
 The test suite requires the committed manifest to equal the deterministic
 in-code specification exactly.
+
+
+## Whole-submission checksum manifest
+
+For a candidate submission commit, create a full tracked-source checksum manifest:
+
+```bash
+python scripts/freeze_submission_artifacts.py \
+  --require-clean \
+  --output results/submission_manifest.json
+```
+
+The manifest hashes every tracked repository file and records the exact git SHA.
+Use repeated `--extra-file` arguments to attach the compiled PDF and only those
+publication result/provenance files that actually exist. See
+`docs/ARTIFACT_FREEZE.md`. This mechanism records artifacts; it never creates or
+infers empirical results.
