@@ -115,7 +115,10 @@ heterogeneous/composite fairness-preserving nulls. That extension remains open.
 - malformed/singleton observation vectors fail closed;
 - raw lower and raw-contrast upper recompute the same C_vert optimum;
 - the 8-row structural specification manifest records and checks the exact
-  normalized raw-contrast cost.
+  normalized raw-contrast cost;
+- all 168 parameter-stress rows materialize their rounded schedules and verify,
+  for every active endpoint, both exposure at least L and the exact finite-sample
+  miss bound `(1-d)^N_x <= beta`.
 
 ## 7. Prior-art fence
 
