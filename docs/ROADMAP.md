@@ -11,7 +11,7 @@ P13 combines unknown patch location with replay on a matching: fixed-confidence 
 P14 shows how sound static patch-effect envelopes prune fairness edges with zero new executions.
 P15 shows that four-way replay across both versions and both counterfactual endpoints cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1).
 P16 lifts synchronized replay to the full active fairness suite: round complexity is independent of edge count and concrete execution complexity is Theta(n_active log(1/delta)/d) in the audited homogeneous Bernoulli family.
-P17 has a corrected two-matrix formulation for partial synchronized replay. The LP geometries are structurally separated by exact fixtures, and an audited raw-output contrast construction attains the active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family. Broader heterogeneous/composite-null partial replay remains open.
+P17 has a corrected two-matrix formulation for partial synchronized replay. The LP geometries are structurally separated by exact fixtures, an audited raw-output contrast construction attains C_vert in the homogeneous single-changed-endpoint family, and an audited group-coherent/d-detectable extension permits different null patch effects across disconnected replay components. Arbitrary within-group heterogeneous/composite-null partial replay remains open.
 
 See docs/PROOF_STATUS.md and docs/PROOF_AUDIT_P17_FRACTIONAL_REPLAY.md for exact audit status.
 
@@ -36,19 +36,20 @@ same contrast under heterogeneity." It is to identify extra replay/control
 structure, a baseline-adjusted statistic, or a sharper decision geometry that
 restores uniform validity under the composite null.
 
-A candidate sufficient-condition extension is now under audit: **group-coherent
-composite nulls**, where every legal replay group has a pathwise-constant null
-patch-delta vector, while different disconnected replay components may have
-different patch effects.  If every alternative indexed by active endpoint x
-creates a within-group contrast with probability at least d in every legal
-group containing x, the same C_vert rounding argument gives zero type-I error
-and type-II error at most beta.  The candidate has proof, adversarial code, and
-deterministic specification data, but it must remain outside the manuscript
-theorem set until CI and the real paper build pass.
+The group-coherent sufficient-condition extension is now audited.  Under every
+null, each legal replay group must have a pathwise-constant patch-delta vector,
+while different disconnected replay components may have different patch
+effects.  If every alternative indexed by active endpoint x creates a contrast
+with probability at least d in every legal group containing x, the same C_vert
+rounding gives zero type-I error, type-II error at most beta, and cost
+L C_vert plus rounding support.  Because the class contains the homogeneous
+Bernoulli subfamily, the prior C_vert transcript-KL lower floor remains
+necessary.
 
-Arbitrary heterogeneous/composite nulls that violate group coherence remain
-open; the frozen scope counterexample proves that Algorithm C cannot simply be
-used there.
+The next target is strictly beyond group coherence: arbitrary
+heterogeneous/composite nulls where benign within-group delta disagreement can
+occur.  The frozen scope counterexample rules out reusing Algorithm C unchanged;
+seek extra controls, baseline adjustment, or a sharper decision geometry.
 
 ### B. Retained certificate headroom
 Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Seek an instance-dependent theorem where patch restrictions and certified headroom interact nontrivially.
@@ -68,7 +69,7 @@ Study P0 -> P1 -> ... -> PT with reusable certificates. Target a dynamic complex
 2. Materialize deterministic Gaussian, replay, counterfactual, and partial-replay benchmark manifests.
 3. Run 10^4-trial single-GPU smoke tests.
 4. Stress the replay exponent at shrinking d.
-5. Search heterogeneous variance profiles and partial-replay group families for counterexamples to broader composite-null graph formulas and candidate extensions beyond the audited homogeneous C_vert theorem.
+5. Search heterogeneous variance profiles and partial-replay group families for counterexamples beyond the audited group-coherent C_vert extension, especially within-group benign heterogeneity that defeats raw contrast.
 6. Only after theorem freeze, run 10^6-10^7 publication sweeps on both GPUs.
 
 ## Paper gate

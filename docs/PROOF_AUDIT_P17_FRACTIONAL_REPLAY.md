@@ -273,7 +273,7 @@ active-vertex exposure, the no-joint-edge path case, and the threshold intervals
 of the Bernoulli construction. Full CI, bibliography/manuscript checks, and the
 real LaTeX build passed before promotion.
 
-## 7c. Candidate group-coherent extension (not yet promoted)
+## 7c. Audited group-coherent extension
 
 A sufficient-condition extension is under audit.  Under every null, require the
 patch-delta vector to be pathwise constant inside each legal replay group; the
@@ -287,11 +287,12 @@ heterogeneity across two disconnected replay components.
 
 The homogeneous Bernoulli family is a subfamily of this group-coherent class,
 so its existing transcript-KL lower bound remains a necessary minimax floor for
-the broader class.  This candidate therefore preserves C_vert on both certified
-combinatorial sides, but it is **not PROVED + AUDITED yet**.  The dedicated
-audit is docs/PROOF_AUDIT_P17_GROUP_COHERENT.md.  Promotion requires green
-candidate CI and a real LaTeX build, followed by a separate synchronized
-manuscript/status commit.
+the broader class.  This extension therefore preserves C_vert on both certified combinatorial
+sides for the group-coherent/d-detectable class.  The dedicated audit is
+docs/PROOF_AUDIT_P17_GROUP_COHERENT.md.  Candidate commit
+012d0bdc44c761073f5a7f3e9e912e50e2af7192 passed full CI and both push/PR
+real LaTeX builds before the result was manuscript-promoted.  Arbitrary
+heterogeneous fair nulls remain outside the claim.
 
 ## 8. Small-d scaling
 

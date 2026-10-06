@@ -101,9 +101,14 @@ operational: scheduling groups by $C_{\rm vert}$ and rejecting on a nonconstant
 within-group vector of old--new patch deltas yields zero type-I error and
 $O(C_{\rm vert}d^{-1}\log(1/\delta))$ fixed-design cost, while transcript
 change of measure gives the matching $C_{\rm vert}$ combinatorial lower
-geometry.  This theorem is deliberately not extended to heterogeneous
-fairness-preserving nulls, where unrelated synchronized references can undergo
-different benign patch effects.
+geometry.  A naive extension to arbitrary heterogeneous
+fairness-preserving nulls is invalid because benign within-group patch effects
+can differ.  We nevertheless identify a strict sufficient-condition extension:
+if every legal replay group is pathwise patch-delta coherent under the null,
+while every changed active endpoint creates a contrast with probability at least
+$d$ in each containing group, the same $C_{\rm vert}$ schedule remains valid.
+This permits different null patch effects across disconnected replay components
+without claiming the arbitrary heterogeneous case.
 
 The paper is deliberately theory-first and model-free.  No pretrained model,
 open-source model, proprietary API, or LLM is an experimental subject.  GPU

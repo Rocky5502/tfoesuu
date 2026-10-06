@@ -2,8 +2,10 @@
 
 **Status: PROVED + AUDITED for the frozen homogeneous single-changed-endpoint
 family.** Full CI and the real LaTeX build are green on the synchronized proof
-branch. The theorem is explicitly not generalized to heterogeneous/composite
-fairness-preserving nulls.
+branch. This audit remains the homogeneous specialization. A separate audited
+result, docs/PROOF_AUDIT_P17_GROUP_COHERENT.md, extends the same schedule to
+group-coherent/d-detectable null/alternative classes; arbitrary heterogeneous
+fairness-preserving nulls remain outside both claims.
 
 ## 1. Exact family
 
@@ -107,7 +109,9 @@ data/partial_replay_scope_cases_v1.jsonl and exercised by both the direct
 scope-guard regression and the manifest round-trip test. It proves only that
 the naive homogeneous contrast rule is not uniformly valid for arbitrary
 heterogeneous/composite fairness-preserving nulls; it does not characterize the
-optimal broader tester. That extension remains open.
+optimal broader tester. A fully arbitrary heterogeneous/composite-null extension remains open.  The
+separate group-coherent theorem covers the sufficient-condition subclass where
+null patch deltas are pathwise equal inside every legal replay group.
 
 ## 6. Adversarial implementation checks
 
@@ -139,5 +143,7 @@ geometry induced by version-aware fairness-regression access in the frozen famil
 The synchronized branch passed all deterministic tests and full CI, bibliography
 and manuscript consistency checks, and the real LaTeX build. The status ledger,
 theorem/algorithm matrix, roadmap, novelty fence, README, data documentation,
-and manuscript use the same homogeneous-family scope. No claim is made for
-heterogeneous/composite fairness-preserving nulls.
+and manuscript use the same homogeneous-family scope for P17-A.  P17-C was
+audited separately before promotion and extends only to group-coherent,
+d-detectable settings; arbitrary within-group heterogeneous fair nulls remain
+open.

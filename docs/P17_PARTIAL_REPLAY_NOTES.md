@@ -1,7 +1,8 @@
 # P17 — partial synchronized replay
 
-**Status: PROVED + AUDITED FOR THE FROZEN HOMOGENEOUS SINGLE-CHANGED-ENDPOINT
-FAMILY. The active-vertex raw-information geometry C_vert is attainable there;
+**Status: PROVED + AUDITED FOR THE HOMOGENEOUS SINGLE-CHANGED-ENDPOINT FAMILY
+AND FOR THE GROUP-COHERENT/d-DETECTABLE SUFFICIENT-CONDITION EXTENSION.  The
+active-vertex geometry C_vert is attainable in both scoped settings; arbitrary
 heterogeneous/composite-null partial replay remains open.**
 
 ## Frozen oracle
@@ -254,10 +255,13 @@ The test suite checks:
 
 ## What remains open
 
-The raw-contrast construction attains the active-vertex geometry for the frozen
-homogeneous single-changed-endpoint family. The remaining P17 question is broader: characterize partial replay under heterogeneous or otherwise
-composite fairness-preserving nulls, where arbitrary within-group patch-delta
-disagreement cannot be treated as a zero-type-I witness.
+The active-vertex raw-contrast construction is now audited for the homogeneous
+single-changed-endpoint family and for the strictly broader group-coherent,
+d-detectable class.  The remaining P17 question is arbitrary heterogeneous or
+otherwise composite fairness-preserving nulls that violate group coherence,
+where within-group patch-delta disagreement cannot be treated as a zero-type-I
+witness.  Candidate routes are additional synchronized controls,
+baseline-adjusted contrasts, or a new decision geometry.
 
 ## Novelty fence
 

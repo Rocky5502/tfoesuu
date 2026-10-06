@@ -11,6 +11,7 @@
 - Promoted the audited P17 result into the STOC abstract/introduction and strengthened the CRN prior-art fence.
 - Synchronized the STOC 2027 checklist to the live CFP, including generative-AI and reviewer-LLM consent requirements.
 - Added a deterministic heterogeneous fair-null P17 scope counterexample and synchronized it across tests, specification data, proof audits, roadmap, and manuscript.
+- Proved and audited the P17 group-coherent composite-null extension after a separate pre-promotion CI/paper gate; added its deterministic specification manifest, tests, proof audit, and manuscript proposition while keeping arbitrary heterogeneous nulls open.
 
 ## 0.1.0 — 2026-10-04
 

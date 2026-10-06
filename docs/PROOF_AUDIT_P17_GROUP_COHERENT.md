@@ -1,7 +1,10 @@
 # Proof audit — P17 group-coherent composite-null extension
 
-**Status: theorem candidate proved on paper and encoded in adversarial tests; promote
-to PROVED + AUDITED only after synchronized CI and the real LaTeX build pass.**
+**Status: PROVED + AUDITED.  The pre-promotion candidate commit
+`012d0bdc44c761073f5a7f3e9e912e50e2af7192` passed full CI, adversarial
+tests, manifest regeneration, bibliography/manuscript consistency, artifact
+freeze validation, and both push- and PR-triggered real LaTeX builds before
+manuscript promotion.**
 
 ## 1. Model and scope
 
@@ -144,12 +147,18 @@ encoded by the P17 scope-falsification manifest.
 - data/partial_replay_group_coherent_cases_v1.jsonl is deterministic
   specification data, not empirical evidence.
 
-## 8. Promotion gate
+## 8. Promotion gate result
 
-Do not call this result PROVED + AUDITED in the source-of-truth ledger until:
+The gate was executed before promotion on candidate commit
+`012d0bdc44c761073f5a7f3e9e912e50e2af7192`.
 
-1. the theorem statement and proof remain synchronized across code/docs/paper;
-2. all adversarial tests pass;
-3. the committed coherent-case manifest round-trips exactly;
-4. bibliography/manuscript consistency checks pass; and
-5. the real LaTeX paper build passes on the candidate commit.
+1. theorem/code/data definitions were synchronized on the candidate branch;
+2. full pytest and adversarial tests passed;
+3. the committed coherent-case manifest round-tripped exactly;
+4. bibliography, manuscript consistency, and submission-manifest checks passed;
+5. push CI and PR CI passed; and
+6. both push- and PR-triggered real LaTeX builds passed.
+
+The promotion commit adds the manuscript proposition and flips the ledger only
+after those gates.  The promoted commit is itself required to rerun CI and the
+paper build before merge.

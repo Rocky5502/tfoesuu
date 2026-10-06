@@ -13,11 +13,11 @@ For a submission candidate, compile the PDF from the frozen commit and attach
 The PDF is intentionally git-ignored; the manifest records its SHA-256 digest.
 
 
-## Candidate-theorem audit note
+## Group-coherent P17 promotion note
 
-The group-coherent P17 extension is being audited outside the submission
-manuscript first.  Its proof, tests, and deterministic specification data live
-in the repository, but the theorem is intentionally not inserted into
-`main.tex` until candidate CI and a real LaTeX build pass.  This README change
-also ensures the paper workflow compiles the unchanged manuscript on the
-candidate branch as an explicit audit gate.
+The group-coherent P17 extension was kept outside the manuscript until candidate
+commit `012d0bdc44c761073f5a7f3e9e912e50e2af7192` passed full CI and both
+push- and PR-triggered real LaTeX builds.  The subsequent promotion commit
+synchronizes the audited proposition with the proof ledger, code, deterministic
+specification data, and submission manuscript.  Arbitrary heterogeneous
+fairness-preserving nulls remain explicitly outside the claim.

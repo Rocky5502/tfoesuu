@@ -208,7 +208,90 @@ the general composite null without additional controls or a different decision
 statistic.
 \end{remark}
 
-Characterizing that broader composite-null setting remains open. Common random
+The counterexample rules out arbitrary heterogeneity, but it does not require
+global homogeneity.  A useful sufficient condition is coherence only within the
+groups that the replay oracle can actually query.
+
+\begin{definition}[Group-coherent partial replay]
+\label{def:p17-group-coherent}
+A fairness-preserving null is \emph{group-coherent} if, for every legal group
+$S_i$, there is a measurable function $h_i$ such that
+\[
+P_1(v;U)-P_0(v;U)=h_i(U)
+\quad\text{a.s. for every }v\in S_i.
+\]
+The functions may differ across disconnected replay-group components.  An
+alternative indexed by active endpoint $x$ is \emph{$d$-detectable} if every
+legal group $S_i\ni x$ has probability at least $d$ of producing a nonconstant
+within-group patch-delta vector.
+\end{definition}
+
+\begin{proposition}[Group-coherent active-vertex schedule]
+\label{prop:p17-group-coherent}
+Consider a class of group-coherent fairness-preserving nulls and $d$-detectable
+endpoint alternatives in the partial-replay oracle.  Suppose
+$C_{\rm vert}<\infty$, let $q^\star$ solve the active-vertex cover, and set
+\[
+L=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil,
+\qquad
+n_i=\lceil Lq_i^\star\rceil.
+\]
+Query $S_i$ exactly $n_i$ times with fresh independent tapes and reject on the
+first nonconstant within-group patch-delta vector.  Uniformly over the stated
+null class the test has zero type-I error; every stated alternative has
+pointwise type-II error at most $\delta$; and the declared cost is at most
+\[
+L C_{\rm vert}+\sum_{i:q_i^\star>0}c_i.
+\]
+\end{proposition}
+
+\begin{proof}
+Group coherence makes every queried patch-delta vector constant pathwise under
+every null, so rejection is impossible.  For an alternative indexed by $x$,
+active-vertex feasibility and upward rounding give
+\[
+\sum_{i:x\in S_i}n_i
+\ge L\sum_{i:x\in S_i}q_i^\star
+\ge L.
+\]
+Every such query exposes a contrast with probability at least $d$, and fresh
+tapes make the query-level misses independent.  Hence the probability that all
+queries containing $x$ miss is at most $(1-d)^L\le\delta$.  Finally,
+$\lceil Lq_i^\star\rceil\le Lq_i^\star+1$ on the positive support of
+$q^\star$, yielding the cost bound.
+\end{proof}
+
+The extension is strict.  On a four-vertex matching with legal groups
+$\{0,1\}$ and $\{2,3\}$, the first group may have old/new thresholds
+$0.20/0.30$ while the second has $0.40/0.45$.  This null is globally
+heterogeneous but group-coherent.  Changing only vertex $0
+
+\paragraph{Adaptivity.}
+Property testing can exhibit large adaptive/non-adaptive gaps in other settings
+\cite{CanonneGur2018,Hurwitz2011}.  Whether full fairness regression admits such a
+separation remains open; the Gaussian patch-neutrality lower bound already shows
+that adaptivity cannot erase the $\Psi$ cost on the zero-delta null instance.
+s new threshold to
+$0.35$ makes group $\{0,1\}$ expose a contrast exactly when
+$U\in(0.30,0.35]$, of probability $0.05$.
+
+Let $Q^\star_{\rm gc}$ denote the infimum worst-case expected declared query
+cost among tests that satisfy the stated error guarantees uniformly over this
+group-coherent/$d$-detectable class.  The class contains the homogeneous
+Bernoulli subfamily used for the transcript lower bound.  Thus any such tester
+inherits
+\[
+\frac{\kl(1-\delta,\delta)}{K_{\rm sync}}C_{\rm vert}
+\le Q^\star_{\rm gc},
+\]
+for that embedded subfamily, while
+Proposition~\ref{prop:p17-group-coherent} supplies the corresponding
+$C_{\rm vert}$ upper geometry.  For fixed interior Bernoulli parameters this
+again gives $\Theta(C_{\rm vert}d^{-1}\log(1/\delta))$ order up to constants
+and rounding support cost.  This is a sufficient-condition extension, not a
+characterization of arbitrary heterogeneous fairness-preserving nulls.
+
+Characterizing nulls that violate group coherence remains open. Common random
 numbers and their use in multiple-system comparisons are established simulation
 tools \cite{GlassermanYao1992,YangNelson1991}; the claim here is the resulting
 version-aware fairness-regression query geometry, not the invention of common

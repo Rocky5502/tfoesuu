@@ -40,7 +40,7 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
 | P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | PROVED + AUDITED for frozen homogeneous family; broader composite-null extension open |
 | P17-S | Scope counterexample for naive heterogeneous raw contrast | Heterogeneous fair-null deterministic witness | tests + partial_replay_scope_cases_v1.jsonl | Counterexample proved + tested; rules out silent generalization of P17-A |
-| P17-C | Group-coherent composite-null extension | Same C_vert schedule under pathwise within-group null coherence and d-detectable endpoint alternatives | partial_replay_lower.py + tests + group-coherent specification data | PROOF CANDIDATE; CI/paper audit gates pending; not manuscript-promoted |
+| P17-C | Group-coherent composite-null extension | Same C_vert schedule under pathwise within-group null coherence and d-detectable endpoint alternatives | partial_replay_lower.py + tests + group-coherent specification data | PROVED + AUDITED; candidate CI and real paper builds passed before promotion |
 | P17-M | Arbitrary heterogeneous/composite-null partial-replay complexity | Open: needs controls/baseline adjustment/new geometry | none yet | Open |
 
 ## P17 matrix package
@@ -214,8 +214,9 @@ rounding-cost bound.
 Promotion of the scoped homogeneous P17 theorem is complete: proof audit,
 executable correspondence, adversarial tests, the 168-row exact-risk validator,
 prior-art fence, CI, paper build, and manuscript synchronization all passed.
-Any broader heterogeneous/composite-null P17 theorem must independently pass the
-same gates before entering the abstract or contribution list.
+P17-C passed the same proof/code/data/CI/paper gates before promotion.  Any
+extension beyond group coherence must independently pass them before entering
+the abstract or contribution list.
 
 
 ## P17 structural specification data
@@ -226,6 +227,22 @@ grid.  It records the exact expected LP values for coherent equality, the
 K_n pair-group finite-gap family for n=3,...,8, and the
 finite-information/infeasible-witness path case.  These rows are mathematical
 specifications, not empirical measurements.
+
+## P17 group-coherent specification data
+
+`data/partial_replay_group_coherent_cases_v1.jsonl` is a deterministic
+specification manifest for P17-C.  Its frozen matching instance has two
+disconnected replay components with distinct null patch intervals,
+`(0.20,0.30]` and `(0.40,0.45]`, while remaining pathwise coherent inside
+each legal group.  A single-endpoint alternative extends vertex 0 to threshold
+0.35 and creates an exact contrast event of probability 0.05.  The test suite
+recomputes `C_vert=2`, checks zero null contrast in both components, checks the
+alternative contrast, and round-trips the committed JSONL exactly.
+
+The separate `partial_replay_scope_cases_v1.jsonl` remains the negative
+boundary fixture: it contains a fairness-preserving null that violates group
+coherence and triggers raw contrast.  Together the two manifests guard both the
+positive sufficient condition and the failure immediately outside it.
 
 ## Algorithm C — active-vertex raw-contrast scheduler
 
