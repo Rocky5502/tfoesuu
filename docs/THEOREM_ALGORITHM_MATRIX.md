@@ -36,7 +36,7 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P15 | Four-way replay cancels a common patch | Counterfactual replay tester/bounds | separations.py, counterfactual benchmark | Proved + audited |
 | P16 | Synchronized suite replay removes edge-count dependence | Full active-suite shared-tape replay | suite_replay.py | Proved + audited |
 | P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; matching theorem open |
-| P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; do not claim attainability |
+| P17-I | Raw-output necessary information floor | Active-vertex/group LP scaled by transcript KL | partial_replay_lower.py | Corrected/derived/tested; attained by P17-A in the frozen homogeneous family |
 | P17-G | Structural relation between information and witness LP geometries | Deterministic equality/finite-gap/infinite-gap fixtures | partial_replay_lower.py + tests + structural specification data | LP geometry proved + tested; not a minimax result |
 | P17-A | Active-vertex raw-contrast schedule in the frozen homogeneous single-endpoint family | Active-vertex LP + deterministic rounding + within-group patch-delta contrast | partial_replay_lower.py + tests | PROVED + AUDITED for frozen homogeneous family; broader composite-null extension open |
 | P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open | none | Open |
@@ -135,8 +135,9 @@ group signatures their duplicate constraint rows coincide and C_vert=C_edge. For
 K_n with legal groups equal to its unit-cost edges, C_vert=n/2 and
 C_edge=n(n-1)/2, giving ratio n-1. For the path 0-1-2 with legal groups {0,2}
 and {1,2}, C_vert=2 while the witness LP is infeasible. Thus no universal finite
-factor compares C_edge to C_vert over the frozen oracle class. This does not
-identify achievable testing complexity.
+factor compares C_edge to C_vert over the frozen oracle class. This separation
+alone does not identify achievable testing complexity; P17-A supplies the
+achievable C_vert construction only for the scoped homogeneous family.
 
 ## Algorithm A — fractional partial-replay witness scheduler
 
