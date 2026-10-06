@@ -281,3 +281,20 @@ def test_raw_group_contrast_witness_validates_group_shape():
         raw_group_contrast_witness([0], [1])
     with pytest.raises(ValueError, match="equal-length vectors"):
         raw_group_contrast_witness([0, 0], [1])
+
+
+def test_raw_lower_and_contrast_upper_share_active_vertex_geometry():
+    g = clique_graph(4)
+    groups = [(1, 2, 3), (0, 2, 3), (0, 1, 3), (0, 1, 2)]
+    costs = [1.0] * len(groups)
+    cover = minimum_fractional_active_vertex_cover(g, groups, costs)
+    raw = _raw(g, groups, costs)
+    schedule = active_vertex_contrast_schedule(
+        g, groups, costs, d=0.05, beta=0.05
+    )
+    assert cover.success and raw.success
+    assert cover.cost == pytest.approx(4.0 / 3.0)
+    assert schedule.normalized_fractional_cost == pytest.approx(cover.cost)
+    positive_kl = raw.information_matrix[raw.information_matrix > 0.0][0]
+    lower_scale = binary_decision_kl(0.05) / positive_kl
+    assert raw.expected_cost_floor == pytest.approx(lower_scale * cover.cost)
