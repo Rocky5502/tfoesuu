@@ -8,7 +8,7 @@ P1-P3 establish localization, the need for a statistical margin, and paired-delt
 P4-P8 establish the Gaussian graph-allocation core around Psi(H,nu).
 P9-P12 establish the Bernoulli replay mechanism and the one-edge linear-vs-quadratic small-patch separation.
 P13 combines unknown patch location with replay on a matching: fixed-confidence cost scales as Theta(M log(1/delta)/d).
-P14 shows how sound static patch-effect envelopes prune fairness edges with zero new executions.
+P14 proves unconditional safe-edge carryover from sound patch-effect envelopes. A sharper promise-aware construction is now under final audit: for a gamma-separated test, only edges whose envelope can reach tau_e+gamma need stochastic search.
 P15 shows that four-way replay across both versions and both counterfactual endpoints cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1).
 P16 lifts synchronized replay to the full active fairness suite: round complexity is independent of edge count and concrete execution complexity is Theta(n_active log(1/delta)/d) in the audited homogeneous Bernoulli family.
 P17 has a corrected two-matrix formulation for partial synchronized replay. The LP geometries are structurally separated by exact fixtures, and an audited raw-output contrast construction attains the active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family. Broader heterogeneous/composite-null partial replay remains open.
@@ -31,7 +31,7 @@ The corrected lower floor is [kl(1-beta,beta)/K_sync] C_vert. The audited active
 Keep the raw-contrast claim explicitly scoped to the homogeneous single-changed-endpoint family until a broader composite-null theorem is proved.
 
 ### B. Retained certificate headroom
-Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Seek an instance-dependent theorem where patch restrictions and certified headroom interact nontrivially.
+Old-version slack cannot improve unrestricted minimax complexity by itself (P11). Sound patch envelopes already yield zero-query carryover (P14), and the current sharpened candidate uses the separation margin itself to discard non-alternative-capable promise-gap edges before Gaussian allocation. After its paper/audit gates close, the remaining target is a tight instance-dependent lower characterization rather than another looser upper bound.
 
 ### C. Unknown variance and sequential validity
 Replace known Gaussian delta variances with confidence sequences or another anytime-valid construction. Every stopping rule must be audited for optional-stopping validity.
