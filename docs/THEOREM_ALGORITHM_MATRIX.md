@@ -32,7 +32,8 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P11 | Old slack alone gives no minimax speedup | Boundary-null adversary | proof only | Proved + audited |
 | P12 | Paired replay d^-1 vs independent d^-2 | Replay-separation bound calculator | separations.py | Proved + audited |
 | P13 | Unknown-location matching complexity Theta(M/d) | Location replay tester/bounds | separations.py | Proved + audited |
-| P14 | Patch-effect envelopes prune safe edges | Residual graph construction | certificate.py | Proved + audited |
+| P14 | Patch-effect envelopes prune certified-safe edges | Unconditional residual graph construction | certificate.py | Proved + audited |
+| P14-P | Under a gamma-separated promise, only envelope-compatible alternative edges need stochastic search | Three-way safe / promise-gap / alternative-capable partition + Gaussian allocation on H_gamma | certificate.py, testers.py + tests | Derived + implemented + tested; final paper/audit gates pending |
 | P15 | Four-way replay cancels a common patch | Counterfactual replay tester/bounds | separations.py, counterfactual benchmark | Proved + audited |
 | P16 | Synchronized suite replay removes edge-count dependence | Full active-suite shared-tape replay | suite_replay.py | Proved + audited |
 | P17-U | Partial replay fractional witness-scheduling upper construction | Edge/group LP + deterministic rounding | partial_replay_lower.py | Upper bound proved; valid but generally nonmatching for the homogeneous raw-output oracle |
