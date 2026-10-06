@@ -23,6 +23,7 @@ jobs:
       - run: python scripts/generate_subject_benchmark.py --output /tmp/software_subject_benchmark_v1.jsonl
       - run: python scripts/generate_counterfactual_benchmark.py --output /tmp/counterfactual_replay_benchmark_v1.jsonl
       - run: python scripts/generate_partial_replay_benchmark.py --output /tmp/partial_replay_benchmark_v1.jsonl
+      - run: python scripts/generate_partial_replay_structural_cases.py --output /tmp/partial_replay_structural_cases_v1.jsonl
       - run: python experiments/run_gaussian_core.py --graph star --n 8 --trials 500 --gamma 0.7 --beta 0.05
       - run: python experiments/run_replay_separation.py --p 0.5 --d 0.05 --beta 0.05 --trials 1000
       - run: python experiments/run_location_replay.py --candidates 8 --p 0.5 --d 0.05 --beta 0.05 --trials 1000

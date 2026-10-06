@@ -80,3 +80,86 @@ def read_partial_replay_jsonl(
             if line.strip():
                 rows.append(PartialReplayBenchmarkSpec(**json.loads(line)))
     return rows
+
+
+@dataclass(frozen=True)
+class PartialReplayStructuralCase:
+    """Deterministic P17 structural-geometry falsification case."""
+
+    case_id: str
+    regime: str
+    graph_family: str
+    n: int
+    group_rule: str
+    expected_c_vert: float
+    expected_c_edge: float | None
+    expected_ratio: float | None
+
+
+def partial_replay_structural_cases_v1() -> list[PartialReplayStructuralCase]:
+    """Audited specification cases for equality, finite gap, and infinite gap.
+
+    These rows encode exact mathematical expectations.  They are not empirical
+    observations and must remain synchronized with the P17 regression tests and
+    proof audit.
+    """
+    rows = [
+        PartialReplayStructuralCase(
+            case_id="p17-struct-equality-matching",
+            regime="coherent-equality",
+            graph_family="matching",
+            n=4,
+            group_rule="fairness_edges",
+            expected_c_vert=2.0,
+            expected_c_edge=2.0,
+            expected_ratio=1.0,
+        )
+    ]
+    for n in range(3, 9):
+        rows.append(
+            PartialReplayStructuralCase(
+                case_id=f"p17-struct-clique-pairs-n{n}",
+                regime="finite-linear-gap",
+                graph_family="clique",
+                n=n,
+                group_rule="fairness_edges",
+                expected_c_vert=n / 2.0,
+                expected_c_edge=n * (n - 1) / 2.0,
+                expected_ratio=n - 1.0,
+            )
+        )
+    rows.append(
+        PartialReplayStructuralCase(
+            case_id="p17-struct-finite-info-infinite-witness",
+            regime="infinite-witness-gap",
+            graph_family="path",
+            n=3,
+            group_rule="reference_pairs_02_12",
+            expected_c_vert=2.0,
+            expected_c_edge=None,
+            expected_ratio=None,
+        )
+    )
+    return rows
+
+
+def write_partial_replay_structural_jsonl(
+    rows: Iterable[PartialReplayStructuralCase],
+    path: str | Path,
+) -> None:
+    out = Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(asdict(row), sort_keys=True) + "\n")
+
+
+def read_partial_replay_structural_jsonl(
+    path: str | Path,
+) -> list[PartialReplayStructuralCase]:
+    rows: list[PartialReplayStructuralCase] = []
+    with Path(path).open("r", encoding="utf-8") as fh:
+        for line in fh:
+            if line.strip():
+                rows.append(PartialReplayStructuralCase(**json.loads(line)))
+    return rows

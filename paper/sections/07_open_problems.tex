@@ -94,10 +94,38 @@ yielding the necessary expected-cost floor
 \frac{\kl(1-\delta,\delta)}{K_{\rm sync}}C_{\rm vert}.
 \]
 Every feasible edge-cover vector is also feasible for the active-vertex cover,
-so $C_{\rm vert}\le C_{\rm edge}$.  The unresolved question is whether this
-two-geometry gap is an artifact of the current witness tester or a fundamental
-separation in partial replay.  We therefore do not claim a matching minimax
-characterization.
+so $C_{\rm vert}\le C_{\rm edge}$.
+
+\begin{proposition}[Separation of the P17 LP geometries]
+\label{prop:p17-geometry-separation}
+The two fractional-cover geometries need not be comparable within any finite
+universal factor.  More precisely: (i) if every fairness edge has endpoints
+with identical legal-group incidence signatures, then
+$C_{\rm vert}=C_{\rm edge}$; (ii) for $H=K_n$ with the legal groups equal to
+its edges and unit group costs,
+$C_{\rm vert}=n/2$ and $C_{\rm edge}=\binom n2$, so their ratio is $n-1$;
+and (iii) there is a legal partial-replay instance with
+$C_{\rm vert}<\infty$ but $C_{\rm edge}=\infty$.
+\end{proposition}
+
+\begin{proof}
+For (i), identical endpoint incidence makes the edge-witness row
+$\mathbf 1\{u,v\in S_i\}_i$ identical to either endpoint's active-vertex
+row; equality propagates over each connected fairness component, and duplicate
+constraints may be removed.  For (ii), pair groups cover only their own edge, so
+every edge variable in the witness LP is at least one.  Summing the $n$
+active-vertex constraints counts every pair variable twice and gives
+$C_{\rm vert}\ge n/2$, while assigning weight $1/(n-1)$ to every pair
+attains equality.  For (iii), take the path $0$--$1$--$2$ with legal groups
+$\{0,2\}$ and $\{1,2\}$ at unit cost.  The active-vertex LP has value $2$,
+but edge $\{0,1\}$ belongs to no legal group, so the witness LP is infeasible.
+\end{proof}
+
+Proposition~\ref{prop:p17-geometry-separation} concerns only the two LP
+geometries; it is not a testing-complexity separation.  The unresolved question
+is whether the active-vertex information floor is attainable, or whether a
+different decision-theoretic parameter governs achievable partial-replay
+testing cost.  We therefore do not claim a matching minimax characterization.
 
 \paragraph{Adaptivity.}
 Property testing can exhibit large adaptive/non-adaptive gaps in other settings
