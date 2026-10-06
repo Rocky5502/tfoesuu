@@ -61,7 +61,7 @@ Before submission:
 ## Artifact/reproducibility gate
 
 - [ ] Freeze submission git SHA.
-- [ ] Freeze benchmark manifests and SHA-256 hashes.
+- [ ] Freeze benchmark manifests and SHA-256 hashes, including the 168-row P17 stress grid and the separate 8-row P17 structural-case manifest.
 - [ ] Run CPU CI from a clean checkout.
 - [ ] Run staged GPU publication sweeps only on frozen theorem configurations.
 - [ ] Record GPU names, NVIDIA driver, CUDA/PyTorch versions, exact commands, benchmark hashes, output hashes, and git SHA.
