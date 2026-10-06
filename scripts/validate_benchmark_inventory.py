@@ -57,7 +57,7 @@ def main() -> None:
                 raise SystemExit(f"{name}: duplicate inventory token {item}")
             global_ids.add(token)
         total += len(rows)
-        print(f"ok {name}: {len(rows)} rows — {spec['role']}")
+        print(f"ok {name}: {len(rows)} rows - {spec['role']}")
     print(f"benchmark inventory ok: {len(EXPECTED)} frozen artifacts, {total} rows")
 
 
