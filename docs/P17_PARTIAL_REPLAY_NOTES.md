@@ -108,6 +108,27 @@ Thus both sides have first-order d^{-1} dependence for fixed confidence, while
 the remaining difficulty is the geometry/attainability gap between C_vert and
 C_edge.
 
+## Exact structural regimes
+
+The corrected geometries admit three exact, deterministic regimes:
+
+- **coherent equality:** if every fairness edge has identical endpoint
+  legal-group incidence signatures, duplicate LP rows coincide and
+  C_vert=C_edge;
+- **unbounded finite gap:** for K_n with legal groups equal to its edges and
+  unit costs, C_vert=n/2 while C_edge=n(n-1)/2, so the ratio is n-1;
+- **infinite witness gap:** for the path 0-1-2 with legal groups {0,2} and
+  {1,2}, C_vert=2 but C_edge is infeasible because edge {0,1} is never jointly
+  replayable.
+
+Hence no finite universal factor compares C_edge to C_vert in the frozen oracle
+class.  These are LP-geometry statements only; they do not establish minimax
+testing separation or attainability of the information floor.
+
+The exact cases are checked in tests/test_partial_replay_lower.py and recorded
+as deterministic specification data in
+data/partial_replay_structural_cases_v1.jsonl.
+
 ## Algorithmic correspondence
 
 Algorithm A — witness scheduler:
