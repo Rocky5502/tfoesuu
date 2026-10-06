@@ -1,0 +1,82 @@
+\begin{figure}[t]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  >=latex,
+  node distance=0.55cm,
+  box/.style={draw=black!28, rounded corners=1.5pt, line width=0.55pt,
+              fill=black!2, minimum height=1.45cm, text width=3.05cm,
+              align=left, inner sep=6pt, font=\small},
+  focal/.style={box, draw=teal!55!black, fill=teal!7},
+  risk/.style={box, draw=red!62!black, fill=red!4},
+  flow/.style={->, line width=0.75pt, draw=black!55},
+  minor/.style={font=\scriptsize, text=black!62, align=left}
+]
+\node[box] (inputs) {
+  \textbf{Version-aware inputs}\\[-1pt]
+  Certified old program $P_0$\\
+  Patch $P_0\!\to\!P_1$\\
+  Fairness graph $G=(V,E)$
+};
+
+\node[box, right=of inputs] (prune) {
+  \textbf{Deterministic reuse}\\[-1pt]
+  Sound impact set $C_\Delta$\\
+  Old certificate + patch envelope\\
+  Prune provably safe edges
+};
+
+\node[box, right=of prune] (gauss) {
+  \textbf{Stochastic core}\\[-1pt]
+  Residual graph $H^\star$\\
+  Coupled deltas $Z_v=P_1-P_0$\\
+  Allocate by $\Psi(H^\star,\nu)$
+};
+
+\node[focal, right=of gauss] (replay) {
+  \textbf{Replay hierarchy}\\[-1pt]
+  Vertex pairing $\rightarrow d^{-2}$\\
+  Four-way / suite replay $\rightarrow d^{-1}$\\
+  Partial replay $\rightarrow C_{\rm vert}$
+};
+
+\node[focal, right=of replay] (cert) {
+  \textbf{Certification output}\\[-1pt]
+  Accept: no detected regression\\
+  Reject: witnessed differential\\
+  Explicit fixed-confidence cost
+};
+
+\draw[flow] (inputs) -- (prune);
+\draw[flow] (prune) -- (gauss);
+\draw[flow] (gauss) -- (replay);
+\draw[flow] (replay) -- (cert);
+
+\node[minor, below=0.28cm of prune, text width=3.0cm] {
+  Zero executions for edges satisfying
+  $|g_{0,e}|+b_e\le\tau_e$.
+};
+\node[minor, below=0.28cm of gauss, text width=3.05cm] {
+  Theory: upper/lower bounds share graph allocation geometry.
+};
+\node[risk, below=0.62cm of replay, text width=4.05cm] (scope) {
+  \textbf{Scope boundary}\\[-1pt]
+  Homogeneous partial-replay theorem is audited.
+  A heterogeneous fair-null counterexample rules out a naive extension.
+};
+\draw[flow, draw=red!55!black] (replay.south) -- (scope.north);
+
+\node[minor, below=0.22cm of cert, text width=3.0cm] {
+  Proofs establish the guarantees; synthetic benchmarks only falsify,
+  stress-test, and reproduce them.
+};
+\end{tikzpicture}%
+}
+\caption{Theory pipeline for fairness regression testing of evolving stochastic software.
+Version information is reused in layers: sound program analysis first removes comparisons
+that need no execution; coupled stochastic testing then concentrates effort on the residual
+fairness graph; increasingly synchronized replay can change both the small-effect exponent
+and the relevant graph geometry. The partial-replay result is intentionally shown with its
+audited scope boundary rather than extrapolated to heterogeneous fairness-preserving nulls.}
+\label{fig:overview}
+\end{figure}
