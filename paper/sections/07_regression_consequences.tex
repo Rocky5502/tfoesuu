@@ -229,15 +229,26 @@ Using \(g_{1,e}=g_{0,e}+\theta_u-\theta_v\) and the triangle inequality,
 \]
 \end{proof}
 
-Define the \emph{residual regression graph} \(H^\star\) to contain exactly the
-edges for which
+For separated testing, the zero-query fairness certificate can be sharpened
+without claiming that additional edges are fair.  Define
 \[
-|g_{0,e}|+b_e>\tau_e.
+M_e=|g_{0,e}|+b_e
 \]
-All other fairness comparisons are discharged by
-\Cref{prop:certificate-pruning} before any paired execution is performed.
+and the \emph{alternative-capable graph}
+\[
+H_\gamma=(V,E_\gamma),
+\qquad
+E_\gamma=
+\{e\in E:M_e\ge\tau_e+\gamma\}.
+\]
+If \(M_e<\tau_e+\gamma\), then the envelope implies
+\(|g_{1,e}|<\tau_e+\gamma\), so edge \(e\) cannot realize the separated
+alternative.  There are therefore three distinct cases: \(M_e\le\tau_e\)
+certifies the edge fair; \(\tau_e<M_e<\tau_e+\gamma\) leaves the edge
+uncertified but inside the promise gap; and \(M_e\ge\tau_e+\gamma\) makes it
+alternative-capable.  Promise-gap edges are \emph{not} declared fair.
 
-\begin{corollary}[Envelope-pruned Gaussian regression testing]
+\begin{corollary}[Promise-aware envelope pruning]
 \label{cor:envelope-gaussian}
 Suppose paired deltas are Gaussian with known vertex variances \(\nu_v^2\), the
 old gaps \(g_{0,e}\) are known, and the tester faces the separated promise
@@ -249,37 +260,52 @@ versus
 \mathsf H_1:\ |g_{1,e}|\ge\tau_e+\gamma
 \quad\text{for some }e,
 \]
-for \(\gamma>0\).  If \(m^\star=|E(H^\star)|>0\), a non-adaptive tester exists
+for \(\gamma>0\).  If \(m_\gamma=|E_\gamma|>0\), a non-adaptive tester exists
 using at most
 \[
-\frac{8\log(2m^\star/\delta)}{\gamma^2}
-\Psi(H^\star,\nu)
+\frac{8\log(2m_\gamma/\delta)}{\gamma^2}
+\Psi(H_\gamma,\nu)
 +
-|V(H^\star)|
+|V(H_\gamma)|
 \]
 paired-oracle calls with error probability at most \(\delta\).  If
-\(m^\star=0\), zero paired-oracle calls suffice.
+\(m_\gamma=0\), the alternative class is empty under the sound envelopes and zero
+paired-oracle calls suffice.
 \end{corollary}
 
 \begin{proof}
-Edges outside \(H^\star\) are fair by
-\Cref{prop:certificate-pruning}.  On the residual graph, allocate paired samples
-exactly as in \Cref{thm:upper}.  For each residual edge \(e=(u,v)\), estimate
+For any edge,
+\[
+|g_{1,e}|
+\le
+|g_{0,e}|+b_e
+=
+M_e.
+\]
+Hence every edge satisfying the \(\mathsf H_1\) inequality must belong to
+\(E_\gamma\).  Allocate paired samples only on \(H_\gamma\), exactly as in
+\Cref{thm:upper}.  For each \(e=(u,v)\in E_\gamma\), estimate
 \(\theta_u-\theta_v\), add the known offset \(g_{0,e}\), and reject if
 \[
 |g_{0,e}+\widehat\theta_u-\widehat\theta_v|
 \ge
 \tau_e+\gamma/2.
 \]
-The allocation makes every residual edge-difference estimation error at most
-\(\gamma/2\) simultaneously except with probability \(\delta\).  On this event,
-all fair instances are accepted and every alternative separated by \(\gamma\) is
-rejected.  The query count is the Gaussian allocation bound applied only to
-\(H^\star\).
+Except on an event of probability at most \(\delta\), every tested edge-difference
+error has magnitude strictly less than \(\gamma/2\).  On that event, every
+\(\mathsf H_0\) instance is accepted, while any \(\mathsf H_1\) instance has a
+witness in \(E_\gamma\) whose estimate crosses the midpoint threshold.  The query
+count is the Gaussian allocation bound applied only to \(H_\gamma\).
 \end{proof}
 
-This result gives a precise role to retained certificate headroom.  Slack is not
-useful merely because it exists; it becomes computationally useful when coupled
-to sound information constraining what the patch can do.  Better static bounds
-shrink \(H^\star\), which can reduce both the number of tested comparisons and
-the graph allocation complexity \(\Psi\).
+The alternative-capable graph is always contained in the older residual graph
+\[
+H^\star=\{e:M_e>\tau_e\},
+\]
+and the inclusion can be strict.  For example, \(g_0=0\), \(\tau=0.10\),
+\(b=0.15\), and \(\gamma=0.10\) give an edge that is not deterministically
+certified fair but cannot reach the alternative boundary \(0.20\).  Promise-aware
+pruning can therefore reduce both the union-bound term and
+\(\Psi\) beyond ordinary certificate carryover.  This is a sharper upper bound
+under the separated promise; we do not claim a matching instance-dependent
+lower bound.
