@@ -26,10 +26,11 @@ Current high-value results/targets:
 2. **proved:** common-uniform old/new replay yields Theta(d^-1) rather than Theta(d^-2) small-patch complexity on a Bernoulli fairness-regression family;
 3. **proved:** four-way replay cancels a nonzero fairness-neutral common patch and changes the small-gap exponent from d^-2 to d^-1;
 4. **proved:** synchronized suite replay removes explicit edge-count dependence in the audited homogeneous family;
-5. **proved upper / necessary lower program:** partial synchronized replay separates an edge-by-group witness cover C_edge from an active-vertex/group information cover C_vert, with C_vert <= C_edge; a matching minimax theorem is not claimed;
-6. **open:** characterize when the P17 active-vertex information floor is attainable, or prove a separation;
-7. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
-8. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
-9. **open:** amortized complexity across multiple software versions.
+5. **proved upper / necessary lower program:** partial synchronized replay separates an edge-by-group witness cover C_edge from an active-vertex/group information cover C_vert, with C_vert <= C_edge;
+6. **proved LP-geometry structure:** coherent group signatures give equality, K_n pair groups give C_edge/C_vert=n-1, and a path/reference construction gives finite C_vert with infeasible C_edge; these are not minimax statements;
+7. **open:** characterize when the P17 active-vertex information floor is attainable, or identify the decision-theoretic geometry governing achievable cost;
+8. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
+9. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
+10. **open:** amortized complexity across multiple software versions.
 
 A reviewer should be able to remove every generic ingredient above and still identify a theorem whose statement fundamentally depends on **software evolution and version-aware access**.
