@@ -33,8 +33,8 @@ The project should not become a broad empirical fairness paper. The intended STO
 
 ### Phase B — full fairness regression
 - Carry forward old edge certificates rather than only testing patch neutrality.
-- Introduce edge headroom and directionality.
-- Seek an instance-dependent information allocation problem.
+- Preserve the distinction between unconditional fairness certificates and separated-promise pruning: edges in the promise gap are not certified fair, but can be excluded from H1 search when sound envelopes cannot reach tau+gamma.
+- After the sharpened H_gamma upper bound is audited, seek a matching or otherwise tight instance-dependent lower characterization rather than adding a weaker residual-graph variant.
 
 ### Phase C — software-evolution structure
 - Formalize distributionally sound vs replay-sound impact sets.
