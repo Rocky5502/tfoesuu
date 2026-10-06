@@ -48,7 +48,7 @@ Before submission:
 - [x] AI Methodology statement identifies ChatGPT/OpenAI.
 - [x] It states that research ideation, literature triage, proof exploration, code drafting, and manuscript drafting/structuring were materially influenced.
 - [ ] Every theorem and proof has been independently checked by the human authors.
-- [ ] Every citation has been independently verified against an archival source.
+- [ ] Every citation has been independently verified against an archival source by a human author. A machine-assisted metadata pass is recorded in `docs/REFERENCE_AUDIT.md`, but it does not satisfy this human gate.
 - [ ] Every implementation/result used in the paper has been reproduced by the human authors from the frozen repository commit.
 - [x] No AI system is listed as an author.
 - [x] No pretrained model, open-source model, proprietary model API, or LLM is an experimental subject or research oracle.
