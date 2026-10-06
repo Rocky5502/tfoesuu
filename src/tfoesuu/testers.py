@@ -62,10 +62,11 @@ def run_gaussian_static_test(
 
 @dataclass(frozen=True)
 class FullRegressionTestResult:
-    """Result for thresholded Gaussian fairness regression after certificate pruning."""
+    """Result for separated Gaussian fairness regression after promise-aware pruning."""
 
     reject: bool
     safe_edges: tuple[tuple[int, int], ...]
+    promise_gap_edges: tuple[tuple[int, int], ...]
     residual_edges: tuple[tuple[int, int], ...]
     estimated_new_gaps: dict[tuple[int, int], float]
     sample_counts: np.ndarray
@@ -89,13 +90,19 @@ def run_gaussian_full_regression_test(
       H0: |g1_e| <= tau_e for every edge;
       H1: |g1_e| >= tau_e + gamma for at least one edge.
 
-    Patch envelopes first prune every edge satisfying
-    |g0_e| + b_e <= tau_e.  The Gaussian allocation is then solved only on the
-    residual graph.  The theorem guarantee requires the supplied envelopes to be
-    sound; this function cannot infer soundness from samples.
+    Patch envelopes induce three categories:
+      * certified safe: |g0_e| + b_e <= tau_e;
+      * promise-gap only: tau_e < |g0_e| + b_e < tau_e + gamma;
+      * alternative-capable: |g0_e| + b_e >= tau_e + gamma.
+
+    Only alternative-capable edges can realize H1, so the Gaussian allocation is
+    solved on that graph. Promise-gap edges are not declared fair; they are
+    omitted only because the separated promise rules them out as H1 witnesses.
+    The theorem guarantee requires the supplied envelopes to be sound; this
+    function cannot infer soundness from samples.
     """
 
-    from .certificate import prune_with_patch_envelopes
+    from .certificate import prune_for_separated_regression
 
     if gamma <= 0:
         raise ValueError("gamma must be positive")
@@ -104,13 +111,14 @@ def run_gaussian_full_regression_test(
     if oracle.n != graph.n:
         raise ValueError("oracle vertex count must match graph")
 
-    pruning = prune_with_patch_envelopes(
+    pruning = prune_for_separated_regression(
         graph,
         old_edge_gaps,
         thresholds,
         patch_effect_bounds,
+        gamma,
     )
-    residual = pruning.residual_graph
+    residual = pruning.alternative_graph
     variances = (
         oracle.paired_delta_variance
         if paired
@@ -126,7 +134,8 @@ def run_gaussian_full_regression_test(
     if residual.m == 0:
         return FullRegressionTestResult(
             reject=False,
-            safe_edges=pruning.safe_edges,
+            safe_edges=pruning.certified_safe_edges,
+            promise_gap_edges=pruning.promise_gap_edges,
             residual_edges=(),
             estimated_new_gaps={},
             sample_counts=counts,
@@ -168,7 +177,8 @@ def run_gaussian_full_regression_test(
 
     return FullRegressionTestResult(
         reject=reject,
-        safe_edges=pruning.safe_edges,
+        safe_edges=pruning.certified_safe_edges,
+        promise_gap_edges=pruning.promise_gap_edges,
         residual_edges=residual.edges,
         estimated_new_gaps=estimated,
         sample_counts=counts,
