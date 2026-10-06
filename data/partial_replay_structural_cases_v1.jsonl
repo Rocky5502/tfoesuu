@@ -1,8 +1,8 @@
-{"case_id":"p17-struct-equality-matching","expected_c_edge":2,"expected_c_vert":2,"expected_ratio":1,"graph_family":"matching","group_rule":"fairness_edges","n":4,"regime":"coherent-equality"}
-{"case_id":"p17-struct-clique-pairs-n3","expected_c_edge":3,"expected_c_vert":1.5,"expected_ratio":2,"graph_family":"clique","group_rule":"fairness_edges","n":3,"regime":"finite-linear-gap"}
-{"case_id":"p17-struct-clique-pairs-n4","expected_c_edge":6,"expected_c_vert":2,"expected_ratio":3,"graph_family":"clique","group_rule":"fairness_edges","n":4,"regime":"finite-linear-gap"}
-{"case_id":"p17-struct-clique-pairs-n5","expected_c_edge":10,"expected_c_vert":2.5,"expected_ratio":4,"graph_family":"clique","group_rule":"fairness_edges","n":5,"regime":"finite-linear-gap"}
-{"case_id":"p17-struct-clique-pairs-n6","expected_c_edge":15,"expected_c_vert":3,"expected_ratio":5,"graph_family":"clique","group_rule":"fairness_edges","n":6,"regime":"finite-linear-gap"}
-{"case_id":"p17-struct-clique-pairs-n7","expected_c_edge":21,"expected_c_vert":3.5,"expected_ratio":6,"graph_family":"clique","group_rule":"fairness_edges","n":7,"regime":"finite-linear-gap"}
-{"case_id":"p17-struct-clique-pairs-n8","expected_c_edge":28,"expected_c_vert":4,"expected_ratio":7,"graph_family":"clique","group_rule":"fairness_edges","n":8,"regime":"finite-linear-gap"}
-{"case_id":"p17-struct-finite-info-infinite-witness","expected_c_edge":null,"expected_c_vert":2,"expected_ratio":null,"graph_family":"path","group_rule":"reference_pairs_02_12","n":3,"regime":"infinite-witness-gap"}
+{"case_id":"p17-struct-equality-matching","expected_c_edge":2,"expected_c_vert":2,"expected_ratio":1,"expected_raw_contrast_cost":2,"graph_family":"matching","group_rule":"fairness_edges","n":4,"regime":"coherent-equality"}
+{"case_id":"p17-struct-clique-pairs-n3","expected_c_edge":3,"expected_c_vert":1.5,"expected_ratio":2,"expected_raw_contrast_cost":1.5,"graph_family":"clique","group_rule":"fairness_edges","n":3,"regime":"finite-linear-gap"}
+{"case_id":"p17-struct-clique-pairs-n4","expected_c_edge":6,"expected_c_vert":2,"expected_ratio":3,"expected_raw_contrast_cost":2,"graph_family":"clique","group_rule":"fairness_edges","n":4,"regime":"finite-linear-gap"}
+{"case_id":"p17-struct-clique-pairs-n5","expected_c_edge":10,"expected_c_vert":2.5,"expected_ratio":4,"expected_raw_contrast_cost":2.5,"graph_family":"clique","group_rule":"fairness_edges","n":5,"regime":"finite-linear-gap"}
+{"case_id":"p17-struct-clique-pairs-n6","expected_c_edge":15,"expected_c_vert":3,"expected_ratio":5,"expected_raw_contrast_cost":3,"graph_family":"clique","group_rule":"fairness_edges","n":6,"regime":"finite-linear-gap"}
+{"case_id":"p17-struct-clique-pairs-n7","expected_c_edge":21,"expected_c_vert":3.5,"expected_ratio":6,"expected_raw_contrast_cost":3.5,"graph_family":"clique","group_rule":"fairness_edges","n":7,"regime":"finite-linear-gap"}
+{"case_id":"p17-struct-clique-pairs-n8","expected_c_edge":28,"expected_c_vert":4,"expected_ratio":7,"expected_raw_contrast_cost":4,"graph_family":"clique","group_rule":"fairness_edges","n":8,"regime":"finite-linear-gap"}
+{"case_id":"p17-struct-finite-info-infinite-witness","expected_c_edge":null,"expected_c_vert":2,"expected_ratio":null,"expected_raw_contrast_cost":2,"graph_family":"path","group_rule":"reference_pairs_02_12","n":3,"regime":"infinite-witness-gap"}
