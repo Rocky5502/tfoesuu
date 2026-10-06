@@ -105,3 +105,24 @@ def test_separated_promise_pruning_validates_gamma():
             {edge: 0.15},
             gamma=0.0,
         )
+
+
+
+def test_promise_aware_alternative_graph_strictly_refines_old_residual():
+    graph = matching_graph(3)
+    old = {edge: 0.0 for edge in graph.edges}
+    tau = {edge: 0.10 for edge in graph.edges}
+    bound = {
+        graph.edges[0]: 0.05,
+        graph.edges[1]: 0.15,
+        graph.edges[2]: 0.30,
+    }
+
+    ordinary = prune_with_patch_envelopes(graph, old, tau, bound)
+    separated = prune_for_separated_regression(
+        graph, old, tau, bound, gamma=0.10
+    )
+
+    assert ordinary.residual_graph.edges == (graph.edges[1], graph.edges[2])
+    assert separated.alternative_graph.edges == (graph.edges[2],)
+    assert set(separated.alternative_graph.edges) < set(ordinary.residual_graph.edges)
