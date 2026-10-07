@@ -1,0 +1,118 @@
+\section{Computational Validation and Experimental Protocol}
+\label{sec:evaluation}
+
+The empirical component of this paper is intentionally a \emph{theorem
+falsification and reproducibility layer}, not a leaderboard study. Its purpose
+is to check whether executable implementations reproduce the exact structural
+predictions of proved results, to search for counterexamples outside proved
+scope, and to measure finite-instance constants only after the corresponding
+theorem gate is frozen. We therefore distinguish deterministic specification
+results from stochastic publication experiments throughout.
+
+\subsection{Research questions}
+
+\begin{description}[leftmargin=1.8cm,labelwidth=1.45cm,style=nextline]
+\item[\textbf{RQ1}] \textbf{Graph allocation.}
+Do executable Gaussian allocation instances reproduce the predicted dependence
+on the uncertainty-weighted graph quantity $\Psi(H,\nu)$ across graph families,
+variance profiles, and effect sizes?
+
+\item[\textbf{RQ2}] \textbf{Replay advantage.}
+Under matched old/new, four-way, and suite replay access, do finite-instance
+runs exhibit the theorem-predicted change from quadratic to linear small-effect
+dependence when common randomness exposes sparse patch differences?
+
+\item[\textbf{RQ3}] \textbf{Partial synchronized replay.}
+Does executable group scheduling reproduce the $C_{\rm vert}$ geometry in the
+audited homogeneous family, and where does the same raw-contrast statistic fail
+under heterogeneous fairness-preserving nulls?
+
+\item[\textbf{RQ4}] \textbf{Reproducibility and robustness.}
+Are theorem-facing conclusions invariant to regenerated manifests, exact seeds,
+graph materialization, implementation round-trips, and clean-checkout execution?
+\end{description}
+
+\subsection{Frozen specification datasets}
+
+\Cref{tab:benchmark-inventory} records the complete checked-in specification
+inventory. These are synthetic \emph{inputs with exact ground truth}, not
+observational datasets and not measured outcomes. They are deliberately compact
+so reviewers can regenerate every configuration and audit theorem/code
+correspondence.
+
+\begin{table}[t]
+\centering
+\caption{Frozen benchmark/specification inventory. Row counts describe
+deterministic test configurations, not empirical sample sizes.}
+\label{tab:benchmark-inventory}
+\small
+\begin{tabular}{@{}p{0.34\textwidth}r p{0.48\textwidth}@{}}
+\toprule
+Artifact & Rows & Primary role \\
+\midrule
+Gaussian allocation grid & 384 & Graph families, variance profiles, effect-size and allocation stress. \\
+Paired replay grid & 54 & Paired-versus-independent Bernoulli replay specifications. \\
+Executable software subjects & 32 & Randomized software configurations exercising the execution interface. \\
+Four-way counterfactual replay & 144 & Common-effect and differential-effect regimes for P15. \\
+P17 partial replay stress grid & 168 & Group size, graph family, group cost, and small-effect stress. \\
+P17 structural fixtures & 8 & Exact equality, finite-gap, and infeasible-witness constructions. \\
+P17 scope counterexample & 1 & Heterogeneous fair null that falsifies naive raw-contrast generalization. \\
+\midrule
+\textbf{Total} & \textbf{791} & Deterministic, regenerable specification rows. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experimental settings and baselines}
+
+Every stochastic publication run is keyed by the repository commit, a frozen
+JSONL row, an explicit seed, the execution backend, and a machine-environment
+record. CPU experiments are used for exact or moderate-size checks; GPU sweeps
+are reserved for high-trial finite-instance studies after the relevant theorem
+and manifest are frozen. No pretrained model or external API is used.
+
+The comparison set is access-model based rather than model based:
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt]
+\item fresh/independent execution where no old--new coupling is available;
+\item old/new vertex pairing under a common tape;
+\item four-way edge replay when both endpoints can share that tape;
+\item synchronized-suite replay when one tape covers all active inputs; and
+\item declared-group partial replay, including the $C_{\rm edge}$ witness
+schedule and the $C_{\rm vert}$ raw-contrast schedule where its assumptions hold.
+\end{enumerate}
+Primary quantities are concrete program executions, replay rounds, empirical
+type-I/type-II error for stochastic runs, and normalized scheduling cost.
+Whenever a theorem is asymptotic in $d$, the finite-instance study varies $d$
+over the frozen manifest rather than fitting an exponent to hand-selected
+points.
+
+\subsection{Current deterministic audit results}
+
+Before any publication-scale stochastic sweep, the repository already supports
+exact deterministic checks. \Cref{tab:deterministic-evidence} reports only
+facts that follow from the committed specifications and executable theorem
+checks; it intentionally does not report fabricated performance numbers.
+
+\begin{table}[t]
+\centering
+\caption{Current deterministic evidence available before stochastic publication
+runs. Pass condition states what the executable audit must verify.}
+\label{tab:deterministic-evidence}
+\small
+\begin{tabular}{@{}p{0.23\textwidth}p{0.33\textwidth}p{0.35\textwidth}@{}}
+\toprule
+Audit target & Frozen evidence & Pass condition \\
+\midrule
+P17 stress geometry & 168 parameter rows & Materialized group/cost geometry is valid; $C_{\rm vert}\le C_{\rm edge}$; rounded active-vertex exposure attains the required miss bound. \\
+P17 structural gap & 8 exact fixtures & One equality case, six clique cases with $C_{\rm edge}/C_{\rm vert}=n-1$, and one finite-$C_{\rm vert}$/infeasible-$C_{\rm edge}$ case agree with the LP implementations. \\
+P17 scope boundary & 1 heterogeneous fair-null fixture & New-version gap is $0.15\le\tau=0.20$, while the homogeneous raw-contrast predicate rejects on tape set $(0.20,0.30]\cup(0.40,0.45]$ of exact measure $0.15$. \\
+Manifest integrity & 791 total rows & All frozen artifacts exist, IDs are unique, row counts meet the frozen inventory, and regenerators round-trip exactly. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The final STOC submission will replace protocol-only entries in the experiment
+ledger with measured stochastic summaries \emph{only after} a clean publication
+run has been executed and archived with hashes and environment metadata. Until
+then, the deterministic tables above are the only result tables we treat as
+submission-facing evidence.
