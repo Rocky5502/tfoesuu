@@ -30,6 +30,24 @@ python experiments/run_gaussian_core.py --graph star --n 10 --gamma 0.5 --beta 0
 python experiments/run_bernoulli_coupling.py --p0 0.5 --delta 0.01 --samples 1000000
 ```
 
+## Integrated publication suite
+
+For a single theorem-facing run directory:
+
+```bash
+python scripts/run_publication_suite.py --mode smoke \
+  --output-dir results/publication_smoke
+
+python scripts/run_publication_suite.py --mode publication \
+  --output-dir results/publication_cpu
+```
+
+To add the frozen GPU sweeps, pass `--gpu-devices` and `--gpu-trials`.
+The suite writes the exact repository state, deterministic evidence summary,
+executed command list, and per-job logs into the selected result directory.
+Those generated result directories remain non-source artifacts until explicitly
+frozen with hashes and provenance.
+
 ## GPU stress sweep
 
 ```bash
