@@ -1,8 +1,11 @@
+import numpy as np
+
 import pytest
 
 from tfoesuu.control_replay import (
     control_replay_information_lower_bound,
     matched_control_contrast_witness,
+    mixed_control_leading_coefficient,
     matched_control_replay_schedule,
     minimum_fractional_control_cover,
 )
@@ -326,3 +329,47 @@ def test_mixed_information_lp_prefers_first_order_controls_for_small_d():
         assert np.all(q[:3] > 0.0)
 
     assert floors[1] / floors[0] == pytest.approx(2.0, rel=5e-4)
+
+
+def test_mixed_control_leading_coefficient_matches_exact_quadratic_limit():
+    graph = complete_bipartite_graph(3, 2)
+    high = (0, 1, 2)
+    groups = ((0, 1), (2, 3))
+    costs = (1.0, 1.0)
+
+    lead = mixed_control_leading_coefficient(
+        graph, groups, costs, high,
+        p=0.20, shared_patch=0.10, fairness_tolerance=0.10, beta=0.05,
+    )
+    assert lead.success
+    assert lead.uncovered_high_vertices == (2,)
+    assert lead.coefficient > 0.0
+
+    errors = []
+    for d in (2e-4, 1e-4, 5e-5):
+        exact = control_replay_information_lower_bound(
+            graph, groups, costs, high,
+            p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
+            d=d, beta=0.05,
+        )
+        assert exact.success
+        scaled = d * d * exact.expected_cost_floor
+        errors.append(abs(scaled - lead.coefficient))
+
+    assert errors[2] < errors[1] < errors[0]
+    assert errors[2] / lead.coefficient < 2e-3
+
+
+def test_mixed_control_leading_coefficient_vanishes_under_complete_control_cover():
+    graph = complete_bipartite_graph(3, 2)
+    high = (0, 1, 2)
+    groups = ((0, 1), (1, 2), (0, 2), (0, 3))
+    costs = (1.0,) * len(groups)
+
+    lead = mixed_control_leading_coefficient(
+        graph, groups, costs, high,
+        p=0.20, shared_patch=0.10, fairness_tolerance=0.10, beta=0.05,
+    )
+    assert lead.success
+    assert lead.coefficient == pytest.approx(0.0)
+    assert lead.uncovered_high_vertices == ()
