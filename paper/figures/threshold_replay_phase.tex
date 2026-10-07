@@ -2,45 +2,58 @@
 \centering
 \begin{tikzpicture}[
   box/.style={draw=black!28, rounded corners=2pt, fill=white,
-              minimum height=1.85cm, text width=4.15cm, align=left,
+              minimum height=1.72cm, text width=5.65cm, align=left,
               inner sep=7pt, font=\small},
   sparse/.style={box, draw=focalteal, line width=0.85pt, fill=focalteal!5},
   dense/.style={box, draw=risktone, line width=0.85pt, fill=risktone!4},
   flow/.style={->, line width=0.8pt, draw=black!55},
+  restore/.style={->, line width=0.9pt, draw=focalteal},
+  lab/.style={font=\scriptsize, text=black!65, fill=white, inner sep=1.5pt},
   note/.style={font=\footnotesize, text=black!68, align=center}
 ]
 \node[sparse] (zero) {
-  \textbf{Zero background gap}\\[2pt]
+  \textbf{Sparse replay witness}\\[2pt]
   $\tau=0$\\
-  sparse witness under the null\\[2pt]
+  null mismatch mass vanishes\\[2pt]
   $Q=\Theta(d^{-1}\log(1/\delta))$
 };
-\node[sparse, right=0.62cm of zero] (matched) {
+\node[sparse, right=0.72cm of zero] (matched) {
   \textbf{Matched-scale tolerance}\\[2pt]
   $\tau=\Theta(d)$\\
   background and alternative shrink together\\[2pt]
   $Q=\Theta(d^{-1}\log(1/\delta))$
 };
-\node[dense, right=0.62cm of matched] (fixed) {
+
+\node[dense, below=0.70cm of zero] (fixed) {
   \textbf{Fixed positive tolerance}\\[2pt]
   $\tau>0$ fixed as $d\to0$\\
-  null already has nonzero mismatch mass\\[2pt]
+  one-edge / high--low-only information is $\Theta(d^2)$\\[2pt]
   $Q=\Theta(d^{-2}\log(1/\delta))$
 };
-\draw[flow] (zero) -- (matched);
-\draw[flow] (matched) -- (fixed);
-\node[note, below=0.42cm of matched, text width=13.2cm] {
-  Exact one-edge interpolation:
-  $\displaystyle Q_{\rm thr}(\tau,d,\delta)
-  =\Theta\!\left((\tau+d)d^{-2}\log(1/\delta)\right)$
-  under the stated interior condition.
+\node[sparse, right=0.72cm of fixed] (control) {
+  \textbf{Matched-background control}\\[2pt]
+  fixed $\tau>0$, but replay group contains a same-background control\\[2pt]
+  information becomes $\Theta(d)$\\
+  $Q=\Theta(C_{\rm ctrl}d^{-1}\log(1/\delta))$
+};
+
+\draw[flow] (zero) -- node[lab,above] {$\tau$ grows with $d$} (matched);
+\draw[flow] (matched.south west) -- node[lab,sloped,above] {fixed background mass} (fixed.north east);
+\draw[restore] (fixed) -- node[lab,above,text=focalteal] {add matched replay control} (control);
+
+\node[note, below=0.43cm of fixed, xshift=3.18cm, text width=12.2cm] {
+  P18: $\displaystyle Q_{\rm thr}(\tau,d,\delta)
+  =\Theta((\tau+d)d^{-2}\log(1/\delta))$ on one edge.
+  \qquad
+  P19: control-compatible groups split off a new transcript state of mass $d$,
+  restoring first-order information under a heterogeneous fair null.
 };
 \end{tikzpicture}
-\caption{The P18 replay phase transition.  Synchronized replay is linearly
-sensitive to a differential effect only while the fairness-permitted background
-gap is zero or on the same scale as the effect.  A fixed positive tolerance
-creates ordinary interior Bernoulli noise and restores quadratic local testing
-complexity.  The figure summarizes the proved one-edge theorem; it contains no
-empirical estimates.}
+\caption{Replay phase map for P18--P19.  A fixed positive fairness tolerance
+creates an interior mismatch mass and returns one-edge testing to quadratic
+local complexity.  That loss is not universal: under partial replay, a
+same-background control cancels the benign disparity pathwise and restores a
+sparse linear witness.  The diagram summarizes proved threshold-Bernoulli
+families and contains no empirical estimates.}
 \label{fig:threshold-replay-phase}
 \end{figure}
