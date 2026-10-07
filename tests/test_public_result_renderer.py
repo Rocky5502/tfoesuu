@@ -48,6 +48,7 @@ def test_public_result_renderer_smoke(tmp_path: Path):
     results = tmp_path / "public_results.jsonl"
     pdf = tmp_path / "public_results.pdf"
     png = tmp_path / "public_results.png"
+    table = tmp_path / "public_results_table.tex"
     write_public_results(rows, results)
 
     subprocess.run(
@@ -63,5 +64,21 @@ def test_public_result_renderer_smoke(tmp_path: Path):
         ],
         check=True,
     )
+    subprocess.run(
+        [
+            sys.executable,
+            "scripts/render_public_results_table.py",
+            "--results",
+            str(results),
+            "--output",
+            str(table),
+            "--patch-size",
+            "0.02",
+        ],
+        check=True,
+    )
     assert pdf.is_file() and pdf.stat().st_size > 0
     assert png.is_file() and png.stat().st_size > 0
+    assert table.is_file() and "\\label{tab:main-results}" in table.read_text(
+        encoding="utf-8"
+    )
