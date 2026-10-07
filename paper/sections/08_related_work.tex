@@ -23,7 +23,7 @@ old and new programs remain executable.
 Shared randomness is classical.  Common-random-number methods reduce uncertainty
 in stochastic-system comparisons and have long been used with
 multiple-comparison procedures
-\cite{YangNelson1991,GlassermanYao1992,NelsonMatejcik1995}.  Statistical testing
+\cite{YangNelson1991,GlassermanYao1992,NelsonHsu1993,NelsonMatejcik1995}.  Statistical testing
 of correlated binary proportions and sample-size planning for paired designs
 are also classical \cite{McNemar1947,Connor1987}.  Couplings provide a formal
 relational language for probabilistic programs \cite{BartheEtAl2017}.
@@ -56,13 +56,13 @@ access model differs: an observation is a stochastic execution of one or two
 software versions, and replay compatibility is part of the problem instance.
 
 \paragraph{Adaptive information lower bounds and experimental design.}
-Sequential experimental design and active hypothesis testing provide the
-information-theoretic tradition for adaptively selecting observations
-\cite{Chernoff1959,CohenZhao2015}.  Sequential sparse-recovery methods also
+Sequential experimental design, active sequential hypothesis testing, and
+controlled sensing provide the information-theoretic tradition for choosing
+among action-dependent experiments
+\cite{Chernoff1959,NaghshvarJavidi2013,NitinawaratAtiaVeeravalli2013,
+NitinawaratVeeravalli2015,CohenZhao2015}.  Sequential sparse-recovery methods also
 show that adaptive coordinate-wise sampling can remove dimension-dependent
-penalties paid by nonsequential procedures \cite{MalloyNowak2014}.  We use
-transcript-level change of measure specialized to patch alternatives, and do
-not claim the generic benefit of adaptive elimination as novel.  Graph-based optimal
+penalties paid by nonsequential procedures \cite{MalloyNowak2014}.  We use transcript-level change of measure specialized to patch alternatives, and do not claim generic KL-driven action allocation, controlled sensing, or adaptive elimination as novel.  Graph-based optimal
 design for pairwise comparisons is also established
 \cite{SinghSinghDavidov2025}; therefore the existence of a graph allocation
 problem by itself is not a novelty claim.  The role of $\Psi$, $C_{\rm vert}$,
