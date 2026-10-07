@@ -10,6 +10,7 @@ This file is the source of truth for mathematical claims. A result is not promot
 | P4 | Gaussian static-allocation upper bound using `Psi(H,nu)` | PROVED + AUDITED | Union bound + Gaussian tails. |
 | P5 | Adaptive Gaussian lower bound using the same `Psi(H,nu)` | PROVED + AUDITED | Adaptive transcript KL + edgewise alternatives. |
 | P6 | Lagrange dual representation of `Psi` | PROVED + AUDITED | Slater condition + separable minimization over q. |
+| P6-C | Exact rotated-SOC representation of `Psi` | PROVED + AUDITED (SUPPORTING) | Standard hyperbolic-to-rotated-cone reformulation; executable certificate test; not a novelty claim. |
 | P7 | Unit-variance exact values: edge, matching, clique, star, complete bipartite | PROVED + AUDITED | Symmetry/convexity; star is `K_{1,k}`. |
 | P8 | Homogeneous variance scaling: `Psi(H,lambda nu^2)=lambda Psi(H,nu^2)` | PROVED + AUDITED | Direct rescaling. |
 | P9 | Common-uniform Bernoulli delta variance `d(1-d)` | PROVED + AUDITED | Delta is signed Bernoulli on interval between probabilities. |
