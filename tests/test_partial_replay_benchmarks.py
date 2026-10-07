@@ -129,6 +129,44 @@ def test_partial_replay_scope_counterexample_manifest(tmp_path: Path):
     assert contrast is row.expected_raw_contrast
     assert contrast
 
+    # Audit the entire piecewise-constant shared-tape geometry rather than
+    # protecting only the frozen witness tape.  For threshold Bernoulli draws,
+    # the contrast can change only at one of the four old/new thresholds.
+    cuts = sorted({
+        0.0,
+        row.old_threshold_0,
+        row.old_threshold_1,
+        row.new_threshold_0,
+        row.new_threshold_1,
+        1.0,
+    })
+    rejecting_intervals = []
+    false_positive_measure = 0.0
+    for left, right in zip(cuts, cuts[1:]):
+        if right <= left:
+            continue
+        u = (left + right) / 2.0
+        old_u = [
+            int(u <= row.old_threshold_0),
+            int(u <= row.old_threshold_1),
+        ]
+        new_u = [
+            int(u <= row.new_threshold_0),
+            int(u <= row.new_threshold_1),
+        ]
+        if raw_group_contrast_witness(old_u, new_u):
+            rejecting_intervals.append((left, right))
+            false_positive_measure += right - left
+
+    assert rejecting_intervals == pytest.approx([
+        (0.20, 0.30),
+        (0.40, 0.45),
+    ])
+    assert false_positive_measure == pytest.approx(
+        row.expected_false_positive_measure
+    )
+    assert false_positive_measure == pytest.approx(0.15)
+
     out = tmp_path / "partial_replay_scope.jsonl"
     write_partial_replay_scope_jsonl(rows, out)
     assert read_partial_replay_scope_jsonl(out) == rows
