@@ -1,0 +1,70 @@
+\section{Algorithmic Framework}
+\label{sec:algorithm}
+
+The theory induces an executable regression-testing procedure rather than a
+single monolithic statistical test.  The tester first reuses deterministic
+software-evolution information, then selects the weakest replay primitive that
+the harness can soundly provide, and finally applies only theorem-backed
+stopping rules.
+
+\begin{figure}[t]
+\centering
+\fbox{\begin{minipage}{0.95\textwidth}
+\textbf{Algorithm 1: TFOESUU fairness-regression tester}
+
+\smallskip
+\textbf{Input:} certified old program $P_0$, patched program $P_1$, fairness
+graph $G=(V,E)$, thresholds $\{\tau_e\}$, confidence $\delta$, sound impact
+information, optional patch-effect envelopes $\{b_e\}$, and an executable
+replay capability.
+
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt,topsep=3pt]
+\item \textbf{Prune by deterministic evidence.}
+Remove every edge $e$ whose certificate and sound envelope imply
+$|g_{0,e}|+b_e\le \tau_e$.  Let the remaining graph be $H^\star$.
+
+\item \textbf{Stop if nothing remains.}
+If $E(H^\star)=\varnothing$, return \textsc{Accept} with zero additional
+stochastic executions.
+
+\item \textbf{Instantiate the strongest valid observation model.}
+Use, in decreasing order of synchronization strength:
+(i) synchronized-suite replay when one tape can be shared over the entire
+active suite;
+(ii) declared-group partial replay when only legal groups can share a tape;
+(iii) four-way edge replay when both endpoints and both versions can be
+synchronized;
+(iv) old/new vertex pairing otherwise.
+Never assume a stronger replay primitive than the harness implements.
+
+\item \textbf{Allocate executions with the matching theorem geometry.}
+For the Gaussian paired-delta core, solve the $\Psi(H^\star,\nu)$ allocation.
+For the audited homogeneous partial-replay family, solve the fractional
+active-vertex cover $C_{\rm vert}$ and round the resulting group schedule.
+For the other replay primitives, use their corresponding fixed-confidence
+sample schedule.
+
+\item \textbf{Evaluate only an audited statistic.}
+Estimate edge patch effects or evaluate the pathwise replay witness required by
+the selected theorem.  For homogeneous partial replay, reject only when the
+within-group old--new patch-delta vector is nonconstant.  Do not reuse this
+predicate under unrestricted heterogeneous/composite nulls.
+
+\item \textbf{Return a certificate-aware decision.}
+Return \textsc{Reject} with a witnessed fairness regression when the selected
+test fires; otherwise return \textsc{Accept} once its fixed-confidence stopping
+condition is met.  Record the queried vertices/groups, random seeds, costs,
+and source commit for reproduction.
+\end{enumerate}
+
+\textbf{Guarantee discipline.}  The procedure inherits only the guarantee of
+the selected proved theorem.  In particular, the P17 $C_{\rm vert}$
+attainability result is restricted to the frozen homogeneous
+single-changed-endpoint family.
+\end{minipage}}
+\caption{Executable high-level TFOESUU procedure.  The key design rule is to
+reuse deterministic certificates before sampling and to match every sampling
+schedule and decision statistic to the strongest replay primitive that the
+software harness actually supports.}
+\label{alg:tfoesuu}
+\end{figure}
