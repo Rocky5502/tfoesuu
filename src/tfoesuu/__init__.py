@@ -47,6 +47,8 @@ __all__ = [
     "solve_psi",
     "solve_psi_dual",
     "CertificatePruningResult",
+    "ResidualEdgeMargins",
+    "threshold_residual_margins",
     "prune_with_patch_envelopes",
     "GraphSpec",
     "GaussianVersionPair",
