@@ -107,6 +107,32 @@ def cpu_plan(trials: int) -> list[tuple[str, list[str]]]:
             )
         )
 
+    for tau in ("0.0", "0.01", "0.05", "0.10"):
+        tag = tau.replace(".", "p")
+        jobs.append(
+            (
+                f"threshold_phase_tau{tag}",
+                [
+                    py,
+                    "experiments/run_threshold_replay_phase.py",
+                    "--p",
+                    "0.20",
+                    "--shared-patch",
+                    "0.10",
+                    "--tau",
+                    tau,
+                    "--d",
+                    "0.01",
+                    "--beta",
+                    "0.05",
+                    "--trials",
+                    str(trials),
+                    "--seed",
+                    "20271008",
+                ],
+            )
+        )
+
     jobs.extend(
         [
             (
