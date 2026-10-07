@@ -2,7 +2,7 @@
 
 Upload the contents of this directory to Overleaf with `main.tex` as the root document.
 
-The submission draft uses an 11pt single-column letter-paper layout with one-inch margins to keep the first 10--12 pages readable, matching the STOC 2027 submission guidance. The accepted-paper proceedings format is a different later-stage format.
+The submission draft uses an 11pt single-column letter-paper layout with one-inch margins, matching the STOC 2027 submission guidance. The title/abstract occupy a dedicated title page, followed by an optional table-of-contents page; the official CFP states that the merits, prior-work context, and central technical ideas must be clear within the first twelve pages following the title page, while a TOC immediately after the title page does not count toward those twelve pages. The accepted-paper proceedings format is a different later-stage format.
 
 The bibliography intentionally contains archival peer-reviewed sources only.
 
