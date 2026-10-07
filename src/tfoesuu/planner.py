@@ -8,7 +8,11 @@ import numpy as np
 from .certificate import prune_with_patch_envelopes
 from .graphs import Edge, GraphSpec
 from .partial_replay_lower import active_vertex_contrast_schedule
-from .separations import counterfactual_replay_bounds, replay_separation_bounds
+from .separations import (
+    counterfactual_replay_bounds,
+    replay_separation_bounds,
+    threshold_fairness_replay_bounds,
+)
 from .suite_replay import synchronized_suite_replay_bounds
 from .testers import gaussian_static_counts
 
@@ -16,6 +20,7 @@ from .testers import gaussian_static_counts
 ReplayMode = Literal[
     "vertex-paired-one-edge",
     "four-way-one-edge",
+    "four-way-thresholded-one-edge",
     "suite-homogeneous",
     "partial-homogeneous",
 ]
@@ -100,6 +105,7 @@ def plan_bernoulli_replay(
     d: float,
     beta: float,
     shared_patch: float = 0.0,
+    fairness_tolerance: float = 0.0,
     groups: Iterable[Iterable[int]] | None = None,
     costs: Sequence[float] | None = None,
     homogeneous_single_changed_endpoint: bool = False,
@@ -171,6 +177,36 @@ def plan_bernoulli_replay(
             normalized_geometry=None,
             notes=(
                 "Each replay round executes two versions at both fairness endpoints.",
+            ),
+        )
+
+    if mode == "four-way-thresholded-one-edge":
+        if graph.m != 1:
+            raise ValueError(
+                "P18 thresholded replay planner is restricted to the one-edge theorem"
+            )
+        bounds = threshold_fairness_replay_bounds(
+            p,
+            shared_patch,
+            fairness_tolerance,
+            d,
+            beta,
+        )
+        return TFOESUUPlan(
+            mode=mode,
+            theorem_scope="P18 one-edge thresholded four-way replay",
+            safe_edges=(),
+            residual_edges=graph.edges,
+            rounds=bounds.replay_upper_rounds,
+            concrete_program_executions=(
+                bounds.replay_upper_concrete_executions
+            ),
+            vertex_counts=None,
+            group_counts=None,
+            normalized_geometry=None,
+            notes=(
+                "Complexity interpolates with the allowed fairness tolerance.",
+                "The proved phase transition is scoped to one threshold-Bernoulli edge.",
             ),
         )
 
