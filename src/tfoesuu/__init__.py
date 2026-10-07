@@ -38,6 +38,10 @@ from .partial_replay_lower import (
     minimum_fractional_replay_cover,
     raw_output_information_lower_bound,
 )
+from .threshold_replay_benchmarks import (
+    ThresholdReplayPhaseSpec,
+    threshold_replay_phase_benchmark_v1,
+)
 from .subject_benchmarks import (
     SoftwareSubjectBenchmarkSpec,
     software_subject_benchmark_v1,
@@ -84,6 +88,8 @@ __all__ = [
     "fractional_replay_schedule",
     "raw_output_information_lower_bound",
     "linear_baseline",
+    "ThresholdReplayPhaseSpec",
+    "threshold_replay_phase_benchmark_v1",
     "SoftwareSubjectBenchmarkSpec",
     "software_subject_benchmark_v1",
     "FullRegressionTestResult",
