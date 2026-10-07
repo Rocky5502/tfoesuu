@@ -14,14 +14,11 @@ from __future__ import annotations
 import argparse
 from itertools import combinations
 import json
-import math
-
-import numpy as np
-from scipy.optimize import linprog
 
 from tfoesuu.control_replay import (
     control_replay_information_lower_bound,
     minimum_fractional_control_cover,
+    mixed_control_leading_coefficient,
 )
 from tfoesuu.graphs import complete_bipartite_graph
 
@@ -64,35 +61,6 @@ def exact_floor(graph, high, groups, costs, d: float) -> float:
     return out.expected_cost_floor
 
 
-def leading_boundary_coefficient(graph, high, groups, costs, *, p, shared_patch, tau, beta):
-    """Candidate d^-2 coefficient from alternatives lacking every control channel."""
-    high_set = set(high)
-    uncovered = tuple(
-        x for x in high
-        if not any(x in g and sum(v in high_set for v in g) >= 2 for g in groups)
-    )
-    if not uncovered:
-        return 0.0, np.zeros(len(groups)), uncovered
-
-    r = 1.0 - p - shared_patch - tau
-    b2 = 0.5 * (1.0 / tau + 1.0 / r)
-    # Same binary-decision target used by the exact lower-bound routine.
-    ell = (1.0 - beta) * math.log((1.0 - beta) / beta) + beta * math.log(beta / (1.0 - beta))
-    A = np.zeros((len(uncovered), len(groups)))
-    for xi, x in enumerate(uncovered):
-        for gi, group in enumerate(groups):
-            if x in group:
-                A[xi, gi] = b2
-    res = linprog(
-        np.asarray(costs, dtype=float), A_ub=-A,
-        b_ub=-ell * np.ones(len(uncovered)),
-        bounds=[(0.0, None)] * len(groups), method="highs",
-    )
-    if not res.success:
-        raise RuntimeError(res.message)
-    return float(res.fun), np.asarray(res.x), uncovered
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--high", type=int, default=3)
@@ -108,10 +76,15 @@ def main() -> None:
     ):
         qd = exact_floor(graph, high, groups, costs, args.d)
         qh = exact_floor(graph, high, groups, costs, args.d / 2.0)
-        a0, leading_weights, leading_uncovered = leading_boundary_coefficient(
-            graph, high, groups, costs,
-            p=0.20, shared_patch=0.10, tau=0.10, beta=0.05,
+        leading = mixed_control_leading_coefficient(
+            graph, groups, costs, high,
+            p=0.20, shared_patch=0.10, fairness_tolerance=0.10, beta=0.05,
         )
+        if not leading.success:
+            raise RuntimeError(leading.message)
+        a0 = leading.coefficient
+        leading_weights = leading.scaled_query_weights
+        leading_uncovered = leading.uncovered_high_vertices
         ratio = qh / qd
         control_degree = {
             x: sum(
