@@ -1,7 +1,7 @@
 # STOC 2027 submission compliance checklist
 
 Source of truth: official STOC 2027 Call for Papers. Re-check the live CFP before
-submission in case instructions change. Last live-CFP verification: **2026-10-06**.
+submission in case instructions change. Last live-CFP verification: **2026-10-08**.
 
 ## Dates
 
