@@ -1,0 +1,6 @@
+# Optional dependencies for the seven-dataset public benchmark layer.
+# Kept separate from core CI so theorem validation remains lightweight.
+pandas>=2.2
+scikit-learn>=1.5
+ucimlrepo>=0.0.7
+aif360>=0.6.1
