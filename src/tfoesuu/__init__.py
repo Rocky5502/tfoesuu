@@ -1,7 +1,12 @@
 """Testing Fairness of Evolving Software under Uncertainty."""
 
 from .allocation import AllocationResult, solve_psi, solve_psi_dual
-from .certificate import (\n    CertificatePruningResult,\n    ResidualEdgeMargins,\n    prune_with_patch_envelopes,\n    threshold_residual_margins,\n)
+from .certificate import (
+    CertificatePruningResult,
+    ResidualEdgeMargins,
+    prune_with_patch_envelopes,
+    threshold_residual_margins,
+)
 from .graphs import GraphSpec
 from .oracles import BernoulliCommonUniformPair, GaussianVersionPair
 from .replay_benchmarks import ReplayBenchmarkSpec, replay_benchmark_v1
