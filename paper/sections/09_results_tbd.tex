@@ -1,0 +1,43 @@
+\section{Publication Results Layout (Pre-registered; Values Pending)}
+\label{sec:results-tbd}
+
+This section fixes the reporting layout before the publication-scale runs.
+Every numeric value in the checked-in table is marked \textsc{TBD}. It may be
+replaced only by the repository renderer consuming a validated frozen result
+manifest with source commit, dataset hash, seed, environment record, and result
+checksum archived together. This pre-registration prevents selective reporting
+after the GPU sweep.
+
+\input{generated/public_results_table}
+
+\IfFileExists{figures/public_results.pdf}{%
+  \begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/public_results.pdf}
+  \caption{Frozen public-benchmark results generated directly from the
+  validated result JSONL. Panel definitions, method ordering, confidence target,
+  and aggregation rules are fixed by \texttt{scripts/render\_public\_results.py}.}
+  \label{fig:public-results}
+  \end{figure}
+}{%
+  \input{figures/results_tbd}
+}
+
+\paragraph{Planned statistical reporting.}
+For each dataset and replay regime, the final table states the exact number of
+independent trials, point estimates for type-I/type-II error, and a binomial
+confidence interval in the accompanying result artifact. Query/execution counts
+are deterministic whenever they are fixed by a theorem-backed schedule;
+otherwise the aggregation rule must be declared by the renderer. The primary
+comparison is execution cost at a common confidence target, not classifier
+accuracy.
+
+\paragraph{Replacement gate.}
+The \textsc{TBD} table and figure may be replaced only when
+(i) all seven dataset adapters succeed from a clean frozen commit;
+(ii) every result row names a frozen dataset ID, source hash, and seed;
+(iii) the complete matrix passes \texttt{PublicResultRow} validation;
+(iv) the plotting and table scripts consume only immutable result JSONL;
+(v) all rows share one source commit and one registered protocol; and
+(vi) the resulting PDF passes manuscript consistency, bibliography, and visual
+QA gates. No hand-entered publication value is permitted.

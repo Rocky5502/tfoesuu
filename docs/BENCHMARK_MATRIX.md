@@ -10,11 +10,13 @@ reproducibility role; row count is not treated as scientific evidence.
 | `replay_benchmark_v1.jsonl` | 54 | Bernoulli paired-replay separation |
 | `software_subject_benchmark_v1.jsonl` | 32 | Executable randomized software-subject cases |
 | `counterfactual_replay_benchmark_v1.jsonl` | 144 | Four-way counterfactual replay across `p,s,d,beta` regimes |
+| `threshold_replay_phase_v1.jsonl` | 24 | P18 tolerance/effect-size phase-transition stress |
+| `control_replay_structural_cases_v1.jsonl` | 6 | P19 exact control-cover feasibility and weighted geometry fixtures |
 | `partial_replay_benchmark_v1.jsonl` | 168 | Partial-replay graph/group/cost/small-effect stress |
 | `partial_replay_structural_cases_v1.jsonl` | 8 | Exact equality, finite-gap, and infeasible-witness fixtures |
 | `partial_replay_scope_cases_v1.jsonl` | 1 | Deterministic heterogeneous-null counterexample |
 
-Total frozen specification rows: **791**.
+Total frozen specification rows: **821**.
 
 ## Coverage principles
 
@@ -47,3 +49,8 @@ oracle assumption, graph geometry, cost model, or counterexample regime.  We do
 not add unrelated public datasets merely to increase a dataset count.  External
 datasets may be added later only where they can instantiate the paper's executable
 old/new-version and replay assumptions without changing the estimand.
+
+
+## Public evaluation benchmark registry
+
+The theorem-validation manifests above remain separate from the public evaluation layer.  The frozen `data/public_benchmark_registry_v1.jsonl` registry contains **7 planned public benchmark populations**: Adult Census Income, Bank Marketing, Statlog German Credit, ProPublica COMPAS, Law School GPA, MEPS Panel 21, and Default of Credit Card Clients.  These public datasets do not establish the theorems; they will instantiate locally trained/executable old/new stochastic software versions for the finite-instance evaluation.  Their sources, protected attributes, loader family, and DOI when available are frozen in the registry and round-trip tested.

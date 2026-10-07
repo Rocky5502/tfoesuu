@@ -16,9 +16,12 @@ Every experiment is determined by:
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
+python scripts/generate_threshold_replay_phase.py --output data/threshold_replay_phase_v1.jsonl
+python scripts/generate_control_replay_structural_cases.py --output data/control_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
+python scripts/generate_replay_phase_benchmark.py --output /tmp/replay_phase_benchmark_v1.jsonl
 ```
 
 The generator is deterministic. The manifest contains parameter specifications rather than giant sampled arrays.
@@ -29,6 +32,24 @@ The generator is deterministic. The manifest contains parameter specifications r
 python experiments/run_gaussian_core.py --graph star --n 10 --gamma 0.5 --beta 0.05 --trials 100000
 python experiments/run_bernoulli_coupling.py --p0 0.5 --delta 0.01 --samples 1000000
 ```
+
+## Integrated publication suite
+
+For a single theorem-facing run directory:
+
+```bash
+python scripts/run_publication_suite.py --mode smoke \
+  --output-dir results/publication_smoke
+
+python scripts/run_publication_suite.py --mode publication \
+  --output-dir results/publication_cpu
+```
+
+To add the frozen GPU sweeps, pass `--gpu-devices` and `--gpu-trials`.
+The suite writes the exact repository state, deterministic evidence summary,
+executed command list, and per-job logs into the selected result directory.
+Those generated result directories remain non-source artifacts until explicitly
+frozen with hashes and provenance.
 
 ## GPU stress sweep
 
@@ -99,7 +120,11 @@ to invalid theorem generalizations. Its v1 case fixes a heterogeneous
 fairness-preserving null with tau=0.20, old Bernoulli thresholds (0.20,0.40),
 new thresholds (0.30,0.45), and shared tape u=0.25. The new-version gap is
 0.15 <= tau, yet the patch-delta vector is nonconstant and the homogeneous
-raw-contrast predicate fires. Regenerate it with
+raw-contrast predicate fires. The executable scope audit partitions the full
+common-uniform tape at the four thresholds and derives the complete rejection
+set `(0.20,0.30] U (0.40,0.45]`, whose exact uniform-tape measure is 0.15.
+This quantity is analytic specification evidence, not an empirical false-positive
+rate. Regenerate the manifest with
 `scripts/generate_partial_replay_scope_cases.py`; it is specification data,
 not an empirical false-positive estimate.
 
@@ -129,3 +154,65 @@ with infeasible C_edge, and representative common-uniform threshold regions.
 These checks validate implementation correspondence to the audited theorem; they
 do not replace the proof or extend the claim to heterogeneous/composite
 fairness-preserving nulls.
+
+
+## Public benchmark reproducibility
+
+The public-data layer is separate from the 821 deterministic theorem/specification rows. Its source registry is `data/public_benchmark_registry_v1.jsonl`. Preparation is performed with `scripts/prepare_public_benchmarks.py`, which records a canonical loaded-data SHA-256, deterministic split seed, evaluation-context count, local base-predictor metadata, and the probability clipping range used to keep additive replay patches in the Bernoulli interior.
+
+Publication rows are validated by `tfoesuu.public_results.PublicResultRow`. A publication matrix must come from one source commit, use one content hash per dataset, and contain no duplicate dataset/method/patch-size/seed keys. The plotting script `scripts/render_public_results.py` consumes only this validated JSONL. Raw third-party datasets and generated result files remain outside git; provenance and hashes are frozen with the publication bundle.
+
+
+## P18 thresholded-replay phase checks
+
+`data/threshold_replay_phase_v1.jsonl` contains 24 deterministic parameter
+specifications spanning zero tolerance, `tau` on the same scale as `d`, and
+fixed positive tolerance.  Every row is checked against
+`threshold_fairness_replay_bounds`; the manifest stores no observed error rate
+or performance result.
+
+Regenerate and test with:
+
+```bash
+python scripts/generate_threshold_replay_phase.py \
+  --output data/threshold_replay_phase_v1.jsonl
+pytest -q tests/test_threshold_replay_phase.py \
+  tests/test_threshold_replay_benchmarks.py
+```
+
+
+## P19 matched-control structural checks
+
+`data/control_replay_structural_cases_v1.jsonl` contains six exact geometry
+fixtures for the bipartite two-class theorem. They cover fractional
+control-cover values 1, 1.5, and 2, weighted controls, paired controls, and a
+boundary-only instance where the control cover is infeasible but the exact
+mixed-information lower program remains finite and quadratic in the small
+effect.
+
+```bash
+python scripts/generate_control_replay_structural_cases.py \
+  --output data/control_replay_structural_cases_v1.jsonl
+pytest -q tests/test_control_replay.py \
+  tests/test_control_replay_benchmarks.py
+```
+
+## Theorem-driven replay phase contract
+
+The additional replay phase grid is generated on demand and is not counted as a
+new submission-evidence dataset. It is a deterministic experiment contract used
+to guard theorem-facing GPU/CPU sweeps against post-hoc regime labeling.
+
+```bash
+python scripts/generate_replay_phase_benchmark.py \\
+  --output /tmp/replay_phase_benchmark_v1.jsonl
+python experiments/validate_replay_phase_contract.py \\
+  --benchmark /tmp/replay_phase_benchmark_v1.jsonl
+python experiments/search_control_replay_mixed_geometry.py --top 20
+```
+
+Version 1 freezes replay fidelity at 1.0. It labels only theorem-backed P19
+control-coverage extremes (0 and 1); intermediate control coverage remains a
+falsification domain until the mixed-control singular analysis passes proof and
+audit gates. Generated rows are parameter specifications, never observed
+performance values.

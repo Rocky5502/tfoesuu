@@ -1,0 +1,6 @@
+{"case_id":"p19-triangle-controls","high_count":3,"low_count":2,"groups":[[0,1],[1,2],[0,2]],"costs":[1,1,1],"expected_control_feasible":true,"expected_control_cover":1.5,"expected_small_d_regime":"linear"}
+{"case_id":"p19-boundary-only","high_count":3,"low_count":2,"groups":[[0,3],[1,3],[2,3]],"costs":[1,1,1],"expected_control_feasible":false,"expected_control_cover":null,"expected_small_d_regime":"quadratic"}
+{"case_id":"p19-all-high-control","high_count":4,"low_count":1,"groups":[[0,1,2,3]],"costs":[1],"expected_control_feasible":true,"expected_control_cover":1,"expected_small_d_regime":"linear"}
+{"case_id":"p19-cycle-controls","high_count":4,"low_count":2,"groups":[[0,1],[1,2],[2,3],[0,3]],"costs":[1,1,1,1],"expected_control_feasible":true,"expected_control_cover":2,"expected_small_d_regime":"linear"}
+{"case_id":"p19-paired-controls","high_count":4,"low_count":1,"groups":[[0,1],[2,3]],"costs":[1,1],"expected_control_feasible":true,"expected_control_cover":2,"expected_small_d_regime":"linear"}
+{"case_id":"p19-weighted-triangle","high_count":3,"low_count":1,"groups":[[0,1],[1,2],[0,2]],"costs":[1,1,2],"expected_control_feasible":true,"expected_control_cover":2,"expected_small_d_regime":"linear"}

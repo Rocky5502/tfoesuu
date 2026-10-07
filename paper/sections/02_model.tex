@@ -28,6 +28,57 @@ thus be converted to concrete program executions by multiplying by two.  This
 constant conversion never changes the asymptotic separations, but we keep the
 units explicit throughout.
 
+\subsection{Replay access as a resource}
+\label{sec:replay-access}
+
+The tester's observation model is part of the problem instance.  We distinguish
+the following primitives; later theorems state explicitly which one they use.
+
+\begin{table}[t]
+\centering
+\caption{Replay primitives and concrete execution cost for one observation
+round.  The same random tape is shared only across executions listed in the
+middle column.  Stronger synchronization can reduce round complexity while
+increasing the number of concrete executions per round.}
+\label{tab:oracle-access}
+\small
+\begin{tabular}{@{}p{0.20\textwidth}p{0.43\textwidth}p{0.25\textwidth}@{}}
+\toprule
+Primitive & One observed round & Concrete executions \\
+\midrule
+Fresh / independent &
+One requested version-input execution with a fresh tape; repeated calls need
+not share randomness. &
+$1$ per single-version call \\
+
+Old/new paired &
+$P_0(x;R)$ and $P_1(x;R)$ for one input $x$ under one shared tape $R$. &
+$2$ \\
+
+Four-way edge replay &
+$P_0(u;R),P_1(u;R),P_0(v;R),P_1(v;R)$ for one fairness edge $(u,v)$. &
+$4$ \\
+
+Synchronized-suite replay &
+Both versions at every fairness-active input under one common tape. &
+$2n_+$ \\
+
+Partial group replay &
+Both versions at every $v\in S_i$ for a declared legal group $S_i$, under one
+common tape. &
+$2|S_i|$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Rounds versus executions.}
+We report both units whenever synchronization changes the width of an
+observation.  A suite-replay oracle dominates narrower transcripts at the level
+of information per round, but a suite round executes every active input.  Thus a
+smaller round complexity does not by itself imply a smaller concrete execution
+cost.  Partial replay is parameterized by its legal group family and group
+costs rather than treated as a universally stronger or weaker primitive.
+
 \subsection{Counterfactual fairness graph}
 Let $G=(V,E)$ with $V\subseteq\X$.  An edge $e=(u,v)$ encodes a valid
 counterfactual comparison.  For scalar expected outcomes we require

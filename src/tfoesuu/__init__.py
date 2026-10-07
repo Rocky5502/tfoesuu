@@ -1,6 +1,12 @@
 """Testing Fairness of Evolving Software under Uncertainty."""
 
-from .allocation import AllocationResult, solve_psi, solve_psi_dual
+from .allocation import (
+    AllocationResult,
+    PsiConicCertificate,
+    psi_conic_certificate,
+    solve_psi,
+    solve_psi_dual,
+)
 from .certificate import (
     CertificatePruningResult,
     ResidualEdgeMargins,
@@ -15,9 +21,12 @@ from .separations import (
     CounterfactualReplayBounds,
     LocationReplayBounds,
     ReplaySeparationBounds,
+    ThresholdFairnessReplayBounds,
     counterfactual_replay_bounds,
     location_replay_bounds,
     replay_separation_bounds,
+    threshold_fairness_replay_bounds,
+    threshold_fairness_replay_kl,
 )
 from .software_subjects import RandomizedResourceAllocatorPair, linear_baseline
 from .suite_replay import SuiteReplayBounds, active_vertex_count, synchronized_suite_replay_bounds
@@ -31,6 +40,19 @@ from .partial_replay_benchmarks import (
     PartialReplayBenchmarkSpec,
     partial_replay_benchmark_v1,
 )
+from .control_replay_benchmarks import (
+    ControlReplayStructuralCase,
+    control_replay_structural_cases_v1,
+)
+from .control_replay import (
+    ControlReplayInformationLowerBound,
+    ControlReplaySchedule,
+    FractionalControlCover,
+    control_replay_information_lower_bound,
+    matched_control_contrast_witness,
+    matched_control_replay_schedule,
+    minimum_fractional_control_cover,
+)
 from .partial_replay_lower import (
     FractionalActiveVertexCover,
     FractionalReplayCover,
@@ -41,14 +63,21 @@ from .partial_replay_lower import (
     minimum_fractional_replay_cover,
     raw_output_information_lower_bound,
 )
+from .threshold_replay_benchmarks import (
+    ThresholdReplayPhaseSpec,
+    threshold_replay_phase_benchmark_v1,
+)
 from .subject_benchmarks import (
     SoftwareSubjectBenchmarkSpec,
     software_subject_benchmark_v1,
 )
 from .testers import FullRegressionTestResult, run_gaussian_full_regression_test
+from .planner import TFOESUUPlan, plan_bernoulli_replay, plan_gaussian_regression
 
 __all__ = [
     "AllocationResult",
+    "PsiConicCertificate",
+    "psi_conic_certificate",
     "solve_psi",
     "solve_psi_dual",
     "CertificatePruningResult",
@@ -63,9 +92,12 @@ __all__ = [
     "minimum_information_cover",
     "replay_benchmark_v1",
     "ReplaySeparationBounds",
+    "ThresholdFairnessReplayBounds",
     "LocationReplayBounds",
     "CounterfactualReplayBounds",
     "replay_separation_bounds",
+    "threshold_fairness_replay_bounds",
+    "threshold_fairness_replay_kl",
     "counterfactual_replay_bounds",
     "location_replay_bounds",
     "RandomizedResourceAllocatorPair",
@@ -79,6 +111,15 @@ __all__ = [
     "PartialReplayBenchmarkSpec",
     "partial_replay_benchmark_v1",
     "FractionalActiveVertexCover",
+    "ControlReplayStructuralCase",
+    "control_replay_structural_cases_v1",
+    "FractionalControlCover",
+    "ControlReplayInformationLowerBound",
+    "ControlReplaySchedule",
+    "minimum_fractional_control_cover",
+    "control_replay_information_lower_bound",
+    "matched_control_replay_schedule",
+    "matched_control_contrast_witness",
     "FractionalReplayCover",
     "FractionalReplaySchedule",
     "RawOutputInformationLowerBound",
@@ -87,10 +128,15 @@ __all__ = [
     "fractional_replay_schedule",
     "raw_output_information_lower_bound",
     "linear_baseline",
+    "ThresholdReplayPhaseSpec",
+    "threshold_replay_phase_benchmark_v1",
     "SoftwareSubjectBenchmarkSpec",
     "software_subject_benchmark_v1",
     "FullRegressionTestResult",
     "run_gaussian_full_regression_test",
+    "TFOESUUPlan",
+    "plan_gaussian_regression",
+    "plan_bernoulli_replay",
 ]
 
 __version__ = "0.1.0"

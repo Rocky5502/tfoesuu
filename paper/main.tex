@@ -39,78 +39,83 @@
 \maketitle
 
 \begin{abstract}
-Software fairness is usually audited as if a program were a fixed deterministic
-object.  Real software evolves through patches and can be stochastic because of
-randomized logic, scheduling, concurrency, resource contention, and environmental
-state.  We study \emph{fairness regression testing}: after a previously certified
-program is modified, how many executions are fundamentally necessary to determine
-whether the patch has introduced a fairness violation?
+We initiate the study of the query complexity of \emph{fairness regression}
+for evolving stochastic software.  A previously certified program $P_0$ is
+modified to $P_1$; fairness constraints form a graph over program inputs; and
+the tester may reuse both change-impact information and controlled executions of
+the two versions.  We ask how many executions are necessary to certify that the
+patch has not introduced a fairness violation, and how this complexity changes
+with the available replay primitive.
 
-We model valid counterfactual comparisons by a graph whose vertices are software
-inputs and whose edges identify pairs that should receive sufficiently similar
-outcomes.  A patch is accompanied by a sound change-impact region.  Regression
-testing additionally exposes two executable program versions.  We therefore study
-a \emph{coupled differential execution oracle}: the old and new versions are run
-on the same input under a shared random tape, allowing the tester to estimate the
-patch-induced behavioral delta directly.
+For Gaussian old--new differences, we identify an uncertainty-weighted graph
+quantity $\Psi(H,\nu)$ governing optimal allocation over the residual impacted
+graph $H$.  A non-adaptive tester uses
+$O(\Psi(H,\nu)\gamma^{-2}\log(|E(H)|/\delta))$ paired calls, while every
+adaptive $\delta$-correct tester requires
+$\Omega(\Psi(H,\nu)\gamma^{-2}\log(1/\delta))$ expected paired calls on a
+null instance.  Sound patch localization yields a linear separation on a
+matching family.
 
-For a Gaussian core problem, we identify an uncertainty-weighted graph quantity
-$\Psi(H,\nu)$ that captures how executions should be shared across counterfactual
-comparisons.  A non-adaptive tester has complexity
-$O(\Psi(H,\nu)\gamma^{-2}\log(|E(H)|/\delta))$, while every adaptive
-$\delta$-correct tester requires
-$\Omega(\Psi(H,\nu)\gamma^{-2}\log(1/\delta))$ expected paired-oracle calls on a
-null instance.  Sound patch localization yields a linear separation on a matching
-family.  For Bernoulli software, we further distinguish ordinary old/new pairing
-from \emph{four-way counterfactual replay}, which synchronizes the random tape
-across both software versions and both endpoints of a fairness edge.  When a patch
-has a nonzero fairness-neutral common effect $s$ and a smaller differential
-fairness effect $d$, four-way replay cancels the common effect pathwise and has
-$\Theta(d^{-1}\log(1/\delta))$ fixed-confidence complexity, whereas
-vertex-paired replay requires
-$\Theta(d^{-2}\log(1/\delta))$ calls for fixed interior $s$.  Under the stronger
-synchronized-suite replay primitive, one shared random tape is applied to both
-versions at every fairness-active input.  In the corresponding homogeneous
-Bernoulli family, all fairness edges are tested simultaneously: round complexity
-is $\Theta(d^{-1}\log(1/\delta))$ and concrete execution complexity is
-$\Theta(n_+d^{-1}\log(1/\delta))$, independent of the number of fairness edges.
-For intermediate \emph{partial replay}, where only declared input groups may
-share randomness, we identify two fractional-cover geometries.  Four-way
-edge-witness scheduling can be arbitrarily more expensive, or even infeasible,
-while the raw-output information geometry is an active-vertex cover
-$C_{\rm vert}$.  In the frozen homogeneous single-changed-endpoint family, a
-within-group patch-delta contrast test attains this same $C_{\rm vert}$ geometry,
-giving matching lower/upper combinatorial dependence and
-$\Theta(d^{-1}\log(1/\delta))$ fixed-confidence order up to constants and
-rounding.  Thus version-aware replay can change both the small-effect exponent
-and the graph geometry of fairness-regression testing.
+For Bernoulli software, replay strength changes the small-effect exponent.
+With a nonzero fairness-neutral common patch effect, ordinary vertex-paired
+replay requires $\Theta(d^{-2}\log(1/\delta))$ calls, whereas four-way
+counterfactual replay cancels the common effect pathwise and achieves
+$\Theta(d^{-1}\log(1/\delta))$.  This advantage has a sharp boundary:
+for a one-edge fairness tolerance $\tau$, synchronized replay has complexity
+$\Theta((\tau+d)d^{-2}\log(1/\delta))$ under an interior condition, so
+$\tau=O(d)$ retains the linear regime while every fixed $\tau>0$ restores
+quadratic dependence on $1/d$.  Synchronized-suite replay tests all active
+fairness edges in $\Theta(d^{-1}\log(1/\delta))$ rounds and
+$\Theta(n_+d^{-1}\log(1/\delta))$ concrete executions, independent of the
+number of fairness edges in the audited homogeneous family.
 
-These results establish a tractable foundation for the broader objective of tight
-query complexity for fairness regression with retained certificates, heterogeneous
-uncertainty, imperfect change-impact information, and multiple software versions.
+For partial replay, where only declared input groups may share randomness, two
+fractional-cover geometries emerge.  The edge-witness cover can be an unbounded
+factor larger than the active-vertex cover $C_{\rm vert}$ and can even be
+infeasible.  In the frozen homogeneous single-changed-endpoint family, a
+within-group patch-delta contrast attains the same $C_{\rm vert}$ geometry as
+the transcript-information lower bound.  Under a heterogeneous two-class fair
+null, we further identify a matched-control cover $C_{\rm ctrl}$: legal groups
+with a same-background control carry $\Theta(d)$ information and recover
+$\Theta(d^{-1})$ complexity, whereas high--low-only groups carry
+$\Theta(d^2)$ information at fixed tolerance.  Thus replayability and control
+topology jointly determine both the small-effect exponent and the graph geometry
+of fairness-regression complexity.
 \end{abstract}
+
+\clearpage
+\setcounter{tocdepth}{1}
+\tableofcontents
+\clearpage
 
 \input{sections/01_introduction}
 \input{figures/overview_pipeline}
+\input{sections/01_results_at_glance}
 \input{sections/02_model}
+\input{sections/03_algorithm}
 \input{sections/03_localization}
 \input{sections/04_coupled_execution}
 \input{sections/05_gaussian_core}
 \input{sections/06_bernoulli_core}
 \input{sections/07_regression_consequences}
 \input{sections/07_open_problems}
+\input{sections/08_evaluation}
 \input{sections/08_related_work}
 
 \bibliographystyle{alpha}
 \bibliography{references}
 
 \section*{AI Methodology}
-ChatGPT (OpenAI) was used for substantive research ideation, literature triage,
-proof exploration, code drafting, and manuscript drafting and structuring.  The human
-authors are responsible for independently verifying every theorem, proof,
-originality claim, citation, implementation, and final statement.  No generative
-AI model, pretrained model, open-source model, or model API is a study subject,
-research oracle or data source, or component of the experimental system analyzed
-in this paper.
+ChatGPT (OpenAI) was used substantively for research ideation, literature triage,
+proof exploration, implementation and test drafting, and manuscript drafting and
+structuring.  It materially influenced the organization and draft text of
+Sections~1--8 and associated artifact code.  AI-generated suggestions were
+treated as untrusted drafts: theorem claims enter the manuscript only after the
+project's proof-audit and executable-correspondence gates, and the human authors
+remain responsible for final independent verification of every theorem, proof,
+originality claim, citation, implementation, and statement before submission.
+No generative AI model, pretrained model, open-source model, or model API is a
+study subject, research oracle, data source, or component of the experimental
+system analyzed in this paper.
 
 \end{document}

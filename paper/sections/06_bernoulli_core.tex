@@ -396,6 +396,282 @@ behavior cancel pathwise, changing the information rate for the differential
 fairness effect.
 
 
+
+\subsection{A replay phase transition at nonzero fairness tolerance}
+\label{sec:threshold-replay}
+
+The linear $d^{-1}$ behavior above relies on a sparse witness: under the null,
+the synchronized endpoint contrast is exactly zero.  We next characterize what
+happens when the fairness requirement itself permits a nonzero background gap.
+
+Consider one edge $(u,v)$ with tolerance $\tau\ge0$.  The old thresholds are
+$(p,p)$.  Fix a common patch shift $s\ge0$ and a separation margin $d>0$ with
+$p+s+\tau+d<1$.  At the boundary null and alternative let
+\[
+\mathsf H_0:\ (p_{1,u},p_{1,v})=(p+s+\tau,p+s),
+\qquad
+\mathsf H_1:\ (p_{1,u},p_{1,v})=(p+s+\tau+d,p+s).
+\]
+These two instances lie respectively on the boundary of the composite null
+$|p_{1,u}-p_{1,v}|\le\tau$ and the separated alternative
+$|p_{1,u}-p_{1,v}|\ge\tau+d$.
+
+\begin{theorem}[Thresholded replay phase transition]
+\label{thm:threshold-replay-phase}
+Let $\delta\in(0,1/2)$ and set $r=1-p-s-\tau$.  One four-way synchronized
+replay round has null-to-alternative KL
+\[
+K_\tau(d)
+=
+\tau\log\!\left(\frac{\tau}{\tau+d}\right)
++
+r\log\!\left(\frac{r}{r-d}\right),
+\]
+where the first term is zero when $\tau=0$.  Every adaptive
+$\delta$-correct tester with finite null expected stopping time satisfies
+\[
+\E_0[T]\ge
+\frac{\kl(1-\delta,\delta)}{K_\tau(d)}.
+\]
+Conversely, the full composite problem
+\[
+\mathsf H_0:\ |p_{1,u}-p_{1,v}|\le\tau,
+\qquad
+\mathsf H_1:\ |p_{1,u}-p_{1,v}|\ge\tau+d
+\]
+admits a fixed-design synchronized-replay test using at most
+\[
+\left\lceil
+\frac{8(\tau+d)\log(1/\delta)}{d^2}
+\right\rceil
+\]
+rounds.  If $r-d$ is bounded below by a positive constant, these bounds give
+\[
+Q_{\rm thr}(\tau,d,\delta)
+=
+\Theta\!\left(
+\frac{\tau+d}{d^2}\log\frac1\delta
+\right)
+\]
+up to constants.  Hence $\tau=0$ and, more generally, $\tau=O(d)$ retain
+$d^{-1}$ scaling, whereas every fixed $\tau>0$ restores $d^{-2}$ scaling as
+$d\to0$.
+\end{theorem}
+
+\begin{proof}
+Under the boundary pair, only two four-way transcript atoms change probability:
+masses $\tau$ and $r$ under the null become $\tau+d$ and $r-d$ under the
+alternative, giving the displayed KL.  Adaptive transcript change of measure
+and data processing yield the lower bound.  Equivalently, conditioning on the
+event $U>p+s$ reduces the informative transcript exactly to a Bernoulli shift
+from $\tau/(1-p-s)$ to $(\tau+d)/(1-p-s)$.
+
+For the upper bound, in each independent synchronized round retain only
+\[
+W=\mathbf 1\{P_1(u;U)\ne P_1(v;U)\}.
+\]
+Under common-uniform threshold replay, $W$ is Bernoulli with mean equal to the
+new-version endpoint gap.  Reject when its empirical mean is at least
+$\tau+d/2$.  Binomial stochastic ordering reduces the two composite errors to
+the boundary means $\tau$ and $\tau+d$; Bernstein/Chernoff bounds make both at
+most $\delta$ at the stated sample size.  Finally, for fixed positive $\tau$
+and $r$,
+\[
+K_\tau(d)
+=
+\frac{d^2}{2}\left(\frac1\tau+\frac1r\right)+O(d^3),
+\]
+whereas $K_0(d)=d+O(d^2)$.  More uniformly, if $r-d\ge\rho>0$,
+$K_\tau(d)=O_\rho(d^2/(\tau+d))$, matching the upper order.
+\end{proof}
+
+\input{figures/threshold_replay_phase}
+
+This result gives a boundary to the replay advantage rather than a universal
+$d^{-1}$ claim.  Paired binary testing and common random numbers are classical
+\cite{Connor1987,GlassermanYao1992}; the contribution is the consequence for
+the version-aware fairness-regression access model.  It also explains why the
+heterogeneous P17 raw-contrast tester cannot remain zero-error once benign null
+disparity is allowed.
+
+
+\subsection{Matched-background controls restore the sparse regime}
+\label{sec:control-replay}
+
+\Cref{thm:threshold-replay-phase} shows that a fixed positive fairness
+tolerance destroys the sparse one-edge witness.  Partial replay can recover that
+witness when the harness supplies a synchronized \emph{matched-background
+control}.
+
+Let \(H=(A\cup B,E)\) be bipartite, with every fairness edge crossing from a
+high class \(A\) to a low class \(B\).  All old thresholds equal \(p\).  Under
+the common null, low vertices have new threshold \(p+s\), while high vertices
+have new threshold \(p+s+\tau\), where \(\tau>0\).  Hence every fairness edge is
+exactly at tolerance \(\tau\).  Alternative \(x\in A\) raises only the new
+threshold of \(x\) by \(d\), so every incident edge has gap \(\tau+d\).
+
+Let \(S_1,\ldots,S_k\) be the legal replay groups with costs \(c_i>0\).  Define
+\[
+C_{x i}
+=
+\mathbf 1\!\left\{
+x\in S_i,\ |S_i\cap A|\ge2
+\right\},
+\qquad
+R_{x i}
+=
+\mathbf 1\{x\in S_i\}-C_{x i}.
+\]
+Thus \(C\) records queries that include a matched high-class control, while
+\(R\) records high--low-only observations for candidate \(x\).  With
+\(r=1-p-s-\tau\), define
+\[
+K_{\rm ctrl}(d)
+=
+r\log\!\frac{r}{r-d},
+\]
+and
+\[
+K_{\rm bnd}(\tau,d)
+=
+\tau\log\!\frac{\tau}{\tau+d}
++
+r\log\!\frac{r}{r-d}.
+\]
+
+\begin{theorem}[Matched controls under a heterogeneous fair null]
+\label{thm:control-replay}
+Fix \(\delta\in(0,1/2)\) and the two-class family above.
+
+\begin{enumerate}[label=(\roman*)]
+\item Every adaptive \(\delta\)-correct partial-replay tester with finite null
+expected declared cost satisfies
+\[
+\E_0[\mathrm{cost}]
+\ge
+\min_{n\ge0}
+\left\{
+c^\top n:
+\bigl(K_{\rm ctrl}C+K_{\rm bnd}R\bigr)n
+\ge
+\kl(1-\delta,\delta)\mathbf 1
+\right\}.
+\]
+
+\item Define the fractional control-cover quantity
+\[
+C_{\rm ctrl}
+=
+\min_{q\ge0}
+\left\{
+c^\top q:
+Cq\ge\mathbf 1
+\right\}.
+\]
+If \(C_{\rm ctrl}<\infty\), a fixed-design tester has zero type-I error and
+pointwise type-II error at most \(\delta\) using declared cost at most
+\[
+L\,C_{\rm ctrl}
++
+\sum_{i:q_i^\star>0}c_i,
+\qquad
+L=
+\left\lceil
+\frac{\log\delta}{\log(1-d)}
+\right\rceil.
+\]
+
+\item For fixed \(p,s,\tau>0\) with \(p+s+\tau<1\),
+\[
+K_{\rm ctrl}(d)=d+O(d^2),
+\qquad
+K_{\rm bnd}(\tau,d)
+=
+\frac{d^2}{2}
+\left(
+\frac1\tau+\frac1r
+\right)
++O(d^3).
+\]
+Consequently, if \(C_{\rm ctrl}<\infty\), the lower program and upper
+construction have matching leading control-cover geometry and
+\(\Theta(d^{-1}\log(1/\delta))\) fixed-confidence order, up to rounding and
+standard constant factors.  If some high candidate has no control-compatible
+legal group, then every tester requires
+\(\Omega(d^{-2}\log(1/\delta))\) expected declared cost at fixed
+\(\tau>0\), unless that candidate is completely unobservable.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Fix alternative \(x\in A\).  If a queried group contains \(x\) and another
+high vertex, the null transcript has a top tape interval of mass \(r\).  Raising
+only \(x\)'s new threshold splits mass \(d\) from that interval into a new
+\(x\)-specific state, giving \(K_{\rm ctrl}\).  If the group contains \(x\)
+but no other high vertex, the existing high--low interval has mass \(\tau\);
+the alternative changes masses \((\tau,r)\) to \((\tau+d,r-d)\), giving
+\(K_{\rm bnd}\).  Groups omitting \(x\) have zero KL.  Adaptive transcript
+change of measure gives one information constraint per \(x\), proving (i).
+
+For (ii), let \(q^\star\) solve the control-cover LP and query group \(S_i\)
+\(\lceil Lq_i^\star\rceil\) times.  Within each group, compare old--new patch
+deltas only among its high-class members.  Under the null those deltas are
+identical pathwise, even though high and low classes differ benignly by
+\(\tau\).  Under alternative \(x\), every control-compatible exposure containing
+\(x\) becomes nonconstant exactly when
+\(U\in(p+s+\tau,p+s+\tau+d]\), an event of probability \(d\).
+The cover gives at least \(L\) independent opportunities for each \(x\), so the
+miss probability is at most \((1-d)^L\le\delta\).
+
+For (iii), expand the two exact KL expressions.  In the lower LP, scaling
+\(z_i=d\,n_i/\kl(1-\delta,\delta)\) makes the coefficient of \(C\) converge to
+one and the coefficient of \(R\) converge to zero.  A feasible control-cover
+solution gives a uniform upper bound on the scaled optimum.  Because every
+\(c_i>0\), any sequence of scaled optimizers therefore has bounded
+coordinates; every convergent subsequence has a limit satisfying
+\(Cz\ge\mathbf 1\).  Consequently the lower limit of the scaled objective is
+at least \(C_{\rm ctrl}\), while the control-cover solution gives the matching
+upper limit.  If candidate \(x\) has no control-compatible group, its
+information constraint contains only \(K_{\rm bnd}=\Theta(d^2)\), giving the
+quadratic lower bound.
+\end{proof}
+
+\begin{corollary}[Replay topology changes the small-effect exponent]
+\label{cor:control-topology-separation}
+Fix any positive tolerance $\tau$ and consider the same bipartite fairness
+instance with three high candidates and one low reference, unit group costs,
+and the P19 null/alternative family.  If the only legal groups are the three
+high--low pairs, then every candidate is observable but no matched control
+exists, and every $\delta$-correct tester requires
+\[
+\Omega\!\left(d^{-2}\log(1/\delta)\right)
+\]
+expected declared cost as $d\to0$.  If instead the three high--high pairs are
+legal replay groups, then their fractional control cover has
+$C_{\rm ctrl}=3/2$, and a zero-type-I tester uses
+\[
+O\!\left(d^{-1}\log(1/\delta)\right)
+\]
+declared cost.  Thus, at fixed fairness tolerance and with the fairness graph
+unchanged, replay-group topology alone can change the small-effect exponent.
+\end{corollary}
+
+\begin{proof}
+For the high--low-only family, every information constraint in
+\Cref{thm:control-replay} contains only
+$K_{\rm bnd}(\tau,d)=\Theta(d^2)$.  For the high--high triangle, assigning
+weight $1/2$ to each pair gives the optimal control cover
+$C_{\rm ctrl}=3/2$, and the upper construction in
+\Cref{thm:control-replay} applies.
+\end{proof}
+
+P19 is deliberately scoped.  It does not solve arbitrary heterogeneous partial
+replay; it identifies one sufficient form of extra control structure that
+repairs the failure exposed by the P17 counterexample.  The mechanism also
+clarifies the relationship with P18: a high--low-only replay group remains in
+the quadratic thresholded regime, whereas adding a matched high control creates
+a new sparse transcript state and restores linear information.
+
 \subsection{Synchronized suite replay removes edge-count dependence}
 
 Four-way replay can be lifted to a software-test-suite primitive when the
