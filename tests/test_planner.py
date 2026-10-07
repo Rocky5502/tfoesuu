@@ -1,0 +1,128 @@
+import numpy as np
+import pytest
+
+from tfoesuu.graphs import edge_graph, path_graph
+from tfoesuu.planner import plan_bernoulli_replay, plan_gaussian_regression
+
+
+def test_gaussian_planner_prunes_safe_edge_to_zero_executions():
+    graph = edge_graph()
+    edge = graph.edges[0]
+
+    plan = plan_gaussian_regression(
+        graph,
+        old_edge_gaps={edge: 0.02},
+        thresholds={edge: 0.20},
+        patch_effect_bounds={edge: 0.10},
+        variances=np.ones(graph.n),
+        gamma=0.10,
+        beta=0.05,
+    )
+
+    assert plan.safe_edges == (edge,)
+    assert plan.residual_edges == ()
+    assert plan.concrete_program_executions == 0
+    assert plan.vertex_counts == (0, 0)
+
+
+def test_one_edge_replay_plans_keep_theorem_scope_explicit():
+    graph = edge_graph()
+
+    paired = plan_bernoulli_replay(
+        graph,
+        "vertex-paired-one-edge",
+        p=0.50,
+        d=0.05,
+        beta=0.05,
+    )
+    assert paired.rounds is not None and paired.rounds > 0
+    assert paired.concrete_program_executions == 2 * paired.rounds
+    assert "P12" in paired.theorem_scope
+
+    four_way = plan_bernoulli_replay(
+        graph,
+        "four-way-one-edge",
+        p=0.35,
+        shared_patch=0.20,
+        d=0.05,
+        beta=0.05,
+    )
+    assert four_way.rounds is not None and four_way.rounds > 0
+    assert four_way.concrete_program_executions == 4 * four_way.rounds
+    assert "P15" in four_way.theorem_scope
+
+
+def test_one_edge_modes_reject_multiedge_generalization():
+    graph = path_graph(3)
+
+    with pytest.raises(ValueError, match="one-edge theorem"):
+        plan_bernoulli_replay(
+            graph,
+            "vertex-paired-one-edge",
+            p=0.50,
+            d=0.05,
+            beta=0.05,
+        )
+
+    with pytest.raises(ValueError, match="one-edge theorem"):
+        plan_bernoulli_replay(
+            graph,
+            "four-way-one-edge",
+            p=0.35,
+            shared_patch=0.20,
+            d=0.05,
+            beta=0.05,
+        )
+
+
+def test_suite_plan_counts_active_vertex_executions():
+    graph = path_graph(3)
+    plan = plan_bernoulli_replay(
+        graph,
+        "suite-homogeneous",
+        p=0.30,
+        shared_patch=0.10,
+        d=0.05,
+        beta=0.05,
+    )
+
+    assert plan.rounds is not None and plan.rounds > 0
+    assert plan.concrete_program_executions == 2 * 3 * plan.rounds
+    assert plan.normalized_geometry == pytest.approx(3.0)
+    assert "P16" in plan.theorem_scope
+
+
+def test_partial_plan_requires_explicit_homogeneous_scope_acknowledgement():
+    graph = path_graph(3)
+    groups = [(0, 2), (1, 2)]
+    costs = [1.0, 1.0]
+
+    with pytest.raises(ValueError, match="explicit acknowledgement"):
+        plan_bernoulli_replay(
+            graph,
+            "partial-homogeneous",
+            p=0.20,
+            shared_patch=0.10,
+            d=0.05,
+            beta=0.05,
+            groups=groups,
+            costs=costs,
+        )
+
+    plan = plan_bernoulli_replay(
+        graph,
+        "partial-homogeneous",
+        p=0.20,
+        shared_patch=0.10,
+        d=0.05,
+        beta=0.05,
+        groups=groups,
+        costs=costs,
+        homogeneous_single_changed_endpoint=True,
+    )
+
+    assert plan.group_counts is not None
+    assert plan.normalized_geometry == pytest.approx(2.0)
+    assert plan.concrete_program_executions is not None
+    assert plan.concrete_program_executions > 0
+    assert "P17" in plan.theorem_scope
