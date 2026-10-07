@@ -14,6 +14,17 @@ class CertificatePruningResult:
     residual_graph: GraphSpec
 
 
+@dataclass(frozen=True)
+class ResidualEdgeMargins:
+    """Directional threshold headroom retained from an old fair certificate."""
+
+    edge: Edge
+    old_signed_gap: float
+    threshold: float
+    positive_headroom: float
+    negative_headroom: float
+
+
 def _edge_map_value(values: Mapping[Edge, float], edge: Edge, name: str) -> float:
     if edge in values:
         return float(values[edge])
@@ -72,3 +83,52 @@ def prune_with_patch_envelopes(
         },
     )
     return CertificatePruningResult(tuple(safe), residual_graph)
+
+
+def threshold_residual_margins(
+    graph: GraphSpec,
+    old_signed_gaps: Mapping[Edge, float],
+    thresholds: Mapping[Edge, float],
+) -> tuple[ResidualEdgeMargins, ...]:
+    """Return directional patch-contrast boundaries for thresholded fairness.
+
+    For an oriented edge e=(u,v), let g0 = mu0_u - mu0_v and let
+    theta_vtx = mu1 - mu0. The new signed gap is
+
+        g1 = g0 + theta_u - theta_v.
+
+    Fairness requires |g1| <= tau. Hence the patch contrast theta_u-theta_v
+    may increase by at most tau-g0 in the positive direction and by at most
+    tau+g0 in the negative direction before crossing the fairness boundary.
+
+    This helper only exposes retained certificate geometry; it is not a
+    statistical testing theorem.
+    """
+
+    out: list[ResidualEdgeMargins] = []
+    for edge in graph.edges:
+        if edge in old_signed_gaps:
+            gap = float(old_signed_gaps[edge])
+        elif (edge[1], edge[0]) in old_signed_gaps:
+            gap = -float(old_signed_gaps[(edge[1], edge[0])])
+        else:
+            raise KeyError(f"missing old signed gap for edge {edge}")
+
+        tau = _edge_map_value(thresholds, edge, "threshold")
+        if tau < 0:
+            raise ValueError(f"threshold must be nonnegative on edge {edge}")
+        if abs(gap) > tau + 1e-12:
+            raise ValueError(
+                f"old certificate is not fair on edge {edge}: |{gap}| > {tau}"
+            )
+
+        out.append(
+            ResidualEdgeMargins(
+                edge=edge,
+                old_signed_gap=gap,
+                threshold=tau,
+                positive_headroom=tau - gap,
+                negative_headroom=tau + gap,
+            )
+        )
+    return tuple(out)
