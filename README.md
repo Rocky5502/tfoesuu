@@ -143,6 +143,7 @@ python experiments/run_replay_separation.py --p 0.5 --d 0.01 --trials 100000
 python experiments/run_location_replay.py --candidates 64 --p 0.5 --d 0.01 --trials 100000
 python experiments/run_allocator_subject.py --contexts 64 --changed-context 17 --delta 0.01 --trials 100000
 python experiments/run_counterfactual_replay.py --p 0.35 --shared-patch 0.20 --d 0.01 --trials 100000
+python experiments/run_threshold_replay_phase.py --p 0.20 --shared-patch 0.10 --tau 0.10 --d 0.01 --trials 100000
 python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
 python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
 ```
@@ -247,4 +248,4 @@ A separate seven-dataset registry is frozen for the submission-facing finite-ins
 
 ## Public benchmark commands
 
-After core CI is green, install `requirements-public.txt`, prepare the seven public datasets with `scripts/prepare_public_benchmarks.py`, run `experiments/gpu_public_replay_sweep.py`, then generate the submission figure with `scripts/render_public_results.py`. The paper currently contains explicit TBD result slots; they are replaced only from a validated frozen JSONL result matrix.
+After core CI is green, install `requirements-public.txt`, prepare the seven public datasets with `scripts/prepare_public_benchmarks.py`, run `experiments/gpu_public_replay_sweep.py`, then generate the submission figure with `scripts/render_public_results.py`. The preregistered TBD result templates remain in the repository but are excluded from the compiled manuscript until a validated frozen JSONL result matrix is available.
