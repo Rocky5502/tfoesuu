@@ -42,6 +42,26 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-S | Scope counterexample for naive heterogeneous raw contrast | Heterogeneous fair-null deterministic witness | tests + partial_replay_scope_cases_v1.jsonl | Counterexample proved + tested; rules out silent generalization of P17-A |
 | P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open: needs controls/baseline adjustment/new geometry | none yet | Open |
 
+## Unified planner layer
+
+The paper-level TFOESUU procedure is implemented by
+`src/tfoesuu/planner.py`.  It does not create new theorem claims; it composes
+already-audited components while enforcing their scope in the API.
+
+- `plan_gaussian_regression` performs P14 certificate/envelope pruning and then
+  calls the P4 Gaussian allocation only on the residual graph.
+- `plan_bernoulli_replay(..., mode="vertex-paired-one-edge")` is restricted to
+  the one-edge P12 family.
+- `mode="four-way-one-edge"` is restricted to the one-edge P15 family.
+- `mode="suite-homogeneous"` delegates to the P16 suite-replay bound.
+- `mode="partial-homogeneous"` delegates to the P17 active-vertex contrast
+  schedule and refuses to run unless the caller explicitly acknowledges the
+  homogeneous single-changed-endpoint scope.
+
+`tests/test_planner.py` guards zero-query pruning, concrete execution
+accounting, single-edge scope rejection, suite execution cost, and the explicit
+P17 scope gate.
+
 ## P17 matrix package
 
 Let the legal replay groups be G={S_1,...,S_k}, each of size at least two.
