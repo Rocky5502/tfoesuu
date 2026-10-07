@@ -1,6 +1,6 @@
 import pytest
 
-from tfoesuu.certificate import prune_with_patch_envelopes
+from tfoesuu.certificate import prune_with_patch_envelopes, threshold_residual_margins
 from tfoesuu.graphs import matching_graph
 
 
@@ -41,4 +41,43 @@ def test_invalid_negative_patch_bound_rejected():
             {edge: 0.0},
             {edge: 0.1},
             {edge: -0.01},
+        )
+
+
+def test_threshold_residual_margins_preserve_directional_headroom():
+    graph = matching_graph(1)
+    edge = graph.edges[0]
+    margins = threshold_residual_margins(
+        graph,
+        {edge: 0.03},
+        {edge: 0.10},
+    )
+
+    assert len(margins) == 1
+    assert margins[0].positive_headroom == pytest.approx(0.07)
+    assert margins[0].negative_headroom == pytest.approx(0.13)
+
+
+def test_threshold_residual_margins_flip_reversed_signed_gap():
+    graph = matching_graph(1)
+    u, v = graph.edges[0]
+    margins = threshold_residual_margins(
+        graph,
+        {(v, u): 0.04},
+        {(u, v): 0.10},
+    )
+
+    assert margins[0].old_signed_gap == pytest.approx(-0.04)
+    assert margins[0].positive_headroom == pytest.approx(0.14)
+    assert margins[0].negative_headroom == pytest.approx(0.06)
+
+
+def test_threshold_residual_margins_reject_old_unfair_edge():
+    graph = matching_graph(1)
+    edge = graph.edges[0]
+    with pytest.raises(ValueError):
+        threshold_residual_margins(
+            graph,
+            {edge: 0.11},
+            {edge: 0.10},
         )
