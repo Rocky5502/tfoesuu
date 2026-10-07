@@ -69,3 +69,11 @@ schedule and decision statistic to the strongest replay primitive that the
 software harness actually supports.}
 \label{alg:tfoesuu}
 \end{figure}
+\paragraph{Executable correspondence.}
+The repository implements this theorem-to-plan layer in
+\texttt{src/tfoesuu/planner.py}.  The planner is intentionally fail-closed:
+the P12 and P15 modes reject multi-edge requests, and the P17 mode requires an
+explicit homogeneous single-changed-endpoint scope acknowledgement before it
+will construct the active-vertex schedule.  Thus the software interface cannot
+silently promote a theorem beyond the proof ledger.
+
