@@ -48,6 +48,8 @@ def load_subject(prepared_dir: Path, dataset_id: str) -> tuple[np.ndarray, dict]
     arr = np.load(npz_path)
     p0 = np.asarray(arr["baseline_probabilities"], dtype=float)
     meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    if "preparation_source_commit" not in meta:
+        raise ValueError(f"{dataset_id}: prepared metadata lacks source commit")
     if p0.ndim != 1 or len(p0) < 1:
         raise ValueError(f"{dataset_id}: invalid baseline probability vector")
     return p0, meta
@@ -321,6 +323,12 @@ def main() -> None:
     rows: list[PublicResultRow] = []
     for dataset_index, dataset_id in enumerate(dataset_ids):
         p0, meta = load_subject(args.prepared_dir, dataset_id)
+        prep_commit = str(meta["preparation_source_commit"])
+        if prep_commit != sha:
+            raise SystemExit(
+                f"{dataset_id}: prepared under {prep_commit}, current source is {sha}; "
+                "re-prepare datasets from the frozen publication commit"
+            )
         for d_index, d in enumerate(patch_sizes):
             run_seed = args.seed + 1000 * dataset_index + 100 * d_index
             print(
