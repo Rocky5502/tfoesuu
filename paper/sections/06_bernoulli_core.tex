@@ -631,6 +631,35 @@ If candidate \(x\) has no control-compatible group, its information constraint
 contains only \(K_{\rm bnd}=\Theta(d^2)\), giving the quadratic lower bound.
 \end{proof}
 
+\begin{corollary}[Replay topology changes the small-effect exponent]
+\label{cor:control-topology-separation}
+Fix any positive tolerance $\tau$ and consider the same bipartite fairness
+instance with three high candidates and one low reference, unit group costs,
+and the P19 null/alternative family.  If the only legal groups are the three
+high--low pairs, then every candidate is observable but no matched control
+exists, and every $\delta$-correct tester requires
+\[
+\Omega\!\left(d^{-2}\log(1/\delta)\right)
+\]
+expected declared cost as $d\to0$.  If instead the three high--high pairs are
+legal replay groups, then their fractional control cover has
+$C_{\rm ctrl}=3/2$, and a zero-type-I tester uses
+\[
+O\!\left(d^{-1}\log(1/\delta)\right)
+\]
+declared cost.  Thus, at fixed fairness tolerance and with the fairness graph
+unchanged, replay-group topology alone can change the small-effect exponent.
+\end{corollary}
+
+\begin{proof}
+For the high--low-only family, every information constraint in
+\Cref{thm:control-replay} contains only
+$K_{\rm bnd}(\tau,d)=\Theta(d^2)$.  For the high--high triangle, assigning
+weight $1/2$ to each pair gives the optimal control cover
+$C_{\rm ctrl}=3/2$, and the upper construction in
+\Cref{thm:control-replay} applies.
+\end{proof}
+
 P19 is deliberately scoped.  It does not solve arbitrary heterogeneous partial
 replay; it identifies one sufficient form of extra control structure that
 repairs the failure exposed by the P17 counterexample.  The mechanism also
