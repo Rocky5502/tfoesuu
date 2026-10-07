@@ -37,8 +37,8 @@
 \node[focal, right=of observe] (allocate) {
   \textbf{4. Allocate by theorem geometry}\\[2pt]
   Gaussian: $\Psi(H^\star,\nu)$\\
-  Partial replay: $C_{\rm vert}$\\
-  Match statistic to replay access
+  Partial replay: $C_{\rm vert}$ or $C_{\rm ctrl}$\\
+  Match statistic to replay/control access
 };
 
 \node[stage, right=of allocate] (decision) {
@@ -59,21 +59,21 @@
 };
 
 \node[sub, below=0.34cm of observe, text width=3.35cm] (replay) {
-  \textbf{Replay hierarchy:} synchronization can expose sparse $d^{-1}$
-  witnesses, but only while null background disparity is sufficiently small.
+  \textbf{Replay hierarchy:} synchronization exposes sparse $d^{-1}$ witnesses
+  directly, or recovers them through matched-background controls.
 };
 
 \node[sub, below=0.34cm of allocate, text width=3.35cm] (geometry) {
   \textbf{Graph geometry:} suite replay removes edge-count dependence in
-  rounds; partial replay induces fractional-cover structure.
+  rounds; partial replay induces active-vertex or matched-control covers.
 };
 
 \node[risk, below=1.30cm of observe, text width=7.40cm] (scope) {
-  \textbf{Scope boundary and phase transition.} P17 attains $C_{\rm vert}$
-  in the homogeneous family, but its raw contrast fails on a heterogeneous fair
-  null over exact tape mass $0.15$.  P18 quantifies the one-edge boundary:
-  $Q=\Theta((\tau+d)d^{-2}\log(1/\delta))$; $\tau=O(d)$ is linear in
-  $1/d$, while fixed $\tau>0$ is quadratic.
+  \textbf{Scope boundary and control recovery.} P17 attains $C_{\rm vert}$
+  in the homogeneous family, but naive raw contrast fails under heterogeneous
+  benign shifts. P18 shows fixed $\tau>0$ is quadratic without a sparse
+  witness. P19 adds matched-background controls: control-compatible groups carry
+  $\Theta(d)$ information and restore $C_{\rm ctrl}/d$ scaling.
 };
 
 \draw[flow, draw=risktone] (observe.south) |- (scope.west);
@@ -84,9 +84,9 @@
 across software versions: deterministic change information first removes
 comparisons that need no new executions; the remaining stochastic problem is
 matched to the strongest sound replay primitive; theorem-specific allocation
-then controls execution cost.  The red box combines the exact P17 scope
-obstruction with P18's thresholded one-edge characterization, showing that the
-linear replay advantage has a mathematical boundary rather than holding
-universally.}
+then controls execution cost.  The red box combines the P17 scope obstruction,
+P18's threshold phase boundary, and P19's matched-control recovery, making clear
+that replay strength alone is insufficient: the topology of valid synchronized
+controls can change both the exponent and the governing fractional geometry.}
 \label{fig:overview}
 \end{figure}
