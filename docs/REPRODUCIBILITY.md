@@ -151,3 +151,10 @@ with infeasible C_edge, and representative common-uniform threshold regions.
 These checks validate implementation correspondence to the audited theorem; they
 do not replace the proof or extend the claim to heterogeneous/composite
 fairness-preserving nulls.
+
+
+## Public benchmark reproducibility
+
+The public-data layer is separate from the 791 deterministic theorem/specification rows. Its source registry is `data/public_benchmark_registry_v1.jsonl`. Preparation is performed with `scripts/prepare_public_benchmarks.py`, which records a canonical loaded-data SHA-256, deterministic split seed, evaluation-context count, local base-predictor metadata, and the probability clipping range used to keep additive replay patches in the Bernoulli interior.
+
+Publication rows are validated by `tfoesuu.public_results.PublicResultRow`. A publication matrix must come from one source commit, use one content hash per dataset, and contain no duplicate dataset/method/patch-size/seed keys. The plotting script `scripts/render_public_results.py` consumes only this validated JSONL. Raw third-party datasets and generated result files remain outside git; provenance and hashes are frozen with the publication bundle.
