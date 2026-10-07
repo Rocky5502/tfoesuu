@@ -39,15 +39,17 @@ local tests \cite{ChakrabartySeshadhri2013}. Stronger certification requirements
 can change testing complexity \cite{FischerFortnow2006}, and adaptivity itself
 admits strict hierarchies \cite{CanonneGur2018}. Recent STOC work shows how new
 graph/hypergraph container structure can sharpen property-testing bounds
-\cite{BlaisSeth2024}. Sequential experimental design and active hypothesis
-testing provide the complementary information-theoretic tradition for
-adaptively selecting observations \cite{Chernoff1959,CohenZhao2015}, while
-graph-based optimal design for pairwise comparisons shows that a graph allocation
-problem alone is not novel \cite{SinghSinghDavidov2025}. We use these traditions as methodology. Consequently, neither KL-driven action
-allocation nor minimum-cost experiment selection is itself a novelty claim. Our
-oracle instead derives its admissible actions from which inputs of \emph{two}
-executable program versions can share a replayed random tape, making software
-replay compatibility part of the instance.
+\cite{BlaisSeth2024}. Sequential experimental design, active sequential hypothesis testing, and
+controlled sensing provide the complementary information-theoretic tradition for
+choosing among action-dependent experiments
+\cite{Chernoff1959,NaghshvarJavidi2013,NitinawaratAtiaVeeravalli2013,
+NitinawaratVeeravalli2015,CohenZhao2015}, while graph-based optimal design for
+pairwise comparisons shows that a graph allocation problem alone is not novel
+\cite{SinghSinghDavidov2025}. Consequently, neither KL-driven action allocation
+nor minimum-cost experiment selection is itself a novelty claim. Our oracle
+instead derives its admissible actions from which inputs of \emph{two} executable
+program versions can share a replayed random tape, making software replay
+compatibility part of the instance.
 
 \paragraph{Regression testing and change-impact analysis.}
 Regression-test selection, minimization, and prioritization are mature
