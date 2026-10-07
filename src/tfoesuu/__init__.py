@@ -40,6 +40,7 @@ from .subject_benchmarks import (
     software_subject_benchmark_v1,
 )
 from .testers import FullRegressionTestResult, run_gaussian_full_regression_test
+from .planner import TFOESUUPlan, plan_bernoulli_replay, plan_gaussian_regression
 
 __all__ = [
     "AllocationResult",
@@ -81,6 +82,9 @@ __all__ = [
     "software_subject_benchmark_v1",
     "FullRegressionTestResult",
     "run_gaussian_full_regression_test",
+    "TFOESUUPlan",
+    "plan_gaussian_regression",
+    "plan_bernoulli_replay",
 ]
 
 __version__ = "0.1.0"
