@@ -25,8 +25,8 @@ positive fairness tolerance?
 
 \item[\textbf{RQ3}] \textbf{Partial synchronized replay.}
 Does executable group scheduling reproduce the $C_{\rm vert}$ geometry in the
-audited homogeneous family, and where does the same raw-contrast statistic fail
-under heterogeneous fairness-preserving nulls?
+homogeneous family, the new $C_{\rm ctrl}$ geometry when matched-background
+controls are available, and the predicted quadratic fallback when they are not?
 
 \item[\textbf{RQ4}] \textbf{Reproducibility and robustness.}
 Are theorem-facing conclusions invariant to regenerated manifests, exact seeds,
@@ -56,11 +56,12 @@ Paired replay grid & 54 & Paired-versus-independent Bernoulli replay specificati
 Executable software subjects & 32 & Randomized software configurations exercising the execution interface. \\
 Four-way counterfactual replay & 144 & Common-effect and differential-effect regimes for P15. \\
 P18 threshold phase grid & 24 & Zero, matched-scale, and fixed positive fairness tolerances across four differential margins. \\
+P19 control-replay fixtures & 6 & Exact control-cover feasibility, weighted-cover values, and boundary-only quadratic structure. \\
 P17 partial replay stress grid & 168 & Group size, graph family, group cost, and small-effect stress. \\
 P17 structural fixtures & 8 & Exact equality, finite-gap, and infeasible-witness constructions. \\
 P17 scope counterexample & 1 & Heterogeneous fair null that falsifies naive raw-contrast generalization. \\
 \midrule
-\textbf{Total} & \textbf{815} & Deterministic, regenerable specification rows. \\
+\textbf{Total} & \textbf{821} & Deterministic, regenerable specification rows. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -149,7 +150,8 @@ P17 stress geometry & 168 parameter rows & Materialized group/cost geometry is v
 P17 structural gap & 8 exact fixtures & One equality case, six clique cases with $C_{\rm edge}/C_{\rm vert}=n-1$, and one finite-$C_{\rm vert}$/infeasible-$C_{\rm edge}$ case agree with the LP implementations. \\
 P17 scope boundary & 1 heterogeneous fair-null fixture & New-version gap is $0.15\le\tau=0.20$, while the homogeneous raw-contrast predicate rejects on tape set $(0.20,0.30]\cup(0.40,0.45]$ of exact measure $0.15$. \\
 P18 tolerance phase & 24 parameter rows & Every row yields positive exact transcript KL and a valid theorem schedule; zero-tolerance rows recover the linear replay regime while fixed positive tolerances probe the quadratic regime. \\
-Manifest integrity & 815 total rows & All frozen artifacts exist, IDs are unique, row counts meet the frozen inventory, and regenerators round-trip exactly. \\
+P19 control geometry & 6 exact fixtures & Fractional control-cover feasibility and expected costs match the frozen specifications; the boundary-only fixture remains information-observable but loses the linear control channel. \\
+Manifest integrity & 821 total rows & All frozen artifacts exist, IDs are unique, row counts meet the frozen inventory, and regenerators round-trip exactly. \\
 \bottomrule
 \end{tabular}
 \end{table}
