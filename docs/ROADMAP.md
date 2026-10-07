@@ -62,3 +62,91 @@ Study P0 -> P1 -> ... -> PT with reusable certificates. Target a dynamic complex
 ## Paper gate
 
 A contribution enters the abstract only when it is PROVED + AUDITED in docs/PROOF_STATUS.md. Computationally checked observations remain labeled empirical.
+
+## STOC-strengthening sprint: highest-value open weaknesses
+
+This sprint is deliberately narrow. Do not add new RQs, arbitrary datasets, or
+headline claims until these items are resolved or explicitly bounded.
+
+### S1 — P17 beyond the homogeneous null (highest priority)
+
+Current audited P17 attainability is restricted to the frozen homogeneous
+single-changed-endpoint family. Attack the restriction in both directions:
+
+1. characterize the largest heterogeneous fairness-preserving null class for
+   which within-group raw patch-delta contrasts remain sound;
+2. if a broad extension is impossible, prove a lower bound/impossibility showing
+   why stronger edge-witness geometry or additional calibration is necessary;
+3. state all quantifiers over legal replay groups, orientations, costs, and null
+   nuisance parameters explicitly;
+4. add deterministic counterexamples before attempting a positive theorem.
+
+A rigorous impossibility/boundary theorem is a successful outcome.
+
+### S2 — Full thresholded fairness with retained certificate headroom
+
+Bridge the gap between patch-neutrality tests and the motivating thresholded
+fairness-regression question. Seek an instance-dependent characterization using
+old edge slack/headroom plus sound patch envelopes. P11 and P14 are boundary
+results; the missing target is a tight or near-tight statistical complexity
+statement after deterministic pruning.
+
+### S3 — Formal replay-oracle hierarchy
+
+Define comparable access models for fresh sampling, vertex-paired old/new replay,
+four-way edge replay, legal partial group replay, and synchronized full-suite
+replay. Prove strict separations only where the cost units and information
+available to each oracle are matched fairly. Separate replay rounds, group-query
+cost, and concrete program executions.
+
+### S4 — Close or explain the Gaussian logarithmic gap
+
+P4 has a simultaneous-testing factor log(|E|/delta), whereas the current adaptive
+null lower bound contains log(1/delta). Determine whether log|E| is:
+
+- removable by a sharper correlated simultaneous test;
+- necessary on an explicit graph/alternative family; or
+- replaceable by a structural complexity smaller than |E|.
+
+Do not hide the gap behind big-O notation.
+
+### S5 — Replay feasibility and software semantics
+
+Formalize which software randomness is controllable:
+
+- seeded pseudorandomness;
+- deterministic record/replay;
+- partially replayable groups;
+- external or non-replayable nondeterminism.
+
+Connect these categories to the oracle hierarchy. The theory should expose the
+price of weaker replay rather than assume universal synchronization.
+
+### S6 — Final archival collision audit
+
+Before strengthening abstract/contribution language, collision-check P15--P17
+against peer-reviewed work on controlled sensing, active hypothesis testing,
+restricted group testing, combinatorial pure exploration, graph-constrained
+experimental design, fractional covering/sampling designs, CRN ranking and
+selection, and stochastic monitoring. Fractional cover, CRN, coupling, and
+subset queries are established ingredients and must never be claimed novel.
+
+### S7 — Compact theorem-validation experiments
+
+Keep experiments subordinate to proofs. Validate predicted scaling and structural
+ratios with deterministic manifests and executable stochastic subjects:
+
+- d^-2 versus d^-1 small-effect scaling;
+- edgewise four-way versus synchronized-suite execution cost;
+- exact P17 structural fixtures and integrality gaps;
+- heterogeneous-null counterexamples;
+- Gaussian Psi scaling and any resolution of the log|E| question.
+
+Do not add public datasets merely to increase a dataset count.
+
+### Promotion gate
+
+A new headline claim enters the abstract only after:
+PROVED -> independent second derivation -> adversarial finite checks -> archival
+collision audit -> code/test synchronization -> green CI and paper build.
+
