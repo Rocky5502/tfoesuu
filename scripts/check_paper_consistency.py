@@ -56,6 +56,7 @@ REQUIRED_PAPER_MARKERS = {
     r"\label{thm:threshold-replay-phase}": "P18 thresholded replay theorem",
     r"\label{fig:threshold-replay-phase}": "P18--P19 replay phase figure",
     r"\label{thm:control-replay}": "P19 matched-control replay theorem",
+    r"\label{cor:control-topology-separation}": "P19 replay-topology exponent separation",
     r"\label{tab:benchmark-inventory}": "benchmark inventory table",
     r"\label{tab:deterministic-evidence}": "deterministic evidence table",
 }
