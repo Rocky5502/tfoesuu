@@ -11,13 +11,21 @@ impact analysis.
 
 \paragraph{Fairness testing and verification.}
 Themis established automated software fairness testing as a software-engineering
-problem \cite{GalhotraBrunMeliou2017}.  FairSquare showed that important fairness
-definitions can be formulated as probabilistic program properties and verified
-with probabilistic-program analysis \cite{AlbarghouthiEtAl2017}.  Active fairness
-auditing gives theoretical query-efficient algorithms for assessing fixed learned
-systems \cite{YanZhang2022}.  We do not claim novelty for fairness testing,
-probabilistic fairness verification, or active fairness auditing in isolation; our
-target is version-aware stochastic \emph{regression} testing.
+problem \cite{GalhotraBrunMeliou2017}, and the broader fairness-testing literature
+is now large enough to support dedicated surveys \cite{ChenZhangHortHarmanSarro2024}.
+FairSquare showed that important fairness definitions can be formulated as
+probabilistic program properties and verified with probabilistic-program analysis
+\cite{AlbarghouthiEtAl2017}. Active fairness auditing gives theoretical
+query-efficient algorithms for assessing a fixed learned system
+\cite{YanZhang2022}; recent work extends the active-auditing viewpoint to
+black-box LLM fairness evaluation \cite{HartmannEtAl2026}.  These papers optimize
+which inputs to query about one deployed predictor.  Our access model is
+orthogonal: the old software version remains executable, the patch supplies
+version-specific side information, and shared randomness can couple executions
+across versions and counterfactual inputs.  We do not claim novelty for fairness
+testing, probabilistic fairness verification, or active fairness auditing in
+isolation; our target is the query complexity of version-aware stochastic
+\emph{regression} testing.
 
 \paragraph{Property testing.}
 Property testing provides the surrounding query-complexity framework.
@@ -25,9 +33,15 @@ Optimal monotonicity/Lipschitz testing on hypercubes and hypergrids is a canonic
 example of graph-structured local checks determining a global property
 \cite{ChakrabartySeshadhri2013}; tolerant testing can be much harder than ordinary
 testing \cite{FischerFortnow2006}; and adaptivity hierarchies are known
-\cite{CanonneGur2018}.  Our property and access model are different: observations
-are stochastic executions of two evolving software versions, and old-version and
-impact information are first-class inputs.
+\cite{CanonneGur2018}. Recent work makes two distinctions especially relevant to
+our positioning. Bun, Desai, and Pinto study testing relative to a bounded class
+of distinguishers \cite{BunDesaiPinto2026}, while Pinto, Palit, and Raskhodnikova
+separate query complexity from computational complexity for property testers
+\cite{PintoPalitRaskhodnikova2026}.  Our paper likewise treats the access model as
+part of the problem definition, but the observations are coupled executions of
+two software versions rather than samples from one unknown object.  The present
+results characterize execution/query complexity; computational efficiency of the
+resulting allocation programs is kept conceptually separate.
 
 \paragraph{Adaptive information lower bounds.}
 Adaptive fixed-confidence sampling is commonly analyzed through transcript-level
