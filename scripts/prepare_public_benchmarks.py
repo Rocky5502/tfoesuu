@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -28,6 +29,18 @@ PROTECTED_COLUMNS = {
     "public-meps21": ("RACE",),
     "public-default-credit": ("SEX", "AGE"),
 }
+
+
+def git_state() -> tuple[str, bool]:
+    sha = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], text=True
+    ).strip()
+    dirty = bool(
+        subprocess.check_output(
+            ["git", "status", "--porcelain"], text=True
+        ).strip()
+    )
+    return sha, dirty
 
 
 def _imports():
@@ -171,11 +184,12 @@ def prepare_one(
     seed: int,
     max_contexts: int,
     accept_meps_terms: bool,
+    source_commit: str,
 ) -> dict:
     lib = _imports()
     pd = lib["pd"]
     X, y_raw = load_dataset(dataset_id, data_home, accept_meps_terms)
-    X = X.reset_index(drop=False)
+    X = X.reset_index(drop=True)
     y, target_meta = binarize_target(dataset_id, y_raw, pd)
     if len(X) != len(y):
         raise ValueError("feature/target row count mismatch")
@@ -263,6 +277,7 @@ def prepare_one(
         "base_predictor": "scikit-learn LogisticRegression on non-protected features",
         "base_accuracy": accuracy,
         "probability_clip": [0.10, 0.80],
+        "preparation_source_commit": source_commit,
         **target_meta,
     }
     meta_path = output_dir / f"{dataset_id}.json"
@@ -281,7 +296,12 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=20271008)
     ap.add_argument("--max-contexts", type=int, default=4096)
     ap.add_argument("--accept-meps-terms", action="store_true")
+    ap.add_argument("--allow-dirty", action="store_true")
     args = ap.parse_args()
+
+    source_commit, dirty = git_state()
+    if dirty and not args.allow_dirty:
+        raise SystemExit("working tree is dirty; commit/freeze before preparing public datasets")
 
     registry = public_benchmark_registry_v1()
     ids = [row.benchmark_id for row in registry]
@@ -301,6 +321,7 @@ def main() -> None:
                 seed=args.seed,
                 max_contexts=args.max_contexts,
                 accept_meps_terms=args.accept_meps_terms,
+                source_commit=source_commit,
             )
         )
 
