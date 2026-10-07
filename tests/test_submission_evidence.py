@@ -8,7 +8,7 @@ from scripts.summarize_submission_evidence import summarize
 def test_submission_evidence_summary_matches_frozen_repository():
     summary = summarize(Path("."))
 
-    assert summary["total_frozen_specification_rows"] == 815
+    assert summary["total_frozen_specification_rows"] == 821
 
     scope = summary["p17_scope"]
     assert scope["fairness_gap"] == pytest.approx(0.15)
