@@ -217,6 +217,31 @@ def test_p19_control_plan_requires_explicit_scope_and_tracks_execution_cost():
     assert plan.concrete_program_executions == expected
 
 
+
+def test_p19_planner_fails_closed_without_matched_controls_even_when_boundary_information_exists():
+    graph = complete_bipartite_graph(3, 2)
+    # Every legal group contains exactly one high vertex.  P19's mixed-KL lower
+    # program is still finite through boundary information, but the proved
+    # linear matched-control upper construction is unavailable.  The unified
+    # planner must therefore refuse to manufacture a d^-1 schedule.
+    groups = [(0, 3), (1, 3), (2, 4)]
+    costs = [1.0, 1.0, 1.0]
+
+    with pytest.raises(ValueError, match="no legal matched-background control group"):
+        plan_bernoulli_replay(
+            graph,
+            "partial-bipartite-control",
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.10,
+            d=0.01,
+            beta=0.05,
+            groups=groups,
+            costs=costs,
+            high_vertices=(0, 1, 2),
+            bipartite_control_family=True,
+        )
+
 def test_p19_control_plan_rejects_nonpositive_tolerance():
     graph = complete_bipartite_graph(2, 1)
     with pytest.raises(ValueError, match="tau>0"):
