@@ -238,6 +238,7 @@ def run_dataset(
         trials=trials,
         graph_vertices=2 * m,
         graph_edges=m,
+        affected_fraction=affected_fraction,
         impacted_edges=k,
         seed=seed,
         dataset_sha256=str(meta["canonical_loaded_data_sha256"]),
