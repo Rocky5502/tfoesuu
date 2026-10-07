@@ -81,13 +81,24 @@ def render_table(rows, output: Path, patch_size: float | None = None) -> float:
             raise ValueError(f"{dataset_id}: missing methods {missing}")
         anchor = meta[dataset_id]
         tfo = methods["tfoesuu"]
-        max_err = max(tfo.type_i_error, tfo.type_ii_error)
+        if tfo.type_i_error >= tfo.type_ii_error:
+            max_err = tfo.type_i_error
+            err_count = tfo.type_i_error_count
+        else:
+            max_err = tfo.type_ii_error
+            err_count = tfo.type_ii_error_count
+        lo, hi = _wilson_interval(err_count, tfo.trials)
+        speedup = (
+            methods["independent"].concrete_program_executions
+            / tfo.concrete_program_executions
+        )
         values = [
             anchor.dataset_name.replace("&", "\\&"),
             str(anchor.graph_vertices),
             str(anchor.graph_edges),
             *[_fmt_count(methods[m].concrete_program_executions) for m in METHOD_ORDER],
-            f"{max_err:.4f}",
+            f"{max_err:.4f} [{lo:.4f},{hi:.4f}]",
+            f"${speedup:.2f}\\times$",
         ]
         lines.append(" & ".join(values) + " \\\\")
     lines.extend([
