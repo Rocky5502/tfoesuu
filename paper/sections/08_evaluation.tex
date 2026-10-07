@@ -19,8 +19,9 @@ variance profiles, and effect sizes?
 
 \item[\textbf{RQ2}] \textbf{Replay advantage.}
 Under matched old/new, four-way, and suite replay access, do finite-instance
-runs exhibit the theorem-predicted change from quadratic to linear small-effect
-dependence when common randomness exposes sparse patch differences?
+runs reproduce the theorem-predicted small-effect laws, including the P18
+transition from $d^{-1}$ behavior at $\tau=O(d)$ to $d^{-2}$ behavior at fixed
+positive fairness tolerance?
 
 \item[\textbf{RQ3}] \textbf{Partial synchronized replay.}
 Does executable group scheduling reproduce the $C_{\rm vert}$ geometry in the
@@ -147,6 +148,7 @@ Audit target & Frozen evidence & Pass condition \\
 P17 stress geometry & 168 parameter rows & Materialized group/cost geometry is valid; $C_{\rm vert}\le C_{\rm edge}$; rounded active-vertex exposure attains the required miss bound. \\
 P17 structural gap & 8 exact fixtures & One equality case, six clique cases with $C_{\rm edge}/C_{\rm vert}=n-1$, and one finite-$C_{\rm vert}$/infeasible-$C_{\rm edge}$ case agree with the LP implementations. \\
 P17 scope boundary & 1 heterogeneous fair-null fixture & New-version gap is $0.15\le\tau=0.20$, while the homogeneous raw-contrast predicate rejects on tape set $(0.20,0.30]\cup(0.40,0.45]$ of exact measure $0.15$. \\
+P18 tolerance phase & 24 parameter rows & Every row yields positive exact transcript KL and a valid theorem schedule; zero-tolerance rows recover the linear replay regime while fixed positive tolerances probe the quadratic regime. \\
 Manifest integrity & 815 total rows & All frozen artifacts exist, IDs are unique, row counts meet the frozen inventory, and regenerators round-trip exactly. \\
 \bottomrule
 \end{tabular}
