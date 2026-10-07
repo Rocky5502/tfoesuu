@@ -105,9 +105,15 @@ operational: scheduling groups by $C_{\rm vert}$ and rejecting on a nonconstant
 within-group vector of old--new patch deltas yields zero type-I error and
 $O(C_{\rm vert}d^{-1}\log(1/\delta))$ fixed-design cost, while transcript
 change of measure gives the matching $C_{\rm vert}$ combinatorial lower
-geometry.  This theorem is deliberately not extended to heterogeneous
-fairness-preserving nulls, where unrelated synchronized references can undergo
-different benign patch effects.
+geometry.  A naive extension to heterogeneous fairness-preserving nulls fails because
+unrelated synchronized references can undergo different benign patch effects.
+P19 identifies one sufficient repair.  In a bipartite two-class null at fixed
+positive tolerance, a replay group containing a same-background control creates
+first-order $\Theta(d)$ transcript information and induces a fractional
+control-cover geometry $C_{\rm ctrl}$; a group containing only the opposite
+background class has only $\Theta(d^2)$ information.  Thus matched controls
+restore the linear $d^{-1}$ regime exactly where P18's one-edge boundary would
+otherwise be quadratic.
 
 The paper is deliberately theory-first and model-free.  No pretrained model,
 open-source model, proprietary API, or LLM is an experimental subject.  GPU
@@ -125,9 +131,10 @@ certificates, sound change information, and replayable stochastic execution;
 $\Psi(H,\nu)$, together with separations quantifying the value of patch
 localization and certificate-aware pruning;
 \item a Bernoulli replay hierarchy showing when stronger synchronization changes
-the small-effect dependence from $d^{-2}$ to $d^{-1}$, together with a threshold
-phase transition identifying when fixed nonzero background disparity forces the
-quadratic regime back; and
+the small-effect dependence from $d^{-2}$ to $d^{-1}$, a threshold phase
+transition identifying when fixed background disparity forces the quadratic
+regime back, and a matched-control cover showing when partial replay restores
+the linear regime under a heterogeneous fair null; and
 \item an executable falsification/reproducibility layer organized by RQ1--RQ4
 over 815 frozen specification rows, including exact structural fixtures and a
 positive-measure counterexample that prevents overgeneralizing P17.
@@ -141,10 +148,11 @@ bound.  Second, common-uniform replay converts a sufficiently small differential
 patch into a sparse pathwise witness, explaining the $d^{-1}$ regime.  Third,
 P18 identifies the exact boundary of that mechanism: once the null contains a
 fixed positive mismatch mass, first-order KL cancellation returns and local
-testing becomes quadratic in $1/d$.  Fourth, under restricted group replay the
-relevant incidence structure depends on what the transcript exposes: edge
-witnesses induce $C_{\rm edge}$, whereas raw endpoint information collapses to
-the active-vertex geometry $C_{\rm vert}$.  These ideas are summarized in
+testing becomes quadratic in $1/d$.  Fourth, under restricted group replay the relevant incidence structure depends
+on what the transcript exposes: edge witnesses induce $C_{\rm edge}$, raw
+endpoint information collapses to $C_{\rm vert}$, and matched-background
+controls induce $C_{\rm ctrl}$ by separating first-order from second-order
+information channels.  These ideas are summarized in
 \Cref{fig:overview} and made executable by \Cref{alg:tfoesuu}.
 
 The computational layer is reported in \Cref{sec:evaluation}. It is explicitly
