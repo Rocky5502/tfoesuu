@@ -65,6 +65,7 @@ src/tfoesuu/
   counterfactual_benchmarks.py  Frozen P15 four-way replay benchmark grid
   control_replay.py           P19 matched-control geometry, exact information LP, schedule
   control_replay_benchmarks.py Exact P19 structural theorem fixtures
+  replay_phase_benchmarks.py  Theorem-driven P18/P19 phase-transition specifications
   suite_replay.py             P16 synchronized-suite replay bounds
   partial_replay.py           Legal replay groups + integral P17 upper constructions
   partial_replay_lower.py     Fractional witness schedule + active-vertex information floor
@@ -81,6 +82,8 @@ experiments/
   gpu_replay_sweep.py
   gpu_counterfactual_sweep.py  Two-GPU P15 shared-patch stress sweep
   search_partial_replay_gap.py P17 witness-cover gap / counterexample search
+  search_control_replay_mixed_geometry.py Mixed-control singular-LP falsification search
+  validate_replay_phase_contract.py Phase-grid theorem-claim validator
 
 scripts/
   generate_benchmark.py
@@ -93,6 +96,7 @@ scripts/
   generate_partial_replay_structural_cases.py
   generate_partial_replay_scope_cases.py
   generate_public_benchmark_registry.py
+  generate_replay_phase_benchmark.py
   summarize_submission_evidence.py
   run_publication_suite.py      Integrated CPU/GPU theorem-facing publication runner
   check_bibliography.py
@@ -118,6 +122,17 @@ tests/                       deterministic unit/theorem sanity tests
 .github/workflows/           CPU CI + real LaTeX/PDF build CI
 ```
 
+## Dependency profiles
+
+The repository separates dependency surfaces so theorem/CPU validation remains lightweight.
+
+- `requirements.txt`: core runtime dependencies only;
+- `requirements-dev.txt`: core + pytest/ruff for local development and CI;
+- `requirements-gpu.txt`: core + PyTorch for local GPU simulation sweeps;
+- `requirements-public.txt`: optional public-benchmark preparation dependencies.
+
+The package metadata in `pyproject.toml` is the canonical installable-project definition. Keep lower bounds synchronized when dependencies change.
+
 ## CPU setup and validation
 
 ```bash
@@ -126,7 +141,7 @@ python -m venv .venv
 # Linux/macOS: source .venv/bin/activate
 
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 pip install -e .
 
 pytest -q
@@ -152,6 +167,8 @@ python experiments/run_threshold_replay_phase.py --p 0.20 --shared-patch 0.10 --
 python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
 python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
 python experiments/validate_control_replay_manifest.py --benchmark data/control_replay_structural_cases_v1.jsonl
+python experiments/validate_replay_phase_contract.py --benchmark /tmp/replay_phase_benchmark_v1.jsonl
+python experiments/search_control_replay_mixed_geometry.py --top 20
 ```
 
 ## One-command theorem-facing publication validation
@@ -234,6 +251,17 @@ Large raw Monte Carlo outputs belong in `results/` and are git-ignored.
 ## Paper and Overleaf
 
 The `paper/` directory is directly Overleaf-ready. CI performs both static citation/cross-reference checks and a real LaTeX build. A successful `paper` workflow uploads the compiled PDF as a GitHub Actions artifact.
+
+## Theorem-driven phase benchmark
+
+The replay phase grid is a deterministic specification layer, not an empirical result table. It is designed to test predicted complexity transitions rather than increase dataset count.
+
+- P18 local rows vary `tau/d` while keeping `tau=O(d)` and are labeled only at the proved local linear order.
+- P18 fixed-tolerance rows hold positive `tau` fixed while shrinking `d`, targeting the proved quadratic boundary regime.
+- P19 v1 contains only the theorem-backed control-coverage extremes `rho=0` and `rho=1`.
+- Intermediate control coverage and replay fidelity below 1 remain falsification domains until corresponding theory is proved or refuted.
+
+The mixed-control singular analysis is documented in `docs/MIXED_CONTROL_SINGULAR_ASYMPTOTICS.md`. It is intentionally not promoted to P20.
 
 ## Integrity rules
 
