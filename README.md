@@ -141,6 +141,46 @@ python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
 python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
 ```
 
+## One-command theorem-facing publication validation
+
+The repository now exposes a single orchestrator for the paper-facing CPU checks
+and optional GPU sweeps. It records the repository state, derives the deterministic
+evidence summary, validates all P17 manifest rows, and runs the Gaussian, replay,
+counterfactual-replay, location, and executable-software-subject experiments.
+
+```bash
+# Fast CPU smoke validation
+python scripts/run_publication_suite.py --mode smoke \
+  --output-dir results/publication_smoke
+
+# Larger CPU publication run
+python scripts/run_publication_suite.py --mode publication \
+  --output-dir results/publication_cpu
+
+# Publication run plus all frozen GPU sweeps
+python scripts/run_publication_suite.py --mode publication \
+  --gpu-devices 0,1 --gpu-trials 1000000 \
+  --output-dir results/publication_full
+```
+
+No paper number should be copied from these runs by hand. Result rows become
+submission-facing only after their source commit, benchmark hash, seed/environment
+metadata, and output checksums are frozen.
+
+## Submission-facing manuscript structure
+
+The Overleaf-ready paper now contains, in the main compiled closure:
+
+- an evidence-reuse/replay overview figure;
+- a front-of-paper theorem/results-at-a-glance table;
+- an executable high-level TFOESUU algorithm;
+- explicit RQ1--RQ4;
+- the complete 791-row deterministic specification inventory;
+- a deterministic audit-results table;
+- an exact P17 structural/scope figure;
+- a separate seven-public-dataset registry that remains preregistered until its
+  adapters and frozen result matrix pass the publication gate.
+
 ## Two local NVIDIA GPUs
 
 Install the CUDA-enabled PyTorch build appropriate for the installed NVIDIA driver using the official PyTorch selector, then install the remaining GPU extras.
