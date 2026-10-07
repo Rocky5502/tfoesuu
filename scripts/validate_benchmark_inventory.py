@@ -12,6 +12,7 @@ EXPECTED = {
     "data/partial_replay_benchmark_v1.jsonl": {"min_rows": 168, "id_key": "benchmark_id", "role": "partial-replay parameter stress"},
     "data/partial_replay_structural_cases_v1.jsonl": {"min_rows": 8, "id_key": "case_id", "role": "exact structural theorem fixtures"},
     "data/partial_replay_scope_cases_v1.jsonl": {"min_rows": 1, "id_key": "case_id", "role": "scope/counterexample guard"},
+    "data/public_benchmark_registry_v1.jsonl": {"min_rows": 7, "id_key": "benchmark_id", "role": "planned public benchmark registry"},
 }
 
 
