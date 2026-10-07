@@ -13,12 +13,13 @@ P15 shows that four-way replay across both versions and both counterfactual endp
 P16 lifts synchronized replay to the full active fairness suite: round complexity is independent of edge count and concrete execution complexity is Theta(n_active log(1/delta)/d) in the audited homogeneous Bernoulli family.
 P17 has a corrected two-matrix formulation for partial synchronized replay. The LP geometries are structurally separated by exact fixtures, and an audited raw-output contrast construction attains the active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family. Broader heterogeneous/composite-null partial replay remains open.
 P18 characterizes the one-edge thresholded composite-null boundary: synchronized replay costs Theta((tau+d)d^-2 log(1/delta)), so tau=O(d) retains the linear d^-1 regime while any fixed positive tolerance restores d^-2 scaling.
+P19 identifies matched-background replay controls as a sufficient heterogeneous extension: an exact mixed-information LP separates Theta(d) control-compatible queries from Theta(d^2) boundary-only queries, and a fractional control cover C_ctrl restores the linear regime in the two-class bipartite family.
 
 See docs/PROOF_STATUS.md and docs/PROOF_AUDIT_P17_FRACTIONAL_REPLAY.md for exact audit status.
 
 ## Immediate theorem queue
 
-### A. Partial synchronized replay: extend beyond the homogeneous theorem
+### A. Partial synchronized replay: extend beyond the solved two-class control family
 The intermediate access model is now frozen. Legal replay groups have size at least two and may have heterogeneous costs. The proved fixed-design upper construction is governed by the edge-by-group fractional cover
 
   C_edge = min c^T a  subject to A a >= 1, a >= 0,
@@ -32,12 +33,11 @@ The corrected lower floor is [kl(1-beta,beta)/K_sync] C_vert. The audited active
 A deterministic heterogeneous-null counterexample closes off the naive
 generalization route: for tau=0.20, old thresholds (0.20,0.40), new thresholds
 (0.30,0.45), and U=0.25, the new program remains fair (gap 0.15) while the raw
-patch-delta contrast fires. P18 now resolves the one-edge thresholded analogue
-and shows that fixed positive benign disparity fundamentally restores quadratic
-small-effect scaling. The remaining target is therefore genuinely graph/group
-structured: identify extra replay/control structure, a baseline-adjusted
-statistic, or a sharper decision geometry for heterogeneous composite nulls
-under partial replay.
+patch-delta contrast fires. P18 resolves the one-edge thresholded analogue. P19 then shows that declared
+matched-background controls can restore first-order information and linear
+small-effect scaling in a bipartite two-class heterogeneous null. The remaining
+target is arbitrary heterogeneous/composite nulls with multiple background
+levels, imperfect control classes, or unknown control membership.
 
 Keep the raw-contrast claim explicitly scoped to the homogeneous single-changed-endpoint family until a broader composite-null theorem passes its own proof/audit gates.
 
