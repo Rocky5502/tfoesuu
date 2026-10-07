@@ -28,6 +28,15 @@ from .partial_replay_benchmarks import (
     PartialReplayBenchmarkSpec,
     partial_replay_benchmark_v1,
 )
+from .control_replay import (
+    ControlReplayInformationLowerBound,
+    ControlReplaySchedule,
+    FractionalControlCover,
+    control_replay_information_lower_bound,
+    matched_control_contrast_witness,
+    matched_control_replay_schedule,
+    minimum_fractional_control_cover,
+)
 from .partial_replay_lower import (
     FractionalActiveVertexCover,
     FractionalReplayCover,
@@ -80,6 +89,13 @@ __all__ = [
     "PartialReplayBenchmarkSpec",
     "partial_replay_benchmark_v1",
     "FractionalActiveVertexCover",
+    "FractionalControlCover",
+    "ControlReplayInformationLowerBound",
+    "ControlReplaySchedule",
+    "minimum_fractional_control_cover",
+    "control_replay_information_lower_bound",
+    "matched_control_replay_schedule",
+    "matched_control_contrast_witness",
     "FractionalReplayCover",
     "FractionalReplaySchedule",
     "RawOutputInformationLowerBound",
