@@ -230,6 +230,11 @@ def run_dataset(
     witness_miss = simulate_witness_miss(
         d=d, rounds=n_linear, trials=trials, device=device, seed=seed + 37
     )
+    independent_i_count = int(round(independent_i * trials))
+    independent_ii_count = int(round(independent_ii * trials))
+    paired_i_count = int(round(paired_i * trials))
+    paired_ii_count = int(round(paired_ii * trials))
+    witness_miss_count = int(round(witness_miss * trials))
 
     common = dict(
         dataset_id=dataset_id,
@@ -252,24 +257,30 @@ def run_dataset(
             method="independent",
             replay_rounds=float(m * n_quad),
             concrete_program_executions=float(2 * m * n_quad),
-            type_i_error=independent_i,
-            type_ii_error=independent_ii,
+            type_i_error_count=independent_i_count,
+            type_ii_error_count=independent_ii_count,
+            type_i_error=independent_i_count / trials,
+            type_ii_error=independent_ii_count / trials,
             **common,
         ),
         PublicResultRow(
             method="vertex-paired",
             replay_rounds=float(m * n_quad),
             concrete_program_executions=float(4 * m * n_quad),
-            type_i_error=paired_i,
-            type_ii_error=paired_ii,
+            type_i_error_count=paired_i_count,
+            type_ii_error_count=paired_ii_count,
+            type_i_error=paired_i_count / trials,
+            type_ii_error=paired_ii_count / trials,
             **common,
         ),
         PublicResultRow(
             method="four-way",
             replay_rounds=float(m * n_linear),
             concrete_program_executions=float(4 * m * n_linear),
+            type_i_error_count=0,
+            type_ii_error_count=witness_miss_count,
             type_i_error=0.0,
-            type_ii_error=witness_miss,
+            type_ii_error=witness_miss_count / trials,
             **common,
         ),
         PublicResultRow(
