@@ -85,6 +85,8 @@ scripts/
   generate_partial_replay_benchmark.py
   generate_partial_replay_structural_cases.py
   generate_partial_replay_scope_cases.py
+  generate_public_benchmark_registry.py
+  summarize_submission_evidence.py
   check_bibliography.py
   check_paper_consistency.py
   freeze_submission_artifacts.py Whole-repository submission checksum manifest
@@ -99,6 +101,7 @@ data/
   partial_replay_benchmark_v1.jsonl          168 frozen P17 parameter-stress rows
   partial_replay_structural_cases_v1.jsonl   8 exact P17 structural theorem fixtures
   partial_replay_scope_cases_v1.jsonl        deterministic P17 scope counterexamples
+  public_benchmark_registry_v1.jsonl            7 planned public evaluation datasets
 
 paper/                       Overleaf-ready STOC manuscript
 docs/                        proof audits, novelty matrix, roadmap, GPU runbook
@@ -189,3 +192,8 @@ The `paper/` directory is directly Overleaf-ready. CI performs both static citat
 - Every long experiment records configuration, seed, environment, source commit, and output checksum.
 
 See [docs/THEOREM_ALGORITHM_MATRIX.md](docs/THEOREM_ALGORITHM_MATRIX.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/NOVELTY_MATRIX.md](docs/NOVELTY_MATRIX.md), [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md), and [docs/ARTIFACT_FREEZE.md](docs/ARTIFACT_FREEZE.md).
+
+
+## Public benchmark layer
+
+A separate seven-dataset registry is frozen for the submission-facing finite-instance evaluation: Adult, Bank Marketing, German Credit, COMPAS, Law School GPA, MEPS Panel 21, and Default Credit.  The raw datasets are not committed.  Each publication run must freeze source/preprocessing hashes and construct old/new stochastic software versions locally so the benchmark exercises the replay model rather than merely reporting generic classifier fairness metrics.
