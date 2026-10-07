@@ -99,7 +99,11 @@ to invalid theorem generalizations. Its v1 case fixes a heterogeneous
 fairness-preserving null with tau=0.20, old Bernoulli thresholds (0.20,0.40),
 new thresholds (0.30,0.45), and shared tape u=0.25. The new-version gap is
 0.15 <= tau, yet the patch-delta vector is nonconstant and the homogeneous
-raw-contrast predicate fires. Regenerate it with
+raw-contrast predicate fires. The executable scope audit partitions the full
+common-uniform tape at the four thresholds and derives the complete rejection
+set `(0.20,0.30] U (0.40,0.45]`, whose exact uniform-tape measure is 0.15.
+This quantity is analytic specification evidence, not an empirical false-positive
+rate. Regenerate the manifest with
 `scripts/generate_partial_replay_scope_cases.py`; it is specification data,
 not an empirical false-positive estimate.
 
