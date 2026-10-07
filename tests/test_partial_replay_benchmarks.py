@@ -158,10 +158,12 @@ def test_partial_replay_scope_counterexample_manifest(tmp_path: Path):
             rejecting_intervals.append((left, right))
             false_positive_measure += right - left
 
-    assert rejecting_intervals == pytest.approx([
-        (0.20, 0.30),
-        (0.40, 0.45),
-    ])
+    assert len(rejecting_intervals) == 2
+    for actual, expected in zip(
+        rejecting_intervals, [(0.20, 0.30), (0.40, 0.45)]
+    ):
+        assert actual[0] == pytest.approx(expected[0])
+        assert actual[1] == pytest.approx(expected[1])
     assert false_positive_measure == pytest.approx(
         row.expected_false_positive_measure
     )
