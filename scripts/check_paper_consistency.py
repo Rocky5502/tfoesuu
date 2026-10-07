@@ -54,10 +54,16 @@ REQUIRED_PAPER_MARKERS = {
 
 
 def resolve_input(parent: Path, raw: str) -> Path:
-    p = parent.parent / raw
-    if p.suffix == "":
-        p = p.with_suffix(".tex")
-    return p
+    candidates = [PAPER / raw, parent.parent / raw]
+    normalized = []
+    for candidate in candidates:
+        if candidate.suffix == "":
+            candidate = candidate.with_suffix(".tex")
+        normalized.append(candidate)
+    for candidate in normalized:
+        if candidate.exists():
+            return candidate
+    return normalized[0]
 
 
 def collect_tex(path: Path, seen: set[Path]) -> list[tuple[Path, str]]:
