@@ -142,3 +142,33 @@ def test_partial_plan_rejects_invalid_homogeneous_parameters():
             costs=[1.0, 1.0],
             homogeneous_single_changed_endpoint=True,
         )
+
+
+def test_thresholded_four_way_plan_tracks_p18_and_execution_cost():
+    graph = edge_graph()
+    plan = plan_bernoulli_replay(
+        graph,
+        "four-way-thresholded-one-edge",
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=0.05,
+    )
+
+    assert "P18" in plan.theorem_scope
+    assert plan.rounds is not None and plan.rounds > 0
+    assert plan.concrete_program_executions == 4 * plan.rounds
+
+
+def test_thresholded_four_way_plan_rejects_multiedge_scope():
+    with pytest.raises(ValueError, match="P18.*one-edge"):
+        plan_bernoulli_replay(
+            path_graph(3),
+            "four-way-thresholded-one-edge",
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.10,
+            d=0.01,
+            beta=0.05,
+        )
