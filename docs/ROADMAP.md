@@ -68,20 +68,34 @@ A contribution enters the abstract only when it is PROVED + AUDITED in docs/PROO
 This sprint is deliberately narrow. Do not add new RQs, arbitrary datasets, or
 headline claims until these items are resolved or explicitly bounded.
 
-### S1 — P17 beyond the homogeneous null (highest priority)
+### S1 — P18 nuisance-aware replay information geometry (highest priority)
 
-Current audited P17 attainability is restricted to the frozen homogeneous
-single-changed-endpoint family. Attack the restriction in both directions:
+Do **not** duplicate P15. P15 already proves the one-edge nonzero-common-patch
+separation between vertex-paired and four-way replay. Do **not** relabel the
+audited homogeneous P17 theorem as a new result either.
 
-1. characterize the largest heterogeneous fairness-preserving null class for
-   which within-group raw patch-delta contrasts remain sound;
-2. if a broad extension is impossible, prove a lower bound/impossibility showing
-   why stronger edge-witness geometry or additional calibration is necessary;
-3. state all quantifiers over legal replay groups, orientations, costs, and null
-   nuisance parameters explicitly;
-4. add deterministic counterexamples before attempting a positive theorem.
+The next non-overlapping target is graph-level and nuisance-aware:
 
-A rigorous impossibility/boundary theorem is a successful outcome.
+1. freeze a composite class of fairness-preserving patch nuisances;
+2. derive the exact observation law for every legal replay action and every
+   oriented violating alternative;
+3. construct the resulting action-by-alternative information matrix;
+4. determine whether the minimum-cost information cover gives a valid adaptive
+   lower bound and whether a matching allocation/test can attain it;
+5. recover P15 and the homogeneous P17 geometry as special cases;
+6. search for a genuine phase transition in which endpoint-containing co-replay
+   is first-order informative in d while nuisance-contaminated separated replay
+   is only second-order informative;
+7. explicitly test whether nuisance learning or adaptation defeats any naive
+   C_edge/d characterization.
+
+The implementation in `src/tfoesuu/replay_information.py` is only a generic LP
+scaffold. It is not theorem evidence. The proof attack and failure modes are
+frozen in `docs/PROOF_ATTACK_P18_INFORMATION_GEOMETRY.md`.
+
+A successful result may be a positive characterization, a phase-transition
+theorem, or a clean impossibility theorem showing that no single unweighted cover
+captures the composite-null problem.
 
 ### S2 — Full thresholded fairness with retained certificate headroom
 
