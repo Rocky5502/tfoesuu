@@ -41,6 +41,7 @@ FROZEN_DATA_ROWS = {
     "partial_replay_scope_cases_v1.jsonl": 1,
 }
 REQUIRED_PAPER_MARKERS = {
+    r"\tableofcontents": "reviewer navigation TOC",
     r"\label{fig:overview}": "overview figure",
     r"\label{alg:tfoesuu}": "algorithmic framework",
     r"\label{sec:evaluation}": "evaluation section",
@@ -126,6 +127,12 @@ def main() -> None:
     for marker, name in REQUIRED_PAPER_MARKERS.items():
         if marker not in manuscript_text:
             errors.append(f"missing required manuscript component: {name}")
+
+    if r"\textsc{TBD}" in manuscript_text or "Values Pending" in manuscript_text:
+        errors.append(
+            "compiled manuscript contains TBD placeholders; preregistered public "
+            "result templates must remain outside the submission-facing closure"
+        )
 
     data_dir = Path("data")
     observed_total = 0
