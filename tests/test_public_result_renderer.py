@@ -81,6 +81,6 @@ def test_public_result_renderer_smoke(tmp_path: Path):
     )
     assert pdf.is_file() and pdf.stat().st_size > 0
     assert png.is_file() and png.stat().st_size > 0
-    assert table.is_file() and "\\label{tab:main-results}" in table.read_text(
+    assert table.is_file() and "\\label{tab:public-main-results}" in table.read_text(
         encoding="utf-8"
     )
