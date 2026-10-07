@@ -29,6 +29,39 @@ against
 The program is convex.  One paired-oracle call at a vertex supports every incident edge,
 which is why the optimum depends on graph structure rather than simply $|E(H)|$.
 
+\begin{proposition}[Conic representation]
+\label{prop:psi-soc}
+The optimization problem defining $\Psi(H,\nu)$ is representable as a rotated
+second-order cone program.  Consequently, the allocation used by
+\Cref{thm:upper} is an explicit standard convex-optimization object rather than
+only an information-theoretic quantity.
+\end{proposition}
+
+\begin{proof}
+For every incidence of $v$ with edge $e=(u,v)$, introduce $t_{e,v}\ge0$.
+Replace the edge constraint by
+\[
+t_{e,u}+t_{e,v}\le1,
+\qquad
+q_u t_{e,u}\ge \nu_u^2,
+\qquad
+q_v t_{e,v}\ge \nu_v^2.
+\]
+The hyperbolic constraint $q_vt_{e,v}\ge\nu_v^2$ is a rotated-cone
+constraint because
+$2q_vt_{e,v}\ge(\sqrt{2}\nu_v)^2$.
+Given a feasible $q$ for \Cref{def:psi}, setting
+$t_{e,v}=\nu_v^2/q_v$ gives a feasible conic point with the same objective.
+Conversely, conic feasibility implies
+$\nu_u^2/q_u+\nu_v^2/q_v\le t_{e,u}+t_{e,v}\le1$.
+Thus the feasible $q$-projections, and hence the optimal values, coincide.
+\end{proof}
+
+This representation is standard convex-optimization machinery and is not a
+separate novelty claim.  The analogous P17 scheduling quantities
+$C_{\rm edge}$ and $C_{\rm vert}$ are linear programs.
+
+
 \begin{theorem}[Static upper bound]
 \label{thm:upper}
 Let $m=|E(H)|\ge1$.  For $\delta\in(0,1)$, a non-adaptive tester exists using at
