@@ -65,6 +65,7 @@ src/tfoesuu/
   partial_replay.py           Legal replay groups + integral P17 upper constructions
   partial_replay_lower.py     Fractional witness schedule + active-vertex information floor
   partial_replay_benchmarks.py Deterministic P17 theorem-falsification specifications
+  planner.py                 Fail-closed theorem-backed TFOESUU execution planner
 
 experiments/
   run_gaussian_core.py
@@ -87,6 +88,7 @@ scripts/
   generate_partial_replay_scope_cases.py
   generate_public_benchmark_registry.py
   summarize_submission_evidence.py
+  run_publication_suite.py      Integrated CPU/GPU theorem-facing publication runner
   check_bibliography.py
   check_paper_consistency.py
   freeze_submission_artifacts.py Whole-repository submission checksum manifest
