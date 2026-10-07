@@ -42,6 +42,7 @@ The live source of truth is [docs/PROOF_STATUS.md](docs/PROOF_STATUS.md). Curren
 - sound patch-effect envelopes can prune already-safe fairness edges with **zero new executions**, leaving only a residual graph for stochastic testing;
 - four-way counterfactual replay cancels a nonzero fairness-neutral common patch and changes the differential-gap exponent from quadratic to linear;
 - a thresholded replay phase transition shows the limit of that advantage: one-edge synchronized replay costs `Theta((tau+d) log(1/delta)/d^2)`, so `tau=O(d)` remains linear in `1/d` while fixed positive `tau` returns to quadratic scaling;
+- matched-background controls restore the linear regime under a scoped heterogeneous two-class null: the exact lower program mixes `Theta(d)` control-compatible information with `Theta(d^2)` boundary-only information, and the upper schedule is governed by a new fractional control cover `C_ctrl`;
 - synchronized suite replay tests all fairness edges from one shared-seed suite execution, giving `Theta(n_active log(1/delta)/d)` concrete-execution scaling in the audited Bernoulli family, independent of edge count.
 - partial synchronized replay has a corrected two-matrix formulation. The edge-by-group LP gives a four-way-witness schedule, while the raw transcript-information floor reduces to an active-vertex/group cover. Exact structural fixtures separate those LPs. An audited raw-output contrast theorem attains the same active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family, including instances where the edge-witness LP is infeasible. A deterministic heterogeneous fair-null counterexample now guards the scope boundary: naive raw-contrast extension can false-positive, so broader heterogeneous/composite-null partial replay remains open.
 
@@ -62,6 +63,8 @@ src/tfoesuu/
   subject_benchmarks.py      Executable-subject benchmark specifications
   testers.py                 Gaussian patch-neutrality/full-regression testers
   counterfactual_benchmarks.py  Frozen P15 four-way replay benchmark grid
+  control_replay.py           P19 matched-control geometry, exact information LP, schedule
+  control_replay_benchmarks.py Exact P19 structural theorem fixtures
   suite_replay.py             P16 synchronized-suite replay bounds
   partial_replay.py           Legal replay groups + integral P17 upper constructions
   partial_replay_lower.py     Fractional witness schedule + active-vertex information floor
@@ -85,6 +88,7 @@ scripts/
   generate_subject_benchmark.py
   generate_counterfactual_benchmark.py
   generate_threshold_replay_phase.py
+  generate_control_replay_structural_cases.py
   generate_partial_replay_benchmark.py
   generate_partial_replay_structural_cases.py
   generate_partial_replay_scope_cases.py
@@ -134,6 +138,7 @@ python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.js
 python scripts/generate_subject_benchmark.py --output data/software_subject_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
 python scripts/generate_threshold_replay_phase.py --output data/threshold_replay_phase_v1.jsonl
+python scripts/generate_control_replay_structural_cases.py --output data/control_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
@@ -182,7 +187,7 @@ The Overleaf-ready paper now contains, in the main compiled closure:
 - a front-of-paper theorem/results-at-a-glance table;
 - an executable high-level TFOESUU algorithm;
 - explicit RQ1--RQ4;
-- the complete 815-row deterministic specification inventory;
+- the complete 821-row deterministic specification inventory;
 - a deterministic audit-results table;
 - an exact P17 structural/scope figure;
 - a separate seven-public-dataset registry that remains preregistered until its
