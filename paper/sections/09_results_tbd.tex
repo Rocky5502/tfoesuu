@@ -1,0 +1,63 @@
+\section{Publication Results Layout (Pre-registered; Values Pending)}
+\label{sec:results-tbd}
+
+This section fixes the reporting layout before the publication-scale runs. Every
+numeric cell marked \textsc{TBD} must be populated only from a frozen result
+manifest produced by the repository scripts, with source commit, dataset hash,
+seed set, environment record, and result checksum archived together. The
+pre-registration prevents selective reporting after the GPU sweep.
+
+\begin{table}[t]
+\centering
+\caption{Main public-benchmark result table template. All entries marked
+\textsc{TBD} are intentionally blank until the frozen local publication run is
+completed. ``Exec.'' denotes concrete program executions; lower is better.
+Error columns will report empirical error with the trial denominator and
+uncertainty interval in the final version.}
+\label{tab:public-main-results}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lrrrrrrrrr@{}}
+\toprule
+Dataset &
+$|V|$ &
+$|E|$ &
+Independent exec. &
+Vertex-paired exec. &
+Strongest valid replay exec. &
+TFOESUU exec. &
+Type-I err. &
+Type-II err. &
+Speedup \\
+\midrule
+Adult Census Income & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} \\
+Bank Marketing & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} \\
+German Credit & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} \\
+COMPAS & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} \\
+Law School GPA & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} \\
+MEPS Panel 21 & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} \\
+Default Credit & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} & \textsc{TBD} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\input{figures/results_tbd}
+
+\paragraph{Planned statistical reporting.}
+For each dataset and replay regime, the final table will state the exact number
+of independent trials, point estimates for type-I/type-II error, and a
+binomial confidence interval. Query/execution counts are deterministic whenever
+they are fixed by the theorem schedule; otherwise we report the appropriate
+mean/median together with an interval or quantile summary. The primary
+comparison is execution cost at a common confidence target, not classifier
+accuracy.
+
+\paragraph{Replacement gate.}
+The \textsc{TBD} table and figure may be replaced only when
+(i) all seven dataset adapters succeed from a clean environment;
+(ii) every result row names a frozen benchmark ID and seed;
+(iii) the result schema passes validation;
+(iv) the plotting/table scripts consume only immutable result JSONL; and
+(v) the resulting PDF passes the manuscript consistency, bibliography, and
+visual QA gates.
