@@ -494,6 +494,150 @@ the version-aware fairness-regression access model.  It also explains why the
 heterogeneous P17 raw-contrast tester cannot remain zero-error once benign null
 disparity is allowed.
 
+
+\subsection{Matched-background controls restore the sparse regime}
+\label{sec:control-replay}
+
+\Cref{thm:threshold-replay-phase} shows that a fixed positive fairness
+tolerance destroys the sparse one-edge witness.  Partial replay can recover that
+witness when the harness supplies a synchronized \emph{matched-background
+control}.
+
+Let \(H=(A\cup B,E)\) be bipartite, with every fairness edge crossing from a
+high class \(A\) to a low class \(B\).  All old thresholds equal \(p\).  Under
+the common null, low vertices have new threshold \(p+s\), while high vertices
+have new threshold \(p+s+\tau\), where \(\tau>0\).  Hence every fairness edge is
+exactly at tolerance \(\tau\).  Alternative \(x\in A\) raises only the new
+threshold of \(x\) by \(d\), so every incident edge has gap \(\tau+d\).
+
+Let \(S_1,\ldots,S_k\) be the legal replay groups with costs \(c_i>0\).  Define
+\[
+C_{x i}
+=
+\mathbf 1\!\left\{
+x\in S_i,\ |S_i\cap A|\ge2
+\right\},
+\qquad
+R_{x i}
+=
+\mathbf 1\{x\in S_i\}-C_{x i}.
+\]
+Thus \(C\) records queries that include a matched high-class control, while
+\(R\) records high--low-only observations for candidate \(x\).  With
+\(r=1-p-s-\tau\), define
+\[
+K_{\rm ctrl}(d)
+=
+r\log\!\frac{r}{r-d},
+\]
+and
+\[
+K_{\rm bnd}(\tau,d)
+=
+\tau\log\!\frac{\tau}{\tau+d}
++
+r\log\!\frac{r}{r-d}.
+\]
+
+\begin{theorem}[Matched controls under a heterogeneous fair null]
+\label{thm:control-replay}
+Fix \(\delta\in(0,1/2)\) and the two-class family above.
+
+\begin{enumerate}[label=(\roman*)]
+\item Every adaptive \(\delta\)-correct partial-replay tester with finite null
+expected declared cost satisfies
+\[
+\E_0[\mathrm{cost}]
+\ge
+\min_{n\ge0}
+\left\{
+c^\top n:
+\bigl(K_{\rm ctrl}C+K_{\rm bnd}R\bigr)n
+\ge
+\kl(1-\delta,\delta)\mathbf 1
+\right\}.
+\]
+
+\item Define the fractional control-cover quantity
+\[
+C_{\rm ctrl}
+=
+\min_{q\ge0}
+\left\{
+c^\top q:
+Cq\ge\mathbf 1
+\right\}.
+\]
+If \(C_{\rm ctrl}<\infty\), a fixed-design tester has zero type-I error and
+pointwise type-II error at most \(\delta\) using declared cost at most
+\[
+L\,C_{\rm ctrl}
++
+\sum_{i:q_i^\star>0}c_i,
+\qquad
+L=
+\left\lceil
+\frac{\log\delta}{\log(1-d)}
+\right\rceil.
+\]
+
+\item For fixed \(p,s,\tau>0\) with \(p+s+\tau<1\),
+\[
+K_{\rm ctrl}(d)=d+O(d^2),
+\qquad
+K_{\rm bnd}(\tau,d)
+=
+\frac{d^2}{2}
+\left(
+\frac1\tau+\frac1r
+\right)
++O(d^3).
+\]
+Consequently, if \(C_{\rm ctrl}<\infty\), the lower program and upper
+construction have matching leading control-cover geometry and
+\(\Theta(d^{-1}\log(1/\delta))\) fixed-confidence order, up to rounding and
+standard constant factors.  If some high candidate has no control-compatible
+legal group, then every tester requires
+\(\Omega(d^{-2}\log(1/\delta))\) expected declared cost at fixed
+\(\tau>0\), unless that candidate is completely unobservable.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Fix alternative \(x\in A\).  If a queried group contains \(x\) and another
+high vertex, the null transcript has a top tape interval of mass \(r\).  Raising
+only \(x\)'s new threshold splits mass \(d\) from that interval into a new
+\(x\)-specific state, giving \(K_{\rm ctrl}\).  If the group contains \(x\)
+but no other high vertex, the existing high--low interval has mass \(\tau\);
+the alternative changes masses \((\tau,r)\) to \((\tau+d,r-d)\), giving
+\(K_{\rm bnd}\).  Groups omitting \(x\) have zero KL.  Adaptive transcript
+change of measure gives one information constraint per \(x\), proving (i).
+
+For (ii), let \(q^\star\) solve the control-cover LP and query group \(S_i\)
+\(\lceil Lq_i^\star\rceil\) times.  Within each group, compare old--new patch
+deltas only among its high-class members.  Under the null those deltas are
+identical pathwise, even though high and low classes differ benignly by
+\(\tau\).  Under alternative \(x\), every control-compatible exposure containing
+\(x\) becomes nonconstant exactly when
+\(U\in(p+s+\tau,p+s+\tau+d]\), an event of probability \(d\).
+The cover gives at least \(L\) independent opportunities for each \(x\), so the
+miss probability is at most \((1-d)^L\le\delta\).
+
+For (iii), expand the two exact KL expressions.  In the lower LP, scaling
+\(z_i=d\,n_i/\kl(1-\delta,\delta)\) makes the coefficient of \(C\) converge to
+one and the coefficient of \(R\) converge to zero.  Finite-dimensional LP
+continuity therefore yields the control-cover geometry when it is feasible.
+If candidate \(x\) has no control-compatible group, its information constraint
+contains only \(K_{\rm bnd}=\Theta(d^2)\), giving the quadratic lower bound.
+\end{proof}
+
+P19 is deliberately scoped.  It does not solve arbitrary heterogeneous partial
+replay; it identifies one sufficient form of extra control structure that
+repairs the failure exposed by the P17 counterexample.  The mechanism also
+clarifies the relationship with P18: a high--low-only replay group remains in
+the quadratic thresholded regime, whereas adding a matched high control creates
+a new sparse transcript state and restores linear information.
+
 \subsection{Synchronized suite replay removes edge-count dependence}
 
 Four-way replay can be lifted to a software-test-suite primitive when the
