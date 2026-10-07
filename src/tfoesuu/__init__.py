@@ -1,6 +1,12 @@
 """Testing Fairness of Evolving Software under Uncertainty."""
 
-from .allocation import AllocationResult, solve_psi, solve_psi_dual
+from .allocation import (
+    AllocationResult,
+    PsiConicCertificate,
+    psi_conic_certificate,
+    solve_psi,
+    solve_psi_dual,
+)
 from .certificate import CertificatePruningResult, prune_with_patch_envelopes
 from .graphs import GraphSpec
 from .oracles import BernoulliCommonUniformPair, GaussianVersionPair
@@ -64,6 +70,8 @@ from .planner import TFOESUUPlan, plan_bernoulli_replay, plan_gaussian_regressio
 
 __all__ = [
     "AllocationResult",
+    "PsiConicCertificate",
+    "psi_conic_certificate",
     "solve_psi",
     "solve_psi_dual",
     "CertificatePruningResult",
