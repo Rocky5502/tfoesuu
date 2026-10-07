@@ -2,81 +2,90 @@
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-  >=latex,
-  node distance=0.55cm,
-  box/.style={draw=black!28, rounded corners=1.5pt, line width=0.55pt,
-              fill=black!2, minimum height=1.45cm, text width=3.05cm,
-              align=left, inner sep=6pt, font=\small},
-  focal/.style={box, draw=focalteal, fill=focalteal!7},
-  risk/.style={box, draw=risktone, fill=risktone!4},
-  flow/.style={->, line width=0.75pt, draw=black!55},
-  minor/.style={font=\scriptsize, text=black!62, align=left}
+  >=Latex,
+  node distance=0.62cm and 0.56cm,
+  stage/.style={draw=black!32, rounded corners=2pt, line width=0.6pt,
+               fill=white, minimum height=1.65cm, text width=3.35cm,
+               align=left, inner sep=7pt, font=\small},
+  focal/.style={stage, draw=focalteal, line width=0.8pt, fill=focalteal!6},
+  risk/.style={stage, draw=risktone, line width=0.7pt, fill=risktone!5},
+  flow/.style={->, line width=0.9pt, draw=black!62},
+  sub/.style={font=\footnotesize, text=black!70, align=left}
 ]
-\node[box] (inputs) {
-  \textbf{Version-aware inputs}\\[-1pt]
-  Certified old program $P_0$\\
+
+\node[stage] (inputs) {
+  \textbf{1. Reuse old evidence}\\[2pt]
+  Certified $P_0$ and fairness graph $G$\\
   Patch $P_0\!\to\!P_1$\\
-  Fairness graph $G=(V,E)$
+  Impact set and optional envelopes
 };
 
-\node[box, right=of inputs] (prune) {
-  \textbf{Deterministic reuse}\\[-1pt]
-  Sound impact set $C_\Delta$\\
-  Old certificate + patch envelope\\
-  Prune provably safe edges
+\node[stage, right=of inputs] (prune) {
+  \textbf{2. Prune deterministically}\\[2pt]
+  Remove every edge certified safe by\\
+  $|g_{0,e}|+b_e\le\tau_e$\\
+  Residual graph $H^\star$
 };
 
-\node[box, right=of prune] (gauss) {
-  \textbf{Stochastic core}\\[-1pt]
-  Residual graph $H^\star$\\
-  Coupled deltas $Z_v=P_1-P_0$\\
-  Allocate by $\Psi(H^\star,\nu)$
+\node[focal, right=of prune] (observe) {
+  \textbf{3. Couple stochastic executions}\\[2pt]
+  Old/new paired deltas\\
+  Four-way or suite replay\\
+  Declared-group partial replay
 };
 
-\node[focal, right=of gauss] (replay) {
-  \textbf{Replay hierarchy}\\[-1pt]
-  Vertex pairing $\rightarrow d^{-2}$\\
-  Four-way / suite replay $\rightarrow d^{-1}$\\
-  Partial replay $\rightarrow C_{\rm vert}$
+\node[focal, right=of observe] (allocate) {
+  \textbf{4. Allocate by theorem geometry}\\[2pt]
+  Gaussian: $\Psi(H^\star,\nu)$\\
+  Partial replay: $C_{\rm vert}$\\
+  Match statistic to replay access
 };
 
-\node[focal, right=of replay] (cert) {
-  \textbf{Certification output}\\[-1pt]
-  Accept: no detected regression\\
-  Reject: witnessed differential\\
-  Explicit fixed-confidence cost
+\node[stage, right=of allocate] (decision) {
+  \textbf{5. Stop with a certificate}\\[2pt]
+  Accept or reject under fixed confidence\\
+  Record witnesses, cost, seed, SHA\\
+  Never exceed proved scope
 };
 
 \draw[flow] (inputs) -- (prune);
-\draw[flow] (prune) -- (gauss);
-\draw[flow] (gauss) -- (replay);
-\draw[flow] (replay) -- (cert);
+\draw[flow] (prune) -- (observe);
+\draw[flow] (observe) -- (allocate);
+\draw[flow] (allocate) -- (decision);
 
-\node[minor, below=0.28cm of prune, text width=3.0cm] {
-  Zero executions for edges satisfying
-  $|g_{0,e}|+b_e\le\tau_e$.
+\node[sub, below=0.34cm of prune, text width=3.35cm] (zero) {
+  \textbf{Zero-query reuse:} old certificates become computationally useful
+  when sound patch information makes comparisons provably safe.
 };
-\node[minor, below=0.28cm of gauss, text width=3.05cm] {
-  Theory: upper/lower bounds share graph allocation geometry.
-};
-\node[risk, below=0.62cm of replay, text width=4.05cm] (scope) {
-  \textbf{Scope boundary}\\[-1pt]
-  Homogeneous partial-replay theorem is audited.
-  A heterogeneous fair-null counterexample rules out a naive extension.
-};
-\draw[flow, draw=risktone] (replay.south) -- (scope.north);
 
-\node[minor, below=0.22cm of cert, text width=3.0cm] {
-  Proofs establish the guarantees; synthetic benchmarks only falsify,
-  stress-test, and reproduce them.
+\node[sub, below=0.34cm of observe, text width=3.35cm] (replay) {
+  \textbf{Replay hierarchy:} ordinary pairing can retain $d^{-2}$ behavior;
+  stronger synchronization can expose sparse $d^{-1}$ witnesses.
 };
+
+\node[sub, below=0.34cm of allocate, text width=3.35cm] (geometry) {
+  \textbf{Graph geometry:} suite replay removes edge-count dependence in
+  rounds; partial replay induces fractional-cover structure.
+};
+
+\node[risk, below=1.30cm of observe, text width=7.40cm] (scope) {
+  \textbf{P17 scope boundary.} In the audited homogeneous
+  single-changed-endpoint family, raw contrast attains $C_{\rm vert}$.
+  Under the frozen heterogeneous fair null, the same predicate rejects on
+  $(0.20,0.30]\cup(0.40,0.45]$, an exact shared-tape measure of $0.15$.
+  Therefore the heterogeneous/composite-null extension remains open.
+};
+
+\draw[flow, draw=risktone] (observe.south) |- (scope.west);
+
 \end{tikzpicture}%
 }
-\caption{Theory pipeline for fairness regression testing of evolving stochastic software.
-Version information is reused in layers: sound program analysis first removes comparisons
-that need no execution; coupled stochastic testing then concentrates effort on the residual
-fairness graph; increasingly synchronized replay can change both the small-effect exponent
-and the relevant graph geometry. The partial-replay result is intentionally shown with its
-audited scope boundary rather than extrapolated to heterogeneous fairness-preserving nulls.}
+\caption{TFOESUU overview.  Fairness regression is treated as evidence reuse
+across software versions: deterministic change information first removes
+comparisons that need no new executions; the remaining stochastic problem is
+matched to the strongest sound replay primitive; theorem-specific allocation
+then controls execution cost.  The red scope box is a negative result, not an
+empirical failure rate: it records the exact deterministic obstruction to
+naively extending the homogeneous P17 contrast to heterogeneous fair nulls.}
 \label{fig:overview}
 \end{figure}
