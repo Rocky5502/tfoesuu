@@ -167,3 +167,35 @@ fairness-regression regimes.
   transcript-KL lower schedules;
 - `tests/test_threshold_replay_phase.py` checks the tau=0 reduction to P15,
   linear-vs-quadratic asymptotics, schedule interpolation, and parameter guards.
+
+## 9. Independent conditional-Bernoulli cross-check
+
+There is a second derivation of the one-round information that does not enumerate
+the four-output transcript atom by atom. Let
+
+  a = 1-p-s.
+
+The event U>p+s has probability a under both hypotheses. Conditional on this
+event, the only relevant distinction is whether U falls in the differential
+interval. Under the boundary null its conditional probability is
+
+  x = tau/a,
+
+and under the alternative it is
+
+  x + epsilon = (tau+d)/a,
+
+where epsilon=d/a. Because the conditioning event itself has identical
+probability under H0 and H1, the full one-round KL is
+
+  a * kl(x, x+epsilon).
+
+Expanding this Bernoulli KL gives exactly
+
+  tau log(tau/(tau+d))
+  + (a-tau) log((a-tau)/(a-tau-d)),
+
+which matches K_tau(d) with r=a-tau. This independently confirms both the exact
+KL formula and its linear/quadratic transition. It also makes the statistical
+boundary clear: the theorem is a thresholded paired-Bernoulli problem embedded
+inside the version-aware replay transcript.
