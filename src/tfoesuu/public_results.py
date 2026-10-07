@@ -22,6 +22,7 @@ class PublicResultRow:
     trials: int
     graph_vertices: int
     graph_edges: int
+    affected_fraction: float
     impacted_edges: int
     replay_rounds: float
     concrete_program_executions: float
@@ -47,6 +48,8 @@ def validate_public_result_row(row: PublicResultRow) -> None:
         raise ValueError("trials must be positive")
     if row.graph_vertices <= 0 or row.graph_edges < 0:
         raise ValueError("invalid graph size")
+    if not (0.0 < row.affected_fraction <= 1.0):
+        raise ValueError("affected_fraction must lie in (0,1]")
     if not (0 < row.impacted_edges <= row.graph_edges):
         raise ValueError("impacted_edges must lie in [1, graph_edges]")
     if row.replay_rounds <= 0:
@@ -95,7 +98,15 @@ def validate_public_result_matrix(rows: Iterable[PublicResultRow]) -> None:
     if not rows:
         raise ValueError("public result matrix is empty")
     keys = [
-        (row.dataset_id, row.method, row.patch_size, row.seed)
+        (
+            row.dataset_id,
+            row.method,
+            row.patch_size,
+            row.common_shift,
+            row.confidence_target,
+            row.affected_fraction,
+            row.seed,
+        )
         for row in rows
     ]
     if len(keys) != len(set(keys)):
@@ -103,6 +114,15 @@ def validate_public_result_matrix(rows: Iterable[PublicResultRow]) -> None:
     commit_set = {row.source_commit for row in rows}
     if len(commit_set) != 1:
         raise ValueError("all publication rows must come from one source commit")
+    confidence_set = {row.confidence_target for row in rows}
+    if len(confidence_set) != 1:
+        raise ValueError("one publication matrix must use one confidence target")
+    shift_set = {row.common_shift for row in rows}
+    if len(shift_set) != 1:
+        raise ValueError("one publication matrix must use one common shift")
+    fraction_set = {row.affected_fraction for row in rows}
+    if len(fraction_set) != 1:
+        raise ValueError("one publication matrix must use one affected fraction")
     hashes_by_dataset: dict[str, set[str]] = {}
     for row in rows:
         hashes_by_dataset.setdefault(row.dataset_id, set()).add(
