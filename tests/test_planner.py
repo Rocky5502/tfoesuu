@@ -126,3 +126,19 @@ def test_partial_plan_requires_explicit_homogeneous_scope_acknowledgement():
     assert plan.concrete_program_executions is not None
     assert plan.concrete_program_executions > 0
     assert "P17" in plan.theorem_scope
+
+
+def test_partial_plan_rejects_invalid_homogeneous_parameters():
+    graph = path_graph(3)
+    with pytest.raises(ValueError, match="p\+shared_patch\+d<1"):
+        plan_bernoulli_replay(
+            graph,
+            "partial-homogeneous",
+            p=0.80,
+            shared_patch=0.15,
+            d=0.10,
+            beta=0.05,
+            groups=[(0, 2), (1, 2)],
+            costs=[1.0, 1.0],
+            homogeneous_single_changed_endpoint=True,
+        )
