@@ -134,13 +134,23 @@ cost, and concrete program executions.
 ### S4 — Close or explain the Gaussian logarithmic gap
 
 P4 has a simultaneous-testing factor log(|E|/delta), whereas the current adaptive
-null lower bound contains log(1/delta). Determine whether log|E| is:
+null lower bound contains log(1/delta). The first archival collision audit is
+complete: generic adaptive elimination of dimension penalties is established in
+sequential sparse testing (see docs/GAUSSIAN_LOG_GAP_DISCOVERY.md and
+Malloy--Nowak 2014). Therefore a TFOESUU result must use the shared-vertex graph
+structure rather than merely rediscover sequential thresholding.
 
-- removable by a sharper correlated simultaneous test;
-- necessary on an explicit graph/alternative family; or
+Determine whether the extra logarithm is:
+
+- removable by an adaptive graph-filtering scheme whose expected cost is
+  controlled by Psi(H,nu);
+- necessary on an explicit graph/variance family even with adaptive vertex
+  sampling; or
 - replaceable by a structural complexity smaller than |E|.
 
-Do not hide the gap behind big-O notation.
+Keep expected null cost, worst-case alternative cost, fixed-design cost, replay
+rounds, and concrete executions separate. Do not hide the gap behind big-O
+notation.
 
 ### S5 — Replay feasibility and software semantics
 
