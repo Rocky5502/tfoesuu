@@ -60,9 +60,12 @@ For Bernoulli software, replay strength changes the small-effect exponent.
 With a nonzero fairness-neutral common patch effect, ordinary vertex-paired
 replay requires $\Theta(d^{-2}\log(1/\delta))$ calls, whereas four-way
 counterfactual replay cancels the common effect pathwise and achieves
-$\Theta(d^{-1}\log(1/\delta))$.  Synchronized-suite replay tests all active
-fairness edges in
-$\Theta(d^{-1}\log(1/\delta))$ rounds and
+$\Theta(d^{-1}\log(1/\delta))$.  This advantage has a sharp boundary:
+for a one-edge fairness tolerance $\tau$, synchronized replay has complexity
+$\Theta((\tau+d)d^{-2}\log(1/\delta))$ under an interior condition, so
+$\tau=O(d)$ retains the linear regime while every fixed $\tau>0$ restores
+quadratic dependence on $1/d$.  Synchronized-suite replay tests all active
+fairness edges in $\Theta(d^{-1}\log(1/\delta))$ rounds and
 $\Theta(n_+d^{-1}\log(1/\delta))$ concrete executions, independent of the
 number of fairness edges in the audited homogeneous family.
 
@@ -90,7 +93,6 @@ governing fairness-regression complexity.
 \input{sections/07_regression_consequences}
 \input{sections/07_open_problems}
 \input{sections/08_evaluation}
-\input{sections/09_results_tbd}
 \input{sections/08_related_work}
 
 \bibliographystyle{alpha}
