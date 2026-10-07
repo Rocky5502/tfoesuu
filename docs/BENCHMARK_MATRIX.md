@@ -47,3 +47,8 @@ oracle assumption, graph geometry, cost model, or counterexample regime.  We do
 not add unrelated public datasets merely to increase a dataset count.  External
 datasets may be added later only where they can instantiate the paper's executable
 old/new-version and replay assumptions without changing the estimand.
+
+
+## Public evaluation benchmark registry
+
+The theorem-validation manifests above remain separate from the public evaluation layer.  The frozen `data/public_benchmark_registry_v1.jsonl` registry contains **7 planned public benchmark populations**: Adult Census Income, Bank Marketing, Statlog German Credit, ProPublica COMPAS, Law School GPA, MEPS Panel 21, and Default of Credit Card Clients.  These public datasets do not establish the theorems; they will instantiate locally trained/executable old/new stochastic software versions for the finite-instance evaluation.  Their sources, protected attributes, loader family, and DOI when available are frozen in the registry and round-trip tested.
