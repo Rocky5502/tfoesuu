@@ -23,6 +23,10 @@ Four-way counterfactual replay & One tape across both versions and both
 fairness endpoints & $\Theta(d^{-1}\log(1/\delta))$ versus vertex-paired
 $\Theta(d^{-2}\log(1/\delta))$ with nonzero common patch effect & Proved + audited \\
 
+Thresholded one-edge replay & Four-way synchronized replay with fairness tolerance $\tau$ &
+$\Theta((\tau+d)d^{-2}\log(1/\delta))$; $\tau=O(d)$ gives $d^{-1}$ while fixed $\tau>0$ gives $d^{-2}$ &
+Proved + audited \\
+
 Synchronized-suite replay & One tape across all fairness-active inputs &
 Rounds $\Theta(d^{-1}\log(1/\delta))$; executions
 $\Theta(n_+d^{-1}\log(1/\delta))$, independent of edge count in the
