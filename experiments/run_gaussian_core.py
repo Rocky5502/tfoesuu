@@ -56,7 +56,9 @@ def simulate_direct_means(graph, q, gamma, beta, trials, seed):
 
     return {
         "counts": counts.tolist(),
-        "total_queries": int(counts.sum()),  # backward-compatible alias\n        "total_paired_oracle_calls": int(counts.sum()),\n        "concrete_program_executions": 2 * int(counts.sum()),
+        "total_queries": int(counts.sum()),  # backward-compatible alias
+        "total_paired_oracle_calls": int(counts.sum()),
+        "concrete_program_executions": 2 * int(counts.sum()),
         "null_error_rate": float(np.mean(reject0)),
         "alternative_error_rate": float(np.mean(~reject1)),
     }
