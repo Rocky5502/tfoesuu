@@ -16,6 +16,7 @@ Every experiment is determined by:
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
+python scripts/generate_threshold_replay_phase.py --output data/threshold_replay_phase_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
@@ -158,3 +159,21 @@ fairness-preserving nulls.
 The public-data layer is separate from the 791 deterministic theorem/specification rows. Its source registry is `data/public_benchmark_registry_v1.jsonl`. Preparation is performed with `scripts/prepare_public_benchmarks.py`, which records a canonical loaded-data SHA-256, deterministic split seed, evaluation-context count, local base-predictor metadata, and the probability clipping range used to keep additive replay patches in the Bernoulli interior.
 
 Publication rows are validated by `tfoesuu.public_results.PublicResultRow`. A publication matrix must come from one source commit, use one content hash per dataset, and contain no duplicate dataset/method/patch-size/seed keys. The plotting script `scripts/render_public_results.py` consumes only this validated JSONL. Raw third-party datasets and generated result files remain outside git; provenance and hashes are frozen with the publication bundle.
+
+
+## P18 thresholded-replay phase checks
+
+`data/threshold_replay_phase_v1.jsonl` contains 24 deterministic parameter
+specifications spanning zero tolerance, `tau` on the same scale as `d`, and
+fixed positive tolerance.  Every row is checked against
+`threshold_fairness_replay_bounds`; the manifest stores no observed error rate
+or performance result.
+
+Regenerate and test with:
+
+```bash
+python scripts/generate_threshold_replay_phase.py \
+  --output data/threshold_replay_phase_v1.jsonl
+pytest -q tests/test_threshold_replay_phase.py \
+  tests/test_threshold_replay_benchmarks.py
+```
