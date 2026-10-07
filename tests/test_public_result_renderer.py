@@ -37,6 +37,8 @@ def test_public_result_renderer_smoke(tmp_path: Path):
                         impacted_edges=max(1, edges // 10),
                         replay_rounds=base * multiplier / 4.0,
                         concrete_program_executions=base * multiplier,
+                        type_i_error_count=5 * mi,
+                        type_ii_error_count=10 + 2 * pj,
                         type_i_error=0.005 * mi,
                         type_ii_error=0.01 + 0.002 * pj,
                         seed=1000 + 100 * di + 10 * pj + mi,
