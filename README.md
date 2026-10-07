@@ -151,6 +151,7 @@ python experiments/run_counterfactual_replay.py --p 0.35 --shared-patch 0.20 --d
 python experiments/run_threshold_replay_phase.py --p 0.20 --shared-patch 0.10 --tau 0.10 --d 0.01 --trials 100000
 python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
 python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
+python experiments/validate_control_replay_manifest.py --benchmark data/control_replay_structural_cases_v1.jsonl
 ```
 
 ## One-command theorem-facing publication validation
