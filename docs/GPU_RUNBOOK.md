@@ -138,3 +138,33 @@ Do not treat a GPU curve as evidence of a theorem. A publication figure may illu
 5. reruns on both GPUs agree within Monte Carlo uncertainty;
 6. each publication result has a `record_publication_run.py` provenance record;
 7. the final bundle is hashed with `scripts/freeze_submission_artifacts.py --require-clean`, attaching the compiled PDF and real result/provenance files with `--extra-file`.
+
+
+## Public benchmark publication run
+
+Install the optional public-data layer after the core environment is green:
+
+```powershell
+pip install -r requirements-public.txt
+```
+
+Prepare the seven registered datasets. MEPS requires explicit acceptance of the AHRQ terms and is never accepted silently by the script:
+
+```powershell
+python scripts/prepare_public_benchmarks.py --max-contexts 4096 --accept-meps-terms
+```
+
+Run a single-GPU smoke test before the full sweep:
+
+```powershell
+python experiments/gpu_public_replay_sweep.py --device cuda:0 --trials 1000 --patch-size 0.05 --output results/public_smoke.jsonl
+```
+
+If the smoke result validates, run the frozen publication preview:
+
+```powershell
+python experiments/gpu_public_replay_sweep.py --device cuda:0 --trials 100000 --patch-size 0.05 --patch-size 0.02 --patch-size 0.01 --output results/public_replay_100k.jsonl
+python scripts/render_public_results.py --results results/public_replay_100k.jsonl --output paper/figures/public_results.pdf --png-output paper/figures/public_results.png
+```
+
+The public sweep compares execution-access regimes, not predictive models. The base predictor is local and uses non-protected features only. The patch is injected in the executable stochastic decision wrapper so the old/new replay semantics remain controlled. Do not add a dataset, seed, or patch size after seeing results without recording the change as a new protocol version.
