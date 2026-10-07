@@ -17,10 +17,13 @@ class PublicResultRow:
     dataset_name: str
     method: str
     patch_size: float
+    common_shift: float
     confidence_target: float
     trials: int
     graph_vertices: int
     graph_edges: int
+    impacted_edges: int
+    replay_rounds: float
     concrete_program_executions: float
     type_i_error: float
     type_ii_error: float
@@ -36,12 +39,18 @@ def validate_public_result_row(row: PublicResultRow) -> None:
         raise ValueError("dataset identifiers must be non-empty")
     if not (0.0 < row.patch_size < 1.0):
         raise ValueError("patch_size must lie in (0,1)")
+    if not (0.0 <= row.common_shift < 1.0):
+        raise ValueError("common_shift must lie in [0,1)")
     if not (0.0 < row.confidence_target < 0.5):
         raise ValueError("confidence_target must lie in (0,0.5)")
     if row.trials <= 0:
         raise ValueError("trials must be positive")
     if row.graph_vertices <= 0 or row.graph_edges < 0:
         raise ValueError("invalid graph size")
+    if not (0 < row.impacted_edges <= row.graph_edges):
+        raise ValueError("impacted_edges must lie in [1, graph_edges]")
+    if row.replay_rounds <= 0:
+        raise ValueError("replay_rounds must be positive")
     if row.concrete_program_executions <= 0:
         raise ValueError("concrete_program_executions must be positive")
     for name, value in (
