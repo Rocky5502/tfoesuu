@@ -9,6 +9,7 @@ EXPECTED = {
     "data/replay_benchmark_v1.jsonl": {"min_rows": 54, "id_key": "benchmark_id", "role": "paired replay separation"},
     "data/software_subject_benchmark_v1.jsonl": {"min_rows": 32, "id_key": "benchmark_id", "role": "executable stochastic software subject"},
     "data/counterfactual_replay_benchmark_v1.jsonl": {"min_rows": 144, "id_key": "benchmark_id", "role": "four-way replay stress"},
+    "data/threshold_replay_phase_v1.jsonl": {"min_rows": 24, "id_key": "benchmark_id", "role": "P18 thresholded replay phase stress"},
     "data/partial_replay_benchmark_v1.jsonl": {"min_rows": 168, "id_key": "benchmark_id", "role": "partial-replay parameter stress"},
     "data/partial_replay_structural_cases_v1.jsonl": {"min_rows": 8, "id_key": "case_id", "role": "exact structural theorem fixtures"},
     "data/partial_replay_scope_cases_v1.jsonl": {"min_rows": 1, "id_key": "case_id", "role": "scope/counterexample guard"},
