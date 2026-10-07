@@ -59,8 +59,8 @@
 };
 
 \node[sub, below=0.34cm of observe, text width=3.35cm] (replay) {
-  \textbf{Replay hierarchy:} ordinary pairing can retain $d^{-2}$ behavior;
-  stronger synchronization can expose sparse $d^{-1}$ witnesses.
+  \textbf{Replay hierarchy:} synchronization can expose sparse $d^{-1}$
+  witnesses, but only while null background disparity is sufficiently small.
 };
 
 \node[sub, below=0.34cm of allocate, text width=3.35cm] (geometry) {
@@ -69,11 +69,11 @@
 };
 
 \node[risk, below=1.30cm of observe, text width=7.40cm] (scope) {
-  \textbf{P17 scope boundary.} In the audited homogeneous
-  single-changed-endpoint family, raw contrast attains $C_{\rm vert}$.
-  Under the frozen heterogeneous fair null, the same predicate rejects on
-  $(0.20,0.30]\cup(0.40,0.45]$, an exact shared-tape measure of $0.15$.
-  Therefore the heterogeneous/composite-null extension remains open.
+  \textbf{Scope boundary and phase transition.} P17 attains $C_{\rm vert}$
+  in the homogeneous family, but its raw contrast fails on a heterogeneous fair
+  null over exact tape mass $0.15$.  P18 quantifies the one-edge boundary:
+  $Q=\Theta((\tau+d)d^{-2}\log(1/\delta))$; $\tau=O(d)$ is linear in
+  $1/d$, while fixed $\tau>0$ is quadratic.
 };
 
 \draw[flow, draw=risktone] (observe.south) |- (scope.west);
@@ -84,8 +84,9 @@
 across software versions: deterministic change information first removes
 comparisons that need no new executions; the remaining stochastic problem is
 matched to the strongest sound replay primitive; theorem-specific allocation
-then controls execution cost.  The red scope box is a negative result, not an
-empirical failure rate: it records the exact deterministic obstruction to
-naively extending the homogeneous P17 contrast to heterogeneous fair nulls.}
+then controls execution cost.  The red box combines the exact P17 scope
+obstruction with P18's thresholded one-edge characterization, showing that the
+linear replay advantage has a mathematical boundary rather than holding
+universally.}
 \label{fig:overview}
 \end{figure}
