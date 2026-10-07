@@ -215,14 +215,30 @@ the general composite null without additional controls or a different decision
 statistic.
 \end{remark}
 
-Characterizing that broader composite-null setting remains open. Common random
-numbers and their use in multiple-system comparisons are established simulation
-tools \cite{GlassermanYao1992,YangNelson1991}; the claim here is the resulting
+The fully heterogeneous composite-null setting remains open, but it is no
+longer entirely uncharacterized.  \Cref{thm:control-replay} gives a positive
+two-class bipartite extension: when legal replay groups contain
+matched-background controls, first-order information and a fractional
+$C_{\rm ctrl}$ geometry reappear; without such controls the fixed-tolerance
+boundary channel remains quadratic.  The open problem is to move beyond known
+control classes to multiple or unknown background levels and more general
+fairness graphs.  Common random numbers and their use in multiple-system
+comparisons are established simulation tools
+\cite{GlassermanYao1992,YangNelson1991}; the claim here is the resulting
 version-aware fairness-regression query geometry, not the invention of common
 randomness.
 
-\paragraph{Adaptivity.}
-Property testing can exhibit large adaptive/non-adaptive gaps in other settings
-\cite{CanonneGur2018,Hurwitz2011}.  Whether full fairness regression admits such a
-separation remains open; the Gaussian patch-neutrality lower bound already shows
-that adaptivity cannot erase the $\Psi$ cost on the zero-delta null instance.
+\paragraph{Adaptivity and the Gaussian logarithmic gap.}
+The Gaussian upper bound in \Cref{thm:upper} pays
+$\log(|E(H)|/\delta)$ for simultaneous edge control, while the current adaptive
+null lower bound in \Cref{thm:lower} contains only $\log(1/\delta)$.  This gap
+should not be framed as a generic discovery that sequential sampling can remove
+dimension penalties: sequential sparse-recovery work already establishes large
+adaptive savings relative to nonsequential coordinate-wise procedures
+\cite{MalloyNowak2014}, and property testing also exhibits strict adaptivity
+hierarchies \cite{CanonneGur2018,Hurwitz2011}.  The unresolved question here is
+more specific: whether shared vertex observations and fairness-graph incidence
+permit an adaptive TFOESUU tester whose cost is governed by $\Psi(H,\nu)$
+without the full edgewise union-bound factor, or whether some graph family forces
+an additional structural logarithm.  Any future claim must separate expected
+null cost, alternative cost, replay rounds, and concrete program executions.
