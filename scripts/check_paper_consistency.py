@@ -47,6 +47,7 @@ REQUIRED_PAPER_MARKERS = {
     r"\textbf{RQ2}": "RQ2",
     r"\textbf{RQ3}": "RQ3",
     r"\textbf{RQ4}": "RQ4",
+    r"\label{tab:main-results}": "main theorem results table",
     r"\label{tab:benchmark-inventory}": "benchmark inventory table",
     r"\label{tab:deterministic-evidence}": "deterministic evidence table",
 }
