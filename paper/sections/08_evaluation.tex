@@ -63,6 +63,46 @@ P17 scope counterexample & 1 & Heterogeneous fair null that falsifies naive raw-
 \end{tabular}
 \end{table}
 
+\subsection{Public evaluation populations}
+
+The theorem-specification manifests are complemented by a separate seven-dataset
+public evaluation layer. These datasets do not establish the theorems; they
+supply realistic input populations and protected attributes for locally
+constructed old/new stochastic software versions. The raw datasets are never
+vendored into the repository. Their source metadata are frozen in
+`data/public_benchmark_registry_v1.jsonl`, and publication runs must record a
+local content hash before any result is admitted to the paper.
+
+\begin{table}[t]
+\centering
+\caption{Planned public benchmark populations. The executable old/new software
+versions are constructed locally from each dataset under the frozen protocol;
+no pretrained model or external model API is used.}
+\label{tab:public-datasets}
+\small
+\begin{tabular}{@{}p{0.25\textwidth}p{0.25\textwidth}p{0.20\textwidth}p{0.20\textwidth}@{}}
+\toprule
+Dataset & Task & Protected attributes & Provenance \\
+\midrule
+Adult Census Income & Binary classification & sex, race & UCI \cite{AdultDatasetUCI} \\
+Bank Marketing & Binary classification & age & UCI \cite{BankMarketingUCI} \\
+Statlog German Credit & Binary classification & sex, age & UCI \cite{GermanCreditUCI} \\
+ProPublica COMPAS & Binary classification & race, sex & ProPublica \cite{ProPublicaCOMPAS2016} \\
+Law School GPA & Regression to thresholded decision & race, gender & AIF360 \cite{BellamyEtAl2019} \\
+MEPS Panel 21 & Binary classification & race & AIF360/AHRQ \cite{BellamyEtAl2019} \\
+Default of Credit Card Clients & Binary classification & sex, age & UCI \cite{DefaultCreditUCI} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The common protocol fits a simple local baseline predictor on non-protected
+features, converts its score to an interior Bernoulli probability, and defines
+the old program by a common-uniform randomized decision. Counterfactual pairs
+are created by varying only the designated protected attribute. The new program
+is produced by a frozen patch specification with a common shift and, when
+required by the experiment, a differential endpoint shift. This construction
+lets public inputs instantiate the replay model while keeping the theorem
+assumptions and the empirical generalization claims separate.
 \subsection{Experimental settings and baselines}
 
 Every stochastic publication run is keyed by the repository commit, a frozen
