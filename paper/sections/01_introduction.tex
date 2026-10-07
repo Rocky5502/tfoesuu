@@ -109,3 +109,25 @@ The paper is deliberately theory-first and model-free.  No pretrained model,
 open-source model, proprietary API, or LLM is an experimental subject.  GPU
 computation is used only to falsify conjectures, validate implementations, and
 stress-test the proved complexity laws on large synthetic instances.
+
+\paragraph{Contributions and paper map.}
+\Cref{fig:overview} summarizes the complete evidence-reuse pipeline and
+\Cref{alg:tfoesuu} turns the theorem hierarchy into an executable testing
+procedure. The paper makes four contributions:
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt]
+\item a version-aware fairness-regression access model that combines retained
+certificates, sound change information, and replayable stochastic execution;
+\item matching graph-dependent Gaussian upper/lower bounds governed by
+$\Psi(H,\nu)$, together with separations quantifying the value of patch
+localization and certificate-aware pruning;
+\item a Bernoulli replay hierarchy showing when stronger synchronization changes
+the small-effect dependence from $d^{-2}$ to $d^{-1}$ and changes the relevant
+graph geometry; and
+\item an executable falsification/reproducibility layer organized by RQ1--RQ4
+over 791 frozen specification rows, including exact structural fixtures and a
+positive-measure counterexample that prevents overgeneralizing P17.
+\end{enumerate}
+The computational layer is reported in \Cref{sec:evaluation}. It is explicitly
+subordinate to the proof ledger: deterministic specification checks are labeled
+as such, and stochastic publication results are reported only after a frozen
+clean-checkout run exists.
