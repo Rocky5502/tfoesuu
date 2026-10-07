@@ -22,6 +22,7 @@ def _row(method: str, *, executions: float, seed: int = 0) -> PublicResultRow:
         trials=1000,
         graph_vertices=100,
         graph_edges=50,
+        affected_fraction=0.10,
         impacted_edges=5,
         replay_rounds=20.0,
         concrete_program_executions=executions,
