@@ -17,6 +17,7 @@ python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
 python scripts/generate_threshold_replay_phase.py --output data/threshold_replay_phase_v1.jsonl
+python scripts/generate_control_replay_structural_cases.py --output data/control_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
@@ -176,4 +177,21 @@ python scripts/generate_threshold_replay_phase.py \
   --output data/threshold_replay_phase_v1.jsonl
 pytest -q tests/test_threshold_replay_phase.py \
   tests/test_threshold_replay_benchmarks.py
+```
+
+
+## P19 matched-control structural checks
+
+`data/control_replay_structural_cases_v1.jsonl` contains six exact geometry
+fixtures for the bipartite two-class theorem. They cover fractional
+control-cover values 1, 1.5, and 2, weighted controls, paired controls, and a
+boundary-only instance where the control cover is infeasible but the exact
+mixed-information lower program remains finite and quadratic in the small
+effect.
+
+```bash
+python scripts/generate_control_replay_structural_cases.py \
+  --output data/control_replay_structural_cases_v1.jsonl
+pytest -q tests/test_control_replay.py \
+  tests/test_control_replay_benchmarks.py
 ```
