@@ -239,3 +239,8 @@ See [docs/THEOREM_ALGORITHM_MATRIX.md](docs/THEOREM_ALGORITHM_MATRIX.md), [docs/
 ## Public benchmark layer
 
 A separate seven-dataset registry is frozen for the submission-facing finite-instance evaluation: Adult, Bank Marketing, German Credit, COMPAS, Law School GPA, MEPS Panel 21, and Default Credit.  The raw datasets are not committed.  Each publication run must freeze source/preprocessing hashes and construct old/new stochastic software versions locally so the benchmark exercises the replay model rather than merely reporting generic classifier fairness metrics.
+
+
+## Public benchmark commands
+
+After core CI is green, install `requirements-public.txt`, prepare the seven public datasets with `scripts/prepare_public_benchmarks.py`, run `experiments/gpu_public_replay_sweep.py`, then generate the submission figure with `scripts/render_public_results.py`. The paper currently contains explicit TBD result slots; they are replaced only from a validated frozen JSONL result matrix.
