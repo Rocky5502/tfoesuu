@@ -241,3 +241,52 @@ def test_exact_shared_tape_partition_recovers_control_and_boundary_kl():
     assert exact_control == pytest.approx(lower.control_kl)
     assert exact_boundary == pytest.approx(lower.boundary_kl)
     assert exact_control > exact_boundary
+
+
+def test_mixed_control_topology_is_quadratic_when_one_candidate_lacks_control():
+    graph = complete_bipartite_graph(3, 2)
+    high = (0, 1, 2)
+    # Candidates 0 and 1 share a first-order matched-control channel; candidate
+    # 2 is observable only through a high-low boundary group.  The total exact
+    # information floor must therefore retain the d^-2 leading regime.
+    groups = ((0, 1), (2, 3))
+    costs = (1.0, 1.0)
+
+    a = control_replay_information_lower_bound(
+        graph, groups, costs, high,
+        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
+        d=1e-4, beta=0.05,
+    )
+    b = control_replay_information_lower_bound(
+        graph, groups, costs, high,
+        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
+        d=5e-5, beta=0.05,
+    )
+
+    assert a.success and b.success
+    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(
+        4.0, rel=3e-3
+    )
+
+
+def test_all_candidates_control_covered_recover_linear_leading_regime():
+    graph = complete_bipartite_graph(3, 2)
+    high = (0, 1, 2)
+    groups = ((0, 1), (1, 2), (0, 2), (0, 3), (1, 3), (2, 4))
+    costs = (1.0,) * len(groups)
+
+    a = control_replay_information_lower_bound(
+        graph, groups, costs, high,
+        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
+        d=1e-4, beta=0.05,
+    )
+    b = control_replay_information_lower_bound(
+        graph, groups, costs, high,
+        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
+        d=5e-5, beta=0.05,
+    )
+
+    assert a.success and b.success
+    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(
+        2.0, rel=3e-3
+    )
