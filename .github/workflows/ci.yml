@@ -39,3 +39,4 @@ jobs:
       - run: python experiments/search_graph_replay_complexity.py --max-n 5 --top 5
       - run: python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
       - run: python experiments/run_counterfactual_replay.py --p 0.35 --shared-patch 0.20 --d 0.05 --beta 0.05 --trials 1000
+      - run: python experiments/run_threshold_replay_phase.py --p 0.20 --shared-patch 0.10 --tau 0.10 --d 0.02 --beta 0.05 --trials 1000
