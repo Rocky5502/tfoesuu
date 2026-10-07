@@ -28,6 +28,7 @@ LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
 REF_RE = re.compile(r"\\(?:ref|pageref|eqref|cref|Cref)\{([^}]+)\}")
 CITE_RE = re.compile(r"\\(?:cite|citep|citet)\{([^}]+)\}")
 BIBKEY_RE = re.compile(r"@\w+\s*\{\s*([^,\s]+)\s*,", re.IGNORECASE)
+BIBENTRY_RE = re.compile(r"@(\\w+)\\s*\\{\\s*([^,\\s]+)\\s*,([\\s\\S]*?)\\n\\}", re.IGNORECASE)
 
 
 def resolve_input(parent: Path, raw: str) -> Path:
@@ -88,6 +89,8 @@ def main() -> None:
         errors.append(f"duplicate BibTeX keys: {duplicate_bib}")
     if missing_cites:
         errors.append(f"missing BibTeX keys: {missing_cites}")
+    if missing_doi:
+        errors.append(f"bibliography entries missing DOI: {missing_doi}")
 
     forbidden = {
         "arXiv preprint": re.compile(r"arXiv\s+preprint", re.IGNORECASE),
