@@ -27,6 +27,10 @@ Thresholded one-edge replay & Four-way synchronized replay with fairness toleran
 $\Theta((\tau+d)d^{-2}\log(1/\delta))$; $\tau=O(d)$ gives $d^{-1}$ while fixed $\tau>0$ gives $d^{-2}$ &
 Proved + audited \\
 
+Matched-control partial replay & Heterogeneous two-class null plus same-background replay controls &
+$C_{\rm ctrl}d^{-1}\log(1/\delta)$ when control-coverable; without controls fixed $\tau>0$ forces $d^{-2}$ &
+Proved + audited in stated scope \\
+
 Synchronized-suite replay & One tape across all fairness-active inputs &
 Rounds $\Theta(d^{-1}\log(1/\delta))$; executions
 $\Theta(n_+d^{-1}\log(1/\delta))$, independent of edge count in the
