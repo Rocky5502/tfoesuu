@@ -231,3 +231,94 @@ def counterfactual_replay_bounds(
         edge_coupled_per_round_kl=edge_kl,
         vertex_paired_per_round_kl=vertex_kl,
     )
+
+
+@dataclass(frozen=True)
+class ThresholdFairnessReplayBounds:
+    """Bounds for thresholded one-edge fairness under synchronized replay."""
+
+    fairness_tolerance: float
+    differential_margin: float
+    replay_upper_rounds: int
+    replay_upper_concrete_executions: int
+    null_expected_rounds_lower: float
+    per_round_kl: float
+
+
+def threshold_fairness_replay_kl(
+    p: float,
+    shared_patch: float,
+    tau: float,
+    d: float,
+) -> float:
+    """Null-to-alternative KL at a thresholded fairness boundary.
+
+    Old thresholds are (p,p).  Under the boundary null, the new thresholds are
+    (p+s+tau, p+s); under the alternative they are
+    (p+s+tau+d, p+s).  One common-uniform tape is shared across both versions
+    and both endpoints.
+
+    Only two transcript atoms change mass: tau -> tau+d and
+    r -> r-d, where r=1-p-s-tau.  Hence the exact full-transcript KL is
+
+        tau log(tau/(tau+d)) + r log(r/(r-d)),
+
+    with the first term interpreted as zero at tau=0.
+    """
+
+    if not (0.0 < p < 1.0):
+        raise ValueError("p must lie in (0,1)")
+    if not (0.0 <= shared_patch < 1.0 - p):
+        raise ValueError("shared_patch must lie in [0,1-p)")
+    if tau < 0.0:
+        raise ValueError("tau must be nonnegative")
+    if d <= 0.0:
+        raise ValueError("d must be positive")
+    if not (p + shared_patch + tau + d < 1.0):
+        raise ValueError("require p+shared_patch+tau+d < 1")
+
+    r = 1.0 - p - shared_patch - tau
+    first = 0.0 if tau == 0.0 else tau * math.log(tau / (tau + d))
+    second = r * math.log(r / (r - d))
+    return first + second
+
+
+def threshold_fairness_replay_bounds(
+    p: float,
+    shared_patch: float,
+    tau: float,
+    d: float,
+    beta: float,
+) -> ThresholdFairnessReplayBounds:
+    """Fixed-confidence bounds for thresholded one-edge synchronized replay.
+
+    The composite null is that the new-version endpoint gap is at most tau; the
+    alternative gap is at least tau+d.  In each synchronized edge replay, the
+    new-version mismatch indicator is Bernoulli with mean equal to that gap.
+    Thresholding its empirical mean at tau+d/2 and applying Bernstein/Chernoff
+    bounds gives an upper schedule of
+
+        8 (tau+d) log(1/beta) / d^2
+
+    rounds.  A boundary null/alternative pair gives the transcript-KL lower
+    bound returned below.
+
+    This family interpolates between the sparse-witness regime tau=0 and the
+    interior-threshold regime tau>0.
+    """
+
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+    k = threshold_fairness_replay_kl(p, shared_patch, tau, d)
+    upper = math.ceil(
+        8.0 * (tau + d) * math.log(1.0 / beta) / (d * d)
+    )
+    lower = binary_decision_kl(beta) / k
+    return ThresholdFairnessReplayBounds(
+        fairness_tolerance=tau,
+        differential_margin=d,
+        replay_upper_rounds=upper,
+        replay_upper_concrete_executions=4 * upper,
+        null_expected_rounds_lower=lower,
+        per_round_kl=k,
+    )
