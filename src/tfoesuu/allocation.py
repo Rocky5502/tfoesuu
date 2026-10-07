@@ -133,6 +133,60 @@ def solve_psi_dual(graph: GraphSpec, variances: Sequence[float] | None = None) -
     return AllocationResult(float(dual_value(res.x)), np.asarray(res.x), bool(res.success), str(res.message), 0.0)
 
 
+
+@dataclass(frozen=True)
+class PsiConicCertificate:
+    """Numerical certificate for the rotated-cone representation of Psi."""
+
+    incidence_weights: np.ndarray
+    max_edge_sum_violation: float
+    max_product_violation: float
+
+
+def psi_conic_certificate(
+    graph: GraphSpec,
+    variances: Sequence[float],
+    q: Sequence[float],
+) -> PsiConicCertificate:
+    """Map an original Psi allocation to its canonical conic incidence witness.
+
+    For each edge e=(u,v), set t[e,u]=s_u/q_u and t[e,v]=s_v/q_v.
+    Original feasibility is equivalent to t[e,u]+t[e,v] <= 1.  The products
+    q_v*t[e,v]=s_v certify the hyperbolic constraints used by the rotated-SOC
+    representation.  This routine audits correspondence; it is not a second
+    optimization algorithm.
+    """
+
+    edges, var = _validate(graph.n, graph.edges, variances)
+    q_arr = np.asarray(q, dtype=float)
+    if q_arr.shape != (graph.n,):
+        raise ValueError(f"expected {graph.n} allocation values, got shape {q_arr.shape}")
+    if np.any(~np.isfinite(q_arr)) or np.any(q_arr < 0):
+        raise ValueError("allocation values must be finite and nonnegative")
+
+    incidence = np.zeros((len(edges), 2), dtype=float)
+    edge_sum_violation = 0.0
+    product_violation = 0.0
+
+    for ei, (u, v) in enumerate(edges):
+        if q_arr[u] <= 0.0 or q_arr[v] <= 0.0:
+            raise ValueError("every fairness-active vertex must have positive allocation")
+        tu = var[u] / q_arr[u]
+        tv = var[v] / q_arr[v]
+        incidence[ei] = (tu, tv)
+        edge_sum_violation = max(edge_sum_violation, tu + tv - 1.0, 0.0)
+        product_violation = max(
+            product_violation,
+            abs(q_arr[u] * tu - var[u]),
+            abs(q_arr[v] * tv - var[v]),
+        )
+
+    return PsiConicCertificate(
+        incidence_weights=incidence,
+        max_edge_sum_violation=float(edge_sum_violation),
+        max_product_violation=float(product_violation),
+    )
+
 def exact_unit_variance_psi(graph: GraphSpec) -> float | None:
     """Closed forms used as theorem sanity checks for selected graph families."""
 
