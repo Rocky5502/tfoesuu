@@ -88,7 +88,7 @@ A rigorous impossibility/boundary theorem remains a successful outcome.
 
 ### S1b — Mixed-control asymptotic stratification (falsification stage)
 
-Do not promote this as P20 yet.  P19's exact lower LP already implies a sharper
+Keep this at P20-CONJECTURE status; do not promote it beyond conjecture yet.  P19's exact lower LP already implies a sharper
 question than the binary all-controls/no-controls split.  In a partially
 controlled topology, some alternatives have a first-order control-compatible
 channel while others are observable only through the second-order boundary
@@ -114,6 +114,28 @@ Required before theorem promotion: derive the singularly perturbed LP limit,
 identify its exact leading coefficient (not merely the exponent), determine
 whether an achievable tester matches that coefficient/order, and search for
 degenerate cost/group families that invalidate the naive lexicographic claim.
+
+
+### S1c — P20 unified replay information geometry (conjecture)
+
+P18 and P19 establish two scoped phase-transition/control results. P20 asks
+whether a single graph-level action-by-alternative information geometry can
+characterize the broader nuisance-aware problem without relabeling those scoped
+theorems as generic controlled sensing.
+
+The candidate program is
+
+  minimize    sum_S c(S) x_S
+  subject to  sum_S I[a,S] x_S >= K_a   for every active alternative a,
+              x_S >= 0.
+
+The matrix I must be derived from exact replay semantics and the frozen nuisance
+class. The generic solver in `src/tfoesuu/replay_information.py` is only an
+implementation scaffold. Promotion requires an adaptive lower bound, a matching
+attainable procedure, counterexamples outside scope, and a fresh archival
+collision audit.
+
+See `docs/PROOF_ATTACK_P20_INFORMATION_GEOMETRY.md`.
 
 ### S2 — Full thresholded fairness with retained certificate headroom
 
