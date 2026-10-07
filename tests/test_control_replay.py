@@ -177,3 +177,67 @@ def test_control_family_rejects_non_bipartite_fairness_edges():
             costs=[1.0, 1.0],
             high_vertices=(0, 1),
         )
+
+
+def _shared_tape_transcript_distribution(old_thresholds, new_thresholds):
+    cuts = sorted({0.0, 1.0, *old_thresholds, *new_thresholds})
+    mass = {}
+    for left, right in zip(cuts, cuts[1:]):
+        if right <= left:
+            continue
+        u = (left + right) / 2.0
+        state = tuple(
+            [int(u <= t) for t in old_thresholds]
+            + [int(u <= t) for t in new_thresholds]
+        )
+        mass[state] = mass.get(state, 0.0) + (right - left)
+    return mass
+
+
+def _categorical_kl(q0, q1):
+    import math
+
+    out = 0.0
+    for state, p0 in q0.items():
+        if p0 == 0.0:
+            continue
+        p1 = q1.get(state, 0.0)
+        assert p1 > 0.0
+        out += p0 * math.log(p0 / p1)
+    return out
+
+
+def test_exact_shared_tape_partition_recovers_control_and_boundary_kl():
+    p, s, tau, d = 0.20, 0.10, 0.10, 0.01
+
+    # x + matched high control + low vertex.
+    old = [p, p, p]
+    null_new = [p + s + tau, p + s + tau, p + s]
+    alt_new = [p + s + tau + d, p + s + tau, p + s]
+    q0 = _shared_tape_transcript_distribution(old, null_new)
+    q1 = _shared_tape_transcript_distribution(old, alt_new)
+    exact_control = _categorical_kl(q0, q1)
+
+    # x + low reference only.
+    old_boundary = [p, p]
+    null_boundary = [p + s + tau, p + s]
+    alt_boundary = [p + s + tau + d, p + s]
+    b0 = _shared_tape_transcript_distribution(old_boundary, null_boundary)
+    b1 = _shared_tape_transcript_distribution(old_boundary, alt_boundary)
+    exact_boundary = _categorical_kl(b0, b1)
+
+    lower = control_replay_information_lower_bound(
+        complete_bipartite_graph(2, 1),
+        groups=[(0, 1), (0, 2), (1, 2)],
+        costs=[1.0, 1.0, 1.0],
+        high_vertices=(0, 1),
+        p=p,
+        shared_patch=s,
+        fairness_tolerance=tau,
+        d=d,
+        beta=0.05,
+    )
+    assert lower.success
+    assert exact_control == pytest.approx(lower.control_kl)
+    assert exact_boundary == pytest.approx(lower.boundary_kl)
+    assert exact_control > exact_boundary
