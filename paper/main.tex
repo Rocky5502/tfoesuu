@@ -74,11 +74,13 @@ fractional-cover geometries emerge.  The edge-witness cover can be an unbounded
 factor larger than the active-vertex cover $C_{\rm vert}$ and can even be
 infeasible.  In the frozen homogeneous single-changed-endpoint family, a
 within-group patch-delta contrast attains the same $C_{\rm vert}$ geometry as
-the transcript-information lower bound, up to constants and rounding.  An exact
-heterogeneous fair-null counterexample shows why this tester cannot be extended
-naively beyond that scope.  Thus replayability is itself an information resource:
-it can change both the exponent in the effect size and the graph geometry
-governing fairness-regression complexity.
+the transcript-information lower bound.  Under a heterogeneous two-class fair
+null, we further identify a matched-control cover $C_{\rm ctrl}$: legal groups
+with a same-background control carry $\Theta(d)$ information and recover
+$\Theta(d^{-1})$ complexity, whereas high--low-only groups carry
+$\Theta(d^2)$ information at fixed tolerance.  Thus replayability and control
+topology jointly determine both the small-effect exponent and the graph geometry
+of fairness-regression complexity.
 \end{abstract}
 
 \clearpage
