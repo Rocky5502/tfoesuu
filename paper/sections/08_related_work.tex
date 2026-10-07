@@ -1,72 +1,74 @@
 \section{Related Work and Novelty Boundary}
 \label{sec:related}
 
-\paragraph{Regression testing and change impact.}
-Regression-test selection has long been studied as a way to reuse tests after
-software modification \cite{RothermelHarrold1996,YooHarman2012}.  Code-based
-change-impact analysis identifies which behavior may be affected by a change
-\cite{LiSunLeungZhang2013}.  Our model treats sound impact information as side
-information in a statistical query problem rather than proposing a new static
-impact analysis.
+\paragraph{Fairness testing, verification, and auditing.}
+Automated fairness testing is an established software-engineering problem.
+Themis introduced automated measurement and test generation for software
+discrimination \cite{GalhotraBrunMeliou2017}; directed and white-box methods
+subsequently made discriminatory-instance search more targeted and scalable
+\cite{UdeshiAroraChattopadhyay2018,ZhangEtAl2020}.
+FairSquare formulates fairness as a probabilistic program property and verifies it
+with probabilistic-program analysis \cite{AlbarghouthiEtAl2017}, while online
+fairness auditing adaptively concentrates observations on likely violations
+\cite{ManerikerBurleyParthasarathy2023}. A recent archival survey systematizes
+this broader fairness-testing landscape \cite{ChenEtAl2024}. Accordingly, we do
+not claim novelty for fairness testing, counterfactual discrimination search,
+probabilistic fairness verification, or observation-efficient auditing of a fixed
+system. Our target is the execution-query complexity of \emph{version-aware}
+fairness regression when the old and new programs remain executable.
 
-\paragraph{Fairness testing and verification.}
-Themis established automated software fairness testing as a software-engineering
-problem \cite{GalhotraBrunMeliou2017}.  FairSquare showed that important fairness
-definitions can be formulated as probabilistic program properties and verified
-with probabilistic-program analysis \cite{AlbarghouthiEtAl2017}.  Active fairness
-auditing gives theoretical query-efficient algorithms for assessing fixed learned
-systems \cite{YanZhang2022}.  We do not claim novelty for fairness testing,
-probabilistic fairness verification, or active fairness auditing in isolation; our
-target is version-aware stochastic \emph{regression} testing.
+\paragraph{Common random numbers, paired observations, and couplings.}
+Shared randomness is classical. Common-random-number (CRN) methods reduce
+uncertainty in stochastic-system comparisons and have long been used with
+multiple-comparison procedures
+\cite{YangNelson1991,GlassermanYao1992,NelsonMatejcik1995}. Statistical testing
+of correlated binary proportions and sample-size planning for paired designs are
+also classical \cite{McNemar1947,Connor1987}. Couplings additionally provide a
+formal relational language for probabilistic programs \cite{BartheEtAl2017}.
+Therefore P15 does \emph{not} claim that pairing, CRN, matched Bernoulli
+observations, or probabilistic coupling is new. Its claim is narrower: under the
+stated old/new and counterfactual replay oracles, the information exposed by a
+fairness-regression query changes the small-effect fixed-confidence order in the
+scoped Bernoulli family.
 
-\paragraph{Property testing.}
-Property testing provides the surrounding query-complexity framework.
-Optimal monotonicity/Lipschitz testing on hypercubes and hypergrids is a canonical
-example of graph-structured local checks determining a global property
-\cite{ChakrabartySeshadhri2013}; tolerant testing can be much harder than ordinary
-testing \cite{FischerFortnow2006}; and adaptivity hierarchies are known
-\cite{CanonneGur2018}.  Our property and access model are different: observations
-are stochastic executions of two evolving software versions, and old-version and
-impact information are first-class inputs.
+\paragraph{Property testing, adaptive experiments, and graph structure.}
+Property testing supplies the surrounding query-complexity viewpoint, from early
+program self-testing \cite{RubinfeldSudan1996} and foundational property-testing
+models \cite{GoldreichGoldwasserRon1998,GoldreichRon1997} to graph-structured
+local tests \cite{ChakrabartySeshadhri2013}. Stronger certification requirements
+can change testing complexity \cite{FischerFortnow2006}, and adaptivity itself
+admits strict hierarchies \cite{CanonneGur2018}. Recent STOC work shows how new
+graph/hypergraph container structure can sharpen property-testing bounds
+\cite{BlaisSeth2024}. Sequential experimental design and active hypothesis
+testing provide the complementary information-theoretic tradition for
+adaptively selecting observations \cite{Chernoff1959,CohenZhao2015}, while
+graph-based optimal design for pairwise comparisons shows that a graph allocation
+problem alone is not novel \cite{SinghSinghDavidov2025}. We use these traditions
+as methodology, but our oracle returns stochastic executions of \emph{two}
+program versions and makes replay compatibility part of the instance.
 
-\paragraph{Adaptive information lower bounds.}
-Adaptive fixed-confidence sampling is commonly analyzed through transcript-level
-change-of-measure arguments.  We use the generic information-theoretic technique
-of Kaufmann, Capp{\'e}, and Garivier \cite{KaufmannCappeGarivier2016} and
-specialize the alternatives to counterfactual patch effects on graph edges.
+\paragraph{Regression testing and change-impact analysis.}
+Regression-test selection, minimization, and prioritization are mature
+techniques for reusing evidence after software modification
+\cite{RothermelHarrold1996,ElbaumMalishevskyRothermel2002,YooHarman2012}.
+Likewise, dynamic and code-based change-impact analysis can localize tests or
+behavior potentially affected by a change
+\cite{LawRothermel2003,RenEtAl2004,LiSunLeungZhang2013}. Our localization results
+therefore do not claim a new change-impact algorithm. We condition on a
+sound impact set and ask what statistical execution cost remains for a
+counterfactual fairness property under stochastic behavior.
 
-\paragraph{Pairing, matched binary outcomes, and common random numbers.}
-Common random numbers are a classical simulation technique for comparing
-stochastic systems \cite{GlassermanYao1992}; their use across multiple systems
-and multiple-comparison procedures is also established
-\cite{YangNelson1991,NelsonMatejcik1995}.  Sample-size analysis for paired binary
-proportions is classical statistics \cite{Connor1987}.  Consequently, neither
-pairing, synchronized reference systems, nor the efficiency of matched Bernoulli
-observations is a novelty claim.  \Cref{thm:bernoulli-separation} instead treats
-replayability of two software versions as an access primitive in a
-fairness-regression problem, and \Cref{prop:p17-active-contrast} identifies the
-active-vertex fractional-cover query geometry induced by restricted replay groups
-in the scoped homogeneous family.
-
-\paragraph{Pairwise experimental design.}
-Optimal design for selected pairwise mean comparisons has a substantial
-statistical literature, including recent graph-based formulations
-\cite{SinghSinghDavidov2025}.  Therefore the existence of a graph allocation
-problem by itself is not a novelty claim.  The role of $\Psi$ here is as the core
-information quantity arising from a regression-specific coupled execution oracle;
-the intended contribution is the complete software-evolution query model and its
-upper/lower complexity theory.
-
-\paragraph{Incremental and probabilistic verification.}
-Incremental verification seeks to reuse proof information from earlier program
-versions \cite{YinEtAl2025}.  Couplings are a standard tool for relational
-reasoning about probabilistic programs \cite{BartheEtAl2017}.  We combine the
-version-reuse viewpoint with statistical testing of a fairness property rather
-than attempting full formal equivalence verification.
-
-\paragraph{Nondeterministic software testing.}
-Flaky tests demonstrate that stochastic and environment-dependent execution is a
-practical testing concern.  Recent OOPSLA work controls nondeterministic APIs to
-expose flakiness \cite{YuanLinShi2026}.  Our theory abstracts such uncertainty as
-an execution oracle and asks how it changes the fundamental cost of fairness
-regression certification.
+\paragraph{Boundary of P15--P17.}
+The archival literature above creates three important caveats. First, P15 must
+be presented as a \emph{replay-oracle complexity separation}, not as the invention
+of common random numbers or paired testing. Second, P16 must be presented as the
+fairness-regression consequence of synchronized suite replay---including the
+distinction between replay rounds and concrete program executions---not as the
+first use of shared randomness for multiple comparisons. Third, neither
+fractional covering nor graph-based experimental design is, by itself, a P17
+novelty claim. In the literature reviewed here, the candidate contribution is
+the derivation of the active-vertex fractional-cover geometry from legal
+partial-replay groups in the stated homogeneous single-changed-endpoint family,
+together with matching combinatorial upper/lower dependence. We deliberately
+do not extend that claim to heterogeneous fairness-preserving nulls or to replay
+models not covered by the theorem.
