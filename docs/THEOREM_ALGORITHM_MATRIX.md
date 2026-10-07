@@ -43,6 +43,7 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-S | Scope counterexample for naive heterogeneous raw contrast | Heterogeneous fair-null deterministic witness | tests + partial_replay_scope_cases_v1.jsonl | Counterexample proved + tested; rules out silent generalization of P17-A |
 | P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open: needs controls/baseline adjustment/new geometry | none yet | Open |
 | P18 | Thresholded one-edge synchronized replay phase transition | Exact transcript KL + thresholded mismatch test | separations.py, planner.py, tests/test_threshold_replay_phase.py | Proved + audited; one-edge threshold-Bernoulli scope |
+| P19 | Matched-background controls under a heterogeneous bipartite null | Exact mixed-KL LP + fractional control-cover schedule | control_replay.py, planner.py, tests/test_control_replay.py | Proved + audited for the two-class threshold family |
 
 ## Unified planner layer
 
@@ -60,6 +61,9 @@ already-audited components while enforcing their scope in the API.
 - `mode="partial-homogeneous"` delegates to the P17 active-vertex contrast
   schedule and refuses to run unless the caller explicitly acknowledges the
   homogeneous single-changed-endpoint scope.
+- `mode="partial-bipartite-control"` delegates to the P19 matched-control
+  schedule and requires explicit acknowledgement of the two-class bipartite
+  null plus declared high-side candidate vertices.
 
 `tests/test_planner.py` guards zero-query pruning, concrete execution
 accounting, single-edge scope rejection, suite execution cost, and the explicit
@@ -270,3 +274,48 @@ so the pointwise miss probability is at most beta. The declared cost is at most
 This audited construction matches the lower program's combinatorial geometry in
 the frozen family. It is not a theorem for arbitrary heterogeneous
 fairness-preserving nulls.
+
+## P19 control-cover package
+
+Let the fairness graph be bipartite with high class A and low class B. Under
+the common null, old thresholds are p everywhere, low new thresholds are p+s,
+and high new thresholds are p+s+tau. Alternative x in A increases only x by d.
+
+For legal group S_i define
+
+  C[x,i] = 1{x in S_i and |S_i intersection A| >= 2},
+  R[x,i] = 1{x in S_i} - C[x,i].
+
+With r=1-p-s-tau,
+
+  K_ctrl = r log(r/(r-d)),
+  K_bnd  = tau log(tau/(tau+d)) + r log(r/(r-d)).
+
+Every adaptive beta-correct tester obeys the exact expected-cost LP
+
+  min c^T n
+  subject to
+    (K_ctrl C + K_bnd R)n >= kl(1-beta,beta) 1,
+    n >= 0.
+
+The upper construction uses the fractional control cover
+
+  C_ctrl = min c^T q
+           subject to Cq >= 1, q >= 0,
+
+scaled by L=ceil(log(beta)/log(1-d)). Under the null, high-class patch deltas
+are identical pathwise; under alternative x, every control-compatible exposure
+containing x yields a sparse witness with probability d.
+
+For fixed positive tau,
+
+  K_ctrl = Theta(d),
+  K_bnd  = Theta(d^2).
+
+Thus feasible matched controls restore linear 1/d complexity with leading
+geometry C_ctrl. If some candidate has no matched control group, its lower
+constraint is boundary-only and forces quadratic 1/d^2 cost unless the
+alternative is entirely unobservable.
+
+Frozen structural fixtures:
+`data/control_replay_structural_cases_v1.jsonl` (6 rows).
