@@ -48,7 +48,6 @@ def render_table(rows, output: Path, patch_size: float | None = None) -> float:
             "all rows use the same frozen confidence target and result commit.}"
         ),
         "\\label{tab:public-main-results}",
-        "\\label{tab:main-results}",
         "\\scriptsize",
         "\\resizebox{\\textwidth}{!}{%",
         "\\begin{tabular}{@{}lrrrrrrrrr@{}}",
