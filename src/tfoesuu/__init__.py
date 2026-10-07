@@ -9,9 +9,12 @@ from .separations import (
     CounterfactualReplayBounds,
     LocationReplayBounds,
     ReplaySeparationBounds,
+    ThresholdFairnessReplayBounds,
     counterfactual_replay_bounds,
     location_replay_bounds,
     replay_separation_bounds,
+    threshold_fairness_replay_bounds,
+    threshold_fairness_replay_kl,
 )
 from .software_subjects import RandomizedResourceAllocatorPair, linear_baseline
 from .suite_replay import SuiteReplayBounds, active_vertex_count, synchronized_suite_replay_bounds
@@ -54,9 +57,12 @@ __all__ = [
     "ReplayBenchmarkSpec",
     "replay_benchmark_v1",
     "ReplaySeparationBounds",
+    "ThresholdFairnessReplayBounds",
     "LocationReplayBounds",
     "CounterfactualReplayBounds",
     "replay_separation_bounds",
+    "threshold_fairness_replay_bounds",
+    "threshold_fairness_replay_kl",
     "counterfactual_replay_bounds",
     "location_replay_bounds",
     "RandomizedResourceAllocatorPair",
