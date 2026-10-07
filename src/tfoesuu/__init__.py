@@ -7,10 +7,16 @@ from .allocation import (
     solve_psi,
     solve_psi_dual,
 )
-from .certificate import CertificatePruningResult, prune_with_patch_envelopes
+from .certificate import (
+    CertificatePruningResult,
+    ResidualEdgeMargins,
+    prune_with_patch_envelopes,
+    threshold_residual_margins,
+)
 from .graphs import GraphSpec
 from .oracles import BernoulliCommonUniformPair, GaussianVersionPair
 from .replay_benchmarks import ReplayBenchmarkSpec, replay_benchmark_v1
+from .replay_information import ReplayInformationSolution, minimum_information_cover
 from .separations import (
     CounterfactualReplayBounds,
     LocationReplayBounds,
@@ -75,11 +81,15 @@ __all__ = [
     "solve_psi",
     "solve_psi_dual",
     "CertificatePruningResult",
+    "ResidualEdgeMargins",
+    "threshold_residual_margins",
     "prune_with_patch_envelopes",
     "GraphSpec",
     "GaussianVersionPair",
     "BernoulliCommonUniformPair",
     "ReplayBenchmarkSpec",
+    "ReplayInformationSolution",
+    "minimum_information_cover",
     "replay_benchmark_v1",
     "ReplaySeparationBounds",
     "ThresholdFairnessReplayBounds",
