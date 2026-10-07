@@ -25,6 +25,7 @@ jobs:
       - run: python scripts/generate_replay_benchmark.py --output /tmp/replay_benchmark_v1.jsonl
       - run: python scripts/generate_subject_benchmark.py --output /tmp/software_subject_benchmark_v1.jsonl
       - run: python scripts/generate_counterfactual_benchmark.py --output /tmp/counterfactual_replay_benchmark_v1.jsonl
+      - run: python scripts/generate_threshold_replay_phase.py --output /tmp/threshold_replay_phase_v1.jsonl
       - run: python scripts/generate_partial_replay_benchmark.py --output /tmp/partial_replay_benchmark_v1.jsonl
       - run: python scripts/generate_partial_replay_structural_cases.py --output /tmp/partial_replay_structural_cases_v1.jsonl
       - run: python scripts/generate_partial_replay_scope_cases.py --output /tmp/partial_replay_scope_cases_v1.jsonl
