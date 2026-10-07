@@ -263,7 +263,11 @@ an arbitrary heterogeneous fairness-preserving null. The failure is
 constructive: with tau=0.20, old thresholds (0.20,0.40), new thresholds
 (0.30,0.45), and shared tape U=0.25, the new-version fairness gap is only 0.15
 but the patch-delta vector equals (1,0), so the homogeneous raw-contrast
-predicate rejects. The frozen scope-falsification manifest records this case.
+predicate rejects. More strongly, the predicate rejects on the disjoint tape
+regions (0.20,0.30] and (0.40,0.45], whose exact common-uniform measure is
+0.10+0.05=0.15. The frozen scope-falsification manifest records this case,
+and the executable regression reconstructs that measure from the threshold
+partition rather than trusting the stored scalar.
 Thus within-group patch deltas may differ without any fairness violation, and
 the zero-type-I argument genuinely fails beyond the stated scope.
 
