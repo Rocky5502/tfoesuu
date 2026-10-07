@@ -29,6 +29,8 @@ LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
 REF_RE = re.compile(r"\\(?:ref|pageref|eqref|cref|Cref)\{([^}]+)\}")
 CITE_RE = re.compile(r"\\(?:cite|citep|citet)\{([^}]+)\}")
 BIBKEY_RE = re.compile(r"@\w+\s*\{\s*([^,\s]+)\s*,", re.IGNORECASE)
+BIBENTRY_RE = re.compile(r"@(\w+)\s*\{\s*([^,\s]+)\s*,([\s\S]*?)\n\}", re.IGNORECASE)
+NON_DOI_PROVENANCE_KEYS = {"ProPublicaCOMPAS2016"}
 
 FROZEN_DATA_ROWS = {
     "benchmark_v1.jsonl": 384,
@@ -113,6 +115,13 @@ def main() -> None:
     bib_counts = Counter(bibkeys)
     duplicate_bib = sorted(k for k, n in bib_counts.items() if n > 1)
     missing_cites = sorted(set(cites) - set(bibkeys))
+    bib_entries = BIBENTRY_RE.findall(bib)
+    missing_doi = sorted(
+        key
+        for _, key, body in bib_entries
+        if key not in NON_DOI_PROVENANCE_KEYS
+        and not re.search(r"\bdoi\s*=", body, re.IGNORECASE)
+    )
 
     errors: list[str] = []
     if duplicate_labels:
@@ -123,6 +132,8 @@ def main() -> None:
         errors.append(f"duplicate BibTeX keys: {duplicate_bib}")
     if missing_cites:
         errors.append(f"missing BibTeX keys: {missing_cites}")
+    if missing_doi:
+        errors.append(f"peer-reviewed bibliography entries missing DOI: {missing_doi}")
 
 
     manuscript_text = "\n".join(text for _, text in docs)
