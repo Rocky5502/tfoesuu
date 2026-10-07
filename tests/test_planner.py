@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from tfoesuu.graphs import edge_graph, path_graph
+from tfoesuu.graphs import complete_bipartite_graph, edge_graph, path_graph
 from tfoesuu.planner import plan_bernoulli_replay, plan_gaussian_regression
 
 
@@ -171,4 +171,65 @@ def test_thresholded_four_way_plan_rejects_multiedge_scope():
             fairness_tolerance=0.10,
             d=0.01,
             beta=0.05,
+        )
+
+
+def test_p19_control_plan_requires_explicit_scope_and_tracks_execution_cost():
+    graph = complete_bipartite_graph(3, 2)
+    groups = [(0, 1), (1, 2), (0, 2)]
+    costs = [1.0, 1.0, 1.0]
+
+    with pytest.raises(ValueError, match="explicit acknowledgement"):
+        plan_bernoulli_replay(
+            graph,
+            "partial-bipartite-control",
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.10,
+            d=0.01,
+            beta=0.05,
+            groups=groups,
+            costs=costs,
+            high_vertices=(0, 1, 2),
+        )
+
+    plan = plan_bernoulli_replay(
+        graph,
+        "partial-bipartite-control",
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=0.05,
+        groups=groups,
+        costs=costs,
+        high_vertices=(0, 1, 2),
+        bipartite_control_family=True,
+    )
+
+    assert "P19" in plan.theorem_scope
+    assert plan.normalized_geometry == pytest.approx(1.5)
+    assert plan.group_counts is not None
+    expected = sum(
+        2 * count * len(group)
+        for count, group in zip(plan.group_counts, groups)
+    )
+    assert plan.concrete_program_executions == expected
+
+
+def test_p19_control_plan_rejects_nonpositive_tolerance():
+    graph = complete_bipartite_graph(2, 1)
+    with pytest.raises(ValueError, match="tau>0"):
+        plan_bernoulli_replay(
+            graph,
+            "partial-bipartite-control",
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.0,
+            d=0.01,
+            beta=0.05,
+            groups=[(0, 1)],
+            costs=[1.0],
+            high_vertices=(0, 1),
+            bipartite_control_family=True,
         )
