@@ -11,11 +11,12 @@ reproducibility role; row count is not treated as scientific evidence.
 | `software_subject_benchmark_v1.jsonl` | 32 | Executable randomized software-subject cases |
 | `counterfactual_replay_benchmark_v1.jsonl` | 144 | Four-way counterfactual replay across `p,s,d,beta` regimes |
 | `threshold_replay_phase_v1.jsonl` | 24 | P18 tolerance/effect-size phase-transition stress |
+| `control_replay_structural_cases_v1.jsonl` | 6 | P19 exact control-cover feasibility and weighted geometry fixtures |
 | `partial_replay_benchmark_v1.jsonl` | 168 | Partial-replay graph/group/cost/small-effect stress |
 | `partial_replay_structural_cases_v1.jsonl` | 8 | Exact equality, finite-gap, and infeasible-witness fixtures |
 | `partial_replay_scope_cases_v1.jsonl` | 1 | Deterministic heterogeneous-null counterexample |
 
-Total frozen specification rows: **815**.
+Total frozen specification rows: **821**.
 
 ## Coverage principles
 
