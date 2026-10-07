@@ -290,3 +290,39 @@ def test_all_candidates_control_covered_recover_linear_leading_regime():
     assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(
         2.0, rel=3e-3
     )
+
+
+def test_mixed_information_lp_prefers_first_order_controls_for_small_d():
+    graph, high = _family()
+    groups = [
+        (0, 1), (1, 2), (0, 2),  # matched high controls
+        (0, 3), (1, 3), (2, 3),  # cheaper boundary-only references
+    ]
+    costs = [1.0, 1.0, 1.0, 0.1, 0.1, 0.1]
+
+    floors = []
+    solutions = []
+    for d in (1e-4, 5e-5):
+        lower = control_replay_information_lower_bound(
+            graph,
+            groups,
+            costs,
+            high,
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.10,
+            d=d,
+            beta=0.05,
+        )
+        assert lower.success
+        floors.append(lower.expected_cost_floor)
+        solutions.append(lower.expected_query_counts)
+
+    # Despite their lower declared price, boundary-only queries carry only
+    # second-order information.  At sufficiently small d, the exact LP places
+    # all mass on the first-order matched-control channel.
+    for q in solutions:
+        assert np.allclose(q[3:], 0.0, atol=1e-8)
+        assert np.all(q[:3] > 0.0)
+
+    assert floors[1] / floors[0] == pytest.approx(2.0, rel=5e-4)
