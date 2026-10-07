@@ -86,6 +86,35 @@ two-class bipartite family. The next target is strictly broader:
 
 A rigorous impossibility/boundary theorem remains a successful outcome.
 
+### S1b — Mixed-control asymptotic stratification (falsification stage)
+
+Do not promote this as P20 yet.  P19's exact lower LP already implies a sharper
+question than the binary all-controls/no-controls split.  In a partially
+controlled topology, some alternatives have a first-order control-compatible
+channel while others are observable only through the second-order boundary
+channel.  For fixed positive tau,
+
+  K_ctrl(d) = Theta(d),    K_bnd(tau,d) = Theta(d^2).
+
+The immediate conjecture to attack is a lexicographic asymptotic description:
+boundary-only alternatives determine the d^-2 leading term; after satisfying
+those constraints, control-covered alternatives contribute a d^-1 correction.
+If every candidate is control-covered, the leading regime collapses to P19's
+d^-1 control-cover geometry.  If even one observable candidate lacks every
+control-compatible group, the total minimax information floor retains a d^-2
+leading term.
+
+Repository falsification support:
+- experiments/search_control_replay_mixed_geometry.py enumerates small legal
+  pair-group families and measures exact LP scaling under d -> d/2;
+- tests pin one mixed topology to the quadratic leading regime and an
+  all-covered topology to the linear leading regime.
+
+Required before theorem promotion: derive the singularly perturbed LP limit,
+identify its exact leading coefficient (not merely the exponent), determine
+whether an achievable tester matches that coefficient/order, and search for
+degenerate cost/group families that invalidate the naive lexicographic claim.
+
 ### S2 — Full thresholded fairness with retained certificate headroom
 
 Bridge the gap between patch-neutrality tests and the motivating thresholded
