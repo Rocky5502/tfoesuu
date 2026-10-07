@@ -157,6 +157,24 @@ def main() -> None:
             f"frozen benchmark inventory total drift: expected 791, found {observed_total}"
         )
 
+    public_registry = data_dir / "public_benchmark_registry_v1.jsonl"
+    if not public_registry.is_file():
+        errors.append(f"missing public benchmark registry: {public_registry}")
+    else:
+        public_rows = [
+            json.loads(line)
+            for line in public_registry.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        if len(public_rows) != 7:
+            errors.append(
+                f"{public_registry}: expected 7 public benchmark entries, "
+                f"found {len(public_rows)}"
+            )
+        public_ids = [row.get("benchmark_id") for row in public_rows]
+        if any(not value for value in public_ids) or len(set(public_ids)) != len(public_ids):
+            errors.append(f"{public_registry}: public benchmark IDs must be unique and non-empty")
+
     scope_path = data_dir / "partial_replay_scope_cases_v1.jsonl"
     if scope_path.is_file():
         scope_rows = [
