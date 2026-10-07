@@ -1,7 +1,7 @@
 # STOC 2027 submission compliance checklist
 
 Source of truth: official STOC 2027 Call for Papers. Re-check the live CFP before
-submission in case instructions change. Last live-CFP verification: **2026-10-06**.
+submission in case instructions change. Last live-CFP verification: **2026-10-08**.
 
 ## Dates
 
@@ -30,7 +30,9 @@ submission in case instructions change. Last live-CFP verification: **2026-10-06
 - [x] Hyperlinked cross-references via hyperref/cleveref.
 - [x] Alphanumeric bibliography style.
 - [ ] Title page contains final title, human authors/affiliations, and a contribution-focused abstract.
-- [ ] First 10–12 pages clearly explain importance, prior-work context, central technical ideas, theorem statements, and proof intuition to a broad TCS audience.
+- [x] Dedicated title/abstract page is separated from the technical manuscript.
+- [x] Reviewer-navigation table of contents appears immediately after the title page; the official CFP says this page does not count toward the first twelve pages.
+- [ ] First **12 pages following the title page** clearly explain importance, prior-work context, central technical ideas, theorem statements, and proof intuition to a broad TCS audience.
 - [ ] Main mathematical claims have proofs sufficient for verification.
 - [x] Bibliographic references are at the end of the technical manuscript; the mandatory AI Methodology disclosure follows them as the final paper statement.
 - [ ] Final PDF has no security restrictions on copying or printing.
@@ -46,7 +48,7 @@ manuscript structuring, so the disclosure is mandatory.
 Before submission:
 
 - [x] AI Methodology statement identifies ChatGPT/OpenAI.
-- [x] It states that research ideation, literature triage, proof exploration, code drafting, and manuscript drafting/structuring were materially influenced.
+- [x] It states that research ideation, literature triage, proof exploration, implementation/test drafting, and manuscript drafting/structuring were materially influenced, and identifies the affected manuscript/artifact scope.
 - [ ] Every theorem and proof has been independently checked by the human authors.
 - [ ] Every citation has been independently verified against an archival source.
 - [ ] Every implementation/result used in the paper has been reproduced by the human authors from the frozen repository commit.
@@ -64,7 +66,7 @@ Before submission:
 
 - [ ] Freeze submission git SHA.
 - [ ] Generate the whole-submission checksum manifest with `scripts/freeze_submission_artifacts.py --require-clean`.
-- [ ] Freeze benchmark manifests and SHA-256 hashes, including the 168-row P17 stress grid, the separate 8-row P17 structural-case manifest, and the deterministic P17 scope-falsification manifest.
+- [ ] Freeze benchmark manifests and SHA-256 hashes, including the 24-row P18 phase grid, the 168-row P17 stress grid, the separate 8-row P17 structural-case manifest, and the deterministic P17 scope-falsification manifest.
 - [ ] Run CPU CI from a clean checkout.
 - [ ] Run the 168-row P17 executable manifest validator and archive its deterministic validation summary.
 - [ ] Run staged GPU publication sweeps only on frozen theorem configurations.
