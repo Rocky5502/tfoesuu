@@ -173,6 +173,21 @@ experimental design, fractional covering/sampling designs, CRN ranking and
 selection, and stochastic monitoring. Fractional cover, CRN, coupling, and
 subset queries are established ingredients and must never be claimed novel.
 
+### S5b — Replay phase-transition benchmark contract
+
+Before GPU execution, maintain a deterministic phase-grid specification rather
+than adding public datasets for count.  The grid varies d and tau/d for P18 and
+uses only the theorem-backed P19 control-coverage extremes rho=0 and rho=1.
+Intermediate 0<rho<1 remains a falsification domain until the mixed-control
+singular LP is proved or refuted.  The specification lives in
+`src/tfoesuu/replay_phase_benchmarks.py` and is guarded against accidental
+claim expansion by `tests/test_replay_phase_benchmarks.py`.
+
+Replay fidelity is recorded as a field but is frozen at 1.0 in v1.  No theorem
+currently supports a partial-fidelity exponent, so gamma-like replay-quality
+sweeps must not be interpreted as predicted phase transitions until a formal
+access model exists.
+
 ### S7 — Compact theorem-validation experiments
 
 Keep experiments subordinate to proofs. Validate predicted scaling and structural
