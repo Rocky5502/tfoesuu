@@ -6,6 +6,7 @@ from typing import Iterable, Literal, Mapping, Sequence
 import numpy as np
 
 from .certificate import prune_with_patch_envelopes
+from .control_replay import matched_control_replay_schedule
 from .graphs import Edge, GraphSpec
 from .partial_replay_lower import active_vertex_contrast_schedule
 from .separations import (
@@ -23,6 +24,7 @@ ReplayMode = Literal[
     "four-way-thresholded-one-edge",
     "suite-homogeneous",
     "partial-homogeneous",
+    "partial-bipartite-control",
 ]
 
 
@@ -107,8 +109,10 @@ def plan_bernoulli_replay(
     shared_patch: float = 0.0,
     fairness_tolerance: float = 0.0,
     groups: Iterable[Iterable[int]] | None = None,
+    high_vertices: Iterable[int] | None = None,
     costs: Sequence[float] | None = None,
     homogeneous_single_changed_endpoint: bool = False,
+    bipartite_control_family: bool = False,
 ) -> TFOESUUPlan:
     """Plan one proved Bernoulli replay schedule and fail closed otherwise."""
 
@@ -231,6 +235,62 @@ def plan_bernoulli_replay(
             notes=(
                 "One tape is shared across both versions at every active vertex.",
                 "Round complexity is independent of fairness-edge count only in the audited family.",
+            ),
+        )
+
+    if mode == "partial-bipartite-control":
+        if not bipartite_control_family:
+            raise ValueError(
+                "P19 planning requires explicit acknowledgement of the "
+                "bipartite two-class matched-control theorem scope"
+            )
+        if groups is None or costs is None or high_vertices is None:
+            raise ValueError(
+                "partial-bipartite-control requires legal groups, costs, "
+                "and high-side candidate vertices"
+            )
+        if not (
+            0.0 < p < 1.0
+            and shared_patch >= 0.0
+            and fairness_tolerance > 0.0
+            and d > 0.0
+            and p + shared_patch + fairness_tolerance + d < 1.0
+        ):
+            raise ValueError(
+                "P19 requires p in (0,1), shared_patch>=0, tau>0, d>0, "
+                "and p+shared_patch+tau+d<1"
+            )
+        group_list = tuple(tuple(int(v) for v in group) for group in groups)
+        high_list = tuple(int(v) for v in high_vertices)
+        schedule = matched_control_replay_schedule(
+            graph,
+            group_list,
+            costs,
+            high_list,
+            d=d,
+            beta=beta,
+        )
+        executions = sum(
+            2 * int(count) * len(group)
+            for count, group in zip(schedule.counts, group_list)
+        )
+        return TFOESUUPlan(
+            mode=mode,
+            theorem_scope=(
+                "P19 bipartite two-class matched-background control replay"
+            ),
+            safe_edges=(),
+            residual_edges=graph.edges,
+            rounds=int(schedule.counts.sum()),
+            concrete_program_executions=executions,
+            vertex_counts=None,
+            group_counts=tuple(int(x) for x in schedule.counts),
+            normalized_geometry=float(
+                schedule.normalized_control_cover_cost
+            ),
+            notes=(
+                "The high/low null classes and tolerance boundary must be certified externally.",
+                "Matched controls restore the sparse d^-1 regime only in the audited P19 family.",
             ),
         )
 
