@@ -15,6 +15,7 @@
 | Pairwise graph design | Scandinavian Journal of Statistics and older design literature | Inventing graph allocation | Regression-specific `Psi` plus lower bounds in the coupled software oracle |
 | Fractional set/group cover | Classical combinatorial optimization | Inventing fractional cover or LP rounding | How legal replay-group structure controls fairness-regression witness scheduling after software evolution |
 | Group/subset querying | Group testing, active search, and simulation design | Inventing subset queries | Distinguishing edge-witness geometry from raw endpoint-information geometry under replay-compatible software groups |
+| Matched-background controls | Blocking, matched comparisons, and common-random-number simulation are classical | Inventing matched controls or blocking | Exact mixed-information LP and fractional control-cover geometry showing when replay topology restores first-order information under a heterogeneous fairness-preserving null |
 | Incremental verification | ISSTA/PACMSE and prior verification literature | Inventing incremental verification | Statistical rather than proof-reuse complexity for fairness under execution noise |
 
 ## Submission-level novelty test
@@ -31,9 +32,10 @@ Current high-value results/targets:
 6. **proved LP-geometry structure:** coherent group signatures give equality, K_n pair groups give C_edge/C_vert=n-1, and a path/reference construction gives finite C_vert with infeasible C_edge; these are not minimax statements;
 7. **proved + audited:** a within-group raw patch-delta contrast schedule attains the C_vert geometry in the frozen homogeneous single-changed-endpoint family, yielding matching lower/upper combinatorial geometry and d^-1 fixed-confidence order; CRN/multiple-comparison techniques themselves are established prior art;
 8. **proved + audited:** one-edge thresholded synchronized replay has `Theta((tau+d)d^-2 log(1/delta))` complexity under an interior condition, identifying the phase boundary between sparse `d^-1` replay and fixed-tolerance `d^-2` testing;
-9. **open:** characterize graph/group partial replay under heterogeneous/composite fairness-preserving nulls beyond the one-edge P18 characterization;
-10. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
-11. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
-12. **open:** amortized complexity across multiple software versions.
+9. **proved + audited in scoped family:** matched-background controls yield an exact mixed-KL lower program and a fractional `C_ctrl` upper schedule in a bipartite two-class heterogeneous null, restoring `d^-1` when control-coverable and leaving `d^-2` when controls are absent;
+10. **open:** characterize arbitrary heterogeneous/composite partial replay with multiple background levels, imperfect control classes, or unknown control membership;
+11. **open:** full fairness-regression complexity with instance-dependent old-certificate headroom;
+12. **open:** graph-level bounded/Bernoulli complexity that combines sparse deltas with shared vertices;
+13. **open:** amortized complexity across multiple software versions.
 
 A reviewer should be able to remove every generic ingredient above and still identify a theorem whose statement fundamentally depends on **software evolution and version-aware access**.
