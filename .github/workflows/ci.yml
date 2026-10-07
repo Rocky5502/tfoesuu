@@ -27,6 +27,8 @@ jobs:
       - run: python scripts/generate_partial_replay_benchmark.py --output /tmp/partial_replay_benchmark_v1.jsonl
       - run: python scripts/generate_partial_replay_structural_cases.py --output /tmp/partial_replay_structural_cases_v1.jsonl
       - run: python scripts/generate_partial_replay_scope_cases.py --output /tmp/partial_replay_scope_cases_v1.jsonl
+      - run: python scripts/generate_public_benchmark_registry.py --output /tmp/public_benchmark_registry_v1.jsonl
+      - run: python scripts/summarize_submission_evidence.py --output /tmp/submission_evidence.json
       - run: python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
       - run: python experiments/run_gaussian_core.py --graph star --n 8 --trials 500 --gamma 0.7 --beta 0.05
       - run: python experiments/run_replay_separation.py --p 0.5 --d 0.05 --beta 0.05 --trials 1000
