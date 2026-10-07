@@ -47,6 +47,19 @@ def cpu_plan(trials: int) -> list[tuple[str, list[str]]]:
                 "data/control_replay_structural_cases_v1.jsonl",
             ],
         ),
+        (
+            "replay_phase_contract",
+            [py, "experiments/validate_replay_phase_contract.py"],
+        ),
+        (
+            "mixed_control_geometry_search",
+            [
+                py,
+                "experiments/search_control_replay_mixed_geometry.py",
+                "--top",
+                "20",
+            ],
+        ),
     ]
 
     for graph in ("matching", "star", "path", "clique"):
