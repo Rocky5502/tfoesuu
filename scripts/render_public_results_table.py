@@ -19,6 +19,25 @@ def _fmt_count(value: float) -> str:
     return f"{value:,.1f}"
 
 
+def _wilson_interval(
+    count: int,
+    trials: int,
+    z: float = 1.959963984540054,
+) -> tuple[float, float]:
+    p = count / trials
+    denom = 1.0 + z * z / trials
+    center = (p + z * z / (2.0 * trials)) / denom
+    half = (
+        z
+        * np.sqrt(
+            p * (1.0 - p) / trials
+            + z * z / (4.0 * trials * trials)
+        )
+        / denom
+    )
+    return max(0.0, center - half), min(1.0, center + half)
+
+
 def render_table(rows, output: Path, patch_size: float | None = None) -> float:
     validate_public_result_matrix(rows)
     available = sorted({row.patch_size for row in rows})
@@ -52,7 +71,7 @@ def render_table(rows, output: Path, patch_size: float | None = None) -> float:
         "\\resizebox{\\textwidth}{!}{%",
         "\\begin{tabular}{@{}lrrrrrrrrr@{}}",
         "\\toprule",
-        "Dataset & $|V|$ & $|E|$ & Independent & Vertex-paired & Four-way & Suite & TFOESUU & Max error \\\\",
+        "Dataset & $|V|$ & $|E|$ & Independent & Vertex-paired & Four-way & Suite & TFOESUU & Max error (95\\% CI) & Speedup \\\\",
         "\\midrule",
     ]
     for dataset_id in sorted(grouped, key=lambda key: meta[key].dataset_name):
