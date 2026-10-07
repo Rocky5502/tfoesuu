@@ -63,7 +63,10 @@ already-audited components while enforcing their scope in the API.
   homogeneous single-changed-endpoint scope.
 - `mode="partial-bipartite-control"` delegates to the P19 matched-control
   schedule and requires explicit acknowledgement of the two-class bipartite
-  null plus declared high-side candidate vertices.
+  null plus declared high-side candidate vertices. It fails closed when any
+  candidate lacks a legal matched-background control group: the P19 mixed-KL
+  lower program may remain finite through boundary-only information there, but
+  no linear-regime upper schedule is promoted by the planner.
 
 `tests/test_planner.py` guards zero-query pruning, concrete execution
 accounting, single-edge scope rejection, suite execution cost, and the explicit
