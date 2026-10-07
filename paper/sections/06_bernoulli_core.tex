@@ -625,10 +625,15 @@ miss probability is at most \((1-d)^L\le\delta\).
 
 For (iii), expand the two exact KL expressions.  In the lower LP, scaling
 \(z_i=d\,n_i/\kl(1-\delta,\delta)\) makes the coefficient of \(C\) converge to
-one and the coefficient of \(R\) converge to zero.  Finite-dimensional LP
-continuity therefore yields the control-cover geometry when it is feasible.
-If candidate \(x\) has no control-compatible group, its information constraint
-contains only \(K_{\rm bnd}=\Theta(d^2)\), giving the quadratic lower bound.
+one and the coefficient of \(R\) converge to zero.  A feasible control-cover
+solution gives a uniform upper bound on the scaled optimum.  Because every
+\(c_i>0\), any sequence of scaled optimizers therefore has bounded
+coordinates; every convergent subsequence has a limit satisfying
+\(Cz\ge\mathbf 1\).  Consequently the lower limit of the scaled objective is
+at least \(C_{\rm ctrl}\), while the control-cover solution gives the matching
+upper limit.  If candidate \(x\) has no control-compatible group, its
+information constraint contains only \(K_{\rm bnd}=\Theta(d^2)\), giving the
+quadratic lower bound.
 \end{proof}
 
 \begin{corollary}[Replay topology changes the small-effect exponent]
