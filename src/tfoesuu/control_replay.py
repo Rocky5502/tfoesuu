@@ -38,6 +38,18 @@ class ControlReplayInformationLowerBound:
 
 
 @dataclass(frozen=True)
+class MixedControlLeadingCoefficient:
+    """Candidate d^-2 coefficient of the exact P19 information lower LP."""
+
+    coefficient: float
+    scaled_query_weights: np.ndarray
+    uncovered_high_vertices: tuple[int, ...]
+    boundary_quadratic_coefficient: float
+    success: bool
+    message: str
+
+
+@dataclass(frozen=True)
 class ControlReplaySchedule:
     """Zero-type-I matched-control schedule for the P19 family."""
 
@@ -232,6 +244,86 @@ def control_replay_information_lower_bound(
         k_boundary,
         True,
         str(res.message),
+    )
+
+
+def mixed_control_leading_coefficient(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+    high_vertices: Iterable[int],
+    *,
+    p: float,
+    shared_patch: float,
+    fairness_tolerance: float,
+    beta: float,
+) -> MixedControlLeadingCoefficient:
+    """Leading d^-2 coefficient for P19 alternatives lacking a control channel.
+
+    This is an asymptotic object for the exact information lower LP, not an
+    achievable testing guarantee.  For fixed positive tolerance, candidates
+    with no legal matched-high control receive only boundary information with
+    K_boundary(d) = b2*d^2 + O(d^3).
+    """
+
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+    tau = float(fairness_tolerance)
+    s = float(shared_patch)
+    if not (0.0 < p < 1.0 and s >= 0.0 and tau > 0.0 and p + s + tau < 1.0):
+        raise ValueError(
+            "leading mixed-control coefficient requires p in (0,1), "
+            "shared_patch>=0, fixed tau>0, and p+shared_patch+tau<1"
+        )
+
+    high = _validate_bipartite_threshold_family(graph, high_vertices)
+    high_set = set(high)
+    gs = _canonical_groups(graph, groups)
+    c = _validate_costs(gs, costs)
+
+    control = np.zeros((len(high), len(gs)), dtype=float)
+    for xi, x in enumerate(high):
+        for gi, group in enumerate(gs):
+            if x in group and sum(v in high_set for v in group) >= 2:
+                control[xi, gi] = 1.0
+    uncovered_idx = tuple(i for i in range(len(high)) if control[i].sum() == 0.0)
+    uncovered = tuple(high[i] for i in uncovered_idx)
+
+    r = 1.0 - p - s - tau
+    b2 = 0.5 * (1.0 / tau + 1.0 / r)
+    if not uncovered:
+        return MixedControlLeadingCoefficient(
+            0.0, np.zeros(len(gs)), (), b2, True,
+            "all high-side alternatives have a first-order control channel",
+        )
+
+    boundary = np.zeros((len(uncovered), len(gs)), dtype=float)
+    for ui, xi in enumerate(uncovered_idx):
+        x = high[xi]
+        for gi, group in enumerate(gs):
+            if x in group:
+                boundary[ui, gi] = b2
+
+    if np.any(boundary.sum(axis=1) == 0.0):
+        return MixedControlLeadingCoefficient(
+            float("inf"), np.zeros(len(gs)), uncovered, b2, False,
+            "some control-uncovered alternative is absent from every legal replay group",
+        )
+
+    target = binary_decision_kl(beta)
+    res = linprog(
+        c,
+        A_ub=-boundary,
+        b_ub=-target * np.ones(len(uncovered)),
+        bounds=[(0.0, None)] * len(gs),
+        method="highs",
+    )
+    if not res.success:
+        return MixedControlLeadingCoefficient(
+            float("inf"), np.zeros(len(gs)), uncovered, b2, False, str(res.message)
+        )
+    return MixedControlLeadingCoefficient(
+        float(res.fun), np.asarray(res.x), uncovered, b2, True, str(res.message)
     )
 
 
