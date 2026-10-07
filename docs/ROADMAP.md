@@ -12,6 +12,7 @@ P14 shows how sound static patch-effect envelopes prune fairness edges with zero
 P15 shows that four-way replay across both versions and both counterfactual endpoints cancels a nonzero common patch effect and changes differential-gap complexity from Theta(d^-2) to Theta(d^-1).
 P16 lifts synchronized replay to the full active fairness suite: round complexity is independent of edge count and concrete execution complexity is Theta(n_active log(1/delta)/d) in the audited homogeneous Bernoulli family.
 P17 has a corrected two-matrix formulation for partial synchronized replay. The LP geometries are structurally separated by exact fixtures, and an audited raw-output contrast construction attains the active-vertex C_vert geometry in the frozen homogeneous single-changed-endpoint family. Broader heterogeneous/composite-null partial replay remains open.
+P18 characterizes the one-edge thresholded composite-null boundary: synchronized replay costs Theta((tau+d)d^-2 log(1/delta)), so tau=O(d) retains the linear d^-1 regime while any fixed positive tolerance restores d^-2 scaling.
 
 See docs/PROOF_STATUS.md and docs/PROOF_AUDIT_P17_FRACTIONAL_REPLAY.md for exact audit status.
 
@@ -28,13 +29,15 @@ while raw transcript change-of-measure reduces exactly to the active-vertex/grou
 
 The corrected lower floor is [kl(1-beta,beta)/K_sync] C_vert. The audited active-vertex raw-contrast theorem uses q* from the same LP, L=ceil(log(beta)/log(1-d)), and n_i=ceil(L q_i*) to obtain zero type-I error and pointwise type-II error at most beta in the frozen homogeneous family, at cost at most L C_vert plus rounding support cost.
 
-A deterministic heterogeneous-null counterexample now closes off the naive
+A deterministic heterogeneous-null counterexample closes off the naive
 generalization route: for tau=0.20, old thresholds (0.20,0.40), new thresholds
 (0.30,0.45), and U=0.25, the new program remains fair (gap 0.15) while the raw
-patch-delta contrast fires. The next theorem target is therefore not "reuse the
-same contrast under heterogeneity." It is to identify extra replay/control
-structure, a baseline-adjusted statistic, or a sharper decision geometry that
-restores uniform validity under the composite null.
+patch-delta contrast fires. P18 now resolves the one-edge thresholded analogue
+and shows that fixed positive benign disparity fundamentally restores quadratic
+small-effect scaling. The remaining target is therefore genuinely graph/group
+structured: identify extra replay/control structure, a baseline-adjusted
+statistic, or a sharper decision geometry for heterogeneous composite nulls
+under partial replay.
 
 Keep the raw-contrast claim explicitly scoped to the homogeneous single-changed-endpoint family until a broader composite-null theorem passes its own proof/audit gates.
 
