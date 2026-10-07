@@ -1,0 +1,46 @@
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw=black!28, rounded corners=2pt, fill=white,
+              minimum height=1.85cm, text width=4.15cm, align=left,
+              inner sep=7pt, font=\small},
+  sparse/.style={box, draw=focalteal, line width=0.85pt, fill=focalteal!5},
+  dense/.style={box, draw=risktone, line width=0.85pt, fill=risktone!4},
+  flow/.style={->, line width=0.8pt, draw=black!55},
+  note/.style={font=\footnotesize, text=black!68, align=center}
+]
+\node[sparse] (zero) {
+  \textbf{Zero background gap}\\[2pt]
+  $\tau=0$\\
+  sparse witness under the null\\[2pt]
+  $Q=\Theta(d^{-1}\log(1/\delta))$
+};
+\node[sparse, right=0.62cm of zero] (matched) {
+  \textbf{Matched-scale tolerance}\\[2pt]
+  $\tau=\Theta(d)$\\
+  background and alternative shrink together\\[2pt]
+  $Q=\Theta(d^{-1}\log(1/\delta))$
+};
+\node[dense, right=0.62cm of matched] (fixed) {
+  \textbf{Fixed positive tolerance}\\[2pt]
+  $\tau>0$ fixed as $d\to0$\\
+  null already has nonzero mismatch mass\\[2pt]
+  $Q=\Theta(d^{-2}\log(1/\delta))$
+};
+\draw[flow] (zero) -- (matched);
+\draw[flow] (matched) -- (fixed);
+\node[note, below=0.42cm of matched, text width=13.2cm] {
+  Exact one-edge interpolation:
+  $\displaystyle Q_{\rm thr}(\tau,d,\delta)
+  =\Theta\!\left((\tau+d)d^{-2}\log(1/\delta)\right)$
+  under the stated interior condition.
+};
+\end{tikzpicture}
+\caption{The P18 replay phase transition.  Synchronized replay is linearly
+sensitive to a differential effect only while the fairness-permitted background
+gap is zero or on the same scale as the effect.  A fixed positive tolerance
+creates ordinary interior Bernoulli noise and restores quadratic local testing
+complexity.  The figure summarizes the proved one-edge theorem; it contains no
+empirical estimates.}
+\label{fig:threshold-replay-phase}
+\end{figure}
