@@ -20,3 +20,7 @@ paper/*.pdf
 *.egg-info/
 build/
 dist/
+
+# Downloaded/prepared public benchmark data (recreated from frozen registry/protocol)
+data/public_cache/
+data/public_prepared/
