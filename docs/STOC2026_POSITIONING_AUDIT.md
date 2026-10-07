@@ -74,7 +74,7 @@ long chronological debugging story.
 
 STOC 2026 includes many papers with no benchmark-style empirical section. For
 TFOESUU, deterministic theorem fixtures and synthetic stress tests are useful
-for falsification and artifact review, but the manuscript must not make "791
+for falsification and artifact review, but the manuscript must not make "815
 rows" sound like the scientific contribution. Public datasets can demonstrate
 that the execution model is realizable, but they cannot rescue a weak theorem
 story and should remain secondary.
@@ -100,13 +100,8 @@ information-theoretic optima.
 
 ## Discovery queue
 
-1. **Psi conic representation.** Prove an exact rotated-SOC formulation and
-   audit it independently.
-2. **Heterogeneous P17 composite null.** Search for a baseline-adjusted
-   within-group statistic or extra control structure that restores type-I
-   validity.
-3. **Multi-version amortization.** Look for a dynamic potential depending on
-   cumulative changed structure rather than T fresh audits.
-4. **Query/time separation.** After the conic result, decide whether a genuine
-   computational lower/upper question remains rather than adding computation
-   claims merely for style.
+1. **Completed supporting result: Psi conic representation.** The exact rotated-SOC formulation is proved, independently audited, executable-certified, and manuscript-synchronized; it is explicitly not a novelty claim.
+2. **Completed scoped discovery: P18 thresholded replay phase.** One-edge synchronized replay has `Theta((tau+d)d^-2 log(1/delta))` complexity under an interior condition, explaining the `d^-1` to `d^-2` boundary.
+3. **Next: heterogeneous P17 graph/group composite null.** Use P18 as the one-edge boundary condition and search for a baseline-adjusted statistic or new group geometry rather than reusing raw contrast.
+4. **Multi-version amortization.** Look for a dynamic potential depending on cumulative changed structure rather than T fresh audits.
+5. **Query/time separation.** Decide whether a genuine computational complexity question remains after the conic/LP computability facts are made explicit.
