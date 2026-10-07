@@ -132,6 +132,21 @@ quadratic regime back; and
 over 815 frozen specification rows, including exact structural fixtures and a
 positive-measure counterexample that prevents overgeneralizing P17.
 \end{enumerate}
+\paragraph{Technical ideas.}
+Four proof mechanisms drive the results.  First, old--new paired executions turn
+a versioned testing problem into estimation of patch deltas; sharing one vertex
+sample across all incident fairness edges leads to the convex graph allocation
+$\Psi(H,\nu)$, while transcript change of measure yields the adaptive lower
+bound.  Second, common-uniform replay converts a sufficiently small differential
+patch into a sparse pathwise witness, explaining the $d^{-1}$ regime.  Third,
+P18 identifies the exact boundary of that mechanism: once the null contains a
+fixed positive mismatch mass, first-order KL cancellation returns and local
+testing becomes quadratic in $1/d$.  Fourth, under restricted group replay the
+relevant incidence structure depends on what the transcript exposes: edge
+witnesses induce $C_{\rm edge}$, whereas raw endpoint information collapses to
+the active-vertex geometry $C_{\rm vert}$.  These ideas are summarized in
+\Cref{fig:overview} and made executable by \Cref{alg:tfoesuu}.
+
 The computational layer is reported in \Cref{sec:evaluation}. It is explicitly
 subordinate to the proof ledger: deterministic specification checks are labeled
 as such, and stochastic publication results are reported only after a frozen
