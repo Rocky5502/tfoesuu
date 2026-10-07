@@ -102,6 +102,8 @@ information-theoretic optima.
 
 1. **Completed supporting result: Psi conic representation.** The exact rotated-SOC formulation is proved, independently audited, executable-certified, and manuscript-synchronized; it is explicitly not a novelty claim.
 2. **Completed scoped discovery: P18 thresholded replay phase.** One-edge synchronized replay has `Theta((tau+d)d^-2 log(1/delta))` complexity under an interior condition, explaining the `d^-1` to `d^-2` boundary.
-3. **Next: heterogeneous P17 graph/group composite null.** Use P18 as the one-edge boundary condition and search for a baseline-adjusted statistic or new group geometry rather than reusing raw contrast.
-4. **Multi-version amortization.** Look for a dynamic potential depending on cumulative changed structure rather than T fresh audits.
-5. **Query/time separation.** Decide whether a genuine computational complexity question remains after the conic/LP computability facts are made explicit.
+3. **Completed discovery: P19 matched-control recovery.** In a bipartite two-class heterogeneous null, the exact group-query KL is first order when a matched-background control is present and second order for boundary-only groups. This yields the mixed-information LP, the fractional `C_ctrl` upper geometry, and a clean replay-topology `d^-1` versus `d^-2` separation.
+4. **Next: arbitrary heterogeneous P17/P19 extension.** Generalize beyond known two-class controls to multiple/unknown background levels or prove an impossibility boundary.
+5. **Gaussian log-gap audit.** Generic adaptive dimension-penalty removal collides with sequential sparse-testing prior art; any result must exploit shared-vertex graph structure.
+6. **Multi-version amortization.** Look for a dynamic potential depending on cumulative changed structure rather than T fresh audits.
+7. **Query/time separation.** Decide whether a genuine computational complexity question remains after the conic/LP computability facts are made explicit.
