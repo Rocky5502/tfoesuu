@@ -33,6 +33,7 @@ def test_public_result_renderer_smoke(tmp_path: Path):
                         trials=1000,
                         graph_vertices=2 * edges,
                         graph_edges=edges,
+                        affected_fraction=0.10,
                         impacted_edges=max(1, edges // 10),
                         replay_rounds=base * multiplier / 4.0,
                         concrete_program_executions=base * multiplier,
