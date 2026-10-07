@@ -84,6 +84,7 @@ scripts/
   generate_replay_benchmark.py
   generate_subject_benchmark.py
   generate_counterfactual_benchmark.py
+  generate_threshold_replay_phase.py
   generate_partial_replay_benchmark.py
   generate_partial_replay_structural_cases.py
   generate_partial_replay_scope_cases.py
@@ -101,6 +102,7 @@ data/
   replay_benchmark_v1.jsonl
   software_subject_benchmark_v1.jsonl
   counterfactual_replay_benchmark_v1.jsonl  144 frozen P15 configurations
+  threshold_replay_phase_v1.jsonl            24 frozen P18 tolerance/effect specifications
   partial_replay_benchmark_v1.jsonl          168 frozen P17 parameter-stress rows
   partial_replay_structural_cases_v1.jsonl   8 exact P17 structural theorem fixtures
   partial_replay_scope_cases_v1.jsonl        deterministic P17 scope counterexamples
@@ -131,6 +133,7 @@ python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
 python scripts/generate_subject_benchmark.py --output data/software_subject_benchmark_v1.jsonl
 python scripts/generate_counterfactual_benchmark.py --output data/counterfactual_replay_benchmark_v1.jsonl
+python scripts/generate_threshold_replay_phase.py --output data/threshold_replay_phase_v1.jsonl
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
@@ -178,7 +181,7 @@ The Overleaf-ready paper now contains, in the main compiled closure:
 - a front-of-paper theorem/results-at-a-glance table;
 - an executable high-level TFOESUU algorithm;
 - explicit RQ1--RQ4;
-- the complete 791-row deterministic specification inventory;
+- the complete 815-row deterministic specification inventory;
 - a deterministic audit-results table;
 - an exact P17 structural/scope figure;
 - a separate seven-public-dataset registry that remains preregistered until its
