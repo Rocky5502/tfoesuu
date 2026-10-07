@@ -26,6 +26,8 @@ class PublicResultRow:
     impacted_edges: int
     replay_rounds: float
     concrete_program_executions: float
+    type_i_error_count: int
+    type_ii_error_count: int
     type_i_error: float
     type_ii_error: float
     seed: int
@@ -56,12 +58,22 @@ def validate_public_result_row(row: PublicResultRow) -> None:
         raise ValueError("replay_rounds must be positive")
     if row.concrete_program_executions <= 0:
         raise ValueError("concrete_program_executions must be positive")
+    for name, count in (
+        ("type_i_error_count", row.type_i_error_count),
+        ("type_ii_error_count", row.type_ii_error_count),
+    ):
+        if not (0 <= count <= row.trials):
+            raise ValueError(f"{name} must lie in [0,trials]")
     for name, value in (
         ("type_i_error", row.type_i_error),
         ("type_ii_error", row.type_ii_error),
     ):
         if not (0.0 <= value <= 1.0):
             raise ValueError(f"{name} must lie in [0,1]")
+    if abs(row.type_i_error - row.type_i_error_count / row.trials) > 1e-12:
+        raise ValueError("type_i_error does not match count/trials")
+    if abs(row.type_ii_error - row.type_ii_error_count / row.trials) > 1e-12:
+        raise ValueError("type_ii_error does not match count/trials")
     if len(row.dataset_sha256) != 64:
         raise ValueError("dataset_sha256 must be a 64-character hex digest")
     int(row.dataset_sha256, 16)
