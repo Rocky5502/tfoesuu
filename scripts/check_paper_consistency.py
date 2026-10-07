@@ -15,6 +15,7 @@ This complements, rather than replaces, a real LaTeX compile.
 from __future__ import annotations
 
 from collections import Counter
+import json
 from pathlib import Path
 import re
 import sys
@@ -28,6 +29,27 @@ LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
 REF_RE = re.compile(r"\\(?:ref|pageref|eqref|cref|Cref)\{([^}]+)\}")
 CITE_RE = re.compile(r"\\(?:cite|citep|citet)\{([^}]+)\}")
 BIBKEY_RE = re.compile(r"@\w+\s*\{\s*([^,\s]+)\s*,", re.IGNORECASE)
+
+FROZEN_DATA_ROWS = {
+    "benchmark_v1.jsonl": 384,
+    "replay_benchmark_v1.jsonl": 54,
+    "software_subject_benchmark_v1.jsonl": 32,
+    "counterfactual_replay_benchmark_v1.jsonl": 144,
+    "partial_replay_benchmark_v1.jsonl": 168,
+    "partial_replay_structural_cases_v1.jsonl": 8,
+    "partial_replay_scope_cases_v1.jsonl": 1,
+}
+REQUIRED_PAPER_MARKERS = {
+    r"\label{fig:overview}": "overview figure",
+    r"\label{alg:tfoesuu}": "algorithmic framework",
+    r"\label{sec:evaluation}": "evaluation section",
+    r"\textbf{RQ1}": "RQ1",
+    r"\textbf{RQ2}": "RQ2",
+    r"\textbf{RQ3}": "RQ3",
+    r"\textbf{RQ4}": "RQ4",
+    r"\label{tab:benchmark-inventory}": "benchmark inventory table",
+    r"\label{tab:deterministic-evidence}": "deterministic evidence table",
+}
 
 
 def resolve_input(parent: Path, raw: str) -> Path:
@@ -88,6 +110,85 @@ def main() -> None:
         errors.append(f"duplicate BibTeX keys: {duplicate_bib}")
     if missing_cites:
         errors.append(f"missing BibTeX keys: {missing_cites}")
+
+
+    manuscript_text = "\n".join(text for _, text in docs)
+    for marker, name in REQUIRED_PAPER_MARKERS.items():
+        if marker not in manuscript_text:
+            errors.append(f"missing required manuscript component: {name}")
+
+    data_dir = Path("data")
+    observed_total = 0
+    for filename, expected_rows in FROZEN_DATA_ROWS.items():
+        path = data_dir / filename
+        if not path.is_file():
+            errors.append(f"missing frozen data artifact: {path}")
+            continue
+        rows = [
+            json.loads(line)
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        observed_total += len(rows)
+        if len(rows) != expected_rows:
+            errors.append(
+                f"{path}: expected {expected_rows} frozen rows, found {len(rows)}"
+            )
+        ids = [
+            row.get("benchmark_id")
+            or row.get("case_id")
+            or row.get("subject_id")
+            or row.get("id")
+            for row in rows
+        ]
+        ids = [value for value in ids if value is not None]
+        if ids and len(set(ids)) != len(ids):
+            errors.append(f"{path}: duplicate frozen row identifiers")
+
+    if observed_total != 791:
+        errors.append(
+            f"frozen benchmark inventory total drift: expected 791, found {observed_total}"
+        )
+
+    scope_path = data_dir / "partial_replay_scope_cases_v1.jsonl"
+    if scope_path.is_file():
+        scope_rows = [
+            json.loads(line)
+            for line in scope_path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        if len(scope_rows) == 1:
+            row = scope_rows[0]
+            cuts = sorted({
+                0.0,
+                float(row["old_threshold_0"]),
+                float(row["old_threshold_1"]),
+                float(row["new_threshold_0"]),
+                float(row["new_threshold_1"]),
+                1.0,
+            })
+            measure = 0.0
+            for left, right in zip(cuts, cuts[1:]):
+                if right <= left:
+                    continue
+                u = (left + right) / 2.0
+                old = [
+                    int(u <= float(row["old_threshold_0"])),
+                    int(u <= float(row["old_threshold_1"])),
+                ]
+                new = [
+                    int(u <= float(row["new_threshold_0"])),
+                    int(u <= float(row["new_threshold_1"])),
+                ]
+                deltas = [new_i - old_i for old_i, new_i in zip(old, new)]
+                if len(set(deltas)) > 1:
+                    measure += right - left
+            expected_measure = float(row["expected_false_positive_measure"])
+            if abs(measure - expected_measure) > 1e-12:
+                errors.append(
+                    "P17 scope measure drift between executable threshold geometry "
+                    "and frozen scope manifest"
+                )
 
     forbidden = {
         "arXiv preprint": re.compile(r"arXiv\s+preprint", re.IGNORECASE),
