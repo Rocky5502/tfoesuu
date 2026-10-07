@@ -1,0 +1,37 @@
+\begin{table}[t]
+\centering
+\caption{Main complexity results at a glance.  Orders suppress universal constants;
+$\delta$ is the target error probability.  Rows state proved scope only.}
+\label{tab:main-results}
+\small
+\begin{tabular}{@{}p{0.24\textwidth}p{0.25\textwidth}p{0.28\textwidth}p{0.16\textwidth}@{}}
+\toprule
+Setting & Reused information / access & Fixed-confidence cost & Status \\
+\midrule
+Gaussian patch neutrality & Old/new paired deltas on residual graph $H$ &
+$\Theta(\Psi(H,\nu)\gamma^{-2}\log(1/\delta))$ up to the upper-bound
+$\log |E(H)|$ factor & Proved + audited \\
+
+Patch-localized matching & Sound impact location & Removes the $M$-edge
+location-search factor on the matching family & Proved + audited \\
+
+Bernoulli one-edge replay & Common-uniform old/new pairing &
+$\Theta(d^{-1}\log(1/\delta))$ versus $\Theta(d^{-2}\log(1/\delta))$
+for fresh/independent sampling at fixed interior $p$ & Proved + audited \\
+
+Four-way counterfactual replay & One tape across both versions and both
+fairness endpoints & $\Theta(d^{-1}\log(1/\delta))$ versus vertex-paired
+$\Theta(d^{-2}\log(1/\delta))$ with nonzero common patch effect & Proved + audited \\
+
+Synchronized-suite replay & One tape across all fairness-active inputs &
+Rounds $\Theta(d^{-1}\log(1/\delta))$; executions
+$\Theta(n_+d^{-1}\log(1/\delta))$, independent of edge count in the
+homogeneous family & Proved + audited \\
+
+Partial synchronized replay & Declared replay groups &
+$C_{\rm vert}d^{-1}\log(1/\delta)$ combinatorial geometry up to constants
+and rounding in the frozen homogeneous single-changed-endpoint family &
+Proved + audited in stated scope \\
+\bottomrule
+\end{tabular}
+\end{table}
