@@ -21,6 +21,7 @@ python scripts/generate_control_replay_structural_cases.py --output data/control
 python scripts/generate_partial_replay_benchmark.py --output data/partial_replay_benchmark_v1.jsonl
 python scripts/generate_partial_replay_structural_cases.py --output data/partial_replay_structural_cases_v1.jsonl
 python scripts/generate_partial_replay_scope_cases.py --output data/partial_replay_scope_cases_v1.jsonl
+python scripts/generate_replay_phase_benchmark.py --output /tmp/replay_phase_benchmark_v1.jsonl
 ```
 
 The generator is deterministic. The manifest contains parameter specifications rather than giant sampled arrays.
@@ -157,7 +158,7 @@ fairness-preserving nulls.
 
 ## Public benchmark reproducibility
 
-The public-data layer is separate from the 791 deterministic theorem/specification rows. Its source registry is `data/public_benchmark_registry_v1.jsonl`. Preparation is performed with `scripts/prepare_public_benchmarks.py`, which records a canonical loaded-data SHA-256, deterministic split seed, evaluation-context count, local base-predictor metadata, and the probability clipping range used to keep additive replay patches in the Bernoulli interior.
+The public-data layer is separate from the 821 deterministic theorem/specification rows. Its source registry is `data/public_benchmark_registry_v1.jsonl`. Preparation is performed with `scripts/prepare_public_benchmarks.py`, which records a canonical loaded-data SHA-256, deterministic split seed, evaluation-context count, local base-predictor metadata, and the probability clipping range used to keep additive replay patches in the Bernoulli interior.
 
 Publication rows are validated by `tfoesuu.public_results.PublicResultRow`. A publication matrix must come from one source commit, use one content hash per dataset, and contain no duplicate dataset/method/patch-size/seed keys. The plotting script `scripts/render_public_results.py` consumes only this validated JSONL. Raw third-party datasets and generated result files remain outside git; provenance and hashes are frozen with the publication bundle.
 
@@ -195,3 +196,23 @@ python scripts/generate_control_replay_structural_cases.py \
 pytest -q tests/test_control_replay.py \
   tests/test_control_replay_benchmarks.py
 ```
+
+## Theorem-driven replay phase contract
+
+The additional replay phase grid is generated on demand and is not counted as a
+new submission-evidence dataset. It is a deterministic experiment contract used
+to guard theorem-facing GPU/CPU sweeps against post-hoc regime labeling.
+
+```bash
+python scripts/generate_replay_phase_benchmark.py \\
+  --output /tmp/replay_phase_benchmark_v1.jsonl
+python experiments/validate_replay_phase_contract.py \\
+  --benchmark /tmp/replay_phase_benchmark_v1.jsonl
+python experiments/search_control_replay_mixed_geometry.py --top 20
+```
+
+Version 1 freezes replay fidelity at 1.0. It labels only theorem-backed P19
+control-coverage extremes (0 and 1); intermediate control coverage remains a
+falsification domain until the mixed-control singular analysis passes proof and
+audit gates. Generated rows are parameter specifications, never observed
+performance values.
