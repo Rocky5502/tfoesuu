@@ -2,7 +2,12 @@ import math
 
 import numpy as np
 
-from tfoesuu.allocation import exact_unit_variance_psi, solve_psi, solve_psi_dual
+from tfoesuu.allocation import (
+    exact_unit_variance_psi,
+    psi_conic_certificate,
+    solve_psi,
+    solve_psi_dual,
+)
 from tfoesuu.graphs import (
     clique_graph,
     complete_bipartite_graph,
@@ -58,3 +63,24 @@ def test_star_optimizer_shape():
     assert_close(result.q[0], 1 + math.sqrt(k), 1e-5)
     for leaf in result.q[1:]:
         assert_close(leaf, 1 + 1 / math.sqrt(k), 1e-5)
+
+
+def test_primal_solution_has_rotated_cone_certificate():
+    for graph in [
+        star_graph(7),
+        clique_graph(6),
+        complete_bipartite_graph(2, 5),
+    ]:
+        variances = np.linspace(0.4, 2.1, graph.n)
+        primal = solve_psi(graph, variances)
+        assert primal.success
+
+        cert = psi_conic_certificate(graph, variances, primal.q)
+        assert cert.incidence_weights.shape == (graph.m, 2)
+        assert cert.max_edge_sum_violation < 1e-7
+        assert cert.max_product_violation < 1e-10
+
+        for (u, v), (tu, tv) in zip(graph.edges, cert.incidence_weights):
+            assert 2.0 * primal.q[u] * tu + 1e-12 >= 2.0 * variances[u]
+            assert 2.0 * primal.q[v] * tv + 1e-12 >= 2.0 * variances[v]
+            assert tu + tv <= 1.0 + 1e-7
