@@ -50,6 +50,7 @@ REQUIRED_PAPER_MARKERS = {
     r"\textbf{RQ4}": "RQ4",
     r"\label{tab:main-results}": "main theorem results table",
     r"\label{thm:threshold-replay-phase}": "P18 thresholded replay theorem",
+    r"\label{fig:threshold-replay-phase}": "P18 replay phase figure",
     r"\label{tab:benchmark-inventory}": "benchmark inventory table",
     r"\label{tab:deterministic-evidence}": "deterministic evidence table",
 }
