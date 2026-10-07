@@ -199,6 +199,15 @@ def plan_bernoulli_replay(
         )
 
     if mode == "partial-homogeneous":
+        if not (
+            0.0 < p < 1.0
+            and 0.0 < shared_patch < 1.0 - p
+            and 0.0 < d < 1.0 - p - shared_patch
+        ):
+            raise ValueError(
+                "partial-homogeneous requires p>0, shared_patch>0, d>0, "
+                "and p+shared_patch+d<1"
+            )
         if not homogeneous_single_changed_endpoint:
             raise ValueError(
                 "P17 partial raw-contrast scheduling requires explicit acknowledgement "
