@@ -87,7 +87,11 @@ homogeneous family analyzed in \Cref{thm:suite-replay}, the number of replay
 rounds is independent of \(|E|\), and concrete execution complexity scales with
 the number of active inputs rather than the number of fairness comparisons.
 This stronger oracle is stated explicitly: it is not assumed available to every
-software system.
+software system.  The linear replay advantage also has a precise boundary.
+For a one-edge thresholded fairness problem with tolerance $\tau$, we show
+$\Theta((\tau+d)d^{-2}\log(1/\delta))$ synchronized-replay complexity under
+an interior condition: zero or $O(d)$ background disparity preserves the sparse
+$d^{-1}$ regime, while any fixed positive tolerance restores $d^{-2}$ scaling.
 
 Between edgewise replay and full-suite replay lies a partial-replay regime in
 which only declared groups of inputs can share a tape.  Here two combinatorial
@@ -121,8 +125,9 @@ certificates, sound change information, and replayable stochastic execution;
 $\Psi(H,\nu)$, together with separations quantifying the value of patch
 localization and certificate-aware pruning;
 \item a Bernoulli replay hierarchy showing when stronger synchronization changes
-the small-effect dependence from $d^{-2}$ to $d^{-1}$ and changes the relevant
-graph geometry; and
+the small-effect dependence from $d^{-2}$ to $d^{-1}$, together with a threshold
+phase transition identifying when fixed nonzero background disparity forces the
+quadratic regime back; and
 \item an executable falsification/reproducibility layer organized by RQ1--RQ4
 over 791 frozen specification rows, including exact structural fixtures and a
 positive-measure counterexample that prevents overgeneralizing P17.
