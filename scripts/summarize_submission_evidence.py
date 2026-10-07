@@ -11,6 +11,7 @@ FROZEN_ARTIFACTS = {
     "data/software_subject_benchmark_v1.jsonl": 32,
     "data/counterfactual_replay_benchmark_v1.jsonl": 144,
     "data/threshold_replay_phase_v1.jsonl": 24,
+    "data/control_replay_structural_cases_v1.jsonl": 6,
     "data/partial_replay_benchmark_v1.jsonl": 168,
     "data/partial_replay_structural_cases_v1.jsonl": 8,
     "data/partial_replay_scope_cases_v1.jsonl": 1,
