@@ -36,6 +36,7 @@ FROZEN_DATA_ROWS = {
     "software_subject_benchmark_v1.jsonl": 32,
     "counterfactual_replay_benchmark_v1.jsonl": 144,
     "threshold_replay_phase_v1.jsonl": 24,
+    "control_replay_structural_cases_v1.jsonl": 6,
     "partial_replay_benchmark_v1.jsonl": 168,
     "partial_replay_structural_cases_v1.jsonl": 8,
     "partial_replay_scope_cases_v1.jsonl": 1,
@@ -51,7 +52,8 @@ REQUIRED_PAPER_MARKERS = {
     r"\textbf{RQ4}": "RQ4",
     r"\label{tab:main-results}": "main theorem results table",
     r"\label{thm:threshold-replay-phase}": "P18 thresholded replay theorem",
-    r"\label{fig:threshold-replay-phase}": "P18 replay phase figure",
+    r"\label{fig:threshold-replay-phase}": "P18--P19 replay phase figure",
+    r"\label{thm:control-replay}": "P19 matched-control replay theorem",
     r"\label{tab:benchmark-inventory}": "benchmark inventory table",
     r"\label{tab:deterministic-evidence}": "deterministic evidence table",
 }
@@ -162,9 +164,9 @@ def main() -> None:
         if ids and len(set(ids)) != len(ids):
             errors.append(f"{path}: duplicate frozen row identifiers")
 
-    if observed_total != 815:
+    if observed_total != 821:
         errors.append(
-            f"frozen benchmark inventory total drift: expected 815, found {observed_total}"
+            f"frozen benchmark inventory total drift: expected 821, found {observed_total}"
         )
 
     public_registry = data_dir / "public_benchmark_registry_v1.jsonl"
