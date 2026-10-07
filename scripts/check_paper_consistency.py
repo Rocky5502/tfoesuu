@@ -77,7 +77,7 @@ def main() -> None:
     bibkeys = BIBKEY_RE.findall(bib)
     bib_counts = Counter(bibkeys)
     duplicate_bib = sorted(k for k, n in bib_counts.items() if n > 1)
-    missing_cites = sorted(set(cites) - set(bibkeys))
+    missing_cites = sorted(set(cites) - set(bibkeys))\n    bib_entries = BIBENTRY_RE.findall(bib)\n    missing_doi = sorted(key for _, key, body in bib_entries if not re.search(r"\\bdoi\\s*=", body, re.IGNORECASE))
 
     errors: list[str] = []
     if duplicate_labels:
