@@ -28,6 +28,10 @@ from .partial_replay_benchmarks import (
     PartialReplayBenchmarkSpec,
     partial_replay_benchmark_v1,
 )
+from .control_replay_benchmarks import (
+    ControlReplayStructuralCase,
+    control_replay_structural_cases_v1,
+)
 from .control_replay import (
     ControlReplayInformationLowerBound,
     ControlReplaySchedule,
@@ -89,6 +93,8 @@ __all__ = [
     "PartialReplayBenchmarkSpec",
     "partial_replay_benchmark_v1",
     "FractionalActiveVertexCover",
+    "ControlReplayStructuralCase",
+    "control_replay_structural_cases_v1",
     "FractionalControlCover",
     "ControlReplayInformationLowerBound",
     "ControlReplaySchedule",
