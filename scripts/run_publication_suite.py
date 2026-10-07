@@ -38,6 +38,15 @@ def cpu_plan(trials: int) -> list[tuple[str, list[str]]]:
                 "data/partial_replay_benchmark_v1.jsonl",
             ],
         ),
+        (
+            "p19_manifest_validation",
+            [
+                py,
+                "experiments/validate_control_replay_manifest.py",
+                "--benchmark",
+                "data/control_replay_structural_cases_v1.jsonl",
+            ],
+        ),
     ]
 
     for graph in ("matching", "star", "path", "clique"):
