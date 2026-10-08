@@ -1,0 +1,42 @@
+# PC1 Windows PowerShell dispatcher for PC2's WSL2 TFOESUU worker.
+# Uses the pre-existing Windows OpenSSH connection. No passwords or keys stored.
+param(
+    [ValidateSet("status", "preflight", "smoke-p12", "smoke-p15", "smoke-gaussian")]
+    [string]$Mode = "status",
+    [string]$PC2Host = "192.168.103.117",
+    [string]$RemoteUser = "Administrator",
+    [string]$KeyFile = "$env:USERPROFILE\.ssh\id_ed25519"
+)
+
+$ErrorActionPreference = "Stop"
+if (-not (Test-Path -LiteralPath $KeyFile)) {
+    throw "SSH private key not found at $KeyFile"
+}
+if (-not (Get-Command ssh.exe -ErrorAction SilentlyContinue)) {
+    throw "Windows OpenSSH client ssh.exe not available"
+}
+$repoRoot = Split-Path -Parent $PSScriptRoot
+Push-Location $repoRoot
+try {
+    $sourceSha = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or $sourceSha -notmatch '^[0-9a-f]{40}$') {
+        throw "Cannot determine PC1 source commit"
+    }
+    $branch = (& git branch --show-current).Trim()
+    if ($Mode -ne "status" -and $branch -ne "main") {
+        throw "PC1 must use main for execution dispatch"
+    }
+    if ($Mode -ne "status") {
+        $dirty = (& git status --porcelain)
+        if ($dirty) { throw "PC1 working tree must be clean before dispatch" }
+    }
+    Write-Host "[pc1] mode=$Mode expected_commit=$sourceSha PC2=$PC2Host"
+    $command = "wsl.exe -e bash /home/zbq/work/tfoesuu/scripts/pc2_wsl_worker.sh $Mode $sourceSha"
+    & ssh.exe -i $KeyFile -o BatchMode=yes -o ConnectTimeout=10 "$RemoteUser@$PC2Host" $command
+    if ($LASTEXITCODE -ne 0) {
+        throw "Remote worker command failed with exit code $LASTEXITCODE"
+    }
+}
+finally {
+    Pop-Location
+}
