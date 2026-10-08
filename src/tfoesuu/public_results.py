@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import json
+import math
+from numbers import Real
 from pathlib import Path
 from typing import Iterable
 
@@ -35,7 +37,42 @@ class PublicResultRow:
     source_commit: str
 
 
+def _validate_finite_measure(name: str, value: object) -> None:
+    """Reject nonnumeric, boolean, NaN and infinite experimental measurements."""
+    if isinstance(value, bool) or not isinstance(value, Real):
+        raise ValueError(f"{name} must be a finite real number")
+    if not math.isfinite(value):
+        raise ValueError(f"{name} must be a finite real number")
+
+
+def _validate_integer_measure(name: str, value: object) -> None:
+    """Counts, seeds and graph sizes cannot be floating point measurements."""
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"{name} must be an integer")
+
+
 def validate_public_result_row(row: PublicResultRow) -> None:
+    for name in (
+        "patch_size",
+        "common_shift",
+        "confidence_target",
+        "affected_fraction",
+        "replay_rounds",
+        "concrete_program_executions",
+        "type_i_error",
+        "type_ii_error",
+    ):
+        _validate_finite_measure(name, getattr(row, name))
+    for name in (
+        "trials",
+        "graph_vertices",
+        "graph_edges",
+        "impacted_edges",
+        "type_i_error_count",
+        "type_ii_error_count",
+        "seed",
+    ):
+        _validate_integer_measure(name, getattr(row, name))
     if row.method not in PUBLIC_METHODS:
         raise ValueError(f"unsupported method: {row.method}")
     if not row.dataset_id or not row.dataset_name:
