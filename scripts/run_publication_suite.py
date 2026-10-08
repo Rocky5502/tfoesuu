@@ -256,6 +256,10 @@ def run_jobs(
     output_dir: Path,
 ) -> list[dict]:
     records: list[dict] = []
+    ledger = output_dir / "commands.json"
+    # Persist an empty manifest first: even the earliest failure leaves a
+    # machine-readable indication of which commands did (not) execute.
+    ledger.write_text("[]\n", encoding="utf-8")
     for name, cmd in jobs:
         proc = subprocess.run(
             cmd,
@@ -270,9 +274,14 @@ def run_jobs(
             "name": name,
             "command": cmd,
             "returncode": proc.returncode,
+            "status": "passed" if proc.returncode == 0 else "failed",
             "log": str(log_path),
         }
         records.append(record)
+        ledger.write_text(
+            json.dumps(records, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
         if proc.returncode != 0:
             raise RuntimeError(
                 f"{name} failed with exit code {proc.returncode}; "
