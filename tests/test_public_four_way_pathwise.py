@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 from experiments.gpu_public_replay_sweep import (
+    DEFAULT_PATCH_SIZES,
     four_way_witness_on_tape,
     simulate_four_way_pathwise_counts,
 )
@@ -53,3 +54,11 @@ def test_four_way_torch_cpu_smoke_follows_declared_model():
     # P(no mismatch after 30 independent tapes) = (1-d)^30.
     expected_miss_rate = (1.0 - 0.10) ** 30
     assert (misses / 4000) == pytest.approx(expected_miss_rate, abs=0.025)
+
+
+
+def test_default_public_patch_grid_matches_release_contract():
+    assert len(DEFAULT_PATCH_SIZES) >= 4
+    assert len(set(DEFAULT_PATCH_SIZES)) == len(DEFAULT_PATCH_SIZES)
+    assert all(0.0 < d < 1.0 for d in DEFAULT_PATCH_SIZES)
+    assert tuple(sorted(DEFAULT_PATCH_SIZES, reverse=True)) == DEFAULT_PATCH_SIZES
