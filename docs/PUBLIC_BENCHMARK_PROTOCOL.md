@@ -77,3 +77,53 @@ A public result may enter the manuscript only if:
 ## P17 fence
 
 The public-data suite is not a vehicle for claiming the P17 heterogeneous/composite-null theorem. The P17 raw-contrast result remains restricted to the frozen homogeneous family. The public suite can evaluate safe witness-based or general version-aware procedures and can be used to search for failures of invalid generalizations.
+
+## Publication release gate (October 2026)
+
+Preparation is not an experiment result. The repository contains **821 frozen
+theorem/specification rows** and a registry of **7 planned public populations**.
+Neither count is evidence that GPU sweeps or a seven-dataset publication
+evaluation have finished. The `paper/generated/public_results_table.tex` file
+still contains a deliberately non-evidential template until an actual result
+matrix is frozen and verified.
+
+After running the seven-dataset protocol, validate the actual aggregated
+result JSONL from a clean source commit:
+
+```bash
+python scripts/validate_public_results.py \
+  --registry data/public_benchmark_registry_v1.jsonl \
+  --results results/public/public_results.jsonl \
+  --require-datasets 7 \
+  --min-patch-sizes 4 \
+  --min-trials 100000
+```
+
+This stricter release gate requires:
+- the **exact** seven registered dataset IDs (no missing or extra data);
+- at least four patch sizes and the **same patch-size grid** for every dataset;
+- all five methods (independent, vertex-paired, four-way, suite, TFOESUU)
+  for each dataset/patch-size cell;
+- **matched seed sets across methods** for every dataset/patch-size cell;
+- identical graph metadata across methods for each cell;
+- 100,000 or more actual trials per aggregate row;
+- one 40-character hexadecimal source-commit ID;
+- consistent frozen dataset SHA-256, source commit, confidence target, and
+  common patch shift in the matrix.
+
+These are validation constraints, **not evidence** that trials ran.
+Independently verify the raw execution logs, data hashes, environment metadata,
+result provenance, and the exact code revision before paper admission. Only
+after the release gate passes should the manuscript-facing public-results
+table be generated from the frozen result file.
+
+For the table's maximum of empirical type-I and type-II errors, report an
+**exact Bonferroni-simultaneous 95% Clopper--Pearson interval**, not the
+unadjusted interval for whichever error rate happened to be larger.
+`scripts/render_public_results_table.py` implements this correction.
+
+For theorem-only CPU work, `scripts/run_publication_suite.py` now writes
+`commands.json` incrementally. When a job fails, its log and failed status
+survive for diagnosis; downstream jobs are not recorded as completed.
+
+**Do not copy or fabricate results into the PDF to satisfy a deadline.**
