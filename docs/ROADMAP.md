@@ -130,7 +130,16 @@ The candidate program is
               x_S >= 0.
 
 The matrix I must be derived from exact replay semantics and the frozen nuisance
-class. The generic solver in `src/tfoesuu/replay_information.py` is only an
+class. A composite null has one globally fixed nuisance value per experiment:
+an adaptive policy may have different expected action counts under different
+nulls. Do not replace the valid necessary floor
+  sup_eta min_x {c^T x : I(eta)^T x >= K}
+by the generally larger shared-fixed-allocation program
+  min_x {c^T x : I(eta)^T x >= K for every eta}.
+The latter is a fixed-information design objective, not an adaptive minimax
+lower bound or a finite-sample achievability certificate. See
+`docs/P20_NUISANCE_QUANTIFIER_AUDIT.md` and the exact finite fixtures in
+`tests/test_nuisance_information.py`. The generic solver in `src/tfoesuu/replay_information.py` is only an
 implementation scaffold. Promotion requires an adaptive lower bound, a matching
 attainable procedure, counterexamples outside scope, and a fresh archival
 collision audit.
