@@ -53,3 +53,25 @@
   CRLF and PC2 LF. Added portable LF-normalized hashing, Git-blob logging, and an LF attribute for
   frozen JSONL manifests.
 - GPU jobs: complete; no larger trial budget launched. Approval gate reached: NO.
+
+## 2026-10-08T17:05:41Z — session `codex-20261009-hourly-a`
+
+- Self-check: research branch clean at `1e1490e2fe08e6ebd07c8d234262538ea66a49ba`;
+  isolated PC1 execution worktree and PC2 clean `main` both at frozen
+  `149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b`; both RTX 5070 Ti devices idle and
+  CUDA-visible before launch; PC2 D: had 1.3 TiB free.
+- Authorized 10,000-trial stage completed with unique output names and no overwrite:
+  PC1 P15, 144 rows, UTC 17:05:10--17:05:15, result SHA-256
+  `a6f4fece81ed06d579edb9c297c3375ff64dc55a429ca64f3d1bfda4d3f8e9d7`;
+  PC2 P12, 54 rows, UTC 17:05:20--17:05:23, result SHA-256
+  `2c9f46906eacd67b987ef2ecb5a58bda345d9fbc78b1b0b7999961769eb224a7`.
+- Exact validation recomputed every analytic schedule and finite binomial law: 594 comparisons,
+  Bonferroni familywise threshold `8.417508417508418e-05`, zero outliers. Largest absolute
+  empirical-minus-exact deviation across the six metric families was `0.005136753812386062`
+  (P15 edge-coupled alternative miss); this is exploratory Monte Carlo variation, not a theorem
+  discrepancy.
+- GPU jobs are finished; no process remains authorized to continue. No public-dataset GPU sweep,
+  100,000-trial run, or manuscript result admission was attempted.
+- Approval gate reached: YES for 100,000 trials or larger; fresh approval required.
+- Next independent task: continue formal/statistical audit and repair the local PDF toolchain while
+  keeping frozen data/source compatibility explicit.
