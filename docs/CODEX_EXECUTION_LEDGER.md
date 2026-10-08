@@ -24,21 +24,21 @@
 | G1 software | compileall; 194 PC1 tests; 194 PC2 tests; inventory; bibliography and paper static checks | PASS, with 107 pre-existing Ruff findings |
 | G2 data | seven nonzero NPZ/JSON pairs and manifest pass strict schema/content/hash validation | PASS for frozen prepared artifacts |
 | G3 math | frozen proof-status documents and P17 negative boundary present | OPEN: claim-level crosswalk audit required |
-| G4 experiment | runner fails closed on prepared inputs and records a three-Git-object preparation compatibility contract | PARTIAL: public smoke and cost audit remain |
-| G5 smoke | complete P12/P15 1k, 10k, and 100k frozen-baseline CUDA grids; exact finite-law audits green | PARTIAL: public-data smoke still gated by release-compatible source |
+| G4 experiment | runner fails closed on prepared inputs and records a three-Git-object preparation compatibility contract | PASS for bounded public smoke; publication cost audit remains |
+| G5 smoke | complete P12/P15 staged grids plus a complete seven-dataset 1k public matrix on two GPUs; exact finite-law audits green | PASS for bounded exploratory gates |
 | G6 scale | publication-scale runs require approval | BLOCKED BY APPROVAL GATE |
 | G7 manuscript | static consistency passed; no public result matrix exists | OPEN |
 | G8 artifact | reproducibility material exists but external replication closure is incomplete | OPEN |
 
 ## Active risk register
 
-1. Prepared data are source-commit-bound; work-branch code is incompatible until re-prepared or
-   covered by an explicit validated compatibility contract.
-2. Narrow theorem scopes can drift into broader fairness/null claims, especially around P17.
-3. The v1 public graph uses synthetic duplicated-probability endpoints, not materialized empirical
+1. Narrow theorem scopes can drift into broader fairness/null claims, especially around P17/P20.
+2. The v1 public graph uses synthetic duplicated-probability endpoints, not materialized empirical
    protected-attribute counterfactuals; all claims must retain that limitation.
-4. Publication experiments, figures, and PDF admission evidence remain incomplete.
-5. Repository-wide Ruff still has pre-existing findings outside the touched public-integrity files.
+3. Publication experiments, figures, and PDF admission evidence remain incomplete.
+4. A mixed-topology P19 information-floor expansion is now proved, but no matching upper tester is
+   established when any high candidate lacks a matched control.
+5. Repository-wide Ruff still has pre-existing findings outside the touched files.
 
 Resolved during this session: raw frozen-manifest SHA-256 values were not comparable across PC1 and
 PC2 because Git checkout line endings differed. Future provenance records retain exact byte hashes
@@ -46,6 +46,6 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Audit the public evaluator's statistical/cost contract and maintain
-`docs/CODEX_CLAIM_LEDGER.md` as the theorem-to-code-to-test/manuscript crosswalk. The strict
-prepared-subject validator, dual-GPU exploratory smoke, and portable provenance repair are complete.
+Close the mixed-control P19 lower-program asymptotics and maintain the
+theorem-to-code-to-test/manuscript crosswalk. The strict prepared-subject validator,
+dual-GPU public exploratory smoke, and portable provenance repair are complete.

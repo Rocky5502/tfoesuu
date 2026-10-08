@@ -600,6 +600,43 @@ standard constant factors.  If some high candidate has no control-compatible
 legal group, then every tester requires
 \(\Omega(d^{-2}\log(1/\delta))\) expected declared cost at fixed
 \(\tau>0\), unless that candidate is completely unobservable.
+
+\item The mixed-topology information floor has an exact two-term singular
+expansion.  Let
+\[
+U=\{x\in A:C_{xi}=0\ \text{for every }i\},
+\qquad
+b_2=\frac12\left(\frac1\tau+\frac1r\right),
+\qquad
+b_3=\frac13\left(\frac1{r^2}-\frac1{\tau^2}\right),
+\]
+and, for each observable \(x\in U\), let
+\(\bar c_x=\min\{c_i:x\in S_i\}\).  Write
+\[
+C_{\rm ctrl}^{A\setminus U}
+=
+\min_{q\ge0}
+\left\{
+c^\top q:C_{A\setminus U}q\ge\mathbf 1
+\right\},
+\]
+with value zero if \(A\setminus U\) is empty, and let
+\(a=\kl(1-\delta,\delta)\).  If every candidate is observable, the value
+\(Q_{\rm LB}(d)\) of the lower program in (i) satisfies
+\[
+Q_{\rm LB}(d)
+=
+\frac{a}{b_2}
+\left(\sum_{x\in U}\bar c_x\right)d^{-2}
++
+a\left(
+C_{\rm ctrl}^{A\setminus U}
+-\frac{b_3}{b_2^2}\sum_{x\in U}\bar c_x
+\right)d^{-1}
++O(1).
+\]
+This is an exact asymptotic for the information lower program, not a matching
+upper bound when \(U\ne\varnothing\).
 \end{enumerate}
 \end{theorem}
 
@@ -634,6 +671,32 @@ at least \(C_{\rm ctrl}\), while the control-cover solution gives the matching
 upper limit.  If candidate \(x\) has no control-compatible group, its
 information constraint contains only \(K_{\rm bnd}=\Theta(d^2)\), giving the
 quadratic lower bound.
+
+For (iv), observe first that a group containing an unmatched candidate
+\(x\in U\) cannot contain any other high vertex: otherwise that group would be
+a matched control for \(x\).  Hence the LP block for \(x\) is disjoint from
+every other high-candidate block and has exact value
+\(a\bar c_x/K_{\rm bnd}\).  The Taylor expansion
+\[
+K_{\rm bnd}(\tau,d)=b_2d^2+b_3d^3+O(d^4)
+\]
+therefore contributes
+\[
+\frac{a\bar c_x}{b_2}d^{-2}
+-\frac{ab_3\bar c_x}{b_2^2}d^{-1}+O(1).
+\]
+For the covered block, set
+\(\epsilon=K_{\rm bnd}/K_{\rm ctrl}=O(d)\) and scale
+\(z=K_{\rm ctrl}n/a\).  Its value is
+\((a/K_{\rm ctrl})F(\epsilon)\), where \(F(0)\) is precisely
+\(C_{\rm ctrl}^{A\setminus U}\).  Positive costs bound every coordinate of
+an optimizer uniformly near zero.  Thus the extra term
+\(\epsilon Rz\) relaxes each covering constraint by only \(O(\epsilon)\),
+and rescaling by \(1+O(\epsilon)\) gives
+\(F(\epsilon)=F(0)+O(\epsilon)\).  Since
+\(K_{\rm ctrl}=d+O(d^2)\), the covered block contributes
+\(aC_{\rm ctrl}^{A\setminus U}d^{-1}+O(1)\).  Summing the disjoint blocks
+proves the expansion.
 \end{proof}
 
 \begin{corollary}[Replay topology changes the small-effect exponent]

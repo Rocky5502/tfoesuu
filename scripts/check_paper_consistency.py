@@ -2,10 +2,10 @@
 """Static consistency checks for the STOC manuscript.
 
 Checks the complete main.tex input closure for:
-- missing \input files;
+- missing \\input files;
 - duplicate labels;
-- unresolved \ref/\cref/\Cref targets;
-- missing bibliography keys used by \cite commands;
+- unresolved \ref/\\cref/\\Cref targets;
+- missing bibliography keys used by \\cite commands;
 - duplicate BibTeX keys;
 - forbidden explicit preprint-only bibliography patterns.
 
@@ -14,12 +14,12 @@ This complements, rather than replaces, a real LaTeX compile.
 
 from __future__ import annotations
 
-from collections import Counter
 import json
-from pathlib import Path
 import re
 import sys
-
+from collections import Counter
+from itertools import pairwise
+from pathlib import Path
 
 PAPER = Path("paper")
 MAIN = PAPER / "main.tex"
@@ -30,7 +30,8 @@ REF_RE = re.compile(r"\\(?:ref|pageref|eqref|cref|Cref)\{([^}]+)\}")
 CITE_RE = re.compile(r"\\(?:cite|citep|citet)\{([^}]+)\}")
 BIBKEY_RE = re.compile(r"@\w+\s*\{\s*([^,\s]+)\s*,", re.IGNORECASE)
 BIBENTRY_RE = re.compile(r"@(\w+)\s*\{\s*([^,\s]+)\s*,([\s\S]*?)\n\}", re.IGNORECASE)
-NON_DOI_PROVENANCE_KEYS = {"ProPublicaCOMPAS2016"}
+# Primary archival records for items to which the publisher assigns no DOI.
+NON_DOI_KEYS = {"GeorgeJohnVijaykeerthySaha2020", "ProPublicaCOMPAS2016"}
 
 FROZEN_DATA_ROWS = {
     "benchmark_v1.jsonl": 384,
@@ -120,8 +121,7 @@ def main() -> None:
     missing_doi = sorted(
         key
         for _, key, body in bib_entries
-        if key not in NON_DOI_PROVENANCE_KEYS
-        and not re.search(r"\bdoi\s*=", body, re.IGNORECASE)
+        if key not in NON_DOI_KEYS and not re.search(r"\bdoi\s*=", body, re.IGNORECASE)
     )
 
     errors: list[str] = []
@@ -135,7 +135,6 @@ def main() -> None:
         errors.append(f"missing BibTeX keys: {missing_cites}")
     if missing_doi:
         errors.append(f"peer-reviewed bibliography entries missing DOI: {missing_doi}")
-
 
     manuscript_text = "\n".join(text for _, text in docs)
     for marker, name in REQUIRED_PAPER_MARKERS.items():
@@ -162,14 +161,9 @@ def main() -> None:
         ]
         observed_total += len(rows)
         if len(rows) != expected_rows:
-            errors.append(
-                f"{path}: expected {expected_rows} frozen rows, found {len(rows)}"
-            )
+            errors.append(f"{path}: expected {expected_rows} frozen rows, found {len(rows)}")
         ids = [
-            row.get("benchmark_id")
-            or row.get("case_id")
-            or row.get("subject_id")
-            or row.get("id")
+            row.get("benchmark_id") or row.get("case_id") or row.get("subject_id") or row.get("id")
             for row in rows
         ]
         ids = [value for value in ids if value is not None]
@@ -192,8 +186,7 @@ def main() -> None:
         ]
         if len(public_rows) != 7:
             errors.append(
-                f"{public_registry}: expected 7 public benchmark entries, "
-                f"found {len(public_rows)}"
+                f"{public_registry}: expected 7 public benchmark entries, found {len(public_rows)}"
             )
         public_ids = [row.get("benchmark_id") for row in public_rows]
         if any(not value for value in public_ids) or len(set(public_ids)) != len(public_ids):
@@ -208,16 +201,18 @@ def main() -> None:
         ]
         if len(scope_rows) == 1:
             row = scope_rows[0]
-            cuts = sorted({
-                0.0,
-                float(row["old_threshold_0"]),
-                float(row["old_threshold_1"]),
-                float(row["new_threshold_0"]),
-                float(row["new_threshold_1"]),
-                1.0,
-            })
+            cuts = sorted(
+                {
+                    0.0,
+                    float(row["old_threshold_0"]),
+                    float(row["old_threshold_1"]),
+                    float(row["new_threshold_0"]),
+                    float(row["new_threshold_1"]),
+                    1.0,
+                }
+            )
             measure = 0.0
-            for left, right in zip(cuts, cuts[1:]):
+            for left, right in pairwise(cuts):
                 if right <= left:
                     continue
                 u = (left + right) / 2.0

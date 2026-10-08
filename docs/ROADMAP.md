@@ -86,7 +86,7 @@ two-class bipartite family. The next target is strictly broader:
 
 A rigorous impossibility/boundary theorem remains a successful outcome.
 
-### S1b — Mixed-control asymptotic stratification (falsification stage)
+### S1b — Mixed-control asymptotic stratification (lower program resolved)
 
 Keep this at P20-CONJECTURE status; do not promote it beyond conjecture yet.  P19's exact lower LP already implies a sharper
 question than the binary all-controls/no-controls split.  In a partially
@@ -96,12 +96,14 @@ channel.  For fixed positive tau,
 
   K_ctrl(d) = Theta(d),    K_bnd(tau,d) = Theta(d^2).
 
-The immediate conjecture to attack is a lexicographic asymptotic description:
-boundary-only alternatives determine the d^-2 leading term; after satisfying
-those constraints, control-covered alternatives contribute a d^-1 correction.
-If every candidate is control-covered, the leading regime collapses to P19's
-d^-1 control-cover geometry.  If even one observable candidate lacks every
-control-compatible group, the total minimax information floor retains a d^-2
+The exact finite P19 information lower program now has a proved two-term
+expansion. Boundary-only alternatives determine the d^-2 coefficient; boundary
+KL curvature and the residual control cover determine the d^-1 coefficient.
+A group containing an unmatched high candidate cannot contain another high
+candidate, so the previously suspected cross-coverage interaction is impossible
+in this model. If every candidate is control-covered, the leading regime
+collapses to P19's d^-1 control-cover geometry. If even one observable candidate
+lacks every control-compatible group, the information floor retains a d^-2
 leading term.
 
 Repository falsification support:
@@ -110,10 +112,10 @@ Repository falsification support:
 - tests pin one mixed topology to the quadratic leading regime and an
   all-covered topology to the linear leading regime.
 
-Required before theorem promotion: derive the singularly perturbed LP limit,
-identify its exact leading coefficient (not merely the exponent), determine
-whether an achievable tester matches that coefficient/order, and search for
-degenerate cost/group families that invalidate the naive lexicographic claim.
+Completed for the lower program: exact d^-2 and d^-1 coefficients, including
+positive/zero/negative boundary-curvature tests and unobservable extremes.
+Remaining before a minimax promotion beyond P19: determine whether an achievable
+tester matches the mixed-topology lower coefficients/order.
 
 
 ### S1c — P20 unified replay information geometry (conjecture)

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 
 import numpy as np
 from scipy.optimize import linprog
@@ -39,12 +39,38 @@ class ControlReplayInformationLowerBound:
 
 @dataclass(frozen=True)
 class MixedControlLeadingCoefficient:
-    """Candidate d^-2 coefficient of the exact P19 information lower LP."""
+    """Exact d^-2 coefficient of the exact P19 information lower LP."""
 
     coefficient: float
     scaled_query_weights: np.ndarray
     uncovered_high_vertices: tuple[int, ...]
     boundary_quadratic_coefficient: float
+    success: bool
+    message: str
+
+
+@dataclass(frozen=True)
+class MixedControlAsymptoticCoefficients:
+    """First two singular coefficients of the exact P19 information LP.
+
+    If ``Q(d)`` denotes the LP value, then within the frozen finite P19
+    two-class family
+
+        Q(d) = inverse_square_coefficient / d**2
+             + inverse_linear_coefficient / d + O(1).
+
+    This describes an information lower program; it is not a matching tester
+    for topologies that lack a matched control.
+    """
+
+    inverse_square_coefficient: float
+    inverse_linear_coefficient: float
+    uncovered_high_vertices: tuple[int, ...]
+    covered_high_vertices: tuple[int, ...]
+    boundary_minimum_cost: float
+    residual_control_cover_cost: float
+    boundary_quadratic_coefficient: float
+    boundary_cubic_coefficient: float
     success: bool
     message: str
 
@@ -65,7 +91,7 @@ def _validate_bipartite_threshold_family(
     graph: GraphSpec,
     high_vertices: Iterable[int],
 ) -> tuple[int, ...]:
-    high = tuple(sorted(set(int(v) for v in high_vertices)))
+    high = tuple(sorted({int(v) for v in high_vertices}))
     if not high:
         raise ValueError("at least one high-side candidate is required")
     if any(v < 0 or v >= graph.n for v in high):
@@ -135,9 +161,7 @@ def minimum_fractional_control_cover(
         return FractionalControlCover(
             float("inf"), np.zeros(len(gs)), high, False, str(res.message)
         )
-    return FractionalControlCover(
-        float(res.fun), np.asarray(res.x), high, True, str(res.message)
-    )
+    return FractionalControlCover(float(res.fun), np.asarray(res.x), high, True, str(res.message))
 
 
 def control_replay_information_lower_bound(
@@ -174,16 +198,9 @@ def control_replay_information_lower_bound(
         raise ValueError("beta must lie in (0,1/2)")
     tau = float(fairness_tolerance)
     s = float(shared_patch)
-    if not (
-        0.0 < p < 1.0
-        and s >= 0.0
-        and tau >= 0.0
-        and d > 0.0
-        and p + s + tau + d < 1.0
-    ):
+    if not (0.0 < p < 1.0 and s >= 0.0 and tau >= 0.0 and d > 0.0 and p + s + tau + d < 1.0):
         raise ValueError(
-            "require p in (0,1), shared_patch>=0, tau>=0, d>0, "
-            "and p+shared_patch+tau+d<1"
+            "require p in (0,1), shared_patch>=0, tau>=0, d>0, and p+shared_patch+tau+d<1"
         )
 
     high = _validate_bipartite_threshold_family(graph, high_vertices)
@@ -293,7 +310,11 @@ def mixed_control_leading_coefficient(
     b2 = 0.5 * (1.0 / tau + 1.0 / r)
     if not uncovered:
         return MixedControlLeadingCoefficient(
-            0.0, np.zeros(len(gs)), (), b2, True,
+            0.0,
+            np.zeros(len(gs)),
+            (),
+            b2,
+            True,
             "all high-side alternatives have a first-order control channel",
         )
 
@@ -306,7 +327,11 @@ def mixed_control_leading_coefficient(
 
     if np.any(boundary.sum(axis=1) == 0.0):
         return MixedControlLeadingCoefficient(
-            float("inf"), np.zeros(len(gs)), uncovered, b2, False,
+            float("inf"),
+            np.zeros(len(gs)),
+            uncovered,
+            b2,
+            False,
             "some control-uncovered alternative is absent from every legal replay group",
         )
 
@@ -324,6 +349,122 @@ def mixed_control_leading_coefficient(
         )
     return MixedControlLeadingCoefficient(
         float(res.fun), np.asarray(res.x), uncovered, b2, True, str(res.message)
+    )
+
+
+def mixed_control_asymptotic_coefficients(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+    high_vertices: Iterable[int],
+    *,
+    p: float,
+    shared_patch: float,
+    fairness_tolerance: float,
+    beta: float,
+) -> MixedControlAsymptoticCoefficients:
+    """Return the exact d^-2 and d^-1 coefficients of the P19 lower LP.
+
+    A high candidate without a matched-control group cannot share any legal
+    group with another high candidate: such a group would itself be a matched
+    control.  Its boundary-only LP block therefore separates exactly and uses
+    its cheapest containing group.  The remaining control-covered block has
+    the fractional-control-cover cost as its d^-1 coefficient.  The d^-1 term
+    also includes the cubic curvature of the boundary KL.
+    """
+
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+    tau = float(fairness_tolerance)
+    s = float(shared_patch)
+    if not (0.0 < p < 1.0 and s >= 0.0 and tau > 0.0 and p + s + tau < 1.0):
+        raise ValueError(
+            "mixed-control coefficients require p in (0,1), "
+            "shared_patch>=0, fixed tau>0, and p+shared_patch+tau<1"
+        )
+
+    high = _validate_bipartite_threshold_family(graph, high_vertices)
+    high_set = set(high)
+    gs = _canonical_groups(graph, groups)
+    c = _validate_costs(gs, costs)
+
+    control = np.zeros((len(high), len(gs)), dtype=float)
+    contains = np.zeros((len(high), len(gs)), dtype=float)
+    for xi, x in enumerate(high):
+        for gi, group in enumerate(gs):
+            if x not in group:
+                continue
+            contains[xi, gi] = 1.0
+            if sum(v in high_set for v in group) >= 2:
+                control[xi, gi] = 1.0
+
+    uncovered_idx = tuple(i for i in range(len(high)) if control[i].sum() == 0.0)
+    covered_idx = tuple(i for i in range(len(high)) if control[i].sum() > 0.0)
+    uncovered = tuple(high[i] for i in uncovered_idx)
+    covered = tuple(high[i] for i in covered_idx)
+
+    boundary_minimum_cost = 0.0
+    for xi in uncovered_idx:
+        eligible = np.flatnonzero(contains[xi] > 0.0)
+        if len(eligible) == 0:
+            return MixedControlAsymptoticCoefficients(
+                float("inf"),
+                float("inf"),
+                uncovered,
+                covered,
+                float("inf"),
+                float("inf"),
+                math.nan,
+                math.nan,
+                False,
+                "some control-uncovered alternative is absent from every legal group",
+            )
+        # By definition of ``uncovered``, each eligible group contains exactly
+        # one high candidate and hence belongs to no other high constraint.
+        boundary_minimum_cost += float(np.min(c[eligible]))
+
+    control_cover_cost = 0.0
+    if covered_idx:
+        A = control[np.asarray(covered_idx), :]
+        res = linprog(
+            c,
+            A_ub=-A,
+            b_ub=-np.ones(len(covered_idx)),
+            bounds=[(0.0, None)] * len(gs),
+            method="highs",
+        )
+        if not res.success:
+            return MixedControlAsymptoticCoefficients(
+                float("inf"),
+                float("inf"),
+                uncovered,
+                covered,
+                boundary_minimum_cost,
+                float("inf"),
+                math.nan,
+                math.nan,
+                False,
+                str(res.message),
+            )
+        control_cover_cost = float(res.fun)
+
+    r = 1.0 - p - s - tau
+    b2 = 0.5 * (1.0 / tau + 1.0 / r)
+    b3 = (1.0 / 3.0) * (1.0 / (r * r) - 1.0 / (tau * tau))
+    target = binary_decision_kl(beta)
+    inverse_square = target * boundary_minimum_cost / b2
+    inverse_linear = target * (control_cover_cost - b3 * boundary_minimum_cost / (b2 * b2))
+    return MixedControlAsymptoticCoefficients(
+        inverse_square,
+        inverse_linear,
+        uncovered,
+        covered,
+        boundary_minimum_cost,
+        control_cover_cost,
+        b2,
+        b3,
+        True,
+        "exact finite-family singular coefficients",
     )
 
 
@@ -366,9 +507,7 @@ def matched_control_replay_schedule(
             if x in group and sum(v in high_set for v in group) >= 2
         )
         if exposure < L:
-            raise RuntimeError(
-                "rounded control schedule failed a high-candidate exposure"
-            )
+            raise RuntimeError("rounded control schedule failed a high-candidate exposure")
 
     total = float(c @ counts)
     support = cover.weights > 1e-12

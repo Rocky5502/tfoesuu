@@ -1,13 +1,16 @@
-import numpy as np
+import math
+from itertools import pairwise
 
+import numpy as np
 import pytest
 
 from tfoesuu.control_replay import (
     control_replay_information_lower_bound,
     matched_control_contrast_witness,
-    mixed_control_leading_coefficient,
     matched_control_replay_schedule,
     minimum_fractional_control_cover,
+    mixed_control_asymptotic_coefficients,
+    mixed_control_leading_coefficient,
 )
 from tfoesuu.graphs import complete_bipartite_graph, path_graph
 from tfoesuu.separations import (
@@ -55,12 +58,8 @@ def test_exact_mixed_information_matrix_matches_p15_and_p18_kl():
     )
 
     assert not lower.success  # candidates 1 and 2 are unobservable in this tiny fixture
-    assert lower.control_kl == pytest.approx(
-        edge_coupled_common_patch_kl(p, s + tau, d)
-    )
-    assert lower.boundary_kl == pytest.approx(
-        threshold_fairness_replay_kl(p, s, tau, d)
-    )
+    assert lower.control_kl == pytest.approx(edge_coupled_common_patch_kl(p, s + tau, d))
+    assert lower.boundary_kl == pytest.approx(threshold_fairness_replay_kl(p, s, tau, d))
     # Candidate 0 sees linear-KL information from the high-high control group
     # and quadratic boundary information from the high-low group.
     assert lower.information_matrix[0, 0] == pytest.approx(lower.control_kl)
@@ -73,20 +72,30 @@ def test_matched_controls_restore_linear_small_d_information():
     costs = [1.0] * len(groups)
 
     a = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=1e-4, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=1e-4,
+        beta=0.05,
     )
     b = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=5e-5, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=5e-5,
+        beta=0.05,
     )
 
     assert a.success and b.success
-    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(
-        2.0, rel=5e-4
-    )
+    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(2.0, rel=5e-4)
 
 
 def test_without_matched_controls_fixed_tolerance_is_quadratic():
@@ -98,20 +107,30 @@ def test_without_matched_controls_fixed_tolerance_is_quadratic():
     assert not cover.success
 
     a = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=1e-4, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=1e-4,
+        beta=0.05,
     )
     b = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=5e-5, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=5e-5,
+        beta=0.05,
     )
 
     assert a.success and b.success
-    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(
-        4.0, rel=2e-3
-    )
+    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(4.0, rel=2e-3)
 
 
 def test_control_schedule_covers_every_high_candidate():
@@ -119,9 +138,7 @@ def test_control_schedule_covers_every_high_candidate():
     groups = [(0, 1), (1, 2), (0, 2)]
     costs = [1.0] * len(groups)
 
-    schedule = matched_control_replay_schedule(
-        graph, groups, costs, high, d=0.05, beta=0.01
-    )
+    schedule = matched_control_replay_schedule(graph, groups, costs, high, d=0.05, beta=0.01)
 
     assert schedule.normalized_control_cover_cost == pytest.approx(1.5)
     for x in high:
@@ -185,14 +202,11 @@ def test_control_family_rejects_non_bipartite_fairness_edges():
 def _shared_tape_transcript_distribution(old_thresholds, new_thresholds):
     cuts = sorted({0.0, 1.0, *old_thresholds, *new_thresholds})
     mass = {}
-    for left, right in zip(cuts, cuts[1:]):
+    for left, right in pairwise(cuts):
         if right <= left:
             continue
         u = (left + right) / 2.0
-        state = tuple(
-            [int(u <= t) for t in old_thresholds]
-            + [int(u <= t) for t in new_thresholds]
-        )
+        state = tuple([int(u <= t) for t in old_thresholds] + [int(u <= t) for t in new_thresholds])
         mass[state] = mass.get(state, 0.0) + (right - left)
     return mass
 
@@ -256,20 +270,30 @@ def test_mixed_control_topology_is_quadratic_when_one_candidate_lacks_control():
     costs = (1.0, 1.0)
 
     a = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=1e-4, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=1e-4,
+        beta=0.05,
     )
     b = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=5e-5, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=5e-5,
+        beta=0.05,
     )
 
     assert a.success and b.success
-    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(
-        4.0, rel=3e-3
-    )
+    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(4.0, rel=3e-3)
 
 
 def test_all_candidates_control_covered_recover_linear_leading_regime():
@@ -279,27 +303,41 @@ def test_all_candidates_control_covered_recover_linear_leading_regime():
     costs = (1.0,) * len(groups)
 
     a = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=1e-4, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=1e-4,
+        beta=0.05,
     )
     b = control_replay_information_lower_bound(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-        d=5e-5, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=5e-5,
+        beta=0.05,
     )
 
     assert a.success and b.success
-    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(
-        2.0, rel=3e-3
-    )
+    assert b.expected_cost_floor / a.expected_cost_floor == pytest.approx(2.0, rel=3e-3)
 
 
 def test_mixed_information_lp_prefers_first_order_controls_for_small_d():
     graph, high = _family()
     groups = [
-        (0, 1), (1, 2), (0, 2),  # matched high controls
-        (0, 3), (1, 3), (2, 3),  # cheaper boundary-only references
+        (0, 1),
+        (1, 2),
+        (0, 2),  # matched high controls
+        (0, 3),
+        (1, 3),
+        (2, 3),  # cheaper boundary-only references
     ]
     costs = [1.0, 1.0, 1.0, 0.1, 0.1, 0.1]
 
@@ -338,8 +376,14 @@ def test_mixed_control_leading_coefficient_matches_exact_quadratic_limit():
     costs = (1.0, 1.0)
 
     lead = mixed_control_leading_coefficient(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        beta=0.05,
     )
     assert lead.success
     assert lead.uncovered_high_vertices == (2,)
@@ -348,9 +392,15 @@ def test_mixed_control_leading_coefficient_matches_exact_quadratic_limit():
     errors = []
     for d in (2e-4, 1e-4, 5e-5):
         exact = control_replay_information_lower_bound(
-            graph, groups, costs, high,
-            p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
-            d=d, beta=0.05,
+            graph,
+            groups,
+            costs,
+            high,
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.10,
+            d=d,
+            beta=0.05,
         )
         assert exact.success
         scaled = d * d * exact.expected_cost_floor
@@ -367,9 +417,119 @@ def test_mixed_control_leading_coefficient_vanishes_under_complete_control_cover
     costs = (1.0,) * len(groups)
 
     lead = mixed_control_leading_coefficient(
-        graph, groups, costs, high,
-        p=0.20, shared_patch=0.10, fairness_tolerance=0.10, beta=0.05,
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        beta=0.05,
     )
     assert lead.success
     assert lead.coefficient == pytest.approx(0.0)
     assert lead.uncovered_high_vertices == ()
+
+
+@pytest.mark.parametrize(
+    ("p", "shared_patch", "tolerance"),
+    [
+        (0.20, 0.10, 0.10),  # negative boundary cubic coefficient
+        (0.20, 0.10, 0.35),  # zero boundary cubic coefficient
+        (0.20, 0.10, 0.45),  # positive boundary cubic coefficient
+    ],
+)
+def test_mixed_control_two_term_coefficients_match_exact_lp(p, shared_patch, tolerance):
+    graph = complete_bipartite_graph(3, 2)
+    high = (0, 1, 2)
+    # One control group covers candidates 0 and 1 at declared cost 2.
+    # Candidate 2 has two boundary-only choices and uses the cheaper cost 1.
+    groups = ((0, 1), (2, 3), (2, 4))
+    costs = (2.0, 3.0, 1.0)
+    coeff = mixed_control_asymptotic_coefficients(
+        graph,
+        groups,
+        costs,
+        high,
+        p=p,
+        shared_patch=shared_patch,
+        fairness_tolerance=tolerance,
+        beta=0.05,
+    )
+
+    assert coeff.success
+    assert coeff.uncovered_high_vertices == (2,)
+    assert coeff.covered_high_vertices == (0, 1)
+    assert coeff.boundary_minimum_cost == pytest.approx(1.0)
+    assert coeff.residual_control_cover_cost == pytest.approx(2.0)
+
+    residual_errors = []
+    for d in (4e-4, 2e-4, 1e-4):
+        exact = control_replay_information_lower_bound(
+            graph,
+            groups,
+            costs,
+            high,
+            p=p,
+            shared_patch=shared_patch,
+            fairness_tolerance=tolerance,
+            d=d,
+            beta=0.05,
+        )
+        assert exact.success
+        scaled_residual = d * (
+            exact.expected_cost_floor - coeff.inverse_square_coefficient / (d * d)
+        )
+        residual_errors.append(abs(scaled_residual - coeff.inverse_linear_coefficient))
+
+    assert residual_errors[2] < residual_errors[1] < residual_errors[0]
+    assert residual_errors[2] < 0.01
+
+
+def test_mixed_control_two_term_coefficients_cover_extreme_topologies():
+    graph, high = _family()
+
+    all_control = mixed_control_asymptotic_coefficients(
+        graph,
+        groups=((0, 1), (1, 2), (0, 2)),
+        costs=(1.0, 1.0, 1.0),
+        high_vertices=high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        beta=0.05,
+    )
+    assert all_control.success
+    assert all_control.inverse_square_coefficient == pytest.approx(0.0)
+    assert all_control.residual_control_cover_cost == pytest.approx(1.5)
+
+    all_boundary = mixed_control_asymptotic_coefficients(
+        graph,
+        groups=((0, 3), (1, 3), (2, 4)),
+        costs=(1.0, 2.0, 3.0),
+        high_vertices=high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        beta=0.05,
+    )
+    assert all_boundary.success
+    assert all_boundary.uncovered_high_vertices == high
+    assert all_boundary.boundary_minimum_cost == pytest.approx(6.0)
+    assert all_boundary.residual_control_cover_cost == pytest.approx(0.0)
+
+
+def test_mixed_control_coefficients_reject_unobservable_candidate():
+    graph, high = _family()
+    coeff = mixed_control_asymptotic_coefficients(
+        graph,
+        groups=((0, 1),),
+        costs=(1.0,),
+        high_vertices=high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        beta=0.05,
+    )
+    assert not coeff.success
+    assert math.isinf(coeff.inverse_square_coefficient)

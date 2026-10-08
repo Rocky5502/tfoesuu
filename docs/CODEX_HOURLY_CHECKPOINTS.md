@@ -108,3 +108,33 @@
   bibliography, and manuscript static checks passed.
 - Dataset decision: retain the preregistered seven populations. No post-outcome dataset was added
   without a specific scientific coverage gap and a new protocol version.
+
+## 2026-10-09 — dual-GPU public smoke and P19 sharpening
+
+- PC2 received commit `087f64fb06be0eaaddc1ee5106ec567854751593` through a verified Git bundle
+  and created an isolated detached worktree; its baseline checkout stayed at `149baf36`.
+- Both machines independently validated all 15 prepared artifacts and the preparation/execution
+  contract `b12985f536e2465e67300d62b76b59a8196a0b91dd1167287bfabe08613a7e13`.
+- Complete 1,000-trial public smoke: PC1 ran Adult, German, MEPS, and COMPAS (80 rows; SHA-256
+  `8d7ce8817264186e1b0701b7375ec7e5c846e4e8b7d5b87bcb9e4c6b91c84f33`); PC2 ran Bank,
+  Law School, and Default Credit (60 rows; SHA-256
+  `8d082247de450f93e73cf518bd2d07a5fe35e2e2a34d895790e5371d1f44621c`).
+- The merged 140-row matrix covers seven datasets, four patch sizes, and five methods; SHA-256
+  `d10dfea15e9ded19f645d5e7a719aaa4d1e8e194ba025e633d677478c123da25`. All type-I counts
+  were zero. Across the 28 distinct synchronized-witness configurations, exact binomial auditing
+  found zero Bonferroni outliers (minimum p-value `0.08532118556935754`). This is exploratory,
+  not publication evidence.
+- Formal audit found that an unmatched P19 candidate cannot share a group with another high
+  candidate. This removes a false cross-coverage concern and yields exact d^-2 and d^-1
+  coefficients for the finite mixed-topology information lower LP. Adversarial tests cover all
+  curvature signs, extreme topologies, diverse costs, and unobservability.
+- Validation: 213 tests passed from an isolated task-specific pytest temp root; touched-file Ruff,
+  compileall, the 828-row benchmark inventory, bibliography policy, and full manuscript static
+  consistency passed. The LaTeX compile wrapper first exposed a Windows code-page bug and then
+  hung silently in the installed TeX toolchain after UTF-8 correction; it was terminated after a
+  bounded wait, so no fresh local PDF is claimed.
+- Official STOC 2027 CFP was rechecked: non-anonymous submission; first twelve pages following the
+  title page carry the exposition burden; mandatory public posting; 20--30 minute author video;
+  substantive AI methodology disclosure. The local compliance checklist is current as of
+  2026-10-09.
+- Approval gate reached: YES for a 100,000-trial public publication campaign. It was not launched.

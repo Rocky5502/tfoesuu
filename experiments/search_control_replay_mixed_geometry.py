@@ -12,12 +12,13 @@ extreme fixtures.
 from __future__ import annotations
 
 import argparse
-from itertools import combinations
 import json
+from itertools import combinations
 
 from tfoesuu.control_replay import (
     control_replay_information_lower_bound,
     minimum_fractional_control_cover,
+    mixed_control_asymptotic_coefficients,
     mixed_control_leading_coefficient,
 )
 from tfoesuu.graphs import complete_bipartite_graph
@@ -82,6 +83,12 @@ def main() -> None:
         )
         if not leading.success:
             raise RuntimeError(leading.message)
+        two_term = mixed_control_asymptotic_coefficients(
+            graph, groups, costs, high,
+            p=0.20, shared_patch=0.10, fairness_tolerance=0.10, beta=0.05,
+        )
+        if not two_term.success:
+            raise RuntimeError(two_term.message)
         a0 = leading.coefficient
         leading_weights = leading.scaled_query_weights
         leading_uncovered = leading.uncovered_high_vertices
@@ -104,13 +111,16 @@ def main() -> None:
                 "floor_half_d": qh,
                 "ratio_half_over_full": ratio,
                 "apparent_exponent": 1 if ratio < 3.0 else 2,
-                "candidate_A0": a0,
+                "exact_A0": a0,
+                "exact_B0": two_term.inverse_linear_coefficient,
                 "d2_floor": args.d * args.d * qd,
                 "d2_floor_error": args.d * args.d * qd - a0,
-                "scaled_residual": (
-                    args.d * (qd - a0 / (args.d * args.d))
-                    if a0 > 0.0 else None
+                "scaled_residual": args.d * (
+                    qd - a0 / (args.d * args.d)
                 ),
+                "scaled_residual_error": args.d * (
+                    qd - a0 / (args.d * args.d)
+                ) - two_term.inverse_linear_coefficient,
                 "leading_boundary_weights": leading_weights.tolist(),
                 "leading_uncovered": leading_uncovered,
             }
