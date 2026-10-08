@@ -8,7 +8,7 @@ Created: 2026-10-08. **Status: setup instructions only; no local hardware was ac
 - PC1 already reaches PC2 through Windows OpenSSH with the existing local SSH key, over a private LAN at 192.168.103.117.
 - The current remote Windows account is Administrator. Interactive entry into WSL launches Ubuntu 22.04.5 as user zbq.
 - PC2 has an existing storage folder: D:\Rocky Work\TFOESUU.
-- Claimed devices are two GeForce 50-series cards, one per PC. Confirm the **exact** names, VRAM, driver, and CUDA visibility on each host with nvidia-smi and PyTorch; do not infer hardware identity from a nickname.
+- PC2 device **verified from user-provided `nvidia-smi` output**: NVIDIA GeForce RTX **5070 Ti**, 16 GB (16303 MiB), Windows driver **591.86**, advertised CUDA driver capability **13.1**. PC1 GPU identity is not yet independently verified. These are not two locally visible CUDA devices.
 - These are TWO SEPARATE CUDA workers. Their memories are NOT pooled, and CUDA device 1 on PC1 does not refer to the PC2 GPU.
 
 ## Recommended layout
@@ -36,6 +36,86 @@ Microsoft recommends keeping a Linux Git checkout and virtual environment in the
     git --version
 
 If /usr/lib/wsl/lib/nvidia-smi is missing, try nvidia-smi and check the Windows driver first. In WSL2 the Windows NVIDIA driver supplies CUDA; **do not install a Linux display driver**. If D: is not mounted, stop and troubleshoot the WSL mount before creating paths.
+
+## Immediate next action on PC2 (after the initial hardware check)
+
+SSH -> Windows PC2 -> `wsl` is already functional, D: is mounted, and WSL
+can see the 5070 Ti. **No firewall, SSH server, WSL installation, or NVIDIA
+driver change is required.**
+
+The user is at `(base) zbq@WIN-5CO640JM86F:/mnt/c/Users/Administrator# TFOESUU two-PC GPU architecture (PC1 Windows + PC2 Windows/WSL2)
+
+Created: 2026-10-08. **Status: setup instructions only; no local hardware was accessed from ChatGPT.**
+
+## Verified user-supplied facts
+
+- PC1 is the controller. Windows project folder: G:\TFOESUU Project.
+- PC1 already reaches PC2 through Windows OpenSSH with the existing local SSH key, over a private LAN at 192.168.103.117.
+- The current remote Windows account is Administrator. Interactive entry into WSL launches Ubuntu 22.04.5 as user zbq.
+- PC2 has an existing storage folder: D:\Rocky Work\TFOESUU.
+- PC2 device **verified from user-provided `nvidia-smi` output**: NVIDIA GeForce RTX **5070 Ti**, 16 GB (16303 MiB), Windows driver **591.86**, advertised CUDA driver capability **13.1**. PC1 GPU identity is not yet independently verified. These are not two locally visible CUDA devices.
+- These are TWO SEPARATE CUDA workers. Their memories are NOT pooled, and CUDA device 1 on PC1 does not refer to the PC2 GPU.
+
+## Recommended layout
+
+PC1 Windows (develop and orchestrate; local GPU worker):
+    G:\TFOESUU Project\tfoesuu\   (if G: root is not already a Git repository)
+
+PC2 Ubuntu WSL2 (fast Linux working tree, venv, CUDA worker):
+    /home/zbq/work/tfoesuu/
+
+PC2 Windows D: (persistent bulk outputs, logs, prepared data):
+    D:\Rocky Work\TFOESUU\
+    /mnt/d/Rocky Work/TFOESUU/
+
+Microsoft recommends keeping a Linux Git checkout and virtual environment in the WSL ext4 filesystem instead of /mnt/d for good small-file/build performance. Large result JSONL, datasets, and logs can go on D:. Keep source synchronized by Git, not live network-mounted .git.
+
+## Step 1: run NOW in existing PC2 Ubuntu terminal
+
+    whoami
+    pwd
+    ls -ld "/mnt/d/Rocky Work/TFOESUU"
+    df -h /mnt/d
+    /usr/lib/wsl/lib/nvidia-smi
+    python3 --version
+    git --version
+
+If /usr/lib/wsl/lib/nvidia-smi is missing, try nvidia-smi and check the Windows driver first. In WSL2 the Windows NVIDIA driver supplies CUDA; **do not install a Linux display driver**. If D: is not mounted, stop and troubleshoot the WSL mount before creating paths.
+
+.
+Move into the Linux home directory rather than installing the checkout in
+`/mnt/c/Users/Administrator`. Existing Conda `(base)` is not the
+TFOESUU virtual environment. A disposable dedicated `.venv` is created
+in the Linux checkout.
+
+Run in PC2 Ubuntu:
+
+```bash
+cd ~
+mkdir -p "$HOME/work"
+if [ ! -d "$HOME/work/tfoesuu/.git" ]; then
+  git clone https://github.com/Rocky5502/tfoesuu.git "$HOME/work/tfoesuu"
+fi
+cd "$HOME/work/tfoesuu"
+git status --short
+git switch main
+git pull --ff-only
+bash scripts/bootstrap_pc2_wsl.sh
+```
+
+The bootstrap creates `~/work/tfoesuu/.venv`, installs core/dev
+dependencies and the official **PyTorch 2.12.1 CUDA 13.0** wheel, validates
+`torch.cuda` and its `torch.binomial` kernel, checks the benchmark inventory,
+and runs pytest. The installed Windows driver reports CUDA 13.1 compatibility;
+the supported cu130 PyTorch wheel is deliberately selected. The script uses
+the existing `python3`, so first inspect `command -v python3` and
+`python3 --version` if you want to choose a different interpreter.
+
+It **does not** install an NVIDIA Linux driver, overwrite an existing checkout,
+pull secrets, start a long experiment, or erase PC2 data. If a Python venv
+package is unavailable, run `sudo apt update && sudo apt install -y python3-venv`
+and retry. Keep any error output and do not proceed to larger GPU jobs until
+the failing stage is repaired.
 
 ## Step 2: prepare WSL2 worker checkout (PC2 Ubuntu)
 
