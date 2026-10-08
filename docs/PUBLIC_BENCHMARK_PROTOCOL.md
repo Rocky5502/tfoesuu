@@ -20,17 +20,42 @@ The authoritative URLs and DOIs where available are frozen in `data/public_bench
 
 ## Version construction
 
-1. Split each dataset deterministically into train/validation/evaluation partitions using frozen seeds.
+1. Split each dataset deterministically into training and evaluation partitions using a frozen seed.
 2. Fit a simple local baseline predictor using only non-protected features. No pretrained model or external model API is permitted.
 3. Convert the baseline score into an interior Bernoulli probability `p0(x)` with clipping away from 0 and 1.
 4. Define the old executable software as `P0(x;U)=1{U <= p0(x)}` for a common-uniform random tape `U`.
 5. Construct the new version from a frozen patch specification. The theorem-aligned controlled patch uses a common probability shift `s` and an endpoint-specific differential shift `d` on a counterfactual pair, with clipping configurations excluded from theorem-comparison plots.
-6. Construct counterfactual fairness edges by changing only the designated protected attribute while holding all non-protected features fixed. Store the resulting graph size and pair-construction audit.
+6. In the v1 evaluator, construct one controlled two-endpoint edge per evaluation context by
+   duplicating its scalar `p0(x)` at both old endpoints. The prepared NPZ does not store or mutate
+   protected-attribute values, and therefore does not materialize an empirical counterfactual pair.
+   Protected attributes identify the fairness-relevant source population and are excluded from the
+   local predictor; the experimental graph itself is a synthetic theorem-aligned wrapper.
 7. Run independent execution, old/new vertex pairing, four-way replay, suite replay where executable, and TFOESUU using identical confidence targets.
 
 ## Why this construction is appropriate
 
-The local predictor supplies realistic heterogeneous base probabilities from public data, while the software wrapper gives exact control of the stochastic execution and common random tape. By training the base score without protected attributes, a counterfactual pair shares the same old probability before the injected patch. This allows theorem-aligned replay experiments without claiming that the original public dataset itself satisfies the theorem assumptions.
+The local predictor supplies heterogeneous base probabilities from public covariates, while the
+software wrapper gives exact control of stochastic execution and the common random tape. Duplicating
+each scalar probability makes the two old endpoints equal by construction before the injected patch.
+This is a controlled finite-instance replay experiment, not evidence that the source dataset supplies
+valid causal counterfactual worlds or that its fairness assumptions hold.
+
+## Prepared-input integrity gate
+
+Before any public smoke or publication run, validate the complete directory read-only:
+
+```bash
+python scripts/validate_prepared_public_benchmarks.py \
+  /path/to/datasets/prepared \
+  --expected-source-commit <40-character-clean-release-SHA>
+```
+
+The validator requires exactly the seven registered IDs; coherent manifest and per-dataset metadata;
+the frozen NPZ schema; matching probability/label lengths; finite interior probabilities within the
+declared clip; binary labels; one source commit; and valid metadata/count fields. Its JSON report
+records byte hashes for the 15 prepared artifacts. These byte hashes are distinct from each
+dataset's `canonical_loaded_data_sha256`, which fingerprints the loader's canonical feature/target
+population before splitting.
 
 ## Primary factors
 

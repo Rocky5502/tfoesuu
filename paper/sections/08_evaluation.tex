@@ -100,12 +100,16 @@ Default of Credit Card Clients & Binary classification & sex, age & UCI \cite{De
 
 The common protocol fits a simple local baseline predictor on non-protected
 features, converts its score to an interior Bernoulli probability, and defines
-the old program by a common-uniform randomized decision. Counterfactual pairs
-are created by varying only the designated protected attribute. The new program
+the old program by a common-uniform randomized decision. In the v1 evaluator,
+each evaluation probability is duplicated into a controlled two-endpoint edge;
+the prepared artifact does not store or mutate protected-attribute values and
+therefore does not materialize an empirical counterfactual pair. The new program
 is produced by a frozen patch specification with a common shift and, when
-required by the experiment, a differential endpoint shift. This construction
-lets public inputs instantiate the replay model while keeping the theorem
-assumptions and the empirical generalization claims separate.
+required by the experiment, a differential endpoint shift. Thus public
+covariates determine a heterogeneous probability population, while the graph
+and counterfactual endpoints remain a synthetic theorem-aligned wrapper. This
+construction is not evidence that the source dataset supplies valid causal
+counterfactual worlds or satisfies the paper's fairness assumptions.
 
 \paragraph{Simulation unit and execution accounting.}
 The public GPU evaluator implements a controlled \emph{Bernoulli threshold-law

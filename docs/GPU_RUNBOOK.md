@@ -222,6 +222,18 @@ Prepare the seven registered datasets. MEPS requires explicit acceptance of the 
 python scripts/prepare_public_benchmarks.py --max-contexts 4096 --accept-meps-terms
 ```
 
+Validate the complete prepared directory and capture its read-only byte-hash report before execution:
+
+```powershell
+python scripts/validate_prepared_public_benchmarks.py `
+  'D:\Rocky Work\TFOESUU\datasets\prepared' `
+  --expected-source-commit (git rev-parse HEAD)
+```
+
+The GPU runner invokes the same strict validator and fails before CUDA work if any registered
+dataset, manifest row, metadata field, probability vector, label vector, or source commit is
+incoherent.
+
 Run a single-GPU smoke test before the full sweep:
 
 ```powershell
@@ -235,4 +247,4 @@ python experiments/gpu_public_replay_sweep.py --device cuda:0 --trials 100000 --
 python scripts/render_public_results.py --results results/public_replay_100k.jsonl --output paper/figures/public_results.pdf --png-output paper/figures/public_results.png
 ```
 
-The public sweep compares execution-access regimes, not predictive models. The base predictor is local and uses non-protected features only. The patch is injected in the executable stochastic decision wrapper so the old/new replay semantics remain controlled. Do not add a dataset, seed, or patch size after seeing results without recording the change as a new protocol version.
+The public sweep compares execution-access regimes, not predictive models. The base predictor is local and uses non-protected features only. Each scalar evaluation probability is duplicated into a synthetic two-endpoint edge; v1 does not materialize protected-attribute counterfactual pairs. The patch is injected in the executable stochastic decision wrapper so the old/new replay semantics remain controlled. Do not add a dataset, seed, or patch size after seeing results without recording the change as a new protocol version.

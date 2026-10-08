@@ -19,8 +19,8 @@ from pathlib import Path
 
 import numpy as np
 
+from tfoesuu.public_benchmarks import validate_prepared_public_directory
 from tfoesuu.public_results import PublicResultRow, write_public_results
-
 
 METHODS = ("independent", "vertex-paired", "four-way", "suite", "tfoesuu")
 DEFAULT_PATCH_SIZES = (0.10, 0.05, 0.02, 0.01)
@@ -59,7 +59,7 @@ def load_subject(prepared_dir: Path, dataset_id: str) -> tuple[np.ndarray, dict]
 def impacted_mask(p0: np.ndarray, fraction: float) -> np.ndarray:
     if not (0.0 < fraction <= 1.0):
         raise ValueError("affected_fraction must lie in (0,1]")
-    k = max(1, int(math.ceil(fraction * len(p0))))
+    k = max(1, math.ceil(fraction * len(p0)))
     order = np.argsort(np.abs(p0 - 0.5), kind="stable")
     mask = np.zeros(len(p0), dtype=bool)
     mask[order[:k]] = True
@@ -69,11 +69,11 @@ def impacted_mask(p0: np.ndarray, fraction: float) -> np.ndarray:
 def hoeffding_pair_rounds(edges: int, d: float, beta: float) -> int:
     # Two empirical means per edge.  Requiring both means to be within d/4
     # and union-bounding over all edges gives 4M exp(-n d^2 / 8) <= beta.
-    return int(math.ceil(8.0 * math.log(4.0 * edges / beta) / (d * d)))
+    return math.ceil(8.0 * math.log(4.0 * edges / beta) / (d * d))
 
 
 def witness_rounds(d: float, beta: float) -> int:
-    return int(math.ceil(math.log(beta) / math.log1p(-d)))
+    return math.ceil(math.log(beta) / math.log1p(-d))
 
 
 def _batch_size(edges: int, target_elements: int = 1_500_000) -> int:
@@ -305,26 +305,26 @@ def run_dataset(
         p=float(p0[changed_edge]), s=s, d=d,
         rounds=n_linear, trials=trials, device=device, seed=seed + 37
     )
-    independent_i_count = int(round(independent_i * trials))
-    independent_ii_count = int(round(independent_ii * trials))
-    paired_i_count = int(round(paired_i * trials))
-    paired_ii_count = int(round(paired_ii * trials))
+    independent_i_count = round(independent_i * trials)
+    independent_ii_count = round(independent_ii * trials)
+    paired_i_count = round(paired_i * trials)
+    paired_ii_count = round(paired_ii * trials)
 
-    common = dict(
-        dataset_id=dataset_id,
-        dataset_name=str(meta["dataset_name"]),
-        patch_size=d,
-        common_shift=s,
-        confidence_target=beta,
-        trials=trials,
-        graph_vertices=2 * m,
-        graph_edges=m,
-        affected_fraction=affected_fraction,
-        impacted_edges=k,
-        seed=seed,
-        dataset_sha256=str(meta["canonical_loaded_data_sha256"]),
-        source_commit=source_commit,
-    )
+    common = {
+        "dataset_id": dataset_id,
+        "dataset_name": str(meta["dataset_name"]),
+        "patch_size": d,
+        "common_shift": s,
+        "confidence_target": beta,
+        "trials": trials,
+        "graph_vertices": 2 * m,
+        "graph_edges": m,
+        "affected_fraction": affected_fraction,
+        "impacted_edges": k,
+        "seed": seed,
+        "dataset_sha256": str(meta["canonical_loaded_data_sha256"]),
+        "source_commit": source_commit,
+    }
 
     return [
         PublicResultRow(
@@ -398,6 +398,11 @@ def main() -> None:
     sha, dirty = git_state()
     if dirty and not args.allow_dirty:
         raise SystemExit("working tree is dirty; commit/freeze before publication runs")
+
+    validate_prepared_public_directory(
+        args.prepared_dir,
+        expected_source_commit=sha,
+    )
 
     patch_sizes = args.patch_size or list(DEFAULT_PATCH_SIZES)
     if args.dataset:
