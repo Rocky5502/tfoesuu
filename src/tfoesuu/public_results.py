@@ -248,6 +248,11 @@ def validate_publication_coverage(
                     f"incomplete method coverage for {dataset_id}/d={patch}: "
                     f"missing={sorted(required_methods-set(cohort))}"
                 )
+            if any(len(values) != 1 for values in cohort.values()):
+                raise ValueError(
+                    f"nonaggregated method rows for {dataset_id}/d={patch}: "
+                    "aggregate independent seeds before the publication release gate"
+                )
             seed_sets = {name: {row.seed for row in values}
                          for name, values in cohort.items()}
             if len({frozenset(ids) for ids in seed_sets.values()}) != 1:
