@@ -1,92 +1,58 @@
 \begin{figure}[t]
 \centering
-\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
   >=Latex,
-  node distance=0.62cm and 0.56cm,
-  stage/.style={draw=black!32, rounded corners=2pt, line width=0.6pt,
-               fill=white, minimum height=1.65cm, text width=3.35cm,
-               align=left, inner sep=7pt, font=\small},
-  focal/.style={stage, draw=focalteal, line width=0.8pt, fill=focalteal!6},
-  risk/.style={stage, draw=risktone, line width=0.7pt, fill=risktone!5},
-  flow/.style={->, line width=0.9pt, draw=black!62},
-  sub/.style={font=\footnotesize, text=black!70, align=left}
+  font=\footnotesize,
+  stage/.style={draw=black!74, line width=0.65pt, rounded corners=1pt,
+    fill=white, anchor=north west, align=left, inner xsep=5.2pt,
+    inner ysep=6.2pt, minimum height=1.02cm},
+  muted/.style={stage, fill=black!4},
+  branch/.style={stage, minimum height=1.36cm},
+  result/.style={stage, minimum height=1.27cm},
+  flow/.style={-{Latex[length=2.1mm]}, draw=black!76, line width=0.72pt},
+  line/.style={draw=black!60, line width=0.55pt},
+  sectionhead/.style={anchor=west, font=\footnotesize\bfseries},
+  note/.style={draw=black!60, dashed, line width=0.55pt, fill=black!3,
+    rounded corners=1pt, anchor=north west, align=left,
+    inner xsep=5.2pt, inner ysep=5pt}
 ]
+% Width: 15.95 cm, below the 16.51 cm text block in the 11 pt STOC submission.
+\node[muted, text width=15.55cm, minimum height=0.78cm] (archive) at (0,0) {\textbf{Archived evidence and new patch}\quad Certified $P_0$; patched program $P_1$; fairness graph $G=(V,E)$; sound change-impact information.};
 
-\node[stage] (inputs) {
-  \textbf{1. Reuse old evidence}\\[2pt]
-  Certified $P_0$ and fairness graph $G$\\
-  Patch $P_0\!\to\!P_1$\\
-  Impact set and optional envelopes
-};
+\node[stage, text width=7.33cm, minimum height=1.12cm] (prune) at (0,-1.53) {\textbf{1. Remove certified-safe comparisons}\\[2pt]
+Sound impact localization and envelopes $|g_{0,e}|+b_e\le\tau_e$ remove edges without new execution.};
+\node[stage, text width=7.33cm, minimum height=1.12cm] (residual) at (8.12,-1.53) {\textbf{2. Form residual obligations}\\[2pt]
+Residual graph $H^\star$ and directional headrooms $h_e^+=\tau_e-g_{0,e}$, $h_e^-=\tau_e+g_{0,e}$.};
+\draw[flow] (archive.south) -- ++(0,-0.17) -| (prune.north);
+\draw[flow] (prune.east) -- (residual.west);
 
-\node[stage, right=of inputs] (prune) {
-  \textbf{2. Prune deterministically}\\[2pt]
-  Remove every edge certified safe by\\
-  $|g_{0,e}|+b_e\le\tau_e$\\
-  Residual graph $H^\star$
-};
+\node[sectionhead] at (0.02,-3.44) {3. Declare exactly which executions can share a random tape};
+\draw[line] (0,-3.65) -- (15.95,-3.65);
 
-\node[focal, right=of prune] (observe) {
-  \textbf{3. Couple stochastic executions}\\[2pt]
-  Old/new paired deltas\\
-  Four-way or suite replay\\
-  Declared-group partial replay
-};
+\node[branch, text width=4.73cm] (paired) at (0,-3.93) {\textbf{Old/new paired replay}\\[2pt]
+$\Delta_v=P_1(v;R)-P_0(v;R)$\\
+\emph{Two concrete executions/call}};
+\node[branch, text width=4.73cm] (joint) at (5.45,-3.93) {\textbf{Four-way or suite replay}\\[2pt]
+One $R$ across an edge or active suite\\
+\emph{Four or $2n_+$ executions/round}};
+\node[branch, text width=4.73cm] (groups) at (10.90,-3.93) {\textbf{Legal partial-replay groups}\\[2pt]
+One $R$ within each declared $S\in\mathcal S$\\
+\emph{$2|S|$ concrete executions/query}};
 
-\node[focal, right=of observe] (allocate) {
-  \textbf{4. Allocate by theorem geometry}\\[2pt]
-  Gaussian: $\Psi(H^\star,\nu)$\\
-  Partial replay: $C_{\rm vert}$ or $C_{\rm ctrl}$\\
-  Match statistic to replay/control access
-};
+\node[sectionhead] at (0.02,-6.25) {4. Use a theorem matched to the observation law and null class};
+\draw[line] (0,-6.46) -- (15.95,-6.46);
 
-\node[stage, right=of allocate] (decision) {
-  \textbf{5. Stop with a certificate}\\[2pt]
-  Accept or reject under fixed confidence\\
-  Record witnesses, cost, seed, SHA\\
-  Never exceed proved scope
-};
+\node[result, text width=4.73cm] (gauss) at (0,-6.74) {\textbf{Gaussian allocation (P4--P5)}\\[2pt]
+$\Psi(H^\star,\nu)$ controls paired-call cost; known variance and margin are required.};
+\node[result, text width=4.73cm] (sync) at (5.45,-6.74) {\textbf{Synchronized bounds (P15--P18)}\\[2pt]
+Sparse witness $d^{-1}$ in scoped families; fixed positive $\tau$ can restore $d^{-2}$.};
+\node[result, text width=4.73cm] (cover) at (10.90,-6.74) {\textbf{Replay topology (P17, P19)}\\[2pt]
+$C_{\rm vert}$ for homogeneous nulls; $C_{\rm ctrl}$ for audited two-class controls.};
 
-\draw[flow] (inputs) -- (prune);
-\draw[flow] (prune) -- (observe);
-\draw[flow] (observe) -- (allocate);
-\draw[flow] (allocate) -- (decision);
+\node[stage, text width=15.55cm, minimum height=0.76cm] (decision) at (0,-9.08) {\textbf{5. Report a fixed-confidence decision and its execution cost}\quad State the tested null/alternative, error level $\delta$, replay unit, witnesses and theorem scope; retain zero-query pruned edges.};
 
-\node[sub, below=0.34cm of prune, text width=3.35cm] (zero) {
-  \textbf{Zero-query reuse:} old certificates become computationally useful
-  when sound patch information makes comparisons provably safe.
-};
-
-\node[sub, below=0.34cm of observe, text width=3.35cm] (replay) {
-  \textbf{Replay hierarchy:} synchronization exposes sparse $d^{-1}$ witnesses
-  directly, or recovers them through matched-background controls.
-};
-
-\node[sub, below=0.34cm of allocate, text width=3.35cm] (geometry) {
-  \textbf{Graph geometry:} suite replay removes edge-count dependence in
-  rounds; partial replay induces active-vertex or matched-control covers.
-};
-
-\node[risk, below=1.30cm of observe, text width=7.40cm] (scope) {
-  \textbf{Scope boundary and control recovery.} P17 attains $C_{\rm vert}$
-  in the homogeneous family, but naive raw contrast fails under heterogeneous
-  benign shifts. P18 shows fixed $\tau>0$ is quadratic without a sparse
-  witness. P19 adds matched-background controls: control-compatible groups carry
-  $\Theta(d)$ information and restore $C_{\rm ctrl}/d$ scaling.
-};
-
-\draw[flow, draw=risktone] (observe.south) |- (scope.west);
-
-\end{tikzpicture}%
-}
-\caption{TFOESUU overview.  Fairness regression is treated as evidence reuse
-across software versions: deterministic change information first removes
-comparisons that need no new executions; the remaining stochastic problem is
-matched to the strongest sound replay primitive; theorem-specific allocation
-then controls execution cost.  The red box combines the P17 scope obstruction,
-P18's threshold phase boundary, and P19's matched-control recovery, making clear
-that replay strength alone is insufficient: the topology of valid synchronized
-controls can change both the exponent and the governing fractional geometry.}
+\node[note, text width=15.55cm] (frontier) at (0,-10.40) {\textbf{Unresolved extension (P20, conjecture only).}\quad Composite-nuisance replay information $I_{a,S}(\eta)$ may require nuisance-dependent adaptive allocations. No general optimality/achievability theorem is claimed.};
+\end{tikzpicture}
+\caption{Monochrome overview of fairness-regression certification. Archived evidence and sound patch envelopes first eliminate provably safe edges; remaining obligations are tested under explicitly declared random-tape replay access. The three lower branches summarize \emph{different proved, scoped results}, not interchangeable execution models: Gaussian vertex allocation (P4--P5), synchronized Bernoulli replay (P15--P18), and partial replay with homogeneous or matched-background controls (P17, P19). P20 is an open composite-nuisance generalization, shown separately to avoid conflating proposed information-cover algorithms with proved certification guarantees.}
 \label{fig:overview}
 \end{figure}
