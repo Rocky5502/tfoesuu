@@ -33,6 +33,14 @@ This file is the source of truth for mathematical claims. A result is not promot
 | T6 | Version-aware patch-locality separation vs fresh auditing | OPEN | P10 settles location information on a matching; broader fresh-audit comparison remains open. |
 | T7 | Multi-patch amortized complexity | OPEN | Potential dynamic graph/certificate theorem. |
 
+## P19 numerical implementation safeguard
+
+The P19 information LP is evaluated using cancellation-resistant KL,
+normalized fractional-incidence cover coordinates, and primal-dual
+certification (see `docs/P19_NUMERICAL_CERTIFICATION.md`). This
+changes neither the audited two-class theorem scope nor the P20
+conjecture classification. It supplies no empirical results.
+
 ## Audit protocol
 
 For each theorem:

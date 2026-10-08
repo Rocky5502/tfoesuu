@@ -9,6 +9,7 @@ from scipy.optimize import linprog
 
 from .graphs import GraphSpec
 from .partial_replay import _canonical_groups
+from .p19_numerics import certified_p19_information_allocation, stable_p19_information_rates
 from .separations import binary_decision_kl
 
 
@@ -192,9 +193,7 @@ def control_replay_information_lower_bound(
     c = _validate_costs(gs, costs)
 
     r = 1.0 - p - s - tau
-    k_control = r * math.log(r / (r - d))
-    first = 0.0 if tau == 0.0 else tau * math.log(tau / (tau + d))
-    k_boundary = first + k_control
+    k_control, k_boundary = stable_p19_information_rates(r, tau, d)
 
     K = np.zeros((len(gs), len(high)), dtype=float)
     for gi, group in enumerate(gs):
@@ -217,33 +216,16 @@ def control_replay_information_lower_bound(
         )
 
     target = binary_decision_kl(beta)
-    res = linprog(
-        c,
-        A_ub=-K.T,
-        b_ub=-target * np.ones(len(high)),
-        bounds=[(0.0, None)] * len(gs),
-        method="highs",
-    )
-    if not res.success:
-        return ControlReplayInformationLowerBound(
-            float("inf"),
-            np.zeros(len(gs)),
-            high,
-            K,
-            k_control,
-            k_boundary,
-            False,
-            str(res.message),
-        )
+    allocation = certified_p19_information_allocation(K, c, target)
     return ControlReplayInformationLowerBound(
-        float(res.fun),
-        np.asarray(res.x),
+        allocation.cost,
+        allocation.counts,
         high,
         K,
         k_control,
         k_boundary,
-        True,
-        str(res.message),
+        allocation.success,
+        allocation.message,
     )
 
 
