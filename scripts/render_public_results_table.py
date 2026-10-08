@@ -5,7 +5,7 @@ import argparse
 from collections import defaultdict
 from pathlib import Path
 
-import numpy as np
+from scipy.stats import beta as beta_distribution
 
 from tfoesuu.public_results import read_public_results, validate_public_result_matrix
 
@@ -19,23 +19,46 @@ def _fmt_count(value: float) -> str:
     return f"{value:,.1f}"
 
 
-def _wilson_interval(
+def _clopper_pearson_interval(
     count: int,
     trials: int,
-    z: float = 1.959963984540054,
+    alpha: float,
 ) -> tuple[float, float]:
-    p = count / trials
-    denom = 1.0 + z * z / trials
-    center = (p + z * z / (2.0 * trials)) / denom
-    half = (
-        z
-        * np.sqrt(
-            p * (1.0 - p) / trials
-            + z * z / (4.0 * trials * trials)
-        )
-        / denom
+    """Exact two-sided binomial interval at confidence 1-alpha."""
+    if not (0 <= count <= trials) or trials <= 0:
+        raise ValueError("invalid binomial count/trial total")
+    if not (0.0 < alpha < 1.0):
+        raise ValueError("alpha must lie in (0,1)")
+    lo = 0.0 if count == 0 else float(
+        beta_distribution.ppf(alpha / 2.0, count, trials - count + 1)
     )
-    return max(0.0, center - half), min(1.0, center + half)
+    hi = 1.0 if count == trials else float(
+        beta_distribution.ppf(1.0 - alpha / 2.0, count + 1, trials - count)
+    )
+    return lo, hi
+
+
+def _simultaneous_max_error_interval(
+    type_i_count: int,
+    type_ii_count: int,
+    trials: int,
+    family_alpha: float = 0.05,
+) -> tuple[float, float]:
+    """Bonferroni-simultaneous interval for max(type-I, type-II) error.
+
+    Uses two Clopper-Pearson intervals, each with individual miscoverage
+    family_alpha/2. A union bound gives familywise >=1-family_alpha
+    coverage without assuming independence between the error estimators.
+    For the maximum parameter, take the maximum of the two lower
+    endpoints and the maximum of the two upper endpoints.
+    """
+    if not (0.0 < family_alpha < 1.0):
+        raise ValueError("family_alpha must lie in (0,1)")
+    intervals = (
+        _clopper_pearson_interval(type_i_count, trials, family_alpha / 2.0),
+        _clopper_pearson_interval(type_ii_count, trials, family_alpha / 2.0),
+    )
+    return max(lo for lo, _ in intervals), max(hi for _, hi in intervals)
 
 
 def render_table(rows, output: Path, patch_size: float | None = None) -> float:
@@ -71,7 +94,7 @@ def render_table(rows, output: Path, patch_size: float | None = None) -> float:
         "\\resizebox{\\textwidth}{!}{%",
         "\\begin{tabular}{@{}lrrrrrrrrr@{}}",
         "\\toprule",
-        "Dataset & $|V|$ & $|E|$ & Independent & Vertex-paired & Four-way & Suite & TFOESUU & Max error (95\\% CI) & Speedup \\\\",
+        "Dataset & $|V|$ & $|E|$ & Independent & Vertex-paired & Four-way & Suite & TFOESUU & Max error (95\\% simultaneous CI) & Speedup \\\\",
         "\\midrule",
     ]
     for dataset_id in sorted(grouped, key=lambda key: meta[key].dataset_name):
@@ -81,13 +104,10 @@ def render_table(rows, output: Path, patch_size: float | None = None) -> float:
             raise ValueError(f"{dataset_id}: missing methods {missing}")
         anchor = meta[dataset_id]
         tfo = methods["tfoesuu"]
-        if tfo.type_i_error >= tfo.type_ii_error:
-            max_err = tfo.type_i_error
-            err_count = tfo.type_i_error_count
-        else:
-            max_err = tfo.type_ii_error
-            err_count = tfo.type_ii_error_count
-        lo, hi = _wilson_interval(err_count, tfo.trials)
+        max_err = max(tfo.type_i_error, tfo.type_ii_error)
+        lo, hi = _simultaneous_max_error_interval(
+            tfo.type_i_error_count, tfo.type_ii_error_count, tfo.trials
+        )
         speedup = (
             methods["independent"].concrete_program_executions
             / tfo.concrete_program_executions
