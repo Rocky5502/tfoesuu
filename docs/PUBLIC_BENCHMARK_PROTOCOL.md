@@ -104,9 +104,11 @@ This stricter release gate requires:
 - at least four patch sizes and the **same patch-size grid** for every dataset;
 - all five methods (independent, vertex-paired, four-way, suite, TFOESUU)
   for each dataset/patch-size cell;
-- **matched seed sets across methods** for every dataset/patch-size cell;
+- a **single aggregated result per method** in each dataset/patch-size cell; distinct seed-specific rows must be aggregated with independently preserved run provenance before release;
+- **matched seed identifiers across methods** for every dataset/patch-size cell;
 - identical graph metadata across methods for each cell;
-- 100,000 or more actual trials per aggregate row;
+- 100,000 or more actual trials per aggregate row, with integer trial counts and error counts;
+- finite, numeric execution costs, replay rounds, patch sizes, and empirical error rates (no NaN, Infinity, boolean counts, or fractional trial counts);
 - one 40-character hexadecimal source-commit ID;
 - consistent frozen dataset SHA-256, source commit, confidence target, and
   common patch shift in the matrix.
