@@ -176,18 +176,91 @@ def simulate_vertex_paired(
     return null_errors / trials, alt_misses / trials
 
 
-def simulate_witness_miss(
-    *, d: float, rounds: int, trials: int, device: str, seed: int
-) -> float:
+def four_way_witness_on_tape(
+    tape: np.ndarray, *, p: float, s: float, d: float
+) -> tuple[np.ndarray, np.ndarray]:
+    """Explicit four-execution same-tape contrast on frozen one-edge family.
+
+    The returned masks indicate which individual random tapes reveal a
+    *differential patch* under the fair null and the one-endpoint alternative.
+    This is a pure NumPy test oracle for finite deterministic tape partitions;
+    the GPU runner performs the same threshold evaluations using PyTorch.
+    """
+
+    u = np.asarray(tape, dtype=float)
+    if np.any(~np.isfinite(u)) or np.any((u < 0.0) | (u > 1.0)):
+        raise ValueError("random tape values must be finite and in [0,1]")
+    if not (0.0 < p < 1.0 and 0.0 <= s < 1.0 - p and 0.0 < d < 1.0 - p - s):
+        raise ValueError("require interior p, nonnegative shift s and p+s+d<1")
+
+    old_u = u <= p
+    old_v = u <= p
+    null_new_u = u <= p + s
+    null_new_v = u <= p + s
+    alt_new_u = u <= p + s + d
+    alt_new_v = u <= p + s
+    null_contrast = (null_new_u.astype(np.int8) - old_u.astype(np.int8)) - (
+        null_new_v.astype(np.int8) - old_v.astype(np.int8)
+    )
+    alt_contrast = (alt_new_u.astype(np.int8) - old_u.astype(np.int8)) - (
+        alt_new_v.astype(np.int8) - old_v.astype(np.int8)
+    )
+    return null_contrast != 0, alt_contrast != 0
+
+
+def simulate_four_way_pathwise_counts(
+    *, p: float, s: float, d: float, rounds: int,
+    trials: int, device: str, seed: int
+) -> tuple[int, int]:
+    """Count *simulated executable* same-tape witnesses and misses.
+
+    Uses the actual threshold implementations P0(x;U) and P1(x;U) on
+    fresh uniform tapes, rather than injecting a Binomial(d) hit count.
+    For the frozen homogeneous single-changed-edge family, only one edge
+    can witness a regression; evaluating that edge's sufficient contrast is
+    distributionally equivalent to evaluating all unaffected edges.
+
+    Concrete execution counts for full group/suite policies are **planned
+    accounting**, not measured program runtime or GPU kernel calls.
+    All synchronized methods reuse this matched random-tape trace because
+    they have the same observable witness under this frozen model.
+    """
+
     import torch
+
+    if rounds < 1 or trials < 1:
+        raise ValueError("rounds and trials must be positive")
+    if not (0.0 < p < 1.0 and 0.0 <= s < 1.0 - p and 0.0 < d < 1.0 - p - s):
+        raise ValueError("require interior p, nonnegative shift s and p+s+d<1")
 
     dev = torch.device(device)
     gen = torch.Generator(device=dev)
     gen.manual_seed(seed)
-    totals = torch.full((trials,), float(rounds), device=dev)
-    probs = torch.full((trials,), float(d), device=dev)
-    hits = torch.binomial(totals, probs, generator=gen)
-    return float((hits == 0).float().mean().cpu())
+    batch = max(1, min(4096, 1_000_000 // rounds))
+    false_rejects = 0
+    misses = 0
+    done = 0
+    while done < trials:
+        count = min(batch, trials - done)
+        tape = torch.rand((count, rounds), generator=gen, device=dev)
+        old_u = tape <= p
+        old_v = tape <= p
+        null_u = tape <= p + s
+        null_v = tape <= p + s
+        alt_u = tape <= p + s + d
+        alt_v = tape <= p + s
+        # Integer arithmetic (rather than XOR) also handles non-monotone
+        # threshold changes if the oracle is generalized in the future.
+        null_delta = (null_u.to(torch.int8) - old_u.to(torch.int8)) - (
+            null_v.to(torch.int8) - old_v.to(torch.int8)
+        )
+        alt_delta = (alt_u.to(torch.int8) - old_u.to(torch.int8)) - (
+            alt_v.to(torch.int8) - old_v.to(torch.int8)
+        )
+        false_rejects += int(torch.any(null_delta != 0, dim=1).sum().item())
+        misses += int((~torch.any(alt_delta != 0, dim=1)).sum().item())
+        done += count
+    return false_rejects, misses
 
 
 def run_dataset(
@@ -227,14 +300,14 @@ def run_dataset(
         m, impact, s=s, d=d, n=n_quad, trials=trials,
         changed_edge=changed_edge, device=device, seed=seed + 23
     )
-    witness_miss = simulate_witness_miss(
-        d=d, rounds=n_linear, trials=trials, device=device, seed=seed + 37
+    witness_false_reject_count, witness_miss_count = simulate_four_way_pathwise_counts(
+        p=float(p0[changed_edge]), s=s, d=d,
+        rounds=n_linear, trials=trials, device=device, seed=seed + 37
     )
     independent_i_count = int(round(independent_i * trials))
     independent_ii_count = int(round(independent_ii * trials))
     paired_i_count = int(round(paired_i * trials))
     paired_ii_count = int(round(paired_ii * trials))
-    witness_miss_count = int(round(witness_miss * trials))
 
     common = dict(
         dataset_id=dataset_id,
@@ -277,9 +350,9 @@ def run_dataset(
             method="four-way",
             replay_rounds=float(m * n_linear),
             concrete_program_executions=float(4 * m * n_linear),
-            type_i_error_count=0,
+            type_i_error_count=witness_false_reject_count,
             type_ii_error_count=witness_miss_count,
-            type_i_error=0.0,
+            type_i_error=witness_false_reject_count / trials,
             type_ii_error=witness_miss_count / trials,
             **common,
         ),
@@ -287,9 +360,9 @@ def run_dataset(
             method="suite",
             replay_rounds=float(n_linear),
             concrete_program_executions=float(4 * m * n_linear),
-            type_i_error_count=0,
+            type_i_error_count=witness_false_reject_count,
             type_ii_error_count=witness_miss_count,
-            type_i_error=0.0,
+            type_i_error=witness_false_reject_count / trials,
             type_ii_error=witness_miss_count / trials,
             **common,
         ),
@@ -297,9 +370,9 @@ def run_dataset(
             method="tfoesuu",
             replay_rounds=float(k * n_linear),
             concrete_program_executions=float(4 * k * n_linear),
-            type_i_error_count=0,
+            type_i_error_count=witness_false_reject_count,
             type_ii_error_count=witness_miss_count,
-            type_i_error=0.0,
+            type_i_error=witness_false_reject_count / trials,
             type_ii_error=witness_miss_count / trials,
             **common,
         ),
