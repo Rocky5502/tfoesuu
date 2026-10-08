@@ -53,3 +53,42 @@ def test_public_result_matrix_rejects_mixed_commits():
     b = PublicResultRow(**{**b.__dict__, "source_commit": "fedcba9876543210"})
     with pytest.raises(ValueError, match="one source commit"):
         validate_public_result_matrix([a, b])
+
+
+@pytest.mark.parametrize(
+    "field,bad_value",
+    [
+        ("concrete_program_executions", float("nan")),
+        ("concrete_program_executions", float("inf")),
+        ("replay_rounds", float("nan")),
+        ("replay_rounds", float("-inf")),
+        ("patch_size", float("nan")),
+        ("type_i_error", float("inf")),
+        ("common_shift", "0.05"),
+        ("confidence_target", True),
+    ],
+)
+def test_nonfinite_public_result_metrics_are_rejected(field, bad_value):
+    row = _row("tfoesuu", executions=100.0)
+    altered = PublicResultRow(**{**row.__dict__, field: bad_value})
+    with pytest.raises(ValueError, match="finite real number"):
+        validate_public_result_row(altered)
+
+
+@pytest.mark.parametrize(
+    "field,bad_value",
+    [
+        ("trials", 1000.5),
+        ("trials", True),
+        ("graph_vertices", 100.0),
+        ("graph_edges", 50.5),
+        ("type_i_error_count", 10.5),
+        ("type_ii_error_count", 20.0),
+        ("seed", 3.14),
+    ],
+)
+def test_fractional_or_boolean_public_result_counts_are_rejected(field, bad_value):
+    row = _row("tfoesuu", executions=100.0)
+    altered = PublicResultRow(**{**row.__dict__, field: bad_value})
+    with pytest.raises(ValueError, match="must be an integer"):
+        validate_public_result_row(altered)
