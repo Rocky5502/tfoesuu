@@ -24,7 +24,7 @@
 | G1 software | compileall; 194 PC1 tests; 194 PC2 tests; inventory; bibliography and paper static checks | PASS, with 107 pre-existing Ruff findings |
 | G2 data | seven nonzero NPZ/JSON pairs and manifest pass strict schema/content/hash validation | PASS for frozen prepared artifacts |
 | G3 math | frozen proof-status documents and P17 negative boundary present | OPEN: claim-level crosswalk audit required |
-| G4 experiment | runner now fails closed on the complete prepared-input contract | PARTIAL: protocol and cost audit continues |
+| G4 experiment | runner fails closed on prepared inputs and records a three-Git-object preparation compatibility contract | PARTIAL: public smoke and cost audit remain |
 | G5 smoke | complete P12/P15 1k, 10k, and 100k frozen-baseline CUDA grids; exact finite-law audits green | PARTIAL: public-data smoke still gated by release-compatible source |
 | G6 scale | publication-scale runs require approval | BLOCKED BY APPROVAL GATE |
 | G7 manuscript | static consistency passed; no public result matrix exists | OPEN |

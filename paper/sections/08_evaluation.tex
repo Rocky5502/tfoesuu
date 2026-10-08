@@ -111,6 +111,13 @@ and counterfactual endpoints remain a synthetic theorem-aligned wrapper. This
 construction is not evidence that the source dataset supplies valid causal
 counterfactual worlds or satisfies the paper's fairness assumptions.
 
+Prepared inputs and experiment code carry separate provenance.  A later clean
+execution commit may consume an earlier prepared artifact only if a fail-closed
+compatibility check verifies identical Git objects for the preparation script,
+frozen public registry, and public dependency contract.  Every admitted result
+then records both commits and the digest of that compatibility contract; any
+preparation-surface change requires re-preparation rather than metadata edits.
+
 \paragraph{Simulation unit and execution accounting.}
 The public GPU evaluator implements a controlled \emph{Bernoulli threshold-law
 simulation}, not a wall-clock profile of an instrumented operating system.

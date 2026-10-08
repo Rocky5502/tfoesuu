@@ -57,6 +57,19 @@ records byte hashes for the 15 prepared artifacts. These byte hashes are distinc
 dataset's `canonical_loaded_data_sha256`, which fingerprints the loader's canonical feature/target
 population before splitting.
 
+Prepared artifacts may be evaluated by a later clean execution commit only through the explicit
+`tfoesuu-public-preparation-compatibility-v1` contract. The contract compares the Git blob IDs of:
+
+- `scripts/prepare_public_benchmarks.py`;
+- `data/public_benchmark_registry_v1.jsonl`;
+- `requirements-public.txt`.
+
+Any mismatch fails closed and requires re-preparation. A compatible result row records the original
+`preparation_source_commit`, the later execution `source_commit`, and the SHA-256 of the exact
+contract blob map. This exception does not permit metadata editing and does not claim that
+unrecorded loader package versions were reconstructed; the canonical population hashes and strict
+prepared-artifact byte hashes remain part of the release evidence.
+
 ## Primary factors
 
 - patch size `d`: freeze at least four logarithmically separated values after CPU smoke validation;

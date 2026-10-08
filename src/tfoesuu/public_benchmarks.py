@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -11,6 +12,11 @@ import numpy as np
 
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+PREPARATION_CONTRACT_PATHS = (
+    "scripts/prepare_public_benchmarks.py",
+    "data/public_benchmark_registry_v1.jsonl",
+    "requirements-public.txt",
+)
 
 
 @dataclass(frozen=True)
@@ -348,4 +354,81 @@ def validate_prepared_public_directory(
         "dataset_ids": sorted(expected_ids),
         "source_commit": source_commit,
         "files": files,
+    }
+
+
+def validate_preparation_source_compatibility(
+    preparation_source_commit: str,
+    execution_source_commit: str,
+    *,
+    repo: str | Path = ".",
+    contract_paths: tuple[str, ...] = PREPARATION_CONTRACT_PATHS,
+) -> dict:
+    """Prove that preparation-defining Git objects match at two commits.
+
+    This is intentionally narrower than whole-commit equality. It permits
+    validation, reporting, or experiment-runner changes while failing closed
+    if the preparation script, frozen registry, or public dependency contract
+    changed. The returned digest versions the exact set of Git blobs checked.
+    """
+
+    if not _GIT_SHA_RE.fullmatch(preparation_source_commit):
+        raise ValueError("preparation source commit must be a full lowercase Git SHA")
+    if not _GIT_SHA_RE.fullmatch(execution_source_commit):
+        raise ValueError("execution source commit must be a full lowercase Git SHA")
+    if not contract_paths or any(not path for path in contract_paths):
+        raise ValueError("preparation contract paths must be nonempty")
+    if len(set(contract_paths)) != len(contract_paths):
+        raise ValueError("preparation contract paths must be unique")
+
+    root = Path(repo).resolve()
+
+    def git(*args: str) -> str:
+        try:
+            return subprocess.check_output(
+                ["git", *args],
+                cwd=root,
+                text=True,
+                stderr=subprocess.STDOUT,
+                timeout=15,
+            ).strip()
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise ValueError(f"unable to inspect preparation contract: {' '.join(args)}") from exc
+
+    resolved_preparation = git("rev-parse", f"{preparation_source_commit}^{{commit}}")
+    resolved_execution = git("rev-parse", f"{execution_source_commit}^{{commit}}")
+    if resolved_preparation != preparation_source_commit:
+        raise ValueError("preparation source commit did not resolve exactly")
+    if resolved_execution != execution_source_commit:
+        raise ValueError("execution source commit did not resolve exactly")
+
+    preparation_blobs = {
+        path: git("rev-parse", f"{preparation_source_commit}:{path}")
+        for path in contract_paths
+    }
+    execution_blobs = {
+        path: git("rev-parse", f"{execution_source_commit}:{path}")
+        for path in contract_paths
+    }
+    mismatches = [
+        path
+        for path in contract_paths
+        if preparation_blobs[path] != execution_blobs[path]
+    ]
+    if mismatches:
+        raise ValueError(
+            "preparation contract mismatch in: " + ", ".join(mismatches)
+        )
+
+    contract_payload = {
+        "schema": "tfoesuu-public-preparation-compatibility-v1",
+        "git_blobs": preparation_blobs,
+    }
+    canonical = json.dumps(contract_payload, sort_keys=True, separators=(",", ":"))
+    return {
+        **contract_payload,
+        "compatible": True,
+        "preparation_source_commit": preparation_source_commit,
+        "execution_source_commit": execution_source_commit,
+        "contract_sha256": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
     }

@@ -91,3 +91,20 @@
 - These remain controlled sufficient-statistic previews, not measured service runtime and not a
   seven-public-dataset publication matrix. Both GPU jobs finished; no background job remains.
 - Approval gate reached: YES for million-trial or public-dataset publication campaigns.
+
+### Checkpoint update — preparation/execution compatibility contract
+
+- Falsification tests were added first: unrelated execution-code changes must remain compatible;
+  any change to a preparation-contract file must fail closed.
+- Implemented `tfoesuu-public-preparation-compatibility-v1` over the exact Git blobs for the public
+  preparation script, frozen registry, and public dependency contract. Public result rows now carry
+  preparation SHA, execution SHA, and contract SHA-256; the publication release gate requires all
+  three and rejects mixed or partial provenance.
+- Real baseline-to-research-branch check passed before the compatibility commit: preparation SHA
+  `149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b`, execution SHA
+  `b6ee17d233702915dfe6774e532ea02b7671245d`, contract SHA-256
+  `b12985f536e2465e67300d62b76b59a8196a0b91dd1167287bfabe08613a7e13`.
+- Validation: 39 focused tests and 208 full tests passed; changed-file Ruff, compileall,
+  bibliography, and manuscript static checks passed.
+- Dataset decision: retain the preregistered seven populations. No post-outcome dataset was added
+  without a specific scientific coverage gap and a new protocol version.

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
 import json
 import math
+import re
+from collections.abc import Iterable
+from dataclasses import asdict, dataclass
 from numbers import Real
 from pathlib import Path
-from typing import Iterable
-
 
 PUBLIC_METHODS = ("independent", "vertex-paired", "four-way", "suite", "tfoesuu")
 
@@ -35,12 +35,14 @@ class PublicResultRow:
     seed: int
     dataset_sha256: str
     source_commit: str
+    preparation_source_commit: str | None = None
+    preparation_contract_sha256: str | None = None
 
 
 def _validate_finite_measure(name: str, value: object) -> None:
     """Reject nonnumeric, boolean, NaN and infinite experimental measurements."""
     if isinstance(value, bool) or not isinstance(value, Real):
-        raise ValueError(f"{name} must be a finite real number")
+        raise ValueError(f"{name} must be a finite real number")  # noqa: TRY004
     if not math.isfinite(value):
         raise ValueError(f"{name} must be a finite real number")
 
@@ -48,7 +50,7 @@ def _validate_finite_measure(name: str, value: object) -> None:
 def _validate_integer_measure(name: str, value: object) -> None:
     """Counts, seeds and graph sizes cannot be floating point measurements."""
     if isinstance(value, bool) or not isinstance(value, int):
-        raise ValueError(f"{name} must be an integer")
+        raise ValueError(f"{name} must be an integer")  # noqa: TRY004
 
 
 def validate_public_result_row(row: PublicResultRow) -> None:
@@ -116,6 +118,17 @@ def validate_public_result_row(row: PublicResultRow) -> None:
     int(row.dataset_sha256, 16)
     if len(row.source_commit) < 7:
         raise ValueError("source_commit must identify a git commit")
+    prep_present = row.preparation_source_commit is not None
+    contract_present = row.preparation_contract_sha256 is not None
+    if prep_present != contract_present:
+        raise ValueError(
+            "preparation_source_commit and preparation_contract_sha256 must be provided together"
+        )
+    if prep_present:
+        if not re.fullmatch(r"[0-9a-f]{40}", row.preparation_source_commit or ""):
+            raise ValueError("preparation_source_commit must be a full lowercase Git SHA")
+        if not re.fullmatch(r"[0-9a-f]{64}", row.preparation_contract_sha256 or ""):
+            raise ValueError("preparation_contract_sha256 must be a lowercase SHA-256")
 
 
 def write_public_results(
@@ -163,6 +176,12 @@ def validate_public_result_matrix(rows: Iterable[PublicResultRow]) -> None:
     commit_set = {row.source_commit for row in rows}
     if len(commit_set) != 1:
         raise ValueError("all publication rows must come from one source commit")
+    preparation_set = {
+        (row.preparation_source_commit, row.preparation_contract_sha256)
+        for row in rows
+    }
+    if len(preparation_set) != 1:
+        raise ValueError("all publication rows must share preparation provenance")
     confidence_set = {row.confidence_target for row in rows}
     if len(confidence_set) != 1:
         raise ValueError("one publication matrix must use one confidence target")
@@ -199,8 +218,6 @@ def validate_publication_coverage(
     provenance must still be independently audited.
     """
 
-    import re
-
     observed = list(rows)
     validate_public_result_matrix(observed)
 
@@ -230,6 +247,12 @@ def validate_publication_coverage(
             )
         if not re.fullmatch(r"[0-9a-fA-F]{40}", row.source_commit):
             raise ValueError("publication source_commit must be a full 40-hex git SHA")
+        if row.preparation_source_commit is None or row.preparation_contract_sha256 is None:
+            raise ValueError("publication rows require preparation compatibility provenance")
+        if not re.fullmatch(r"[0-9a-f]{40}", row.preparation_source_commit):
+            raise ValueError("publication preparation_source_commit must be a full 40-hex Git SHA")
+        if not re.fullmatch(r"[0-9a-f]{64}", row.preparation_contract_sha256):
+            raise ValueError("publication preparation contract must be a SHA-256 digest")
         methods = groups.setdefault((row.dataset_id, row.patch_size), {})
         methods.setdefault(row.method, []).append(row)
 

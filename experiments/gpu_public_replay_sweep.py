@@ -19,7 +19,10 @@ from pathlib import Path
 
 import numpy as np
 
-from tfoesuu.public_benchmarks import validate_prepared_public_directory
+from tfoesuu.public_benchmarks import (
+    validate_preparation_source_compatibility,
+    validate_prepared_public_directory,
+)
 from tfoesuu.public_results import PublicResultRow, write_public_results
 
 METHODS = ("independent", "vertex-paired", "four-way", "suite", "tfoesuu")
@@ -277,6 +280,8 @@ def run_dataset(
     device: str,
     seed: int,
     source_commit: str,
+    preparation_source_commit: str,
+    preparation_contract_sha256: str,
 ) -> list[PublicResultRow]:
     if not (0.0 < d < 1.0 and 0.0 <= s < 1.0):
         raise ValueError("invalid patch parameters")
@@ -324,6 +329,8 @@ def run_dataset(
         "seed": seed,
         "dataset_sha256": str(meta["canonical_loaded_data_sha256"]),
         "source_commit": source_commit,
+        "preparation_source_commit": preparation_source_commit,
+        "preparation_contract_sha256": preparation_contract_sha256,
     }
 
     return [
@@ -399,9 +406,16 @@ def main() -> None:
     if dirty and not args.allow_dirty:
         raise SystemExit("working tree is dirty; commit/freeze before publication runs")
 
-    validate_prepared_public_directory(
-        args.prepared_dir,
-        expected_source_commit=sha,
+    prepared_report = validate_prepared_public_directory(args.prepared_dir)
+    compatibility = validate_preparation_source_compatibility(
+        prepared_report["source_commit"],
+        sha,
+    )
+    print(
+        "validated preparation compatibility: "
+        f"prepared={prepared_report['source_commit']} execution={sha} "
+        f"contract={compatibility['contract_sha256']}",
+        flush=True,
     )
 
     patch_sizes = args.patch_size or list(DEFAULT_PATCH_SIZES)
@@ -418,11 +432,8 @@ def main() -> None:
     for dataset_index, dataset_id in enumerate(dataset_ids):
         p0, meta = load_subject(args.prepared_dir, dataset_id)
         prep_commit = str(meta["preparation_source_commit"])
-        if prep_commit != sha:
-            raise SystemExit(
-                f"{dataset_id}: prepared under {prep_commit}, current source is {sha}; "
-                "re-prepare datasets from the frozen publication commit"
-            )
+        if prep_commit != prepared_report["source_commit"]:
+            raise SystemExit(f"{dataset_id}: inconsistent preparation source commit")
         for d_index, d in enumerate(patch_sizes):
             run_seed = args.seed + 1000 * dataset_index + 100 * d_index
             print(
@@ -443,6 +454,8 @@ def main() -> None:
                     device=args.device,
                     seed=run_seed,
                     source_commit=sha,
+                    preparation_source_commit=prep_commit,
+                    preparation_contract_sha256=compatibility["contract_sha256"],
                 )
             )
 

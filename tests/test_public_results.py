@@ -55,6 +55,19 @@ def test_public_result_matrix_rejects_mixed_commits():
         validate_public_result_matrix([a, b])
 
 
+def test_public_result_rejects_partial_preparation_provenance():
+    row = _row("tfoesuu", executions=100.0)
+    altered = PublicResultRow(
+        **{
+            **row.__dict__,
+            "preparation_source_commit": "0" * 40,
+            "preparation_contract_sha256": None,
+        }
+    )
+    with pytest.raises(ValueError, match="provided together"):
+        validate_public_result_row(altered)
+
+
 @pytest.mark.parametrize(
     "field,bad_value",
     [

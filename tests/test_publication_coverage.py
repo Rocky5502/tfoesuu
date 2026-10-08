@@ -10,8 +10,9 @@ from tfoesuu.public_results import (
     validate_publication_coverage,
 )
 
-
 SHA = "0123456789abcdef0123456789abcdef01234567"
+PREP_SHA = "89abcdef0123456789abcdef0123456789abcdef"
+CONTRACT_SHA = "c" * 64
 DATASETS = ("public-adult", "public-bank")
 PATCHES = (0.10, 0.05, 0.02, 0.01)
 
@@ -38,6 +39,8 @@ def _row(dataset: str, patch: float, method: str, seed: int = 17) -> PublicResul
         seed=seed,
         dataset_sha256=("a" if dataset == "public-adult" else "b") * 64,
         source_commit=SHA,
+        preparation_source_commit=PREP_SHA,
+        preparation_contract_sha256=CONTRACT_SHA,
     )
 
 
@@ -87,6 +90,19 @@ def test_registry_mismatch_is_rejected():
 def test_short_source_commit_is_rejected():
     rows = [replace(row, source_commit="0123456789abcdef") for row in _matrix()]
     with pytest.raises(ValueError, match="full 40-hex"):
+        validate_publication_coverage(rows, DATASETS)
+
+
+def test_missing_preparation_compatibility_provenance_is_rejected():
+    rows = [
+        replace(
+            row,
+            preparation_source_commit=None,
+            preparation_contract_sha256=None,
+        )
+        for row in _matrix()
+    ]
+    with pytest.raises(ValueError, match="preparation compatibility provenance"):
         validate_publication_coverage(rows, DATASETS)
 
 
