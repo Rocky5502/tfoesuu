@@ -8,7 +8,7 @@ Created: 2026-10-08. **Status: setup instructions only; no local hardware was ac
 - PC1 already reaches PC2 through Windows OpenSSH with the existing local SSH key, over a private LAN at 192.168.103.117.
 - The current remote Windows account is Administrator. Interactive entry into WSL launches Ubuntu 22.04.5 as user zbq.
 - PC2 has an existing storage folder: D:\Rocky Work\TFOESUU.
-- PC2 device **verified from user-provided `nvidia-smi` output**: NVIDIA GeForce RTX **5070 Ti**, 16 GB (16303 MiB), Windows driver **591.86**, advertised CUDA driver capability **13.1**. PC1 GPU identity is not yet independently verified. These are not two locally visible CUDA devices.
+- **Both GPU models verified by user-provided `nvidia-smi` output**: each machine contains one NVIDIA GeForce RTX **5070 Ti** with **16,303 MiB** reported. Both drivers report **591.86** and a **CUDA 13.1 driver capability**. PC1 lists Python **3.11**; PC2 Ubuntu WSL2 lists Python **3.12.2**. No PyTorch CUDA smoke or pytest success has been supplied yet. These are two separate hosts, not a two-GPU shared-memory device.
 - These are TWO SEPARATE CUDA workers. Their memories are NOT pooled, and CUDA device 1 on PC1 does not refer to the PC2 GPU.
 
 ## Recommended layout
@@ -162,6 +162,69 @@ If G:\TFOESUU Project already IS the TFOESUU Git checkout, run git switch main a
     git pull --ff-only
 
 Install Python/torch locally on PC1 separately using the GPU runbook. A working Python environment on PC2 does not install anything on PC1.
+
+## Windows PowerShell policy fix (PC1, observed October 8, 2026)
+
+On PC1 the repository successfully cloned into
+`G:\TFOESUU Project\tfoesuu`, but
+`scripts/pc1_dispatch_pc2.ps1` was blocked by Windows' script
+execution policy. That failure occurs **before SSH or PC2 is contacted**;
+it does not indicate a broken network connection.
+
+In the existing PC1 PowerShell session (no administrator elevation):
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force
+Get-ExecutionPolicy -List
+
+git pull --ff-only
+.\scripts\pc1_dispatch_pc2.ps1 -Mode status
+```
+
+`Process` applies only to the current PowerShell session. Do **not**
+change `LocalMachine` or disable Group Policy controls. If the script is
+still blocked, inspect `Get-ExecutionPolicy -List` and any file
+zone-blocking condition before attempting another change. This setup
+never requires PC1/PC2 firewall or Windows SSH server modifications.
+
+The PC1 CUDA/Python setup is now in the reviewed GitHub script:
+
+```powershell
+Set-Location 'G:\TFOESUU Project\tfoesuu'
+git status --short
+git pull --ff-only
+.\scripts\bootstrap_pc1_windows.ps1
+```
+
+It creates an isolated Python 3.11 virtual environment, installs the
+official pinned PyTorch 2.12.1 CUDA 13.0 wheel, checks an actual CUDA
+binomial kernel, compiles Python modules, verifies the benchmark inventory
+and runs pytest. It does not launch long GPU jobs or perform any remote
+command. Keep the terminal output; no successful installation has yet been
+observed on PC1.
+
+On PC2, the user pasted the commands intended to run
+`bash scripts/bootstrap_pc2_wsl.sh`, but **not the completed command
+output**. Therefore PC2's package installation, PyTorch GPU access,
+pytest, and data-directory creation remain **unverified**.
+
+Only once both machines independently pass and are at the same clean Git
+SHA should PC1 dispatch `-Mode preflight` or `-Mode smoke-p12`.
+
+## Synchronizing the STOC manuscript to Overleaf
+
+The hardware and two-host experimental protocol were added directly to
+`paper/sections/08_evaluation.tex` on GitHub `main`. An Overleaf
+project is not writable from the currently connected tools, and GitHub
+sync is not automatic.
+
+If an Overleaf project is **already linked** to this GitHub repository,
+open that project, choose its **GitHub** integration and select
+**Pull GitHub changes**. Confirm the updated Experimental Settings section
+in the compiled PDF. If it is not linked, use Overleaf's supported Git
+integration or import a new Overleaf project from GitHub; do not assume an
+existing unrelated Overleaf project can be silently linked in place.
+Do not push stale Overleaf files over newer GitHub manuscript changes.
 
 ## Step 4: verify remote command dispatch
 
