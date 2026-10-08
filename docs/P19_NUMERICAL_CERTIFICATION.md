@@ -24,3 +24,7 @@ These are deterministic numerical safeguards, not new empirical
 results or a new theorem. P19's two-class bipartite scope and
 P20's conjecture status remain unchanged. Run the full repository
 pytest suite and paper consistency/LaTeX build before publication.
+
+A zero-row information matrix is reported as a failed allocation rather than
+passed to a zero-size reduction; the public replay API already rejects an
+empty legal-group family before constructing the matrix.

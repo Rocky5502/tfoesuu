@@ -71,6 +71,9 @@ def certified_p19_information_allocation(
             or not math.isfinite(target) or target <= 0):
         raise ValueError("invalid P19 information matrix, costs, or target")
     zero = np.zeros(len(c))
+    if K.shape[0] == 0:
+        return CertifiedP19Allocation(float("inf"), zero, False,
+            "no informative legal replay groups", float("inf"), float("inf"), float("inf"))
     if np.any(np.max(K, axis=0) == 0):
         return CertifiedP19Allocation(float("inf"), zero, False,
             "some alternative has no informative legal group", float("inf"), float("inf"), float("inf"))

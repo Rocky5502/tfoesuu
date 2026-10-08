@@ -65,3 +65,11 @@ def test_seeded_fractional_incidence_certificates():
             assert sol.relative_dual_violation <= 1e-8
             assert sol.relative_gap <= 1e-7
             assert np.min(K.T @ sol.counts) >= 0.9*math.log(19)*(1-1e-8)
+
+def test_empty_information_matrix_fails_closed():
+    result = certified_p19_information_allocation(
+        np.empty((0, 2)), np.empty(0), 1.0
+    )
+    assert not result.success
+    assert math.isinf(result.cost)
+    assert "no informative legal replay groups" in result.message
