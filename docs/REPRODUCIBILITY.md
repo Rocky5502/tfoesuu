@@ -1,5 +1,14 @@
 # Reproducibility protocol
 
+## Portable and byte-exact hashes
+
+Publication provenance records both `sha256` (the exact local bytes) and
+`sha256_lf_normalized` for text manifests and JSONL results. The latter normalizes CRLF and legacy CR
+line endings to LF before hashing, so it identifies the same logical text across Windows and Linux
+checkouts. Frozen `data/*.jsonl` files are declared `eol=lf` in `.gitattributes`; the Git blob ID is
+also recorded by the PC2 worker. Never compare a Windows raw-byte digest with a Linux raw-byte digest
+as if a mismatch alone implied different benchmark rows.
+
 ## Immutable inputs
 
 Every experiment is determined by:

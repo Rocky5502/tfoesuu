@@ -39,3 +39,17 @@
 - PDF closure: static manuscript consistency passes. The LaTeX skill wrapper and direct MiKTeX
   `latexmk` both produced no output and were terminated after bounded waits; no PDF result is
   claimed. This is an environment/toolchain blocker, not a manuscript compile diagnostic.
+
+### Checkpoint update — dual-GPU exploratory smoke
+
+- PC1 ran all 144 frozen P15 configurations at 1,000 trials on CUDA from isolated baseline
+  `149baf36`; result SHA-256 `256a11155bfb8faf42c5be1cb18b03fd9458434a1577bb69f17feff5db573527`.
+- PC2 ran all 54 frozen P12 configurations at 1,000 trials on CUDA from clean baseline `149baf36`;
+  result SHA-256 `6d38a3e103908a42d37bf0274ea658cf2873ecd667cb2117ec07d8233c097d2d`.
+- Exact finite-law audit: 594 binomial comparisons, Bonferroni threshold
+  `8.417508417508418e-05`, zero outliers. These are exploratory smokes, not publication evidence.
+- Cross-platform provenance finding: P12's committed Git blob was identical on both PCs
+  (`fd8b653879e2958059738cb842f2bf76bc73a7b8`), but raw SHA-256 differed because PC1 checked out
+  CRLF and PC2 LF. Added portable LF-normalized hashing, Git-blob logging, and an LF attribute for
+  frozen JSONL manifests.
+- GPU jobs: complete; no larger trial budget launched. Approval gate reached: NO.

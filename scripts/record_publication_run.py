@@ -10,7 +10,7 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-from tfoesuu.provenance import sha256_file
+from tfoesuu.provenance import sha256_file, sha256_lf_normalized_text
 
 
 def command_output(cmd: list[str]) -> str | None:
@@ -18,7 +18,7 @@ def command_output(cmd: list[str]) -> str | None:
         return subprocess.check_output(
             cmd, text=True, stderr=subprocess.STDOUT, timeout=15
         ).strip()
-    except Exception:
+    except (OSError, subprocess.SubprocessError):
         return None
 
 
@@ -51,7 +51,7 @@ def main() -> None:
                 for i in range(torch.cuda.device_count())
             ],
         }
-    except Exception as exc:
+    except (ImportError, OSError, RuntimeError) as exc:
         torch_info = {"available": False, "error": type(exc).__name__}
 
     record = {
@@ -63,11 +63,13 @@ def main() -> None:
         "benchmark": {
             "path": str(args.benchmark),
             "sha256": sha256_file(args.benchmark),
+            "sha256_lf_normalized": sha256_lf_normalized_text(args.benchmark),
             "bytes": args.benchmark.stat().st_size,
         },
         "result": {
             "path": str(args.result),
             "sha256": sha256_file(args.result),
+            "sha256_lf_normalized": sha256_lf_normalized_text(args.result),
             "bytes": args.result.stat().st_size,
         },
         "python": platform.python_version(),

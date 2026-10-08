@@ -79,11 +79,14 @@ case "$mode" in
     esac
     {
       say "UTC_start=$stamp source=$sha"
-      say "manifest=$manifest manifest_sha256=$(sha256sum "$manifest" | cut -d ' ' -f1)"
+      say "manifest=$manifest manifest_sha256_raw=$(sha256sum "$manifest" | cut -d ' ' -f1)"
+      say "manifest_sha256_lf=$($python -c 'import sys; from tfoesuu.provenance import sha256_lf_normalized_text; print(sha256_lf_normalized_text(sys.argv[1]))' "$manifest")"
+      say "manifest_git_blob=$(git rev-parse "HEAD:$manifest")"
       "$python" scripts/verify_environment.py
       say "launching 1000 exploratory trials per frozen configuration"
       "$python" "$script" --devices 0 --trials 1000 --benchmark "$manifest" --output "$output"
       sha256sum "$output" "$manifest"
+      say "result_sha256_lf=$($python -c 'import sys; from tfoesuu.provenance import sha256_lf_normalized_text; print(sha256_lf_normalized_text(sys.argv[1]))' "$output")"
     } 2>&1 | tee "$log"
     say "finished result=$output log=$log"
     ;;

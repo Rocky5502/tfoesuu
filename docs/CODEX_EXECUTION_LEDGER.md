@@ -40,6 +40,10 @@
 4. Publication experiments, figures, and PDF admission evidence remain incomplete.
 5. Repository-wide Ruff still has pre-existing findings outside the touched public-integrity files.
 
+Resolved during this session: raw frozen-manifest SHA-256 values were not comparable across PC1 and
+PC2 because Git checkout line endings differed. Future provenance records retain exact byte hashes
+and add LF-normalized SHA-256 plus Git blob identity.
+
 ## Current task
 
 Audit the public evaluator's statistical/cost contract and build the theorem-to-code-to-test claim
