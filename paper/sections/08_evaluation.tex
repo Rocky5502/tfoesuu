@@ -129,6 +129,38 @@ record. CPU experiments are used for exact or moderate-size checks; GPU sweeps
 are reserved for high-trial finite-instance studies after the relevant theorem
 and manifest are frozen. No pretrained model or external API is used.
 
+\paragraph{Two-workstation execution environment (preflight).}
+The planned local study uses two independent workstations, each independently
+identified by the operating system as containing one NVIDIA GeForce RTX 5070 Ti
+GPU with 16\,GiB-class memory (16{,}303\,MiB reported per device).
+Both hosts reported NVIDIA driver 591.86 and driver-advertised CUDA 13.1
+compatibility on October 8, 2026. The first host uses Windows with Python
+3.11 available; the second runs Ubuntu 22.04.5 under WSL2 with Python 3.12.2
+available. These observations establish the \emph{hardware inventory only}:
+they do not establish an installed CUDA-enabled PyTorch environment,
+successful kernels, full test-suite execution, or completed experimental
+measurements. Exact PyTorch, CUDA runtime, package versions, execution
+timestamps, and configuration fingerprints will be taken from validated
+run manifests, rather than inferred from driver version strings.
+
+\paragraph{Independent workers and reproducibility controls.}
+The two GPUs are separate devices on different machines, \emph{not} one
+shared-memory two-GPU accelerator. A Windows controller on the first host
+can dispatch an SSH command to the second host, whose Ubuntu WSL2 checkout
+performs computations locally; the second host's Windows D: volume is
+designated for persistent datasets, logs, and result artifacts. Before a
+shard begins, both workers must have the same clean Git commit and
+a checked, frozen manifest. Shards are assigned disjoint configuration
+identifiers with explicit seeds, device information, input hashes, and
+trial budgets. Results may be merged only after verifying those keys and
+recording failures as well as successes. Trial budgets are staged from
+$10^3$ exploratory replications through $10^4$ and $10^5$, with larger
+rare-error sweeps contingent on passing earlier validation gates.
+Per-worker GPU runtime and memory are not equated with the
+\emph{concrete program execution} complexity used in theorems.
+At the current setup stage, these are planned execution controls; no
+two-host performance or publication-scale empirical result is asserted.
+
 The comparison set is access-model based rather than model based:
 \begin{enumerate}[leftmargin=1.6em,itemsep=2pt]
 \item fresh/independent execution where no old--new coupling is available;
