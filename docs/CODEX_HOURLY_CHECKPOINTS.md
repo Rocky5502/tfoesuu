@@ -143,3 +143,31 @@
   file transfer because the ChatGPT browser extension lacks file-URL access. No Overleaf project
   was created or modified; the upload dialog remains open for user handoff.
 - Approval gate reached: YES for a 100,000-trial public publication campaign. It was not launched.
+
+## 2026-10-09 01:30 +08:00 — benchmark semantics checkpoint
+
+- Corrected a stale replay-phase contract statement: mixed P19 lower-program asymptotics are
+  proved, but a scalar control-coverage fraction does not determine the topology-dependent
+  coefficients and no matching mixed-topology upper tester is known. The frozen v1 grid therefore
+  keeps only topology-complete extremes for the correct reason.
+- Re-ran the finite mixed-topology falsification search at `d=10^-4`. A representative topology
+  with one unmatched candidate had exact `A0=0.4542848710713936`,
+  `B0=5.173799920535316`, half-step cost ratio `3.997725336698979`, and two-term scaled residual
+  error `-0.000771774831642702`; no counterexample was exposed by this bounded search.
+- Rejected count-driven addition of five or six ordinary datasets. Preregistered one targeted v2
+  candidate instead: the Themis executable subject suite at upstream commit
+  `a70f12a6a8f34cdd8b170b4dc59a78674c9e8950`, with license, dependency, genuine protected-input,
+  transcript, random-tape, and measured-subprocess gates. No external subject outcome was run or
+  admitted.
+- Validation: 214 tests passed from an isolated task-specific pytest temp root; touched-file Ruff,
+  compileall, manuscript static consistency, bibliography policy, and the 828-row benchmark
+  inventory all passed.
+- Read-only Themis feasibility gate: exact commit cloned detached/clean outside the repository;
+  license hash recorded; no dependency lock found; Python-2-only interfaces and mixed Python/C++/
+  Java subject stacks identified. The compact system-G wrapper is deterministic and has no
+  historical old/new pair, so it is admitted only as a possible external baseline, not a replay or
+  evolving-software result. No dependency was installed and no subject outcome was executed.
+- GPU/status audit: no PC2 WSL compute process was reported; PC2's protected main checkout remains
+  at frozen baseline `149baf36`. PC1 reported desktop graphics processes only and no identifiable
+  experiment process. No GPU job was launched because the next authorized work was proof/contract
+  auditing, not another compute sweep.

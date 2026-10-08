@@ -42,3 +42,8 @@ structural property, for example:
 We do not add software subjects merely to increase benchmark count. This keeps the
 artifact aligned with a STOC contribution: computation probes the theory rather
 than substituting for it.
+
+The next candidate is a separately gated executable counterfactual benchmark,
+not a larger collection of synthetic tabular wrappers.  Its pre-outcome design,
+license fence, and admission criteria are frozen in
+`docs/THEMIS_EXECUTABLE_V2_PREREGISTRATION.md`.

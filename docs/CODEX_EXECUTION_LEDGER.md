@@ -46,6 +46,9 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Close the mixed-control P19 lower-program asymptotics and maintain the
-theorem-to-code-to-test/manuscript crosswalk. The strict prepared-subject validator,
-dual-GPU public exploratory smoke, and portable provenance repair are complete.
+Determine whether an achievable tester matches the proved mixed-control P19
+lower-program coefficients/order, and audit feasibility of the preregistered
+executable counterfactual v2 subject without contaminating the frozen v1 evidence.
+The strict prepared-subject validator, dual-GPU public exploratory smoke,
+portable provenance repair, and mixed lower-program expansion are complete. The
+100,000-trial public matrix remains behind its explicit approval gate.

@@ -258,8 +258,8 @@ The replay phase grid is a deterministic specification layer, not an empirical r
 
 - P18 local rows vary `tau/d` while keeping `tau=O(d)` and are labeled only at the proved local linear order.
 - P18 fixed-tolerance rows hold positive `tau` fixed while shrinking `d`, targeting the proved quadratic boundary regime.
-- P19 v1 contains only the theorem-backed control-coverage extremes `rho=0` and `rho=1`.
-- Intermediate control coverage and replay fidelity below 1 remain falsification domains until corresponding theory is proved or refuted.
+- P19 v1 contains only the topology-complete control-coverage extremes `rho=0` and `rho=1`.
+- The mixed P19 lower program has proved two-term asymptotics, but `rho` alone does not determine its coefficients and no matching mixed-topology upper tester is known. Replay fidelity below 1 remains a falsification domain until corresponding theory is proved or refuted.
 
 The mixed-control singular analysis is documented in `docs/MIXED_CONTROL_SINGULAR_ASYMPTOTICS.md`. It is intentionally not promoted to P20.
 

@@ -17,7 +17,7 @@ def test_replay_phase_grid_is_unique_and_roundtrips(tmp_path: Path):
     assert read_replay_phase_jsonl(out) == rows
 
 
-def test_phase_grid_does_not_overclaim_mixed_control_regime():
+def test_phase_grid_keeps_only_topology_complete_control_extremes():
     rows = replay_phase_cases_v1()
     p19 = [row for row in rows if row.family == "p19-control-topology"]
     assert p19

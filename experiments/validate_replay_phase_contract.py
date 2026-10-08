@@ -53,7 +53,8 @@ def validate(rows):
     coverages = {r.control_coverage for r in p19}
     if coverages != {0.0, 1.0}:
         raise ValueError(
-            "P19 v1 may contain only theorem-backed control-coverage extremes 0 and 1"
+            "P19 v1 may contain only topology-complete control-coverage extremes 0 and 1; "
+            "mixed coefficients require an explicit replay topology"
         )
     for r in p19:
         expected = "linear" if r.control_coverage == 1.0 else "quadratic"

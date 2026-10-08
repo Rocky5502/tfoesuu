@@ -31,8 +31,8 @@
   $Q=\Theta(d^{-2}\log(1/\delta))$
 };
 \node[sparse, right=0.72cm of fixed] (control) {
-  \textbf{Matched-background control}\\[2pt]
-  fixed $\tau>0$, but replay group contains a same-background control\\[2pt]
+  \textbf{Complete control coverage}\\[2pt]
+  fixed $\tau>0$, every candidate fractionally covered by matched controls\\[2pt]
   information becomes $\Theta(d)$\\
   $Q=\Theta(C_{\rm ctrl}d^{-1}\log(1/\delta))$
 };
@@ -45,15 +45,16 @@
   P18: $\displaystyle Q_{\rm thr}(\tau,d,\delta)
   =\Theta((\tau+d)d^{-2}\log(1/\delta))$ on one edge.
   \qquad
-  P19: control-compatible groups split off a new transcript state of mass $d$,
-  restoring first-order information under a heterogeneous fair null.
+  P19: complete control coverage restores the linear minimax order; mixed
+  topologies currently have exact lower-program asymptotics only.
 };
 \end{tikzpicture}
 \caption{Replay phase map for P18--P19.  A fixed positive fairness tolerance
 creates an interior mismatch mass and returns one-edge testing to quadratic
 local complexity.  That loss is not universal: under partial replay, a
-same-background control cancels the benign disparity pathwise and restores a
-sparse linear witness.  The diagram summarizes proved threshold-Bernoulli
-families and contains no empirical estimates.}
+complete fractional cover by same-background controls cancels the benign
+disparity pathwise and restores sparse linear witnesses.  The diagram summarizes
+proved threshold-Bernoulli topology-complete regimes and contains no empirical
+estimates.}
 \label{fig:threshold-replay-phase}
 \end{figure}

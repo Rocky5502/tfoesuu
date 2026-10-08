@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
 import json
+from collections.abc import Iterable
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Iterable
 
 
 @dataclass(frozen=True)
@@ -65,9 +65,10 @@ def replay_phase_cases_v1() -> list[ReplayPhaseCase]:
             )
         )
 
-    # P19 extremes only. Intermediate control coverage is intentionally not
-    # assigned a theorem-predicted exponent until the mixed-control extension
-    # is proved or refuted.
+    # P19 v1 keeps only the two topology-complete extremes.  The mixed lower
+    # program now has proved d^-2 and d^-1 coefficients, but a scalar coverage
+    # fraction does not determine them and no matching mixed-topology tester is
+    # known.  Mixed fixtures therefore remain in the explicit topology search.
     for d in ds:
         rows.extend(
             [

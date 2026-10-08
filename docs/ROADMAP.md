@@ -88,8 +88,9 @@ A rigorous impossibility/boundary theorem remains a successful outcome.
 
 ### S1b — Mixed-control asymptotic stratification (lower program resolved)
 
-Keep this at P20-CONJECTURE status; do not promote it beyond conjecture yet.  P19's exact lower LP already implies a sharper
-question than the binary all-controls/no-controls split.  In a partially
+Keep the broader matching minimax/achievability claim at P20-CONJECTURE status;
+do not promote it beyond conjecture yet. P19's exact lower LP already implies a
+sharper question than the binary all-controls/no-controls split. In a partially
 controlled topology, some alternatives have a first-order control-compatible
 channel while others are observable only through the second-order boundary
 channel.  For fixed positive tau,
@@ -114,8 +115,9 @@ Repository falsification support:
 
 Completed for the lower program: exact d^-2 and d^-1 coefficients, including
 positive/zero/negative boundary-curvature tests and unobservable extremes.
-Remaining before a minimax promotion beyond P19: determine whether an achievable
-tester matches the mixed-topology lower coefficients/order.
+Remaining before promoting the mixed result to a matching minimax statement:
+determine whether an achievable tester matches the mixed-topology lower
+coefficients/order.
 
 
 ### S1c — P20 unified replay information geometry (conjecture)
@@ -197,6 +199,12 @@ Formalize which software randomness is controllable:
 Connect these categories to the oracle hierarchy. The theory should expose the
 price of weaker replay rather than assume universal synchronization.
 
+The next executable-subject candidate is preregistered in
+`docs/THEMIS_EXECUTABLE_V2_PREREGISTRATION.md`.  It targets genuine protected-
+input mutation and measured subprocess cost; it must remain separate from the
+synthetic-endpoint public v1 matrix and cannot become replay-theorem evidence
+without auditable random-tape control.
+
 ### S6 — Final archival collision audit
 
 Before strengthening abstract/contribution language, collision-check P15--P17
@@ -211,8 +219,11 @@ subset queries are established ingredients and must never be claimed novel.
 Before GPU execution, maintain a deterministic phase-grid specification rather
 than adding public datasets for count.  The grid varies d and tau/d for P18 and
 uses only the theorem-backed P19 control-coverage extremes rho=0 and rho=1.
-Intermediate 0<rho<1 remains a falsification domain until the mixed-control
-singular LP is proved or refuted.  The specification lives in
+The mixed-control singular LP now has proved two-term coefficients, but an
+intermediate scalar coverage fraction does not identify the replay topology,
+costs, or those coefficients, and there is no matching mixed-topology upper
+tester.  Mixed fixtures therefore remain in the explicit topology search rather
+than being collapsed into a misleading rho-only sweep.  The v1 specification lives in
 `src/tfoesuu/replay_phase_benchmarks.py` and is guarded against accidental
 claim expansion by `tests/test_replay_phase_benchmarks.py`.
 

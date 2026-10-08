@@ -596,10 +596,11 @@ K_{\rm bnd}(\tau,d)
 Consequently, if \(C_{\rm ctrl}<\infty\), the lower program and upper
 construction have matching leading control-cover geometry and
 \(\Theta(d^{-1}\log(1/\delta))\) fixed-confidence order, up to rounding and
-standard constant factors.  If some high candidate has no control-compatible
-legal group, then every tester requires
+standard constant factors.  If some observable high candidate has no
+control-compatible legal group, then every tester requires
 \(\Omega(d^{-2}\log(1/\delta))\) expected declared cost at fixed
-\(\tau>0\), unless that candidate is completely unobservable.
+\(\tau>0\).  If a candidate is completely unobservable, no finite-cost
+\(\delta\)-correct tester exists.
 
 \item The mixed-topology information floor has an exact two-term singular
 expansion.  Let
@@ -621,8 +622,9 @@ c^\top q:C_{A\setminus U}q\ge\mathbf 1
 \right\},
 \]
 with value zero if \(A\setminus U\) is empty, and let
-\(a=\kl(1-\delta,\delta)\).  If every candidate is observable, the value
-\(Q_{\rm LB}(d)\) of the lower program in (i) satisfies
+\(a=\kl(1-\delta,\delta)\).  If every candidate is observable, then as
+\(d\downarrow0\) the value \(Q_{\rm LB}(d)\) of the lower program in (i)
+satisfies
 \[
 Q_{\rm LB}(d)
 =

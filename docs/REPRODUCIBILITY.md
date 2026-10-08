@@ -221,7 +221,8 @@ python experiments/search_control_replay_mixed_geometry.py --top 20
 ```
 
 Version 1 freezes replay fidelity at 1.0. It labels only theorem-backed P19
-control-coverage extremes (0 and 1); intermediate control coverage remains a
-falsification domain until the mixed-control singular analysis passes proof and
-audit gates. Generated rows are parameter specifications, never observed
-performance values.
+control-coverage extremes (0 and 1). The exact mixed lower program now has
+proved two-term coefficients, but intermediate topologies cannot be represented
+by one scalar coverage fraction and have no matching upper tester. They remain
+in the explicit topology search rather than the v1 rho-only grid. Generated rows
+are parameter specifications, never observed performance values.
