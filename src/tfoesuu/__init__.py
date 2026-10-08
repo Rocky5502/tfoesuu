@@ -17,6 +17,7 @@ from .graphs import GraphSpec
 from .oracles import BernoulliCommonUniformPair, GaussianVersionPair
 from .replay_benchmarks import ReplayBenchmarkSpec, replay_benchmark_v1
 from .replay_information import ReplayInformationSolution, minimum_information_cover
+from .nuisance_information import FiniteNuisanceInformationAudit, audit_finite_nuisance_information
 from .separations import (
     CounterfactualReplayBounds,
     LocationReplayBounds,
@@ -89,6 +90,8 @@ __all__ = [
     "BernoulliCommonUniformPair",
     "ReplayBenchmarkSpec",
     "ReplayInformationSolution",
+    "FiniteNuisanceInformationAudit",
+    "audit_finite_nuisance_information",
     "minimum_information_cover",
     "replay_benchmark_v1",
     "ReplaySeparationBounds",
