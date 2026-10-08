@@ -8,6 +8,7 @@ import numpy as np
 from .certificate import prune_with_patch_envelopes
 from .control_replay import matched_control_replay_schedule
 from .graphs import Edge, GraphSpec
+from .partial_replay import _canonical_groups
 from .partial_replay_lower import active_vertex_contrast_schedule
 from .separations import (
     counterfactual_replay_bounds,
@@ -260,7 +261,7 @@ def plan_bernoulli_replay(
                 "P19 requires p in (0,1), shared_patch>=0, tau>0, d>0, "
                 "and p+shared_patch+tau+d<1"
             )
-        group_list = tuple(tuple(int(v) for v in group) for group in groups)
+        group_list = _canonical_groups(graph, groups)
         high_list = tuple(int(v) for v in high_vertices)
         schedule = matched_control_replay_schedule(
             graph,
@@ -313,7 +314,7 @@ def plan_bernoulli_replay(
             raise ValueError(
                 "partial-homogeneous planning requires legal replay groups and costs"
             )
-        group_list = tuple(tuple(int(v) for v in group) for group in groups)
+        group_list = _canonical_groups(graph, groups)
         schedule = active_vertex_contrast_schedule(
             graph,
             group_list,
