@@ -143,3 +143,90 @@ def validate_public_result_matrix(rows: Iterable[PublicResultRow]) -> None:
     bad = [name for name, hashes in hashes_by_dataset.items() if len(hashes) != 1]
     if bad:
         raise ValueError(f"dataset hashes changed within result matrix: {bad}")
+
+
+def validate_publication_coverage(
+    rows: Iterable[PublicResultRow],
+    expected_dataset_ids: Iterable[str],
+    *,
+    minimum_patch_sizes: int = 4,
+    minimum_trials: int = 100_000,
+) -> None:
+    """Fail closed unless a publication matrix covers a matched experiment grid.
+
+    Unlike the permissive result-schema validator, this is a *release gate*.
+    It rejects missing/extra registry datasets, incomplete method cells,
+    inconsistent patch grids, mismatched seeds across methods, unverifiable
+    source-commit tokens, and insufficient trial counts. It cannot establish
+    that underlying trials were truly executed; immutable raw logs and run
+    provenance must still be independently audited.
+    """
+
+    import re
+
+    observed = list(rows)
+    validate_public_result_matrix(observed)
+
+    required = set(expected_dataset_ids)
+    if not required or any(not name for name in required):
+        raise ValueError("expected dataset IDs must be nonempty")
+    seen = {row.dataset_id for row in observed}
+    if seen != required:
+        raise ValueError(
+            f"publication dataset registry mismatch: missing={sorted(required-seen)} "
+            f"extra={sorted(seen-required)}"
+        )
+    if minimum_patch_sizes < 1 or minimum_trials < 1:
+        raise ValueError("minimum patch sizes and trials must be positive")
+    grid = {row.patch_size for row in observed}
+    if len(grid) < minimum_patch_sizes:
+        raise ValueError(
+            f"publication patch grid incomplete: {len(grid)} < {minimum_patch_sizes}"
+        )
+
+    groups: dict[tuple[str, float], dict[str, list[PublicResultRow]]] = {}
+    for row in observed:
+        if row.trials < minimum_trials:
+            raise ValueError(
+                f"insufficient trials for {row.dataset_id}/{row.method}: "
+                f"{row.trials} < {minimum_trials}"
+            )
+        if not re.fullmatch(r"[0-9a-fA-F]{40}", row.source_commit):
+            raise ValueError("publication source_commit must be a full 40-hex git SHA")
+        methods = groups.setdefault((row.dataset_id, row.patch_size), {})
+        methods.setdefault(row.method, []).append(row)
+
+    required_methods = set(PUBLIC_METHODS)
+    for dataset_id in sorted(required):
+        dataset_grid = {patch for (dataset, patch) in groups if dataset == dataset_id}
+        if dataset_grid != grid:
+            raise ValueError(
+                f"missing publication patch sizes for {dataset_id}: "
+                f"{sorted(grid-dataset_grid)}"
+            )
+        for patch in sorted(grid):
+            cohort = groups[(dataset_id, patch)]
+            if set(cohort) != required_methods:
+                raise ValueError(
+                    f"incomplete method coverage for {dataset_id}/d={patch}: "
+                    f"missing={sorted(required_methods-set(cohort))}"
+                )
+            seed_sets = {name: {row.seed for row in values}
+                         for name, values in cohort.items()}
+            if len({frozenset(ids) for ids in seed_sets.values()}) != 1:
+                raise ValueError(
+                    f"unmatched publication seeds for {dataset_id}/d={patch}: "
+                    f"{seed_sets}"
+                )
+            # Graph/counterfactual structure is a property of the frozen
+            # dataset+patch, not a method-specific tuning parameter.
+            cohort_rows = [row for values in cohort.values() for row in values]
+            graph_meta = {
+                (row.dataset_name, row.graph_vertices, row.graph_edges,
+                 row.impacted_edges)
+                for row in cohort_rows
+            }
+            if len(graph_meta) != 1:
+                raise ValueError(
+                    f"graph metadata drift across methods for {dataset_id}/d={patch}"
+                )
