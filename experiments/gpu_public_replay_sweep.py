@@ -23,6 +23,7 @@ from tfoesuu.public_results import PublicResultRow, write_public_results
 
 
 METHODS = ("independent", "vertex-paired", "four-way", "suite", "tfoesuu")
+DEFAULT_PATCH_SIZES = (0.10, 0.05, 0.02, 0.01)
 
 
 def git_state() -> tuple[str, bool]:
@@ -398,7 +399,7 @@ def main() -> None:
     if dirty and not args.allow_dirty:
         raise SystemExit("working tree is dirty; commit/freeze before publication runs")
 
-    patch_sizes = args.patch_size or [0.05, 0.02, 0.01]
+    patch_sizes = args.patch_size or list(DEFAULT_PATCH_SIZES)
     if args.dataset:
         dataset_ids = args.dataset
     else:
