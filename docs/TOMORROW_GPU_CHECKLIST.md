@@ -1,12 +1,13 @@
 # Tomorrow GPU checklist — TFOESUU STOC 2027
 
-Use this checklist from a clean checkout of the frozen experiment commit. Do not edit code between public-data preparation and the corresponding result run. If code must change, commit it first and re-prepare the datasets so the preparation SHA matches the run SHA.
+Use this checklist from a clean checkout of the frozen experiment commit. Use the live consolidated `main` branch (P1--P19 audited, P20 conjectural).
+Do not edit code between public-data preparation and the corresponding result run. If code must change, commit it first and re-prepare the datasets so the preparation SHA matches the run SHA.
 
 ## 0. Freeze the source
 
 ```powershell
-git checkout automation/p17-positive-measure-20261007d
-git pull --ff-only
+git switch main
+git pull --ff-only origin main
 git status --short
 git rev-parse HEAD
 ```
