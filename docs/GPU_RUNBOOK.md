@@ -2,6 +2,74 @@
 
 The GPUs are for **our own simulation and optimization only**. No pretrained model, model API, or model inference is used.
 
+## 0. Single-Blackwell-GPU launch gate (October 2026)
+
+**Decision: ready to attempt a local 1,000-trial smoke, not yet cleared for
+unattended publication sweeps.** GitHub CI has repeatedly failed before
+runner assignment, so local tests and the full LaTeX build are unverified.
+Do not interpret a GPU successfully running a script as evidence that all
+theorems, benchmarks and publication claims pass.
+
+Confirm the **actual GPU name and VRAM with `nvidia-smi`**; do not infer it
+from a colloquial product name. NVIDIA's current GeForce 50-series public
+lineup lists the RTX 5080 and RTX 5070 Ti separately. Use `--devices 0`
+for one GPU; only use `--devices 0,1` if there really are two distinct
+CUDA devices reported by PyTorch.
+
+From a clean Windows PowerShell clone:
+
+```powershell
+git switch main
+git pull --ff-only
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
+python -m pip install -e .
+# Install CUDA-enabled torch using the command from https://pytorch.org/get-started/locally/
+# Choose Windows, Pip, Python, Stable, and a driver-compatible CUDA build.
+python -m pip install -r requirements-gpu.txt
+nvidia-smi
+python scripts/verify_environment.py
+python -c "import torch; assert torch.cuda.is_available(); x=torch.randn(1024,device='cuda:0'); print(torch.cuda.get_device_name(0),float(x.sum()))"
+python -m compileall -q src scripts experiments tests
+python scripts/validate_benchmark_inventory.py
+python -m pytest -q
+```
+
+**Gate 0:** Verify CUDA is available, the installed device identity matches
+`nvidia-smi`, the CUDA tensor smoke runs, and all CPU tests/inventory checks
+pass. Resolve failing tests before GPU experiments. The CUDA `torch.binomial`
+kernel is important for the existing Bernoulli sweeps and should be exercised
+by a small replay smoke before increasing trial counts.
+
+**Gate 1:** Run 1,000-trial one-GPU theorem-aligned smoke experiments, all from
+the frozen checked-in manifests. These outputs are exploratory only:
+
+```powershell
+python experiments/gpu_replay_sweep.py --devices 0 --trials 1000 --benchmark data/replay_benchmark_v1.jsonl --output results/smoke_p12_1k.jsonl
+python experiments/gpu_counterfactual_sweep.py --devices 0 --trials 1000 --benchmark data/counterfactual_replay_benchmark_v1.jsonl --output results/smoke_p15_1k.jsonl
+python experiments/gpu_sweep.py --devices 0 --trials 1000 --benchmark data/benchmark_v1.jsonl --output results/smoke_gaussian_1k.jsonl
+```
+
+**Gate 2:** Check exact row counts, errors, file integrity, and provenance.
+Record the source SHA, driver, CUDA/PyTorch versions, manifest checksums,
+raw job logs and output checksums. Increase to 10,000, then 100,000 trials
+only if the previous stage is sound. Never append a different trial budget
+to an existing resumable `*.gpu0.jsonl` shard: choose a NEW output basename
+when changing trials, code, manifest or seed. Otherwise the resume logic
+will silently mix old and new experiment configurations.
+
+The separate **seven-public-dataset** sweep is not launch-ready until
+datasets are locally prepared, the registry and SHA-256s are verified,
+the trial-count/method-grid release gates pass, and the GPU smoke succeeds.
+A prepared manifest row is not a measured result.
+
+**Do not regenerate a checked-in frozen manifest in-place as a prerequisite.**
+A regeneration audit should write to a temporary/results path and compare
+it to the frozen source without modifying the checkout. The former examples
+below target two GPUs and should be used only when two devices are present.
+
 ## 1. Verify the machine first
 
 ```powershell
@@ -17,7 +85,7 @@ For Blackwell-generation GeForce RTX 50-series hardware, use a recent NVIDIA dri
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 pip install -e .
 ```
 
