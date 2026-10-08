@@ -67,8 +67,9 @@ def replay_phase_cases_v1() -> list[ReplayPhaseCase]:
 
     # P19 v1 keeps only the two topology-complete extremes.  The mixed lower
     # program now has proved d^-2 and d^-1 coefficients, but a scalar coverage
-    # fraction does not determine them and no matching mixed-topology tester is
-    # known.  Mixed fixtures therefore remain in the explicit topology search.
+    # fraction does not determine them.  The hybrid upper matches finite-topology
+    # d-orders, but still requires the explicit topology and does not identify
+    # exact two-term constants.  Mixed fixtures remain in the topology search.
     for d in ds:
         rows.extend(
             [

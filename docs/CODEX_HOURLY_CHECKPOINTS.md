@@ -171,3 +171,37 @@
   at frozen baseline `149baf36`. PC1 reported desktop graphics processes only and no identifiable
   experiment process. No GPU job was launched because the next authorized work was proof/contract
   auditing, not another compute sweep.
+
+## 2026-10-09 07:16 +08:00 — mixed P19 achievability checkpoint
+
+- Started from clean branch `codex/research-audit-20261008` at
+  `c13cfb837ee1064fb576dab6461989e5cc2c1e8a`.
+- Closed the finite-topology mixed-order gap inside the frozen P19 family. For each unmatched but
+  observable candidate, a P18 boundary test runs on its cheapest containing group with error budget
+  `delta/|U|`; the remaining candidates use the residual P19 matched-control cover. The hybrid
+  matches the lower program's `d^-2`/`d^-1` orders and boundary-minimum/control-cover geometry for
+  fixed finite topologies, but not exact two-term constants or the possible `log |U|` gap.
+- Two independent derivations agreed on the construction and cost. An adversarial audit produced
+  successful counterexamples outside scope: unequal but fairness-valid high null thresholds can
+  false-trigger the control contrast, and simultaneous equal changes to both controls can be
+  invisible. The theorem and API therefore retain the equal-high null and singleton-alternative
+  fences.
+- Implemented `mixed_control_replay_schedule`, exported it, and upgraded the unified P19 planner to
+  emit hybrid boundary/control schedules instead of rejecting observable mixed topologies. Added
+  mixed, all-boundary, unobservable, familywise-error, and composite-null counterexample tests.
+- Manuscript theorem, proof, abstract, introduction, phase figure, open-problem scope, claim ledger,
+  proof status, roadmap, reproducibility guide, novelty matrix, and theorem/algorithm crosswalk were
+  synchronized. Independent audit is recorded in
+  `docs/PROOF_AUDIT_CONTROL_REPLAY_HYBRID.md`.
+- Extended the mixed-topology enumeration to compute the achievable hybrid cost. At `d=10^-3`,
+  representative one-unmatched fixtures had lower half-step ratio `3.9775288000006923`, hybrid
+  ratio `3.9777503799183593`, and hybrid/lower cost ratio `5.274876575653486`: matching the
+  quadratic exponent while visibly not claiming exact constants.
+- Exact validation commands: `.venv\\Scripts\\python.exe -m pytest --basetemp
+  "G:\\TFOESUU Project\\.tmp-pytest-codex-20261009\\full-mixed-upper" -q` -> **218 passed**;
+  touched-file Ruff -> pass; `python -m compileall -q src experiments scripts` -> pass;
+  manuscript static check -> 47 labels/50 citations; bibliography policy -> pass; benchmark
+  inventory -> 10 artifacts/828 rows.
+- GPU state remained idle for research workloads on both PCs. No new numerical sweep was warranted
+  by this theorem/proof task. Next scientific target: close or lower-bound the `log |U|` dependence
+  and exact constants without weakening the composite-null scope fence.

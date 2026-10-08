@@ -11,6 +11,7 @@ from tfoesuu.control_replay import (
     minimum_fractional_control_cover,
     mixed_control_asymptotic_coefficients,
     mixed_control_leading_coefficient,
+    mixed_control_replay_schedule,
 )
 from tfoesuu.graphs import complete_bipartite_graph, path_graph
 from tfoesuu.separations import (
@@ -185,6 +186,25 @@ def test_matched_control_statistic_ignores_cross_class_benign_disparity():
         bit(p + s, u),
     ]
     assert matched_control_contrast_witness(old, alt_new, high_mask)
+
+
+def test_matched_control_statistic_is_not_valid_for_arbitrary_composite_null():
+    p = 0.20
+
+    def bit(threshold, u):
+        return int(u <= threshold)
+
+    # Both high--low gaps are null-valid at tolerance 0.10, but the high
+    # thresholds are not pathwise exchangeable. A matched-high contrast can
+    # therefore fire under this broader composite null. P19 excludes it.
+    u = 0.395
+    old = [bit(p, u)] * 3
+    composite_null_new = [bit(0.40, u), bit(0.39, u), bit(0.30, u)]
+    assert matched_control_contrast_witness(
+        old,
+        composite_null_new,
+        high_mask=[True, True, False],
+    )
 
 
 def test_control_family_rejects_non_bipartite_fairness_edges():
@@ -583,6 +603,88 @@ def test_mixed_control_two_term_residual_with_two_unmatched_candidates():
 
     assert residual_errors[2] < residual_errors[1] < residual_errors[0]
     assert residual_errors[2] < 0.01
+
+
+def test_mixed_control_hybrid_schedule_combines_boundary_and_control_blocks():
+    graph = complete_bipartite_graph(3, 2)
+    high = (0, 1, 2)
+    groups = ((0, 1), (2, 3), (2, 4))
+    costs = (2.0, 1.0, 0.5)
+    d = 0.01
+    beta = 0.05
+
+    schedule = mixed_control_replay_schedule(
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=d,
+        beta=beta,
+    )
+
+    expected_boundary = math.ceil(8.0 * 0.11 * math.log(1.0 / beta) / (d * d))
+    expected_control = math.ceil(math.log(beta) / math.log1p(-d))
+    assert schedule.uncovered_high_vertices == (2,)
+    assert schedule.covered_high_vertices == (0, 1)
+    assert schedule.boundary_group_indices == (2,)
+    assert schedule.boundary_rounds_per_candidate == expected_boundary
+    assert schedule.boundary_error_budget_per_candidate == pytest.approx(beta)
+    assert schedule.boundary_minimum_cost == pytest.approx(0.5)
+    assert schedule.residual_control_cover_cost == pytest.approx(2.0)
+    assert schedule.control_scale == expected_control
+    assert tuple(schedule.counts) == (expected_control, 0, expected_boundary)
+    assert schedule.total_cost == pytest.approx(
+        2.0 * expected_control + 0.5 * expected_boundary
+    )
+
+
+def test_mixed_control_hybrid_schedule_splits_familywise_boundary_error():
+    graph, high = _family()
+    groups = ((0, 3), (1, 3), (2, 4))
+    costs = (1.0, 2.0, 3.0)
+    d = 0.01
+    beta = 0.03
+
+    schedule = mixed_control_replay_schedule(
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=d,
+        beta=beta,
+    )
+
+    expected_rounds = math.ceil(8.0 * 0.11 * math.log(3.0 / beta) / (d * d))
+    assert schedule.uncovered_high_vertices == high
+    assert schedule.covered_high_vertices == ()
+    assert schedule.boundary_group_indices == (0, 1, 2)
+    assert schedule.boundary_error_budget_per_candidate == pytest.approx(beta / 3.0)
+    assert schedule.boundary_rounds_per_candidate == expected_rounds
+    assert tuple(schedule.counts) == (expected_rounds,) * 3
+    assert schedule.residual_control_cover_cost == pytest.approx(0.0)
+    assert schedule.control_scale == 0
+
+
+def test_mixed_control_hybrid_schedule_rejects_unobservable_candidate():
+    graph, high = _family()
+    with pytest.raises(ValueError, match="absent from every legal group"):
+        mixed_control_replay_schedule(
+            graph,
+            groups=((0, 1), (0, 3)),
+            costs=(1.0, 1.0),
+            high_vertices=high,
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.10,
+            d=0.01,
+            beta=0.05,
+        )
 
 
 def test_mixed_control_coefficients_reject_unobservable_candidate():

@@ -43,7 +43,7 @@ theorem claims. The authoritative claim status remains docs/PROOF_STATUS.md.
 | P17-S | Scope counterexample for naive heterogeneous raw contrast | Heterogeneous fair-null deterministic witness | tests + partial_replay_scope_cases_v1.jsonl | Counterexample proved + tested; rules out silent generalization of P17-A |
 | P17-M | Broader heterogeneous/composite-null partial-replay complexity | Open: needs controls/baseline adjustment/new geometry | none yet | Open |
 | P18 | Thresholded one-edge synchronized replay phase transition | Exact transcript KL + thresholded mismatch test | separations.py, planner.py, tests/test_threshold_replay_phase.py | Proved + audited; one-edge threshold-Bernoulli scope |
-| P19 | Matched-background controls under a heterogeneous bipartite null | Exact mixed-KL LP + fractional control-cover schedule | control_replay.py, planner.py, tests/test_control_replay.py | Proved + audited for the two-class threshold family |
+| P19 | Matched-background controls under a heterogeneous bipartite null | Exact mixed-KL LP + hybrid boundary/control schedule | control_replay.py, planner.py, tests/test_control_replay.py | Proved + audited for the equal-high two-class threshold family; exact mixed constants open |
 
 ## Unified planner layer
 
@@ -63,10 +63,9 @@ already-audited components while enforcing their scope in the API.
   homogeneous single-changed-endpoint scope.
 - `mode="partial-bipartite-control"` delegates to the P19 matched-control
   schedule and requires explicit acknowledgement of the two-class bipartite
-  null plus declared high-side candidate vertices. It fails closed when any
-  candidate lacks a legal matched-background control group: the P19 mixed-KL
-  lower program may remain finite through boundary-only information there, but
-  no linear-regime upper schedule is promoted by the planner.
+  null plus declared high-side candidate vertices. It uses P18 boundary tests
+  for observable candidates without a matched control and the P19 control-cover
+  schedule for the remainder. It fails closed if a candidate is unobservable.
 
 `tests/test_planner.py` guards zero-query pruning, concrete execution
 accounting, single-edge scope rejection, suite execution cost, and the explicit
@@ -319,6 +318,13 @@ Thus feasible matched controls restore linear 1/d complexity with leading
 geometry C_ctrl. If some candidate has no matched control group, its lower
 constraint is boundary-only and forces quadratic 1/d^2 cost unless the
 alternative is entirely unobservable.
+
+For a mixed topology, let U be the unmatched candidates. The implemented hybrid
+allocates beta/|U| to a P18 test on each cheapest boundary-only group and runs the
+matched-control schedule on A minus U. For fixed finite topology this matches the
+d^-2/d^-1 orders and boundary-minimum/residual-cover geometry. It does not match
+exact two-term constants, close `log |U|`, or support arbitrary heterogeneous
+composite nulls.
 
 Frozen structural fixtures:
 `data/control_replay_structural_cases_v1.jsonl` (6 rows).

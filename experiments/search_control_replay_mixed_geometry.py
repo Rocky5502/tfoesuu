@@ -20,6 +20,7 @@ from tfoesuu.control_replay import (
     minimum_fractional_control_cover,
     mixed_control_asymptotic_coefficients,
     mixed_control_leading_coefficient,
+    mixed_control_replay_schedule,
 )
 from tfoesuu.graphs import complete_bipartite_graph
 
@@ -62,6 +63,20 @@ def exact_floor(graph, high, groups, costs, d: float) -> float:
     return out.expected_cost_floor
 
 
+def hybrid_cost(graph, high, groups, costs, d: float) -> float:
+    return mixed_control_replay_schedule(
+        graph,
+        groups,
+        costs,
+        high,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=d,
+        beta=0.05,
+    ).total_cost
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--high", type=int, default=3)
@@ -77,6 +92,8 @@ def main() -> None:
     ):
         qd = exact_floor(graph, high, groups, costs, args.d)
         qh = exact_floor(graph, high, groups, costs, args.d / 2.0)
+        ud = hybrid_cost(graph, high, groups, costs, args.d)
+        uh = hybrid_cost(graph, high, groups, costs, args.d / 2.0)
         leading = mixed_control_leading_coefficient(
             graph, groups, costs, high,
             p=0.20, shared_patch=0.10, fairness_tolerance=0.10, beta=0.05,
@@ -110,6 +127,10 @@ def main() -> None:
                 "floor_d": qd,
                 "floor_half_d": qh,
                 "ratio_half_over_full": ratio,
+                "hybrid_cost_d": ud,
+                "hybrid_cost_half_d": uh,
+                "hybrid_ratio_half_over_full": uh / ud,
+                "hybrid_to_lower_d": ud / qd,
                 "apparent_exponent": 1 if ratio < 3.0 else 2,
                 "exact_A0": a0,
                 "exact_B0": two_term.inverse_linear_coefficient,

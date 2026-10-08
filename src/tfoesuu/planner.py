@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Iterable, Literal, Mapping, Sequence
+from typing import Literal
 
 import numpy as np
 
 from .certificate import prune_with_patch_envelopes
-from .control_replay import matched_control_replay_schedule
+from .control_replay import mixed_control_replay_schedule
 from .graphs import Edge, GraphSpec
 from .partial_replay_lower import active_vertex_contrast_schedule
 from .separations import (
@@ -16,7 +17,6 @@ from .separations import (
 )
 from .suite_replay import synchronized_suite_replay_bounds
 from .testers import gaussian_static_counts
-
 
 ReplayMode = Literal[
     "vertex-paired-one-edge",
@@ -262,11 +262,14 @@ def plan_bernoulli_replay(
             )
         group_list = tuple(tuple(int(v) for v in group) for group in groups)
         high_list = tuple(int(v) for v in high_vertices)
-        schedule = matched_control_replay_schedule(
+        schedule = mixed_control_replay_schedule(
             graph,
             group_list,
             costs,
             high_list,
+            p=p,
+            shared_patch=shared_patch,
+            fairness_tolerance=fairness_tolerance,
             d=d,
             beta=beta,
         )
@@ -277,7 +280,7 @@ def plan_bernoulli_replay(
         return TFOESUUPlan(
             mode=mode,
             theorem_scope=(
-                "P19 bipartite two-class matched-background control replay"
+                "P19 bipartite two-class mixed boundary/control replay"
             ),
             safe_edges=(),
             residual_edges=graph.edges,
@@ -285,12 +288,15 @@ def plan_bernoulli_replay(
             concrete_program_executions=executions,
             vertex_counts=None,
             group_counts=tuple(int(x) for x in schedule.counts),
-            normalized_geometry=float(
-                schedule.normalized_control_cover_cost
+            normalized_geometry=(
+                float(schedule.residual_control_cover_cost)
+                if not schedule.uncovered_high_vertices
+                else None
             ),
             notes=(
                 "The high/low null classes and tolerance boundary must be certified externally.",
-                "Matched controls restore the sparse d^-1 regime only in the audited P19 family.",
+                "Singleton alternatives and pathwise-equal high controls are required.",
+                "Mixed plans combine P18 boundary tests with P19 matched controls.",
             ),
         )
 

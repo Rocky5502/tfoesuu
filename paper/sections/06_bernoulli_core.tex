@@ -638,7 +638,31 @@ C_{\rm ctrl}^{A\setminus U}
 +O(1).
 \]
 This is an exact asymptotic for the information lower program, not a matching
-upper bound when \(U\ne\varnothing\).
+upper-bound expansion when \(U\ne\varnothing\).
+
+\item Suppose \(U\ne\varnothing\) and every candidate is observable, and let
+\(m=|U|\).  There is a fixed-design hybrid tester with type-I error and every
+pointwise type-II error at most \(\delta\), and declared cost at most
+\[
+N_U\sum_{x\in U}\bar c_x
++L C_{\rm ctrl}^{A\setminus U}
++\sum_{i:q_i^\star>0}c_i,
+\]
+where
+\[
+N_U=
+\left\lceil
+\frac{8(\tau+d)}{d^2}\log\frac{m}{\delta}
+\right\rceil,
+\qquad
+L=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil,
+\]
+and \(q^\star\) is an optimizer defining
+\(C_{\rm ctrl}^{A\setminus U}\).  Consequently, for every fixed finite
+topology and fixed \(\tau>0\), the mixed lower and upper bounds match the
+\(d^{-2}\) leading order and the boundary-minimum/control-cover cost geometry
+up to constants.  This does not match the exact two-term coefficients or close
+the dependence on \(m\).
 \end{enumerate}
 \end{theorem}
 
@@ -699,6 +723,28 @@ and rescaling by \(1+O(\epsilon)\) gives
 \(K_{\rm ctrl}=d+O(d^2)\), the covered block contributes
 \(aC_{\rm ctrl}^{A\setminus U}d^{-1}+O(1)\).  Summing the disjoint blocks
 proves the expansion.
+
+For (v), choose for every \(x\in U\) a cheapest containing group
+\(S_{i_x}\).  Because \(x\) has no control-compatible group,
+\(S_{i_x}\) contains no other high vertex; since legal groups have size at
+least two, it contains a low reference \(y_x\).  On fresh common-uniform
+tapes \(R\), form
+\[
+W_x=\mathbf 1\{P_1(x;R)\ne P_1(y_x;R)\}.
+\]
+Under the frozen P19 null this is \({\rm Bernoulli}(\tau)\), and under
+singleton alternative \(x\) it is \({\rm Bernoulli}(\tau+d)\).  Apply the
+P18 threshold test to each \(x\in U\) with error budget \(\delta/m\) and
+\(N_U\) rounds.  A union bound controls the boundary block's type-I error by
+\(\delta\), while its miss probability under any unmatched alternative is at
+most \(\delta/m\).  Independently apply the zero-type-I matched-control
+schedule from (ii) to the residual cover on \(A\setminus U\), with pointwise
+miss probability at most \(\delta\), and reject if either block rejects.
+The declared costs add to the displayed bound.  Groups containing unmatched
+candidates cannot contain another high vertex, so they do not create a hidden
+cross-coverage term.  The construction relies on the exact equal-high P19 null
+and singleton alternatives; it is not valid for an arbitrary heterogeneous
+composite null or simultaneous multi-candidate changes.
 \end{proof}
 
 \begin{corollary}[Replay topology changes the small-effect exponent]

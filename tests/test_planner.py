@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pytest
 
@@ -130,7 +132,7 @@ def test_partial_plan_requires_explicit_homogeneous_scope_acknowledgement():
 
 def test_partial_plan_rejects_invalid_homogeneous_parameters():
     graph = path_graph(3)
-    with pytest.raises(ValueError, match="p\+shared_patch\+d<1"):
+    with pytest.raises(ValueError, match=r"p\+shared_patch\+d<1"):
         plan_bernoulli_replay(
             graph,
             "partial-homogeneous",
@@ -218,29 +220,34 @@ def test_p19_control_plan_requires_explicit_scope_and_tracks_execution_cost():
 
 
 
-def test_p19_planner_fails_closed_without_matched_controls_even_when_boundary_information_exists():
+def test_p19_planner_uses_boundary_tests_without_matched_controls():
     graph = complete_bipartite_graph(3, 2)
-    # Every legal group contains exactly one high vertex.  P19's mixed-KL lower
-    # program is still finite through boundary information, but the proved
-    # linear matched-control upper construction is unavailable.  The unified
-    # planner must therefore refuse to manufacture a d^-1 schedule.
+    # Every legal group contains exactly one high vertex, so the hybrid planner
+    # must use the proved quadratic P18 boundary block rather than manufacture
+    # a linear matched-control schedule.
     groups = [(0, 3), (1, 3), (2, 4)]
     costs = [1.0, 1.0, 1.0]
 
-    with pytest.raises(ValueError, match="no legal matched-background control group"):
-        plan_bernoulli_replay(
-            graph,
-            "partial-bipartite-control",
-            p=0.20,
-            shared_patch=0.10,
-            fairness_tolerance=0.10,
-            d=0.01,
-            beta=0.05,
-            groups=groups,
-            costs=costs,
-            high_vertices=(0, 1, 2),
-            bipartite_control_family=True,
-        )
+    plan = plan_bernoulli_replay(
+        graph,
+        "partial-bipartite-control",
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=0.05,
+        groups=groups,
+        costs=costs,
+        high_vertices=(0, 1, 2),
+        bipartite_control_family=True,
+    )
+
+    expected_rounds_per_group = math.ceil(
+        8.0 * 0.11 * math.log(3.0 / 0.05) / (0.01**2)
+    )
+    assert plan.group_counts == (expected_rounds_per_group,) * 3
+    assert plan.normalized_geometry is None
+    assert plan.rounds == 3 * expected_rounds_per_group
 
 def test_p19_control_plan_rejects_nonpositive_tolerance():
     graph = complete_bipartite_graph(2, 1)

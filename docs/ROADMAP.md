@@ -86,11 +86,11 @@ two-class bipartite family. The next target is strictly broader:
 
 A rigorous impossibility/boundary theorem remains a successful outcome.
 
-### S1b — Mixed-control asymptotic stratification (lower program resolved)
+### S1b — Mixed-control asymptotic stratification (finite-topology orders resolved)
 
-Keep the broader matching minimax/achievability claim at P20-CONJECTURE status;
-do not promote it beyond conjecture yet. P19's exact lower LP already implies a
-sharper question than the binary all-controls/no-controls split. In a partially
+Keep the broader nuisance-aware minimax claim at P20-CONJECTURE status; the P19
+hybrid does not promote it. P19's exact lower LP implies a sharper question than
+the binary all-controls/no-controls split. In a partially
 controlled topology, some alternatives have a first-order control-compatible
 channel while others are observable only through the second-order boundary
 channel.  For fixed positive tau,
@@ -113,11 +113,11 @@ Repository falsification support:
 - tests pin one mixed topology to the quadratic leading regime and an
   all-covered topology to the linear leading regime.
 
-Completed for the lower program: exact d^-2 and d^-1 coefficients, including
-positive/zero/negative boundary-curvature tests and unobservable extremes.
-Remaining before promoting the mixed result to a matching minimax statement:
-determine whether an achievable tester matches the mixed-topology lower
-coefficients/order.
+Completed: exact lower-program d^-2 and d^-1 coefficients plus a hybrid upper
+that matches the finite-topology d-orders and boundary-minimum/residual-cover
+geometry up to constants. Tests cover positive/zero/negative boundary curvature,
+multiple unmatched candidates, unobservable extremes, and a composite-null
+counterexample. Remaining: exact two-term minimax constants and `|U|` dependence.
 
 
 ### S1c — P20 unified replay information geometry (conjecture)
@@ -221,9 +221,9 @@ than adding public datasets for count.  The grid varies d and tau/d for P18 and
 uses only the theorem-backed P19 control-coverage extremes rho=0 and rho=1.
 The mixed-control singular LP now has proved two-term coefficients, but an
 intermediate scalar coverage fraction does not identify the replay topology,
-costs, or those coefficients, and there is no matching mixed-topology upper
-tester.  Mixed fixtures therefore remain in the explicit topology search rather
-than being collapsed into a misleading rho-only sweep.  The v1 specification lives in
+costs, or coefficients. The hybrid upper also requires that explicit topology
+and does not close exact constants. Mixed fixtures therefore remain in the
+topology search rather than a misleading rho-only sweep. The v1 specification lives in
 `src/tfoesuu/replay_phase_benchmarks.py` and is guarded against accidental
 claim expansion by `tests/test_replay_phase_benchmarks.py`.
 

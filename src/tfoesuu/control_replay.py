@@ -9,7 +9,7 @@ from scipy.optimize import linprog
 
 from .graphs import GraphSpec
 from .partial_replay import _canonical_groups
-from .separations import binary_decision_kl
+from .separations import binary_decision_kl, threshold_fairness_replay_bounds
 
 
 @dataclass(frozen=True)
@@ -59,8 +59,9 @@ class MixedControlAsymptoticCoefficients:
         Q(d) = inverse_square_coefficient / d**2
              + inverse_linear_coefficient / d + O(1).
 
-    This describes an information lower program; it is not a matching tester
-    for topologies that lack a matched control.
+    This describes the exact information lower program.  The hybrid mixed
+    schedule matches its finite-topology d-orders but not these exact two-term
+    coefficients.
     """
 
     inverse_square_coefficient: float
@@ -85,6 +86,29 @@ class ControlReplaySchedule:
     total_cost: float
     additive_rounding_cap: float
     high_vertices: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class MixedControlReplaySchedule:
+    """Hybrid fixed-design schedule for the frozen mixed P19 family.
+
+    Control-uncovered candidates receive individual P18 boundary tests, while
+    the remaining candidates use the zero-type-I matched-control schedule.
+    This is valid only for P19's exact two-class null and singleton alternatives;
+    it is not a tester for an arbitrary heterogeneous composite null.
+    """
+
+    counts: np.ndarray
+    total_cost: float
+    uncovered_high_vertices: tuple[int, ...]
+    covered_high_vertices: tuple[int, ...]
+    boundary_group_indices: tuple[int, ...]
+    boundary_rounds_per_candidate: int
+    boundary_error_budget_per_candidate: float
+    boundary_minimum_cost: float
+    residual_control_cover_cost: float
+    control_scale: int
+    additive_control_rounding_cap: float
 
 
 def _validate_bipartite_threshold_family(
@@ -465,6 +489,139 @@ def mixed_control_asymptotic_coefficients(
         b3,
         True,
         "exact finite-family singular coefficients",
+    )
+
+
+def mixed_control_replay_schedule(
+    graph: GraphSpec,
+    groups: Iterable[Iterable[int]],
+    costs: Sequence[float],
+    high_vertices: Iterable[int],
+    *,
+    p: float,
+    shared_patch: float,
+    fairness_tolerance: float,
+    d: float,
+    beta: float,
+) -> MixedControlReplaySchedule:
+    """Construct an order-matching hybrid schedule for mixed P19 topologies.
+
+    Let U contain the high candidates with no legal group containing a second
+    high control.  Every group containing x in U then contains x as its only
+    high member and at least one low member.  Under P19's frozen two-class null,
+    a new-version high/low mismatch in that group is Bernoulli(tau), and under
+    singleton alternative x it is Bernoulli(tau+d).  A P18 boundary test on the
+    cheapest such group therefore handles x.  A residual fractional control
+    cover handles the candidates in A minus U with zero type-I error.
+
+    Boundary tests split the global type-I budget equally over U.  Type-II
+    control is pointwise over singleton alternatives, so the residual control
+    schedule uses beta directly.  The construction matches the finite-topology
+    d^-2/d^-1 orders, not exact minimax constants or arbitrary |U| dependence.
+    """
+
+    if not (0.0 < beta < 0.5):
+        raise ValueError("beta must lie in (0,1/2)")
+    if not (0.0 < d < 1.0):
+        raise ValueError("d must lie in (0,1)")
+    if fairness_tolerance <= 0.0:
+        raise ValueError("P19 mixed schedule requires fixed fairness_tolerance>0")
+    # Validate the full P19 threshold parameter range even when U is empty.
+    threshold_fairness_replay_bounds(
+        p,
+        shared_patch,
+        fairness_tolerance,
+        d,
+        beta,
+    )
+
+    high = _validate_bipartite_threshold_family(graph, high_vertices)
+    high_set = set(high)
+    gs = _canonical_groups(graph, groups)
+    c = _validate_costs(gs, costs)
+
+    control = np.zeros((len(high), len(gs)), dtype=float)
+    contains = np.zeros((len(high), len(gs)), dtype=float)
+    for xi, x in enumerate(high):
+        for gi, group in enumerate(gs):
+            if x not in group:
+                continue
+            contains[xi, gi] = 1.0
+            if sum(v in high_set for v in group) >= 2:
+                control[xi, gi] = 1.0
+
+    uncovered_idx = tuple(i for i in range(len(high)) if control[i].sum() == 0.0)
+    covered_idx = tuple(i for i in range(len(high)) if control[i].sum() > 0.0)
+    uncovered = tuple(high[i] for i in uncovered_idx)
+    covered = tuple(high[i] for i in covered_idx)
+    counts = np.zeros(len(gs), dtype=int)
+
+    boundary_group_indices: list[int] = []
+    boundary_minimum_cost = 0.0
+    boundary_rounds = 0
+    boundary_error_budget = 0.0
+    if uncovered_idx:
+        boundary_error_budget = beta / len(uncovered_idx)
+        boundary_rounds = threshold_fairness_replay_bounds(
+            p,
+            shared_patch,
+            fairness_tolerance,
+            d,
+            boundary_error_budget,
+        ).replay_upper_rounds
+        for xi in uncovered_idx:
+            eligible = np.flatnonzero(contains[xi] > 0.0)
+            if len(eligible) == 0:
+                raise ValueError(
+                    "some control-uncovered alternative is absent from every legal group"
+                )
+            gi = int(eligible[np.argmin(c[eligible])])
+            # Since x is control-uncovered, this group contains no second high.
+            # Group size is at least two, so it contains a low reference.
+            if sum(v in high_set for v in gs[gi]) != 1:
+                raise RuntimeError("uncovered candidate group is not boundary-only")
+            boundary_group_indices.append(gi)
+            boundary_minimum_cost += float(c[gi])
+            counts[gi] += boundary_rounds
+
+    residual_control_cover_cost = 0.0
+    control_scale = 0
+    additive_control_rounding_cap = 0.0
+    if covered_idx:
+        A = control[np.asarray(covered_idx), :]
+        res = linprog(
+            c,
+            A_ub=-A,
+            b_ub=-np.ones(len(covered_idx)),
+            bounds=[(0.0, None)] * len(gs),
+            method="highs",
+        )
+        if not res.success:
+            raise ValueError(str(res.message))
+        weights = np.asarray(res.x)
+        residual_control_cover_cost = float(res.fun)
+        control_scale = math.ceil(math.log(beta) / math.log1p(-d))
+        control_counts = np.ceil(control_scale * weights - 1e-12).astype(int)
+        counts += control_counts
+        for xi in covered_idx:
+            exposure = int(control[xi] @ control_counts)
+            if exposure < control_scale:
+                raise RuntimeError("rounded residual control schedule failed exposure")
+        support = weights > 1e-12
+        additive_control_rounding_cap = float(c[support].sum())
+
+    return MixedControlReplaySchedule(
+        counts=counts,
+        total_cost=float(c @ counts),
+        uncovered_high_vertices=uncovered,
+        covered_high_vertices=covered,
+        boundary_group_indices=tuple(boundary_group_indices),
+        boundary_rounds_per_candidate=boundary_rounds,
+        boundary_error_budget_per_candidate=boundary_error_budget,
+        boundary_minimum_cost=boundary_minimum_cost,
+        residual_control_cover_cost=residual_control_cover_cost,
+        control_scale=control_scale,
+        additive_control_rounding_cap=additive_control_rounding_cap,
     )
 
 

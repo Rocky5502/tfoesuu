@@ -223,6 +223,7 @@ python experiments/search_control_replay_mixed_geometry.py --top 20
 Version 1 freezes replay fidelity at 1.0. It labels only theorem-backed P19
 control-coverage extremes (0 and 1). The exact mixed lower program now has
 proved two-term coefficients, but intermediate topologies cannot be represented
-by one scalar coverage fraction and have no matching upper tester. They remain
-in the explicit topology search rather than the v1 rho-only grid. Generated rows
-are parameter specifications, never observed performance values.
+by one scalar coverage fraction. A hybrid upper matches their finite-topology
+`d`-orders but still requires the explicit groups and costs and does not close
+exact constants. They remain in the topology search rather than the v1 rho-only
+grid. Generated rows are parameter specifications, never observed performance values.

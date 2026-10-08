@@ -15,7 +15,7 @@
 | Pairwise graph design | Scandinavian Journal of Statistics and older design literature | Inventing graph allocation | Regression-specific `Psi` plus lower bounds in the coupled software oracle |
 | Fractional set/group cover | Classical combinatorial optimization | Inventing fractional cover or LP rounding | How legal replay-group structure controls fairness-regression witness scheduling after software evolution |
 | Group/subset querying | Group testing, active search, and simulation design | Inventing subset queries | Distinguishing edge-witness geometry from raw endpoint-information geometry under replay-compatible software groups |
-| Matched-background controls | Blocking, matched comparisons, and common-random-number simulation are classical | Inventing matched controls or blocking | Exact mixed-information LP and fractional control-cover geometry showing when replay topology restores first-order information under a heterogeneous fairness-preserving null |
+| Matched-background controls | Blocking, matched comparisons, and common-random-number simulation are classical | Inventing matched controls or blocking | Exact mixed-information LP plus a scoped boundary/control hybrid showing how replay topology combines first- and second-order information under an equal-high heterogeneous fairness-preserving null |
 | Incremental verification | ISSTA/PACMSE and prior verification literature | Inventing incremental verification | Statistical rather than proof-reuse complexity for fairness under execution noise |
 
 ## Submission-level novelty test
