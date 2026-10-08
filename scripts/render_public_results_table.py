@@ -2,12 +2,17 @@
 from __future__ import annotations
 
 import argparse
+import json
 from collections import defaultdict
 from pathlib import Path
 
 from scipy.stats import beta as beta_distribution
 
-from tfoesuu.public_results import read_public_results, validate_public_result_matrix
+from tfoesuu.public_results import (
+    read_public_results,
+    validate_public_result_matrix,
+    validate_publication_coverage,
+)
 
 
 METHOD_ORDER = ["independent", "vertex-paired", "four-way", "suite", "tfoesuu"]
@@ -143,8 +148,28 @@ def main() -> None:
         default=Path("paper/generated/public_results_table.tex"),
     )
     ap.add_argument("--patch-size", type=float)
+    ap.add_argument(
+        "--registry",
+        type=Path,
+        default=Path("data/public_benchmark_registry_v1.jsonl"),
+    )
     args = ap.parse_args()
     rows = read_public_results(args.results)
+
+    # Exploratory output to an external path may use partial matrices, but
+    # anything written into the tracked manuscript-generated directory must
+    # first pass the strict seven-dataset publication release gate.
+    manuscript_generated_dir = Path("paper/generated").resolve()
+    if args.output.resolve().is_relative_to(manuscript_generated_dir):
+        registry_rows = [
+            json.loads(line)
+            for line in args.registry.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        registry_ids = [item["benchmark_id"] for item in registry_rows]
+        if len(registry_ids) != 7 or len(set(registry_ids)) != 7:
+            raise ValueError("submission table requires exactly seven unique registry IDs")
+        validate_publication_coverage(rows, registry_ids)
     chosen = render_table(rows, args.output, args.patch_size)
     print(f"wrote {args.output} for d={chosen:g}")
 
