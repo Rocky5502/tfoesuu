@@ -75,3 +75,19 @@
 - Approval gate reached: YES for 100,000 trials or larger; fresh approval required.
 - Next independent task: continue formal/statistical audit and repair the local PDF toolchain while
   keeping frozen data/source compatibility explicit.
+
+### Checkpoint update — authorized 100,000-trial dual-GPU preview
+
+- Fresh preflight: both frozen execution trees clean at `149baf36`; both GPUs idle, CUDA-visible,
+  and had more than 14 GiB free. The research branch remained clean at `f9128c5` before logging.
+- PC1 P15: 144 frozen configurations at 100,000 trials, UTC 17:06:40--17:06:44, result
+  SHA-256 `e0750e5d46215909aa710d83bca8ad748877e66f786aa9106e883ce94da274ab`.
+- PC2 P12: 54 frozen configurations at 100,000 trials, UTC 17:06:50--17:06:53, result
+  SHA-256 `f00458f50d225c8c5bde5cb235c6f67fbc67102157768369df8cd350956f1035`.
+- Exact audit: all IDs unique/complete, every recomputed schedule matched, and 0 of 594 exact
+  binomial tests crossed the Bonferroni threshold `8.417508417508418e-05`. Minimum exact p-value
+  was `0.00046475515380564977`; largest absolute empirical/exact difference was
+  `0.002427090218361183` (P12 paired alternative miss, row `r0019`).
+- These remain controlled sufficient-statistic previews, not measured service runtime and not a
+  seven-public-dataset publication matrix. Both GPU jobs finished; no background job remains.
+- Approval gate reached: YES for million-trial or public-dataset publication campaigns.

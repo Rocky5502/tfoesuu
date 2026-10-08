@@ -25,7 +25,7 @@
 | G2 data | seven nonzero NPZ/JSON pairs and manifest pass strict schema/content/hash validation | PASS for frozen prepared artifacts |
 | G3 math | frozen proof-status documents and P17 negative boundary present | OPEN: claim-level crosswalk audit required |
 | G4 experiment | runner now fails closed on the complete prepared-input contract | PARTIAL: protocol and cost audit continues |
-| G5 smoke | complete P12/P15 1k and 10k frozen-baseline CUDA grids; exact finite-law audits green | PARTIAL: public-data smoke still gated by release-compatible source |
+| G5 smoke | complete P12/P15 1k, 10k, and 100k frozen-baseline CUDA grids; exact finite-law audits green | PARTIAL: public-data smoke still gated by release-compatible source |
 | G6 scale | publication-scale runs require approval | BLOCKED BY APPROVAL GATE |
 | G7 manuscript | static consistency passed; no public result matrix exists | OPEN |
 | G8 artifact | reproducibility material exists but external replication closure is incomplete | OPEN |
