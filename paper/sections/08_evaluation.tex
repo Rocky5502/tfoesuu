@@ -106,6 +106,21 @@ is produced by a frozen patch specification with a common shift and, when
 required by the experiment, a differential endpoint shift. This construction
 lets public inputs instantiate the replay model while keeping the theorem
 assumptions and the empirical generalization claims separate.
+
+\paragraph{Simulation unit and execution accounting.}
+The public GPU evaluator implements a controlled \emph{Bernoulli threshold-law
+simulation}, not a wall-clock profile of an instrumented operating system.
+Independent and old--new vertex-paired baselines sample their exact binomial
+sufficient statistics. In the frozen single-changed-edge experiment, the
+four-way, suite, and localized tester share the same common-tape threshold
+witness trace; all other edges are null and cannot trigger the pathwise witness.
+Their reported \emph{concrete program executions} therefore count the calls
+required by the declared replay schedule, rather than GPU kernel executions
+actually performed by this sufficient-statistic simulator. Shared witness
+errors are deliberately correlated across these three access models and
+must not be interpreted as three independent empirical replicates. No
+generalization to arbitrary stochastic software, uncontrolled nondeterminism,
+or heterogeneous patch nulls follows from this experiment.
 \subsection{Experimental settings and baselines}
 
 Every stochastic publication run is keyed by the repository commit, a frozen
