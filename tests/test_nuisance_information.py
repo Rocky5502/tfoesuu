@@ -78,3 +78,35 @@ def test_unobservable_alternative_fails_closed():
 def test_invalid_nuisance_information_is_rejected(info, costs, needs):
     with pytest.raises(ValueError):
         audit_finite_nuisance_information(info, costs, needs)
+
+
+def test_single_nuisance_reproduces_p19_exact_information_lower_lp():
+    from tfoesuu.control_replay import control_replay_information_lower_bound
+    from tfoesuu.graphs import complete_bipartite_graph
+    from tfoesuu.separations import binary_decision_kl
+
+    graph = complete_bipartite_graph(3, 2)
+    high = (0, 1, 2)
+    groups = [(0, 1), (1, 2), (0, 2), (0, 3), (1, 3), (2, 3)]
+    costs = [1.0] * len(groups)
+    beta = 0.05
+
+    audited_p19 = control_replay_information_lower_bound(
+        graph, groups, costs, high,
+        p=0.20, shared_patch=0.10, fairness_tolerance=0.10,
+        d=0.01, beta=beta,
+    )
+    assert audited_p19.success
+    needs = [binary_decision_kl(beta)] * len(high)
+    generalized = audit_finite_nuisance_information(
+        audited_p19.information_matrix[np.newaxis, :, :],
+        costs,
+        needs,
+    )
+    assert len(generalized.pointwise_solutions) == 1
+    assert generalized.worst_pointwise_cost == pytest.approx(
+        audited_p19.expected_cost_floor
+    )
+    assert generalized.shared_fixed_information_solution.cost == pytest.approx(
+        audited_p19.expected_cost_floor
+    )
