@@ -228,6 +228,47 @@ comparisons are established simulation tools
 version-aware fairness-regression query geometry, not the invention of common
 randomness.
 
+\paragraph{Composite-null action information (P20, open).}
+A central unresolved difficulty is that a fairness-preserving nuisance parameter
+$\eta$ belongs to the \emph{whole} null program, not to each replay action
+independently. For a frozen family of replay actions $S$ and oriented
+alternatives $a$, define the exact null-to-alternative information
+\[
+I_{a,S}(\eta)
+=
+D_{\mathrm{KL}}\!\left(
+P_{0,\eta}^{S}\,\middle\|\,P_{a,\eta}^{S}
+\right).
+\]
+Under the usual stopped-transcript change-of-measure assumptions, every
+level-$\delta$ policy obeys, separately for every fixed $\eta$ and $a$,
+\[
+\sum_S
+\mathbb{E}_{0,\eta}[N_S]\,I_{a,S}(\eta)
+\ge
+\kl(1-\delta,\delta).
+\]
+Consequently one obtains a necessary uniform-null cost floor by maximizing
+the \emph{pointwise-nuisance} information-cover minimum over $\eta$.
+This must not be confused with minimizing cost for one fixed allocation
+subject to every nuisance constraint simultaneously: expected adaptive
+action counts may depend on the true nuisance.
+
+Even for two actions and two nuisance values, the distinction is strict.
+With unit costs, information rows $(1,\varepsilon)$ and
+$(\varepsilon,1)$, and unit required information, both pointwise
+minima equal $1$, whereas the shared fixed-information design costs
+$2/(1+\varepsilon)$. This is an abstract LP separation, not yet a
+realizable software-oracle or optimal-testing separation.
+The detailed quantifier audit and finite fixtures are maintained in the
+replication repository; P20 remains open. Composite controlled sensing,
+restricted-action error exponents, and active testing algorithms are already
+studied in the archival literature
+\cite{DeshmukhVeeravalliBhashyam2021,HsuWang2025,GanJiaLiTayur2025}.
+Our remaining question is which such information patterns can arise from
+\emph{legal same-tape executions of evolving software} and which admit
+matching sound regression-certification procedures.
+
 \paragraph{Adaptivity and the Gaussian logarithmic gap.}
 The Gaussian upper bound in \Cref{thm:upper} pays
 $\log(|E(H)|/\delta)$ for simultaneous edge control, while the current adaptive
