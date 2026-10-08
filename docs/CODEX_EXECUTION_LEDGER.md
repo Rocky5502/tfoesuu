@@ -46,5 +46,6 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Audit the public evaluator's statistical/cost contract and build the theorem-to-code-to-test claim
-crosswalk. The strict prepared-subject validator and runner fail-closed integration are complete.
+Audit the public evaluator's statistical/cost contract and maintain
+`docs/CODEX_CLAIM_LEDGER.md` as the theorem-to-code-to-test/manuscript crosswalk. The strict
+prepared-subject validator, dual-GPU exploratory smoke, and portable provenance repair are complete.

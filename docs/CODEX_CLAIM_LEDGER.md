@@ -1,0 +1,43 @@
+# Claim ledger
+
+This ledger is a navigation and release-control artifact. `docs/PROOF_STATUS.md` remains the
+authoritative mathematical status source. “Proof location” identifies the checked-in manuscript or
+audit containing the argument; tests and finite computations guard implementations but do not prove
+general statements.
+
+| ID | Status | Exact scope / hypothesis and exclusion | Proof location | Code, falsification test, specification | Manuscript link |
+|---|---|---|---|---|---|
+| P1 | PROVED + AUDITED | Sound change-impact set; newly introduced violations only. No guarantee for unsound impact analysis. | `paper/sections/03_localization.tex` (`prop:localization`) | `certificate.py`; `test_certificate.py` | localization proposition |
+| P2 | PROVED + AUDITED | Sharp threshold, stochastic access, no positive margin; rules out uniform finite-query certification. | `paper/sections/03_localization.tex` (`prop:zero-margin`) | no promised tester | zero-margin proposition |
+| P3 | PROVED + AUDITED | Same random tape for old/new paired outputs; variance identity only. | `paper/sections/04_coupled_execution.tex` (`prop:diffvar`) | `oracles.py` | differential-variance proposition |
+| P4 | PROVED + AUDITED | Gaussian paired-delta model, known variances, fixed positive margin; static allocation. | `paper/sections/05_gaussian_core.tex` (`thm:upper`) | `allocation.py`, `testers.py`, `test_allocation.py`; 384-row Gaussian grid | Gaussian upper theorem |
+| P5 | PROVED + AUDITED | Same Gaussian alternative family; adaptive transcript lower bound in paired-oracle calls. | `paper/sections/05_gaussian_core.tex` (`thm:lower`) | dual/allocation checks; proof audits | Gaussian lower theorem |
+| P6/P6-C | PROVED + AUDITED (supporting) | Positive active-vertex allocation; Slater/interior conditions. Conic representation is standard machinery, not novelty. | `paper/sections/05_gaussian_core.tex` (`thm:dual`, `prop:psi-soc`) | `allocation.py`; primal/dual and rotated-cone tests | dual and SOC statements |
+| P7/P8 | PROVED + AUDITED | Unit-variance canonical graph families; homogeneous variance rescaling. | `paper/sections/05_gaussian_core.tex` (`prop:families`) | `graphs.py`, `test_allocation.py` | graph-family proposition |
+| P9 | PROVED + AUDITED | Common-uniform Bernoulli thresholds with interior probabilities. | `paper/sections/06_bernoulli_core.tex` (`prop:bernoulli`) | `oracles.py`, `separations.py` | Bernoulli coupling proposition |
+| P10 | PROVED + AUDITED | Matching instance, sound patch location, matched execution oracle; not arbitrary fresh-audit access. | `paper/sections/07_regression_consequences.tex` (`cor:locality-separation`) | `separations.py` | locality corollary |
+| P11 | PROVED + AUDITED | Unrestricted patches and boundary-null adversary; does not deny instance-dependent upper gains. | `paper/sections/07_regression_consequences.tex` (`prop:slack-no-free-lunch`) | proof only | slack no-free-lunch proposition |
+| P12 | PROVED + AUDITED | One-edge interior common-uniform Bernoulli family; paired `d^-1` versus independent `d^-2`. | `paper/sections/06_bernoulli_core.tex` (`thm:bernoulli-separation`) | `separations.py`, `test_replay_separation.py`; 54-row P12 grid | Bernoulli separation theorem |
+| P13 | PROVED + AUDITED | Unknown changed edge on an M-edge matching under the common null. | `paper/sections/07_regression_consequences.tex` (`cor:bernoulli-location`) | `separations.py` | location corollary |
+| P14 | PROVED + AUDITED | Sound deterministic patch-effect envelopes; zero-query pruning applies only to certified-safe edges. | `paper/sections/07_regression_consequences.tex` (`prop:certificate-pruning`) | `certificate.py`, `test_certificate.py`, `test_planner.py` | pruning proposition/corollary |
+| P15 | PROVED + AUDITED | One-edge four-output common-tape threshold family with a fairness-neutral common patch; not generic paired testing novelty. | `paper/sections/06_bernoulli_core.tex` (`thm:counterfactual-replay`) | `separations.py`, `test_counterfactual_replay.py`; 144-row P15 grid | counterfactual replay theorem |
+| P16 | PROVED + AUDITED | Homogeneous full active-suite replay; stronger suite oracle; concrete executions scale with active vertices. | `paper/sections/06_bernoulli_core.tex` (`thm:suite-replay`) | `suite_replay.py`, `test_suite_replay.py` | suite theorem |
+| P17-U/I/G | PROVED + TESTED AS STATED | Declared legal groups; distinguishes edge-witness cover `C_edge` from raw-information cover `C_vert`. LP geometry is not by itself a minimax theorem. | `paper/sections/07_open_problems.tex`; `docs/P17_PARTIAL_REPLAY_NOTES.md` | `partial_replay_lower.py`; 168 stress rows + 8 structural fixtures | P17 LP propositions |
+| P17-A | PROVED + AUDITED | Homogeneous thresholds, one changed endpoint, fresh tapes across queries; `C_vert` raw-contrast schedule. Excludes heterogeneous/composite nulls. | `paper/sections/07_open_problems.tex` (`prop:p17-active-contrast`) | active-contrast tests and exact miss checks | scoped active-contrast proposition |
+| P17-S | COUNTEREXAMPLE | Deterministic heterogeneous fair null; falsifies naive extension of the homogeneous raw-contrast predicate. | `docs/P17_PARTIAL_REPLAY_NOTES.md` | `partial_replay_scope_cases_v1.jsonl`; `test_raw_contrast_is_not_valid_for_heterogeneous_composite_null` | evaluation scope-boundary row |
+| P18 | PROVED + AUDITED | One-edge synchronized threshold family, interior margin; phase `Theta((tau+d)d^-2 log(1/delta))`. | `paper/sections/06_bernoulli_core.tex` (`thm:threshold-replay-phase`) | `separations.py`, `test_threshold_replay_phase.py`; 24-row grid | threshold phase theorem |
+| P19 | PROVED + AUDITED FOR SCOPED FAMILY | Bipartite two-class threshold null with declared matched-background controls. No arbitrary heterogeneous-null claim. | `paper/sections/06_bernoulli_core.tex` (`thm:control-replay`) | `control_replay.py`, `test_control_replay.py`; 6 structural fixtures | control replay theorem/corollary |
+| P20 | CONJECTURE | General composite nuisance/action information geometry. Pointwise nuisance floors cannot be silently exchanged with one shared minimax allocation; no general achievability. | `docs/P20_NUISANCE_QUANTIFIER_AUDIT.md` | abstract LP fixtures only | explicitly open in algorithm/open-problems sections |
+| Public v1 input construction | COMPUTATIONALLY_CHECKED | Public covariates determine heterogeneous `p0`; each scalar probability is duplicated into a synthetic two-endpoint edge. No empirical protected-attribute counterfactual is materialized. | protocol/code audit | strict seven-subject validator; 9 corruption regressions; PC2 frozen artifacts pass | `paper/sections/08_evaluation.tex` |
+| P12/P15 1k CUDA smoke | EXPLORATORY | Frozen SHA `149baf36`; 54 P12 and 144 P15 configurations; 1,000 trials each; sufficient-statistic simulations, not instrumented runtime. | exact finite binomial laws | 594 comparisons, zero Bonferroni outliers; hashes in hourly checkpoint | not admitted as a paper result |
+| Seven-dataset publication matrix | UNVERIFIED | Requires all seven IDs, four patch sizes, five methods, frozen seeds, 100k+ aggregate trials, provenance and release validation. | protocol only | no qualifying result JSONL exists | template remains non-evidential |
+
+## Release fences
+
+- A numerical search may falsify a universal claim but cannot promote it to `PROVED`.
+- `concrete_program_executions` is declared oracle-work accounting, not GPU kernel count or measured
+  wall-clock runtime.
+- The synchronized public methods reuse one witness trace in the frozen single-changed-edge model;
+  their empirical errors are correlated.
+- P20, T1--T7, and any heterogeneous P17 generalization remain outside abstract/contribution claims
+  unless `docs/PROOF_STATUS.md` is explicitly changed after proof and independent audit.
