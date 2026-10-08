@@ -104,3 +104,14 @@ def test_method_specific_graph_drift_is_rejected():
     rows[0] = replace(rows[0], graph_edges=60)
     with pytest.raises(ValueError, match="graph metadata drift"):
         validate_publication_coverage(rows, DATASETS)
+
+
+
+def test_multiple_seed_specific_rows_require_aggregation_before_release():
+    rows = _matrix()
+    # Every method has the same two-seed set, so this is matched but is not
+    # one aggregate result per manuscript-table cell.
+    for method in PUBLIC_METHODS:
+        rows.append(_row(DATASETS[0], PATCHES[0], method, seed=18))
+    with pytest.raises(ValueError, match="nonaggregated method rows"):
+        validate_publication_coverage(rows, DATASETS)
