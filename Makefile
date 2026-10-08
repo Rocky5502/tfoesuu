@@ -1,4 +1,4 @@
-.PHONY: install test benchmark replay-benchmark smoke replay-smoke paper-check
+.PHONY: install test benchmark replay-benchmark smoke replay-smoke paper-check paper-pdf
 
 install:
 	python -m pip install -r requirements.txt
@@ -21,3 +21,7 @@ replay-smoke:
 
 paper-check:
 	python scripts/check_bibliography.py
+	python scripts/check_paper_consistency.py
+
+paper-pdf: paper-check
+	cd paper && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
