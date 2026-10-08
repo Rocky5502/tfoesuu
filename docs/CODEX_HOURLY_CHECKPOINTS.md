@@ -137,4 +137,9 @@
   title page carry the exposition burden; mandatory public posting; 20--30 minute author video;
   substantive AI methodology disclosure. The local compliance checklist is current as of
   2026-10-09.
+- Overleaf account inspection found no project matching TFOESUU, the paper title, or STOC. A new
+  import was staged from `TFOESUU_STOC2027_26383fa_overleaf.zip` (SHA-256
+  `41c8ac87107104e3da8dbe4d6f0df3fe806591e1b653f0ab4114529b5d48fce5`), but Chrome blocked the
+  file transfer because the ChatGPT browser extension lacks file-URL access. No Overleaf project
+  was created or modified; the upload dialog remains open for user handoff.
 - Approval gate reached: YES for a 100,000-trial public publication campaign. It was not launched.
