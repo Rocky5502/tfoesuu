@@ -37,7 +37,7 @@ def public_benchmark_registry_v1() -> list[PublicBenchmarkSpec]:
             source="UCI Machine Learning Repository",
             source_url="https://archive.ics.uci.edu/dataset/2/adult",
             doi="10.24432/C5XW20",
-            loader_family="uci",
+            loader_family="aif360",
             status="planned",
         ),
         PublicBenchmarkSpec(
@@ -48,7 +48,7 @@ def public_benchmark_registry_v1() -> list[PublicBenchmarkSpec]:
             source="UCI Machine Learning Repository",
             source_url="https://archive.ics.uci.edu/dataset/222/bank+marketing",
             doi="10.24432/C5K306",
-            loader_family="uci",
+            loader_family="aif360",
             status="planned",
         ),
         PublicBenchmarkSpec(
@@ -59,7 +59,7 @@ def public_benchmark_registry_v1() -> list[PublicBenchmarkSpec]:
             source="UCI Machine Learning Repository",
             source_url="https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data",
             doi="10.24432/C5NC77",
-            loader_family="uci",
+            loader_family="aif360",
             status="planned",
         ),
         PublicBenchmarkSpec(
@@ -70,7 +70,7 @@ def public_benchmark_registry_v1() -> list[PublicBenchmarkSpec]:
             source="ProPublica compas-analysis",
             source_url="https://github.com/propublica/compas-analysis",
             doi=None,
-            loader_family="propublica",
+            loader_family="aif360",
             status="planned",
         ),
         PublicBenchmarkSpec(
