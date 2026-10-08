@@ -2,10 +2,11 @@
 \label{sec:algorithm}
 
 The theory induces an executable regression-testing procedure rather than a
-single monolithic statistical test.  The tester first reuses deterministic
-software-evolution information, then selects the weakest replay primitive that
-the harness can soundly provide, and finally applies only theorem-backed
-stopping rules.
+single monolithic statistical test. The tester first reuses deterministic
+software-evolution information, enumerates the replay observations the harness
+can actually implement, and selects a theorem-backed test whose assumptions
+match the residual problem. Stronger synchronization per round need not imply
+lower concrete execution cost.
 
 \begin{figure}[t]
 \centering
@@ -28,34 +29,38 @@ $|g_{0,e}|+b_e\le \tau_e$.  Let the remaining graph be $H^\star$.
 If $E(H^\star)=\varnothing$, return \textsc{Accept} with zero additional
 stochastic executions.
 
-\item \textbf{Instantiate the strongest valid observation model.}
-Use, in decreasing order of synchronization strength:
-(i) synchronized-suite replay when one tape can be shared over the entire
-active suite;
-(ii) declared-group partial replay when only legal groups can share a tape;
-(iii) four-way edge replay when both endpoints and both versions can be
-synchronized;
-(iv) old/new vertex pairing otherwise.
-Never assume a stronger replay primitive than the harness implements.
+\item \textbf{Determine admissible replay actions and costs.}
+Record which inputs and versions can share one random tape: old/new vertex
+pairs, four-way edges, declared partial-replay groups, or a complete active
+suite. For each implementable action record both its observation law and
+its cost in concrete program executions. Do not assume a total cost ordering
+among these primitives: a suite query observes more but also executes more
+configurations.
 
-\item \textbf{Allocate executions with the matching theorem geometry.}
-For the Gaussian paired-delta core, solve the $\Psi(H^\star,\nu)$ allocation.
-For the audited homogeneous partial-replay family, solve the fractional
-active-vertex cover $C_{\rm vert}$ and round the resulting group schedule.
-For the other replay primitives, use their corresponding fixed-confidence
-sample schedule.
+\item \textbf{Select a scoped statistical plan and allocate calls.}
+For the Gaussian paired-delta core, use $\Psi(H^\star,\nu)$ only under its
+stated variance and margin assumptions. For homogeneous partial replay use
+$C_{\rm vert}$; for the audited two-class matched-control family use
+$C_{\rm ctrl}$ only when its control compatibility assumptions hold.
+Use the corresponding finite-confidence sampling construction for eligible
+four-way, thresholded, or suite replay. Compare cost bounds only after
+converting them to consistent execution units. Otherwise decline to
+certify rather than extrapolate from an inapplicable theorem.
 
-\item \textbf{Evaluate only an audited statistic.}
-Estimate edge patch effects or evaluate the pathwise replay witness required by
-the selected theorem.  For homogeneous partial replay, reject only when the
-within-group old--new patch-delta vector is nonconstant.  Do not reuse this
-predicate under unrestricted heterogeneous/composite nulls.
+\item \textbf{Evaluate only a test justified by the selected model.}
+Estimate paired patch contrasts or use the synchronized witness prescribed by
+the chosen theorem. The homogeneous within-group nonconstant-delta predicate
+is valid only under its frozen null; P19 requires matched-background controls.
+The candidate P20 composite-nuisance information LP is not a certified
+testing algorithm or stopping rule.
 
-\item \textbf{Return a certificate-aware decision.}
-Return \textsc{Reject} with a witnessed fairness regression when the selected
-test fires; otherwise return \textsc{Accept} once its fixed-confidence stopping
-condition is met.  Record the queried vertices/groups, random seeds, costs,
-and source commit for reproduction.
+\item \textbf{Return a scope-qualified fixed-confidence decision.}
+Return \textsc{Reject} with the test evidence when its rejection condition
+fires, or \textsc{Accept} only once the selected model's stipulated
+fixed-confidence rule has been satisfied. Record tested null/alternative,
+error target, replay groups, concrete executions, seeds, assumptions, and
+source commit. Statistical acceptance is not a deterministic proof outside
+the stated hypothesis family.
 \end{enumerate}
 
 \textbf{Guarantee discipline.}  The procedure inherits only the guarantee of
@@ -63,10 +68,10 @@ the selected proved theorem.  In particular, the P17 $C_{\rm vert}$
 attainability result is restricted to the frozen homogeneous
 single-changed-endpoint family.
 \end{minipage}}
-\caption{Executable high-level TFOESUU procedure.  The key design rule is to
-reuse deterministic certificates before sampling and to match every sampling
-schedule and decision statistic to the strongest replay primitive that the
-software harness actually supports.}
+\caption{Executable high-level TFOESUU procedure.  The key design rule is to reuse deterministic certificates before sampling,
+then select a legally replayable, theorem-compatible test with explicit
+execution-cost accounting. Stronger replay access is not automatically cheaper
+in concrete executions.}
 \label{alg:tfoesuu}
 \end{figure}
 \paragraph{Executable correspondence.}
