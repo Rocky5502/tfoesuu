@@ -86,15 +86,17 @@ def render_table(rows, output: Path, patch_size: float | None = None) -> float:
         (
             "\\caption{Public-benchmark execution cost at the frozen patch size "
             f"$d={chosen:g}$. Concrete program executions are lower-is-better. "
-            "Max error is $\\max(\\widehat{\\alpha},\\widehat{\\beta})$ for TFOESUU; "
-            "all rows use the same frozen confidence target and result commit.}"
+            "Max error is $\\max(\\widehat{\\alpha},\\widehat{\\beta})$ for TFOESUU. "
+            "Its interval is a Bonferroni-simultaneous 95\\% "
+            "Clopper--Pearson interval for two binomial error rates; "
+            "all rows use the same frozen confidence target and source commit.}"
         ),
         "\\label{tab:public-main-results}",
         "\\scriptsize",
         "\\resizebox{\\textwidth}{!}{%",
         "\\begin{tabular}{@{}lrrrrrrrrr@{}}",
         "\\toprule",
-        "Dataset & $|V|$ & $|E|$ & Independent & Vertex-paired & Four-way & Suite & TFOESUU & Max error (95\\% simultaneous CI) & Speedup \\\\",
+        "Dataset & $|V|$ & $|E|$ & Independent & Vertex-paired & Four-way & Suite & TFOESUU & Max error (95\\% CI) & Speedup \\\\",
         "\\midrule",
     ]
     for dataset_id in sorted(grouped, key=lambda key: meta[key].dataset_name):
