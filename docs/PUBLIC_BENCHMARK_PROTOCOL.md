@@ -78,6 +78,36 @@ A public result may enter the manuscript only if:
 
 The public-data suite is not a vehicle for claiming the P17 heterogeneous/composite-null theorem. The P17 raw-contrast result remains restricted to the frozen homogeneous family. The public suite can evaluate safe witness-based or general version-aware procedures and can be used to search for failures of invalid generalizations.
 
+## Observation and cost semantics of the GPU evaluator
+
+`experiments/gpu_public_replay_sweep.py` evaluates the frozen *threshold-
+coupled Bernoulli software model* with heterogeneous prepared input
+probabilities. It is not an external-service replay or measured program-runtime
+study. Independent and vertex-paired baselines draw exact binomial sufficient
+statistics. Synchronized replay now uses explicit four-way old/new threshold
+operations on common random tapes, rather than injecting a Binomial(d)
+witness count.
+
+Under the **single-changed-edge** experimental alternative, the remaining
+fairness edges carry no differential patch signal. Therefore the four-way,
+suite, and localized TFOESUU methods may reuse one matched changed-edge
+witness trace; this is statistically sufficient within that frozen model.
+Their error estimates are intentionally correlated and should not be
+reported as independent replicated findings.
+
+The `concrete_program_executions` field is a *declared planned oracle-work
+count* (e.g., 4mT for edgewise four-way replay and 4kT for impact-localized
+replay), not the number of PyTorch kernels dispatched. Do not interpret
+these results as an independently observed wall-clock speedup or a test of
+uncontrolled operating-system nondeterminism. Such claims require actual
+instrumented multi-input software execution and separate timing/provenance.
+
+The deterministic NumPy tape-partition fixture and optional CPU PyTorch
+smoke tests in `tests/test_public_four_way_pathwise.py` guard the
+common-tape cancellation law. No simulated run is publication evidence
+until it has been executed on the frozen evaluation inputs and independently
+validated against the strict result-matrix gate.
+
 ## Publication release gate (October 2026)
 
 Preparation is not an experiment result. The repository contains **821 frozen
