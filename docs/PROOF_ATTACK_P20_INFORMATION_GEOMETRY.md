@@ -89,3 +89,28 @@ are established prior art. The only defensible P20 novelty would be a theorem
 showing that executable software replay semantics induce a particular structured
 information geometry for fairness-regression certification, with matching lower
 and upper complexity under a precisely stated nuisance class.
+
+## 8. Composite-null quantifier guard (October 8, 2026)
+
+The conditional stopped-transcript KL lower bound holds separately at each
+fixed nuisance value eta, with expected action counts E_{0,eta}[N_S].
+Therefore the necessary worst-null information floor is the supremum of
+the nuisance-wise LP optima. A single fixed allocation satisfying all
+nuisance constraints instead solves a potentially strictly larger problem;
+it cannot be substituted for the adaptive minimax information lower bound.
+
+An exact two-nuisance crossing-information fixture gives nuisance-wise
+cost 1 but common fixed-design information cost 2/(1+epsilon).
+For m nuisance states with identity information, the ratio reaches m.
+These are abstract LP counterexamples, not yet realizable replay-family
+theorems. See `docs/P20_NUISANCE_QUANTIFIER_AUDIT.md` for derivation,
+`src/tfoesuu/nuisance_information.py` for the finite-nuisance audit and
+`tests/test_nuisance_information.py` for the adversarial fixtures.
+
+The novelty collision search added three archival sources:
+Deshmukh--Veeravalli--Bhashyam (Sequential Analysis 2021);
+Hsu--Wang (IEEE TIT 2025);
+Gan--Jia--Li--Tayur (Management Science, online 2025).
+They rule out treating general composite controlled sensing, action-aware
+error-exponent regions, and approximate active-testing allocations as novel.
+P20 remains CONJECTURE.
