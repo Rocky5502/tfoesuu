@@ -290,3 +290,27 @@
 - No dataset or result artifact was changed. Validated scientific commit:
   `956f7aee60608be05eb9a67a05109318639c8e4a`. Next target: optimize or sharpen the truncation
   confidence allocation, then resume the genuine evolving executable-subject gate.
+
+## 2026-10-09 11:13 +08:00 — optimized P19 truncation certificate
+
+- Started clean on `codex/research-audit-20261008` at
+  `9b0851a63d3f0fc3ddbfc813bbd79e3f2f687dac`. PC1 again showed desktop/UI GPU clients only;
+  PC2's WSL compute-process query returned no rows. The task was a deterministic scalar
+  optimization of a proved bound, so no GPU run was scientifically indicated.
+- Added two falsifying tests first. The red run showed that the default still used the arbitrary
+  `eta=beta/2` split and missed a dense-grid cap by 34.8%. The implementation now minimizes the
+  exact certified cap over `eta in (0,beta)` and retains the half split as a mandatory fallback;
+  optimizer failure therefore cannot weaken the previous guarantee. Explicit `internal_error`
+  continues to bypass optimization for reproducibility.
+- At `p=.2,s=.1,tau=.1,d=.01,beta=.05`, optimized unit-cost caps improved over half splitting by
+  factors `1.2917`, `1.2989`, `1.2907`, and `1.2874` for `|U|=1,16,64,256` (22.3--23.0% smaller).
+  The heterogeneous `[1,3,11]` fixture improved by factor `1.3451` (25.7% smaller), selecting
+  `eta=0.0073699458883` and preserving candidate 2 as the worst alternative.
+- Validation: deliberate red run -> 2 expected failures; focused green run -> 6 passed; full
+  isolated run -> **231 passed**; touched-file Ruff, compileall, manuscript static consistency
+  (48 labels/50 citations), bibliography policy, and frozen inventory (10 artifacts/828 rows) all
+  passed. Bundled Tectonic compiled a 44-page PDF; temporary PDF SHA-256
+  `9fb1b4be4443f33ca1d44a439812d3d6b426bbfcdd691267749ed238b2ecb7dd`.
+- No data or result artifact was changed. Validated scientific commit:
+  `9efb7a5b228a87dfc4b2b1c9c4e5d5326fc3944e`. Next target: resume the genuine evolving
+  executable-subject gate without contaminating frozen v1 evidence.
