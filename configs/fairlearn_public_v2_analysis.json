@@ -20,7 +20,11 @@
     "max_iter": 2000,
     "probability_clip": [0.1, 0.8],
     "fit_environment": "exact V2.1 preparation environment",
-    "required_reproduction_check": "evaluation scores must reproduce V2.1 baseline_probabilities before subject execution"
+    "required_reproduction_check": "evaluation scores must reproduce V2.1 baseline_probabilities before subject execution",
+    "companion_schema": "tfoesuu-public-score-companion-v2.2",
+    "companion_preparation_commit": "b35c0b0d5b997afd50f154d15effffc0ac371345",
+    "companion_manifest_sha256": "52ee136f3754b2f02860d07ba1a8bde3236279cd92200540a163cb47abf0a19e",
+    "companion_validation_sha256": "56aee3a55b1214bef36b1867ca8a77dd9ad91c6ae1ce54fe9927987c62925049"
   },
   "support_gate": {
     "minimum_training_rows_per_group": 40,

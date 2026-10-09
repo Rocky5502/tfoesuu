@@ -582,3 +582,34 @@
   not used because the historical Fairlearn subject and preprocessing are CPU
   tasks. Next: implement and independently validate the non-overwriting score
   companion; outcome execution remains approval-gated.
+
+## 2026-10-10 00:08 +08:00 (2026-10-09 16:08Z) — V2.2 score companion
+
+- Started clean on branch codex/research-audit-20261008 at full SHA
+  8abd9bb32494262a8e8f0ee24259b87846f9c391. PC1 had no scientific GPU
+  process; PC2 baseline remained clean at 149baf36 and no GPU process was
+  reported. The task is CPU-only preprocessing, so no GPU time was spent.
+- Added four falsifying companion tests first; their red run failed at missing
+  module import. Implemented a non-overwriting V2.2 schema, normalized
+  row/score alignment hash, strict seven-dataset validator, raw-loader score
+  preparer, and standalone validator. It rejects score reorder, evaluation
+  drift, prepared-manifest drift, incomplete sets, position mismatch, clip
+  violations, and metadata/manifest divergence. Local focused tests passed and
+  the full suite reached 273 passed before remote preparation.
+- Committed implementation at b35c0b0d5b997afd50f154d15effffc0ac371345;
+  bundle SHA-256
+  db2a962cd8cf589015b4e03d1c62ef3430b42e9f8269c6b4f3dd94279da21779.
+  Isolated PC2 preflight under the exact V2.1 Python 3.12.14 environment:
+  272 passed, one expected Torch-only skip. No source or prepared artifact was
+  modified.
+- PC2 generated only the new 800 KiB directory
+  datasets/score_companion_v2/b35c0b0 from the original loaders and frozen raw
+  bytes. Built-in and separate CLI validation passed; all seven evaluation
+  score vectors reproduce V2.1 bit-for-bit. Companion manifest SHA-256
+  52ee136f3754b2f02860d07ba1a8bde3236279cd92200540a163cb47abf0a19e;
+  external validation JSON SHA-256
+  56aee3a55b1214bef36b1867ca8a77dd9ad91c6ae1ce54fe9927987c62925049.
+- The machine-readable analysis contract now pins those hashes. No Fairlearn
+  old/new outcome was executed and outcome_authorized remains false. Next:
+  implement/audit the fail-closed subject runner without running the public
+  campaign, then stop at the explicit approval gate.

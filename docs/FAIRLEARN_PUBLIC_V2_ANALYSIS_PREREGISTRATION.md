@@ -1,6 +1,6 @@
 # Preregistration: Fairlearn repair on public V2 contexts
 
-Status: **analysis design frozen; score companion and outcome approval still required**.
+Status: **analysis design and score companion frozen; outcome approval still required**.
 
 ## Question and scope
 
@@ -76,10 +76,20 @@ but it is not by itself an exact score-model replay artifact. The remedy is a
 separate non-overwriting score companion generated with the original frozen
 loader and environment; silently accepting inferred MEPS types is forbidden.
 
-No public Fairlearn outcome may run until that companion has its own schema,
-hashes, corruption tests, independent validation, and exact evaluation-score
-reproduction. Creating the companion is preprocessing, not authorization for
-the publication campaign.
+The required V2.2 companion has now been created without overwriting V2.0 or
+V2.1. It was prepared on PC2 from clean commit
+`b35c0b0d5b997afd50f154d15effffc0ac371345` using the original raw loaders and
+the exact V2.1 environment. All seven evaluation score vectors reproduce V2.1
+bit-for-bit. Companion manifest SHA-256:
+`52ee136f3754b2f02860d07ba1a8bde3236279cd92200540a163cb47abf0a19e`;
+external validation JSON SHA-256:
+`56aee3a55b1214bef36b1867ca8a77dd9ad91c6ae1ce54fe9927987c62925049`.
+The 800 KiB artifact remains external and immutable. Four corruption tests
+cover training-score reorder, evaluation-score drift, prepared-manifest drift,
+and complete aligned acceptance.
+
+This closes the score-replay blocker. It is preprocessing evidence, not
+authorization for the public outcome campaign.
 
 ## Release fences
 

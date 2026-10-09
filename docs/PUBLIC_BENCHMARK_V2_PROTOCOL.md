@@ -132,3 +132,10 @@ semantics are not preserved. Therefore a separately versioned, non-overwriting
 training/evaluation score companion is required before any executable-subject
 outcome. This does not weaken V2.1's representation claim and does prevent an
 unreproducible model refit from entering the evidence chain.
+
+That companion is now complete as schema
+`tfoesuu-public-score-companion-v2.2`. Its seven evaluation score vectors
+reproduce V2.1 exactly, including MEPS because generation uses the original
+source dataframe dtypes rather than inferred token types. The manifest and
+external validation hashes are frozen in the downstream preregistration.
+Readiness remains score-replay-only and does not authorize subject outcomes.

@@ -60,6 +60,17 @@ def validate_public_fairlearn_v2_protocol(protocol: dict[str, Any]) -> dict[str,
     if subject.get("prefit") is not True:
         raise ValueError("subject must use the frozen prefit score model")
 
+    score_model = protocol.get("score_model")
+    if not isinstance(score_model, dict):
+        raise TypeError("score_model must be an object")
+    if score_model.get("companion_schema") != "tfoesuu-public-score-companion-v2.2":
+        raise ValueError("score companion schema mismatch")
+    if not _GIT_RE.fullmatch(str(score_model.get("companion_preparation_commit", ""))):
+        raise ValueError("score companion requires a full preparation commit")
+    for field in ("companion_manifest_sha256", "companion_validation_sha256"):
+        if not _SHA256_RE.fullmatch(str(score_model.get(field, ""))):
+            raise ValueError(f"score companion {field} must be SHA-256")
+
     support = protocol.get("support_gate")
     if not isinstance(support, dict):
         raise TypeError("support_gate must be an object")

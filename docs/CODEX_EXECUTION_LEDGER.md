@@ -114,3 +114,19 @@ containing aligned training/evaluation probabilities generated under the
 original V2.1 loader and environment, with exact reproduction, hashes,
 corruption tests, and independent validation. Public subject outcomes remain
 unauthorized.
+
+The V2.2 score companion is now complete. Clean commit
+`b35c0b0d5b997afd50f154d15effffc0ac371345` was bundled with SHA-256
+`db2a962cd8cf589015b4e03d1c62ef3430b42e9f8269c6b4f3dd94279da21779`,
+cloned into an isolated PC2 checkout, and tested under the exact V2.1
+environment (272 passed, one expected Torch-only skip). PC2 wrote only the new
+800 KiB path `datasets/score_companion_v2/b35c0b0`; the protected baseline and
+V2.0/V2.1 artifacts remain unchanged. Every evaluation vector exactly matches
+V2.1. Manifest SHA-256:
+`52ee136f3754b2f02860d07ba1a8bde3236279cd92200540a163cb47abf0a19e`;
+external validation JSON SHA-256:
+`56aee3a55b1214bef36b1867ca8a77dd9ad91c6ae1ce54fe9927987c62925049`.
+This closes preprocessing reproducibility, not the public-outcome approval
+gate. Next: independently audit the subject runner against the frozen protocol
+without executing outcomes, then request approval for the bounded public
+campaign if every source/runtime/common-tape/output gate passes.
