@@ -383,3 +383,27 @@
   0/0/0/0 control-path disagreements). PC2 transcript/validator/runtime hashes are frozen in
   `docs/FAIRLEARN_EXECUTABLE_V2_PREREGISTRATION.md`. Independent-host replication is now closed;
   the next gate is a frozen statistical question, not more unprincipled compute.
+
+## 2026-10-09 12:26 +08:00 — exact Fairlearn distributional law
+
+- Started clean on `codex/research-audit-20261008` at
+  `8e9277dfa44a2cb645bd2fd2bf35891f930fd44c`. PC1 showed desktop/UI GPU clients only;
+  PC2's compute-process query returned no rows. No GPU job was launched because the preserved
+  Fairlearn PMFs determine the target quantities exactly.
+- Added five falsifying tests first; the red run failed at import as expected. Implemented exact
+  per-row Bernoulli disagreement laws: `|p-q|` for a common uniform tape and
+  `p(1-q)+(1-p)q` for independent tapes, with strict shape/finiteness/probability validation.
+- The strengthened transcript validator proves that the repaired multi-column PMF equals its
+  canonical control exactly and that the old/new canonical control PMFs are identical. The affected
+  PMFs differ on 17/24 rows. Exact expected disagreements are `7.083333333333334` per 24-row pass
+  under common replay and `8.083333333333334` independently, ratio `1.1411764705882352`.
+- This closes the same-fixture seed-count question negatively: more seeds would add sampling noise,
+  not information. A larger experiment is warranted only if it adds genuine contexts or protected
+  structure; synthesizing a second protected attribute is forbidden. PC1 exact-law validation
+  SHA-256: `0c62bbc79e91c55366f1884907d0f28e302d6af2ee47ca7264593f33e91c26a4`.
+- Validation: focused suite -> 12 passed; full isolated suite -> **243 passed**; touched-file Ruff,
+  compileall, manuscript static consistency (48 labels/50 citations), bibliography policy, and
+  frozen inventory (10 artifacts/828 rows) passed. No dataset or raw transcript changed. Validated
+  scientific commit: `a3b1f92121c7c1a5ed4e839dcecc795eb0c8ef33`. Next target: audit whether
+  the frozen public sources contain genuine multi-column protected contexts before proposing any
+  larger Fairlearn protocol.
