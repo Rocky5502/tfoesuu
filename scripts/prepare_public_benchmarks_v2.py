@@ -15,6 +15,8 @@ import platform
 import re
 import sys
 import tempfile
+import zipfile
+from io import BytesIO
 from pathlib import Path
 
 import numpy as np
@@ -56,7 +58,14 @@ def _preparation_environment() -> dict:
         "platform": platform.platform(),
         "packages": {
             name: importlib.metadata.version(name)
-            for name in ("aif360", "numpy", "pandas", "scikit-learn", "ucimlrepo")
+            for name in (
+                "aif360",
+                "numpy",
+                "pandas",
+                "scikit-learn",
+                "ucimlrepo",
+                "xlrd",
+            )
         },
     }
 
@@ -124,6 +133,52 @@ def partition_feature_columns(
     return resolved, features
 
 
+def select_default_credit_archive(source_paths: list[str]) -> str:
+    archives = [path for path in source_paths if Path(path).suffix.casefold() == ".zip"]
+    if len(archives) != 1:
+        raise ValueError("public-default-credit: source map must contain exactly one ZIP archive")
+    return archives[0]
+
+
+def _load_default_credit_from_frozen_source(
+    source_root: Path,
+    source_paths: list[str],
+    pd,
+):
+    relative = select_default_credit_archive(source_paths)
+    archive_path = source_root / relative
+    if not archive_path.is_file():
+        raise ValueError(f"public-default-credit: source archive is missing: {relative}")
+    try:
+        with zipfile.ZipFile(archive_path) as archive:
+            members = [
+                member
+                for member in archive.namelist()
+                if not member.endswith("/") and Path(member).suffix.casefold() == ".xls"
+            ]
+            if len(members) != 1 or not _is_safe_relative_path(members[0]):
+                raise ValueError(
+                    "public-default-credit: archive must contain exactly one safe XLS member"
+                )
+            workbook = archive.read(members[0])
+    except zipfile.BadZipFile as exc:
+        raise ValueError("public-default-credit: source archive is not a valid ZIP") from exc
+    frame = pd.read_excel(BytesIO(workbook), header=1, engine="xlrd")
+    frame.columns = [str(column).strip() for column in frame.columns]
+    target_candidates = [
+        column
+        for column in frame.columns
+        if column.casefold().replace("_", " ") == "default payment next month"
+    ]
+    if target_candidates != ["default payment next month"]:
+        raise ValueError("public-default-credit: canonical target column is missing or ambiguous")
+    if "ID" not in frame.columns or frame["ID"].duplicated().any():
+        raise ValueError("public-default-credit: canonical unique ID column is missing")
+    target = frame["default payment next month"].copy()
+    features = frame.drop(columns=["ID", "default payment next month"]).copy()
+    return features, target
+
+
 def _encode_frame(frame, pd) -> np.ndarray:
     rows = []
     for row in frame.itertuples(index=False, name=None):
@@ -169,7 +224,10 @@ def prepare_one_v2(
 ) -> dict:
     lib = _imports()
     pd = lib["pd"]
-    X, y_raw = load_dataset(dataset_id, data_home, accept_meps_terms)
+    if dataset_id == "public-default-credit":
+        X, y_raw = _load_default_credit_from_frozen_source(source_root, source_paths, pd)
+    else:
+        X, y_raw = load_dataset(dataset_id, data_home, accept_meps_terms)
     configured_protected = PROTECTED_COLUMNS[dataset_id]
     loaded_by_folded = {str(column).casefold(): column for column in X.columns}
     index_by_folded = {

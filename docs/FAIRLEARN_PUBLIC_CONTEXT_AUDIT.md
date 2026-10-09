@@ -58,10 +58,12 @@ not mutate v1.  Before any outcome run it must:
 The separate V2 schema, non-overwriting preparer, validator, and corruption
 suite are now implemented in `docs/PUBLIC_BENCHMARK_V2_PROTOCOL.md`. A read-only
 PC2 inventory found retained source bytes for Adult, Bank, German, COMPAS, Law
-School, and MEPS, but not for Default Credit: its original `ucimlrepo` call did
-not preserve a raw file in the frozen data directory. Therefore no complete V2
-directory has been created yet. Reacquiring and freezing that seventh source
-from the registered UCI source is the remaining data-provenance gate.
+School, and MEPS, but initially not for Default Credit: its original
+`ucimlrepo` call did not preserve a raw file. The official UCI ZIP has now been
+reacquired over verified HTTPS under CC BY 4.0 and frozen at a new path with
+SHA-256 `56c885f84457f6680f8438f02bfcdac9579323d8a94465ee5f26e32baa727602`.
+The remaining gate is a clean-commit, complete CPU-only V2 preparation and
+read-only validation; no complete V2 directory is claimed yet.
 
 A seven-dataset outcome campaign and manuscript admission remain behind the
 explicit publication-scale approval gate.

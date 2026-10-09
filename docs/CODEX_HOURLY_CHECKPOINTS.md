@@ -466,3 +466,20 @@
   (10 artifacts/828 rows) passed. GPU work was not scientifically indicated. Next action: obtain
   and hash the registered UCI Default Credit source without bypassing TLS, freeze a complete source
   map, then run bounded CPU-only V2 preparation/validation on PC2. Public outcome runs remain gated.
+
+### Same-cycle update — seventh raw source frozen
+
+- Verified the official UCI dataset page, DOI `10.24432/C55S3H`, 30,000-row/23-feature metadata,
+  and CC BY 4.0 license. Downloaded its official ZIP on PC2 over HTTPS with normal certificate
+  verification to the previously absent new path `datasets/raw/uci-350-default-credit.zip`.
+  No existing file was overwritten. ZIP SHA-256:
+  `56c885f84457f6680f8438f02bfcdac9579323d8a94465ee5f26e32baa727602`; it contains exactly one
+  5,539,328-byte XLS member. Updated ordered 16-file raw-source listing digest:
+  `92a3fddd48155e527ee549b705026e1063823d34f6e00f1bb2bb44d3dd341e2e`.
+- Added a frozen seven-dataset source map and a local-source Default Credit reader, avoiding the
+  original ephemeral `ucimlrepo` response. V2 dependencies are separate from the V1 preparation
+  contract. One new falsifying archive-selection test failed at import before implementation.
+- Focused V2 suite: **16 passed**. Full isolated suite: **261 passed**; touched-file Ruff,
+  compileall, manuscript static consistency, bibliography policy, and inventory passed. Next:
+  commit this source-reader increment, transfer the exact commit to an isolated PC2 worktree, and
+  run the no-outcome V2 preparation/validator after environment and source-map gates pass.

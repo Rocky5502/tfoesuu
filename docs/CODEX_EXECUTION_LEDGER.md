@@ -53,12 +53,13 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Freeze exact Default Credit raw source bytes from the registered UCI source,
-then run the bounded no-outcome V2 preparation/validation on PC2. The separate
+Run the bounded no-outcome V2 preparation/validation on PC2 from a clean commit
+and the frozen seven-source map. The separate
 V2 schema, non-overwriting preparer, validator, and 15-test corruption suite are
-implemented. A read-only inventory proves six datasets have retained raw bytes;
-Default Credit does not, so no complete V2 output exists and readiness remains
-false. Do not infer it from V1 probabilities, manufacture a second protected
+implemented. Six datasets already had retained raw bytes; the missing Default
+Credit archive was reacquired from the registered UCI HTTPS endpoint under CC
+BY 4.0 with TLS verification, stored at a new path, and hashed. No complete V2
+output exists yet and readiness remains false. Do not infer it from V1 probabilities, manufacture a second protected
 attribute, or reinterpret metadata as data. The direct
 parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
 common-tape gates on PC1. The preregistered smoke isolated the documented

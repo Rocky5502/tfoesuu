@@ -1,0 +1,4 @@
+# V2 extends the frozen public-loader environment with deterministic legacy
+# XLS parsing for the retained UCI Default Credit source archive.
+-r requirements-public.txt
+xlrd>=2.0,<3

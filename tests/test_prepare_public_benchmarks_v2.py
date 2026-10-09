@@ -6,6 +6,7 @@ import pytest
 from scripts.prepare_public_benchmarks_v2 import (
     load_source_map,
     partition_feature_columns,
+    select_default_credit_archive,
 )
 
 
@@ -59,3 +60,13 @@ def test_source_map_rejects_nonrelative_paths(tmp_path: Path, bad_path: str):
 
     with pytest.raises(ValueError, match="relative source path"):
         load_source_map(path, ["public-adult"])
+
+
+def test_default_credit_archive_selection_is_unambiguous():
+    assert select_default_credit_archive(["uci-350-default-credit.zip"]) == (
+        "uci-350-default-credit.zip"
+    )
+    with pytest.raises(ValueError, match="exactly one ZIP"):
+        select_default_credit_archive(["metadata.json"])
+    with pytest.raises(ValueError, match="exactly one ZIP"):
+        select_default_credit_archive(["a.zip", "b.zip"])

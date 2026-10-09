@@ -1,0 +1,32 @@
+{
+  "public-adult": [
+    "openml/openml.org/api/v1/json/data/1590.gz",
+    "openml/openml.org/api/v1/json/data/features/1590.gz",
+    "openml/openml.org/api/v1/json/data/qualities/1590.gz",
+    "openml/openml.org/data/v1/download/1595261/adult.arff.gz"
+  ],
+  "public-bank": [
+    "openml/openml.org/api/v1/json/data/1461.gz",
+    "openml/openml.org/api/v1/json/data/features/1461.gz",
+    "openml/openml.org/api/v1/json/data/qualities/1461.gz",
+    "openml/openml.org/data/v1/download/1586218/bank-marketing.arff.gz"
+  ],
+  "public-compas": [
+    "compas-scores-two-years.csv"
+  ],
+  "public-default-credit": [
+    "uci-350-default-credit.zip"
+  ],
+  "public-german": [
+    "openml/openml.org/api/v1/json/data/31.gz",
+    "openml/openml.org/api/v1/json/data/features/31.gz",
+    "openml/openml.org/api/v1/json/data/qualities/31.gz",
+    "openml/openml.org/data/v1/download/31/credit-g.arff.gz"
+  ],
+  "public-lawschool": [
+    "lsac.sas7bdat"
+  ],
+  "public-meps21": [
+    "h192ssp.zip"
+  ]
+}

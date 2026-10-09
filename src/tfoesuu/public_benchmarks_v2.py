@@ -225,7 +225,7 @@ def _validate_subject(
         or not environment["platform"]
         or not isinstance(environment.get("packages"), dict)
         or set(environment["packages"])
-        != {"aif360", "numpy", "pandas", "scikit-learn", "ucimlrepo"}
+        != {"aif360", "numpy", "pandas", "scikit-learn", "ucimlrepo", "xlrd"}
         or any(
             not isinstance(version, str) or not version
             for version in environment["packages"].values()

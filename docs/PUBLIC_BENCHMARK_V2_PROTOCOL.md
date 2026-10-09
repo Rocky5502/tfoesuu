@@ -7,9 +7,11 @@ data and provenance contract for observed protected-group contexts; it is not a
 fairness outcome, a causal counterfactual construction, or publication evidence.
 
 Implementation is complete and tested. Production preparation is **blocked**
-until exact raw bytes for all seven registered sources are frozen. PC2 retains
-source bytes for six datasets. Default Credit was loaded through `ucimlrepo`,
-which did not leave a raw source file under the frozen data root.
+until exact raw bytes for all seven registered sources are frozen and the
+committed V2 source map is validated. PC2 initially retained source bytes for
+six datasets. The missing Default Credit archive was then reacquired from the
+registered UCI HTTPS endpoint under its CC BY 4.0 license, without disabling
+certificate verification, and frozen separately from V1.
 
 ## Artifact schema
 
@@ -54,10 +56,12 @@ validation. It never edits or replaces `datasets/prepared/` or its V1 manifest.
 
 ## Commands after the seventh source is frozen
 
-Create a JSON source map from each dataset ID to one or more paths relative to
-the immutable raw-source root. Then, from a clean committed tree:
+The frozen path map is `configs/public_source_map_v2.json`; every path is
+relative to the immutable raw-source root. From a clean committed tree:
 
 ```bash
+python -m pip install -r requirements-public-v2.txt
+
 python scripts/prepare_public_benchmarks_v2.py \
   --data-home /path/to/raw \
   --source-root /path/to/raw \
@@ -87,5 +91,12 @@ Loading those six cached populations read-only confirmed the declared protected
 columns are present in every frame; the canonical loader shape/index/column
 schema digest is
 `5d69a1a723144733ae88858a492b0eed3bb56b5c1f61bb86200c786a45dcb0ad`.
-Default Credit has no retained raw file, so the complete V2 readiness state is
-currently false and no prepared V2 artifact is claimed.
+The official UCI Default Credit ZIP was downloaded to a new path (never
+overwriting V1 or another raw file); SHA-256
+`56c885f84457f6680f8438f02bfcdac9579323d8a94465ee5f26e32baa727602`.
+It contains exactly one 5,539,328-byte XLS member. After this addition, the
+ordered 16-file raw-source listing digest is
+`92a3fddd48155e527ee549b705026e1063823d34f6e00f1bb2bb44d3dd341e2e`.
+No prepared V2 artifact or
+outcome is claimed until a clean committed preparer reproduces and validates
+all seven populations.

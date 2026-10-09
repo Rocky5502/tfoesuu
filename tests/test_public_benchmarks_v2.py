@@ -97,6 +97,7 @@ def _write_v2_directory(root: Path, source_root: Path) -> None:
                     "pandas": "2.2.0",
                     "scikit-learn": "1.5.0",
                     "ucimlrepo": "0.0.7",
+                    "xlrd": "2.0.2",
                 },
             },
             "row_id_semantics": "zero-based canonical-loaded row position",
