@@ -237,3 +237,28 @@
   constants or bounded-horizon adaptive lower bounds, then the genuine executable-subject gate.
 - Validated theorem/code/manuscript change committed as
   `2509be2ea7eab5efdfe9c85a14c4741adf599a42`.
+
+## 2026-10-09 09:13 +08:00 — P19 sequential constant bracket
+
+- Started clean on `codex/research-audit-20261008` at
+  `d376a57877b18cbf9eb8094130f57f0237ea73e0`. PC1's process query again showed only desktop/UI
+  clients; the direct read-only PC2 WSL compute-process query returned no rows. No GPU work was
+  launched because this checkpoint tightened exact information constants rather than estimating a
+  numerical law.
+- Added two falsifying tests first. They failed with missing lower-bound and small-gap coefficient
+  fields, then passed after implementing the exact summed null information floor and asymptotic
+  coefficients in `boundary_familywise_sequential_bounds`.
+- Combining P19's lower program with the sequential upper proves the explicit leading-null bracket
+  `[kl(1-beta,beta)/b2] sum cbar <= liminf d^2 Q0* <= limsup d^2 Q0* <=
+  [log(1/beta)/b2] sum cbar`. The remaining ratio is independent of `|U|`, topology, and costs;
+  it equals `1.1304671071846433` at `beta=0.05`. The manuscript and claim/proof/reproducibility
+  ledgers now replace an unspecified constant gap with this certified 13.05% bracket.
+- Exact validation: the deliberate red run produced 2 expected `AttributeError` failures; focused
+  green run -> 30 passed; full isolated run -> **225 passed**; touched-file Ruff, compileall,
+  manuscript static consistency (48 labels/50 citations), bibliography policy, and frozen inventory
+  (10 artifacts/828 rows) all passed. Bundled Tectonic compiled a 44-page temporary PDF with
+  SHA-256 `c4438b00d1d99e979d4db4a1a625a0dc0953c7d926065239a2930657978a19b1`.
+- No data or result artifact was changed. Validated scientific commit:
+  `f5e6ae7f837490817961237efe5cb3bd29c4296d`. Next target: determine whether bounded-horizon
+  adaptive allocation can avoid the fixed-allocation `|U| log |U|` penalty, without claiming more
+  than the available lower bounds support.
