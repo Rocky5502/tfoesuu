@@ -97,3 +97,20 @@ No extension beyond the frozen equal-high null and singleton alternatives was
 admitted. The next safe task remains freezing the V2.1 analysis estimand,
 protected transformations, support rules, and old/new protocol before any
 public outcome run.
+
+The seven-dataset Fairlearn analysis question is now preregistered in a
+machine-validated, no-outcome contract. Protected transformations, group
+support, exact-PMF estimands, controls, common tapes, multiplicity handling,
+and fail-closed policies are frozen. A read-only support audit passes all seven
+datasets after selecting the pre-outcome minimum of 40 training rows per
+transformed group; German male/age<25 is limiting at 45 rows.
+
+A second hostile gate found that refitting the score model from V2.1 scalar
+tokens reproduces stored evaluation probabilities bit-for-bit on six datasets
+but not MEPS (maximum absolute difference 0.4504382489762433), because the
+tokens do not retain source dataframe dtype semantics. Do not infer those
+types. The highest-value safe next task is a non-overwriting score companion
+containing aligned training/evaluation probabilities generated under the
+original V2.1 loader and environment, with exact reproduction, hashes,
+corruption tests, and independent validation. Public subject outcomes remain
+unauthorized.

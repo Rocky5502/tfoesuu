@@ -551,3 +551,34 @@
   (10 artifacts, 828 rows); all passed. No dataset, result, or GPU artifact
   changed. Next: preregister and adversarially audit the V2.1 analysis protocol
   before any public outcome execution.
+
+## 2026-10-09 23:08 +08:00 (15:08Z) — public V2 analysis preregistration
+
+- Verified branch codex/research-audit-20261008 at clean full SHA
+  a281ed0f258e2c793dd6d0d825b01413ab2de1dc. PC1 and PC2 reported no scientific
+  GPU compute process; PC2 protected baseline remained clean on main at
+  149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b. No result or dataset was changed.
+- Added a machine-readable seven-dataset Fairlearn protocol and fail-closed
+  validator. It freezes the source pair, prepared-manifest identity, protected
+  transforms, support gates, score-model gate, exact-PMF estimands, injective
+  canonical control, four correspondence seeds, complete reporting, and
+  outcome_authorized=false. Six scope-drift tests were red first at missing
+  implementation, then passed.
+- Read-only PC2 support audit before subject execution: transformed group
+  counts Adult/Bank/COMPAS/Default/German/Law/MEPS = 10/2/4/4/4/4/2. All groups
+  pass at least 40 training rows, two rows per label, five evaluation rows, and
+  train/evaluation coverage. German male/age<25 is limiting at 45 training
+  rows, so a provisional threshold of 50 was rejected before outcomes.
+- Hostile score replay found an additional reproducibility blocker: decoding
+  V2.1 features and inferring dataframe types reproduced stored evaluation
+  probabilities exactly for six datasets, but MEPS differed by as much as
+  0.4504382489762433. V2.1 intentionally stores scalar values, not source
+  dataframe dtypes. The protocol therefore forbids inferred-type execution and
+  requires a separate immutable training/evaluation score companion generated
+  with the frozen loader/environment before any Fairlearn outcome.
+- Validation: 6 focused and 269 full tests passed; touched-file Ruff,
+  compileall, paper consistency (16 TeX, 48 labels, 50 citations), bibliography
+  policy, and frozen inventory (10 artifacts, 828 rows) all passed. GPUs were
+  not used because the historical Fairlearn subject and preprocessing are CPU
+  tasks. Next: implement and independently validate the non-overwriting score
+  companion; outcome execution remains approval-gated.

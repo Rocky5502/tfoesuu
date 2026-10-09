@@ -1,0 +1,92 @@
+{
+  "schema": "tfoesuu-fairlearn-public-v2-analysis-v1",
+  "outcome_authorized": false,
+  "post_outcome_changes_allowed": false,
+  "prepared_input": {
+    "schema": "tfoesuu-public-context-v2.1",
+    "preparation_commit": "d0790b30d09fcc22721dfd5942ec9ef0db76cb35",
+    "manifest_sha256": "b07bf1aa17e37bc02971e200fb7c7e6eed14584d8920573f966fc56399acaf39"
+  },
+  "subject": {
+    "old_commit": "e8cc63784de5410805c156715175fc60e2cd5653",
+    "new_commit": "0cf59eccfdd364417787fe2c368a1c77c3f378b8",
+    "constraint": "demographic_parity",
+    "objective": "accuracy_score",
+    "prefit": true
+  },
+  "score_model": {
+    "family": "logistic-regression-on-non-protected-features",
+    "solver": "lbfgs",
+    "max_iter": 2000,
+    "probability_clip": [0.1, 0.8],
+    "fit_environment": "exact V2.1 preparation environment",
+    "required_reproduction_check": "evaluation scores must reproduce V2.1 baseline_probabilities before subject execution"
+  },
+  "support_gate": {
+    "minimum_training_rows_per_group": 40,
+    "minimum_training_rows_per_label_per_group": 2,
+    "minimum_evaluation_rows_per_group": 5,
+    "require_every_evaluation_group_in_training": true,
+    "failure_policy": "fail-dataset-before-subject-execution; no adaptive merge or exclusion"
+  },
+  "datasets": {
+    "public-adult": {
+      "protected_columns": ["sex", "race"],
+      "role": "multi-attribute subject",
+      "transforms": {"sex": {"kind": "identity"}, "race": {"kind": "identity"}}
+    },
+    "public-bank": {
+      "protected_columns": ["age"],
+      "role": "single-attribute negative control",
+      "transforms": {"age": {"kind": "threshold", "cut": 25, "lower_label": "age<25", "upper_label": "age>=25"}}
+    },
+    "public-compas": {
+      "protected_columns": ["race", "sex"],
+      "role": "multi-attribute subject",
+      "transforms": {"race": {"kind": "identity"}, "sex": {"kind": "identity"}}
+    },
+    "public-default-credit": {
+      "protected_columns": ["sex", "age"],
+      "role": "multi-attribute subject",
+      "transforms": {"sex": {"kind": "identity"}, "age": {"kind": "threshold", "cut": 25, "lower_label": "age<25", "upper_label": "age>=25"}}
+    },
+    "public-german": {
+      "protected_columns": ["sex", "age"],
+      "role": "multi-attribute subject",
+      "transforms": {"sex": {"kind": "identity"}, "age": {"kind": "threshold", "cut": 25, "lower_label": "age<25", "upper_label": "age>=25"}}
+    },
+    "public-lawschool": {
+      "protected_columns": ["race", "gender"],
+      "role": "multi-attribute subject",
+      "transforms": {"race": {"kind": "identity"}, "gender": {"kind": "identity"}}
+    },
+    "public-meps21": {
+      "protected_columns": ["race"],
+      "role": "single-attribute negative control",
+      "transforms": {"race": {"kind": "identity"}}
+    }
+  },
+  "canonical_control": {
+    "encoding": "length-prefixed UTF-8 tuple components",
+    "collision_policy": "reject on any non-injective encoding",
+    "comparison": "multi-column and canonical-control rows must represent identical ordered tuples"
+  },
+  "estimands": {
+    "primary": "per dataset and revision, maximum and mean absolute PMF difference between native protected columns and the injective canonical combined control",
+    "repair_conformance": "new-revision primary differences must be exactly zero before numerical serialization tolerance",
+    "evolution_effect": "paired old-minus-new primary PMF discrepancy on identical rows, scores, labels, and protected tuples",
+    "negative_control": "old and new PMFs must be exactly equal on single-attribute datasets",
+    "not_estimands": ["causal fairness effect", "population treatment effect", "GPU throughput", "post-selected subgroup performance"]
+  },
+  "randomness": {
+    "seeds": [1, 104729, 130363, 155921],
+    "common_tape_required": true,
+    "primary_analysis_uses_exact_pmf": true,
+    "seed_predictions_are_correspondence_checks_only": true
+  },
+  "multiplicity": {
+    "primary_claim_rule": "complete seven-dataset census; report every dataset without significance filtering",
+    "confidence_intervals": "none for exact deterministic PMF discrepancies",
+    "exploratory_metrics": "label explicitly and do not promote to primary claims"
+  }
+}

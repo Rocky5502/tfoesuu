@@ -123,3 +123,12 @@ Bank similarly has 68 single-attribute age groups. Any analysis must freeze a
 semantically justified age transformation and support rule before observing
 old/new Fairlearn outcomes. The validator now reports
 `readiness_scope=representation-only` and `outcome_ready=false` explicitly.
+
+The downstream analysis question and transforms are now frozen separately in
+`docs/FAIRLEARN_PUBLIC_V2_ANALYSIS_PREREGISTRATION.md` and its machine-readable
+configuration. A pre-outcome audit found that V2.1 feature tokens reproduce the
+stored score model exactly on six datasets but not MEPS because dataframe dtype
+semantics are not preserved. Therefore a separately versioned, non-overwriting
+training/evaluation score companion is required before any executable-subject
+outcome. This does not weaken V2.1's representation claim and does prevent an
+unreproducible model refit from entering the evidence chain.
