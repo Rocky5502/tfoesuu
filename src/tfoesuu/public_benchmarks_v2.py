@@ -524,7 +524,7 @@ def validate_prepared_public_v2_directory(
     if expected_source_commit is not None and source_commit != expected_source_commit:
         raise ValueError("prepared V2 source commit does not match expectation")
     source_verified = all(report["source_bytes_verified"] for report in reports)
-    ready_ids = sorted(
+    materialized_ids = sorted(
         report["dataset_id"]
         for report in reports
         if report["multicolumn"] and report["source_bytes_verified"]
@@ -534,8 +534,10 @@ def validate_prepared_public_v2_directory(
         "dataset_ids": sorted(expected_ids),
         "source_commit": source_commit,
         "source_bytes_verified": source_verified,
-        "multicolumn_ready_ids": ready_ids,
-        "ready": source_verified and bool(ready_ids),
+        "multicolumn_materialized_ids": materialized_ids,
+        "readiness_scope": "representation-only",
+        "ready": source_verified and bool(materialized_ids),
+        "outcome_ready": False,
         "files": [
             {"path": path.name, "bytes": path.stat().st_size, "sha256": _file_sha256(path)}
             for path in sorted(artifact_paths)

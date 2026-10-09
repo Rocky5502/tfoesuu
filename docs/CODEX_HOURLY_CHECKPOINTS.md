@@ -504,3 +504,24 @@
   training alignment hashes, train/evaluation group counts, split-disjointness checks, and support
   coverage. Focused V2.1 suite: **17 passed**. Next: commit, transfer, and prepare V2.1 to a new path;
   never overwrite V2.0.
+
+### Same-cycle update — V2.1 representation completed
+
+- Committed V2.1 as `d0790b30d09fcc22721dfd5942ec9ef0db76cb35`; verified bundle SHA-256
+  `2497b8471e032fe50de7b794009887a08575898f80a9c17178191e5fbd21024a` and cloned it into a second
+  clean isolated PC2 checkout. Reused the isolated resolved CPU environment read-only via explicit
+  `PYTHONPATH`; no baseline source or V1 artifact changed.
+- PC2 V2.1 preflight: 261 passed and one Torch-only pathwise test skipped; Ruff/compileall passed.
+  Bounded CPU preparation wrote only `datasets/prepared_v2/d0790b3` (6.2 MiB), then built-in and
+  independent validators rechecked all seven raw sources, complete training/evaluation arrays,
+  disjoint positions, support counts, manifests, and hashes. Validation JSON SHA-256
+  `652a4299461a7ba58d5443f67b81a899ea529e5c9abe87eccf429fedb3cb8723`; manifest SHA-256
+  `b07bf1aa17e37bc02971e200fb7c7e6eed14584d8920573f966fc56399acaf39`.
+- Scientific limitation found before outcomes: supported raw training joint-group counts are Adult
+  10, COMPAS 4, Law School 4, German 83, and Default Credit 102; Bank has 68 raw age groups and
+  MEPS has 2 race groups. Thus V2.1 closes representation but not analysis design. German/Default
+  age transformations and support rules must be preregistered; no post-outcome binning is allowed.
+- Added an explicit report scope (`representation-only`) and `outcome_ready=false`, with a red/green
+  regression preventing data-contract readiness from being mislabeled experimental readiness.
+  Next task: freeze a support/age-transform/estimand protocol, then audit it before any Fairlearn
+  run. Public outcome campaigns remain approval-gated.

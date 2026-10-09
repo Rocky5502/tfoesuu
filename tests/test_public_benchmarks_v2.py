@@ -170,7 +170,7 @@ def test_v2_validator_accepts_aligned_complete_artifacts(v2_directory):
     )
 
     assert len(report["dataset_ids"]) == 7
-    assert report["multicolumn_ready_ids"] == [
+    assert report["multicolumn_materialized_ids"] == [
         "public-adult",
         "public-compas",
         "public-default-credit",
@@ -178,6 +178,8 @@ def test_v2_validator_accepts_aligned_complete_artifacts(v2_directory):
         "public-lawschool",
     ]
     assert report["source_bytes_verified"] is True
+    assert report["readiness_scope"] == "representation-only"
+    assert report["outcome_ready"] is False
 
 
 def test_v2_validator_rejects_missing_protected_column(v2_directory):

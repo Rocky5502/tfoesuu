@@ -106,5 +106,20 @@ It contains exactly one 5,539,328-byte XLS member. After this addition, the
 ordered 16-file raw-source listing digest is
 `92a3fddd48155e527ee549b705026e1063823d34f6e00f1bb2bb44d3dd341e2e`.
 The preliminary V2.0 manifest and external validation hashes are recorded in
-the hourly ledger. No experimental outcome is claimed. V2.1 must be prepared
-under a new clean commit and distinct output path.
+the hourly ledger. V2.1 was then prepared under clean commit
+`d0790b30d09fcc22721dfd5942ec9ef0db76cb35` at the distinct immutable PC2 path
+`datasets/prepared_v2/d0790b3`. Independent validation rechecked all source
+bytes and arrays. Validation JSON SHA-256:
+`652a4299461a7ba58d5443f67b81a899ea529e5c9abe87eccf429fedb3cb8723`;
+manifest SHA-256:
+`b07bf1aa17e37bc02971e200fb7c7e6eed14584d8920573f966fc56399acaf39`.
+The directory occupies 6.2 MiB.
+
+Representation readiness is not outcome readiness. Adult, COMPAS, and Law
+School expose low-cardinality categorical joint groups (10, 4, and 4 supported
+training groups under the raw representation). German and Default Credit expose
+83 and 102 supported raw joint groups because age is retained numerically;
+Bank similarly has 68 single-attribute age groups. Any analysis must freeze a
+semantically justified age transformation and support rule before observing
+old/new Fairlearn outcomes. The validator now reports
+`readiness_scope=representation-only` and `outcome_ready=false` explicitly.

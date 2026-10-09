@@ -62,8 +62,11 @@ School, and MEPS, but initially not for Default Credit: its original
 `ucimlrepo` call did not preserve a raw file. The official UCI ZIP has now been
 reacquired over verified HTTPS under CC BY 4.0 and frozen at a new path with
 SHA-256 `56c885f84457f6680f8438f02bfcdac9579323d8a94465ee5f26e32baa727602`.
-The remaining gate is a clean-commit, complete CPU-only V2 preparation and
-read-only validation; no complete V2 directory is claimed yet.
+The complete training/evaluation V2.1 representation has now been prepared and
+independently validated under clean commit `d0790b3`; hashes are in
+`docs/PUBLIC_BENCHMARK_V2_PROTOCOL.md`. This closes the representation gap, not
+the experiment-design gate: age is high-cardinality in German and Default
+Credit, and no old/new Fairlearn outcome has been run.
 
 A seven-dataset outcome campaign and manuscript admission remain behind the
 explicit publication-scale approval gate.

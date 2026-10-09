@@ -22,7 +22,7 @@
 |---|---|---|
 | G0 identity | PC1 and PC2 both at baseline SHA; PC1 baseline was clean | PASS |
 | G1 software | compileall; 194 PC1 tests; 194 PC2 tests; inventory; bibliography and paper static checks | PASS, with 107 pre-existing Ruff findings |
-| G2 data | seven nonzero NPZ/JSON pairs and manifest pass strict schema/content/hash validation | PASS for frozen prepared artifacts |
+| G2 data | V1 seven-subject schema passes its narrow validator; V2.1 separately preserves and validates complete aligned train/evaluation protected contexts and source bytes | PASS for representation; no outcome protocol implied |
 | G3 math | frozen proof-status documents and P17 negative boundary present | OPEN: claim-level crosswalk audit required |
 | G4 experiment | runner fails closed on prepared inputs and records a three-Git-object preparation compatibility contract | PASS for bounded public smoke; publication cost audit remains |
 | G5 smoke | complete P12/P15 staged grids plus a complete seven-dataset 1k public matrix on two GPUs; exact finite-law audits green | PASS for bounded exploratory gates |
@@ -53,17 +53,18 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Run the bounded no-outcome V2.1 preparation/validation on PC2 from a new clean
-commit and distinct output path. The immutable V2.0 output at `18442ac` passed
-its declared evaluation-side schema but an independent audit found it omitted
-training protected contexts, so it is preliminary and not executable-subject
-ready. The separate
+Freeze the V2.1 Fairlearn analysis question before any outcome: decide and
+preregister protected-group transformations, support exclusions, estimand, and
+old/new training/evaluation procedure. The complete bounded no-outcome V2.1
+preparation now exists at immutable PC2 path `datasets/prepared_v2/d0790b3` and
+passes independent source-byte and alignment validation. The earlier V2.0 path
+remains preserved but preliminary because it omitted training contexts. The separate
 V2.1 schema, non-overwriting preparer, validator, and 17-test corruption suite are
 implemented. Six datasets already had retained raw bytes; the missing Default
 Credit archive was reacquired from the registered UCI HTTPS endpoint under CC
-BY 4.0 with TLS verification, stored at a new path, and hashed. No complete
-V2.1 output exists yet and readiness remains false. Do not infer it from V1
-probabilities, manufacture a second protected
+BY 4.0 with TLS verification, stored at a new path, and hashed. V2.1 readiness
+means representation only, not outcome authorization. Do not infer groups from
+V1 probabilities, manufacture a second protected
 attribute, or reinterpret metadata as data. The direct
 parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
 common-tape gates on PC1. The preregistered smoke isolated the documented
