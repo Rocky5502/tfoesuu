@@ -483,3 +483,24 @@
   compileall, manuscript static consistency, bibliography policy, and inventory passed. Next:
   commit this source-reader increment, transfer the exact commit to an isolated PC2 worktree, and
   run the no-outcome V2 preparation/validator after environment and source-map gates pass.
+
+### Same-cycle update — preliminary V2.0 prepared, then scope gap found
+
+- Verified bundle SHA-256 `efd01144585cfc166755f87317f3be594789c1cf0fe74a12605a83e0592c7cb6`
+  and cloned clean commit `18442ac113903f21df4f2845e1868cf791ee238e` into an isolated PC2 checkout;
+  protected baseline `main` stayed clean at `149baf36`. An isolated uv/CPython 3.12.14 environment
+  installed exact resolved versions, including `xlrd==2.0.2`, over verified package channels.
+- PC2 preflight: 260 passed, one Torch-only test skipped because the CPU V2 environment does not
+  install Torch; touched-file Ruff and compileall passed. The bounded no-outcome preparation wrote
+  a new directory `datasets/prepared_v2/18442ac` and its built-in plus independent validators passed
+  all seven source-byte, schema, alignment, support, and manifest checks. External validation JSON
+  SHA-256 `3bf959c990df34772da787c01e2d6eb017b425e28ed81ff5e28e332cae4259a3`;
+  manifest SHA-256 `4cd3af97283ec7a327fac14791d90e5e5eeaddc1a166ef33ea8bdc56e69d0161`.
+- A subsequent hostile protocol audit found V2.0 preserves only evaluation protected contexts.
+  Genuine Fairlearn fitting also requires aligned training-side protected values and features.
+  V2.0 is therefore preserved but downgraded to preliminary/non-executable; no outcome was run.
+- Added a falsifying training-row reorder test first; it failed at import. V2.1 now includes complete
+  aligned training labels, positions, protected matrices, raw non-protected matrices, independent
+  training alignment hashes, train/evaluation group counts, split-disjointness checks, and support
+  coverage. Focused V2.1 suite: **17 passed**. Next: commit, transfer, and prepare V2.1 to a new path;
+  never overwrite V2.0.

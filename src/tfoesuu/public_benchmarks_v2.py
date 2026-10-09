@@ -10,7 +10,7 @@ import numpy as np
 
 from .public_benchmarks import PublicBenchmarkSpec, public_benchmark_registry_v1
 
-V2_SCHEMA = "tfoesuu-public-context-v2"
+V2_SCHEMA = "tfoesuu-public-context-v2.1"
 V2_VALUE_ENCODING = "canonical-json-scalars-v1"
 V2_NPZ_KEYS = {
     "baseline_probabilities",
@@ -18,6 +18,10 @@ V2_NPZ_KEYS = {
     "source_row_positions",
     "protected_attribute_values",
     "non_protected_feature_values",
+    "training_labels",
+    "training_source_row_positions",
+    "training_protected_attribute_values",
+    "training_non_protected_feature_values",
 }
 
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -114,6 +118,39 @@ def evaluation_alignment_sha256(
             "label": int(labels[index]),
             "position": int(positions[index]),
             "probability_hex": float(probabilities[index]).hex(),
+            "protected": protected[index].tolist(),
+        }
+        digest.update(
+            json.dumps(row, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
+                "utf-8"
+            )
+        )
+        digest.update(b"\n")
+    return digest.hexdigest()
+
+
+def training_alignment_sha256(
+    *,
+    training_labels: np.ndarray,
+    training_source_row_positions: np.ndarray,
+    training_protected_attribute_values: np.ndarray,
+    training_non_protected_feature_values: np.ndarray,
+) -> str:
+    """Hash the row-wise alignment of every V2.1 training array."""
+
+    labels = np.asarray(training_labels)
+    positions = np.asarray(training_source_row_positions)
+    protected = np.asarray(training_protected_attribute_values)
+    features = np.asarray(training_non_protected_feature_values)
+    lengths = {len(labels), len(positions), len(protected), len(features)}
+    if len(lengths) != 1:
+        raise ValueError("cannot hash misaligned V2.1 training arrays")
+    digest = hashlib.sha256()
+    for index in range(len(labels)):
+        row = {
+            "features": features[index].tolist(),
+            "label": int(labels[index]),
+            "position": int(positions[index]),
             "protected": protected[index].tolist(),
         }
         digest.update(
@@ -291,6 +328,10 @@ def _validate_subject(
     positions = arrays["source_row_positions"]
     protected = arrays["protected_attribute_values"]
     features = arrays["non_protected_feature_values"]
+    training_labels = arrays["training_labels"]
+    training_positions = arrays["training_source_row_positions"]
+    training_protected = arrays["training_protected_attribute_values"]
+    training_features = arrays["training_non_protected_feature_values"]
     if probabilities.ndim != 1 or len(probabilities) != contexts:
         raise ValueError(f"{dataset_id}: probability shape/count mismatch")
     if not np.issubdtype(probabilities.dtype, np.number) or np.issubdtype(
@@ -321,30 +362,86 @@ def _validate_subject(
         raise ValueError(f"{dataset_id}: protected matrix shape mismatch")
     if features.shape != (contexts, len(feature_columns)):
         raise ValueError(f"{dataset_id}: non-protected feature matrix shape mismatch")
-    if protected.dtype.kind != "U" or features.dtype.kind != "U":
+    if training_labels.shape != (train_rows,) or not (
+        np.issubdtype(training_labels.dtype, np.integer)
+        or np.issubdtype(training_labels.dtype, np.bool_)
+    ) or not np.all(np.isin(training_labels, [0, 1])):
+        raise ValueError(f"{dataset_id}: training labels must be an aligned binary vector")
+    if training_positions.shape != (train_rows,) or not np.issubdtype(
+        training_positions.dtype, np.integer
+    ):
+        raise ValueError(f"{dataset_id}: training source positions must be an integer vector")
+    training_position_set = set(map(int, training_positions))
+    if len(training_position_set) != train_rows or np.any(
+        (training_positions < 0) | (training_positions >= rows_loaded)
+    ):
+        raise ValueError(f"{dataset_id}: training source positions must be unique and in range")
+    if training_position_set.intersection(map(int, positions)):
+        raise ValueError(f"{dataset_id}: training/evaluation source positions overlap")
+    if training_protected.shape != (train_rows, len(protected_columns)):
+        raise ValueError(f"{dataset_id}: training protected matrix shape mismatch")
+    if training_features.shape != (train_rows, len(feature_columns)):
+        raise ValueError(f"{dataset_id}: training feature matrix shape mismatch")
+    if any(
+        array.dtype.kind != "U"
+        for array in (protected, features, training_protected, training_features)
+    ):
         raise ValueError(f"{dataset_id}: table values must be pickle-free Unicode tokens")
-    for token in np.concatenate((protected.reshape(-1), features.reshape(-1))):
+    for token in np.concatenate(
+        (
+            protected.reshape(-1),
+            features.reshape(-1),
+            training_protected.reshape(-1),
+            training_features.reshape(-1),
+        )
+    ):
         _validate_scalar_token(str(token), dataset_id)
 
+    all_protected = np.concatenate((training_protected, protected), axis=0)
     expected_catalog = {
-        name: sorted(set(protected[:, column].tolist()))
+        name: sorted(set(all_protected[:, column].tolist()))
         for column, name in enumerate(protected_columns)
     }
     if metadata.get("protected_value_catalog") != expected_catalog:
         raise ValueError(f"{dataset_id}: protected value catalog mismatch")
-    joint_counts: dict[str, int] = {}
+    evaluation_joint_counts: dict[str, int] = {}
     for row in protected.tolist():
         key = json.dumps(row, separators=(",", ":"))
-        joint_counts[key] = joint_counts.get(key, 0) + 1
-    if metadata.get("joint_group_counts") != joint_counts:
-        raise ValueError(f"{dataset_id}: joint group counts mismatch")
-    supported = sorted(key for key, count in joint_counts.items() if count >= min_support)
+        evaluation_joint_counts[key] = evaluation_joint_counts.get(key, 0) + 1
+    training_joint_counts: dict[str, int] = {}
+    for row in training_protected.tolist():
+        key = json.dumps(row, separators=(",", ":"))
+        training_joint_counts[key] = training_joint_counts.get(key, 0) + 1
+    if metadata.get("evaluation_joint_group_counts") != evaluation_joint_counts:
+        raise ValueError(f"{dataset_id}: evaluation joint group counts mismatch")
+    if metadata.get("training_joint_group_counts") != training_joint_counts:
+        raise ValueError(f"{dataset_id}: training joint group counts mismatch")
+    supported = sorted(
+        key for key, count in training_joint_counts.items() if count >= min_support
+    )
     if len(supported) < 2:
         raise ValueError(f"{dataset_id}: fewer than two supported joint groups")
+    evaluation_supported = sorted(set(evaluation_joint_counts).intersection(supported))
+    if len(evaluation_supported) < 2:
+        raise ValueError(f"{dataset_id}: fewer than two evaluation groups have training support")
 
-    expected_alignment = evaluation_alignment_sha256(**arrays)
+    expected_alignment = evaluation_alignment_sha256(
+        baseline_probabilities=probabilities,
+        evaluation_labels=labels,
+        source_row_positions=positions,
+        protected_attribute_values=protected,
+        non_protected_feature_values=features,
+    )
     if metadata.get("evaluation_alignment_sha256") != expected_alignment:
         raise ValueError(f"{dataset_id}: evaluation alignment SHA-256 mismatch")
+    expected_training_alignment = training_alignment_sha256(
+        training_labels=training_labels,
+        training_source_row_positions=training_positions,
+        training_protected_attribute_values=training_protected,
+        training_non_protected_feature_values=training_features,
+    )
+    if metadata.get("training_alignment_sha256") != expected_training_alignment:
+        raise ValueError(f"{dataset_id}: training alignment SHA-256 mismatch")
     accuracy = metadata.get("base_accuracy")
     if isinstance(accuracy, bool) or not isinstance(accuracy, (int, float)) or not (
         math.isfinite(accuracy) and 0.0 <= accuracy <= 1.0
@@ -355,6 +452,7 @@ def _validate_subject(
         "multicolumn": len(protected_columns) >= 2,
         "source_bytes_verified": source_verified,
         "supported_joint_groups": supported,
+        "evaluation_groups_with_training_support": evaluation_supported,
         "source_commit": source_commit,
     }
 

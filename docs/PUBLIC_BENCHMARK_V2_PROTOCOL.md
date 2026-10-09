@@ -2,29 +2,35 @@
 
 ## Scope and status
 
-V2 repairs the representation defect in public V1 without changing V1. It is a
+V2.1 repairs the representation defect in public V1 without changing V1. It is a
 data and provenance contract for observed protected-group contexts; it is not a
 fairness outcome, a causal counterfactual construction, or publication evidence.
 
-Implementation is complete and tested. Production preparation is **blocked**
-until exact raw bytes for all seven registered sources are frozen and the
-committed V2 source map is validated. PC2 initially retained source bytes for
-six datasets. The missing Default Credit archive was then reacquired from the
-registered UCI HTTPS endpoint under its CC BY 4.0 license, without disabling
-certificate verification, and frozen separately from V1.
+Implementation is complete and tested. Exact raw bytes and a committed source
+map now exist for all seven datasets. A first immutable V2.0 preparation at
+commit `18442ac` validated the evaluation-side representation, then an
+independent audit correctly rejected it as insufficient for an executable
+Fairlearn subject because it omitted training-side protected contexts. V2.1
+therefore adds the complete aligned training split; V2.0 remains preserved as a
+preliminary artifact and is not outcome-ready.
 
 ## Artifact schema
 
-Each `<dataset-id>.npz` contains exactly:
+Each V2.1 `<dataset-id>.npz` contains exactly:
 
 - `baseline_probabilities`: finite interior evaluation probabilities;
 - `evaluation_labels`: aligned binary targets;
 - `source_row_positions`: unique positions in the canonical loaded population;
 - `protected_attribute_values`: a two-dimensional matrix in declared column order;
-- `non_protected_feature_values`: the aligned raw evaluation feature matrix.
+- `non_protected_feature_values`: the aligned raw evaluation feature matrix;
+- `training_labels`: the complete aligned training targets;
+- `training_source_row_positions`: unique canonical training positions;
+- `training_protected_attribute_values`: the complete training protected matrix;
+- `training_non_protected_feature_values`: the complete raw training feature matrix.
 
 Heterogeneous table values use canonical JSON scalar tokens, never pickle.
-Metadata records the exact loaded protected columns, registry semantics,
+Metadata records separate training/evaluation group counts and alignment
+digests, plus the exact loaded protected columns, registry semantics,
 category catalog, joint-group counts, minimum support, feature columns, split
 counts and seed, source-file byte hashes, preparation Git SHA, exact Python and
 loader-package versions, and a row-wise alignment SHA-256 over every stored
@@ -43,6 +49,8 @@ The validator rejects:
 - absent or case-ambiguous protected columns;
 - protected columns leaking into the predictor feature matrix;
 - row-count, row-position, shape, alignment-digest, or split drift;
+- overlap between training and evaluation source positions, or omission of the
+  complete training split;
 - pickle/object arrays, malformed scalar encodings, category-catalog drift, or
   joint-group count drift;
 - fewer than two joint groups meeting the preregistered support threshold;
@@ -97,6 +105,6 @@ overwriting V1 or another raw file); SHA-256
 It contains exactly one 5,539,328-byte XLS member. After this addition, the
 ordered 16-file raw-source listing digest is
 `92a3fddd48155e527ee549b705026e1063823d34f6e00f1bb2bb44d3dd341e2e`.
-No prepared V2 artifact or
-outcome is claimed until a clean committed preparer reproduces and validates
-all seven populations.
+The preliminary V2.0 manifest and external validation hashes are recorded in
+the hourly ledger. No experimental outcome is claimed. V2.1 must be prepared
+under a new clean commit and distinct output path.

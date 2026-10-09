@@ -53,13 +53,17 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Run the bounded no-outcome V2 preparation/validation on PC2 from a clean commit
-and the frozen seven-source map. The separate
-V2 schema, non-overwriting preparer, validator, and 15-test corruption suite are
+Run the bounded no-outcome V2.1 preparation/validation on PC2 from a new clean
+commit and distinct output path. The immutable V2.0 output at `18442ac` passed
+its declared evaluation-side schema but an independent audit found it omitted
+training protected contexts, so it is preliminary and not executable-subject
+ready. The separate
+V2.1 schema, non-overwriting preparer, validator, and 17-test corruption suite are
 implemented. Six datasets already had retained raw bytes; the missing Default
 Credit archive was reacquired from the registered UCI HTTPS endpoint under CC
-BY 4.0 with TLS verification, stored at a new path, and hashed. No complete V2
-output exists yet and readiness remains false. Do not infer it from V1 probabilities, manufacture a second protected
+BY 4.0 with TLS verification, stored at a new path, and hashed. No complete
+V2.1 output exists yet and readiness remains false. Do not infer it from V1
+probabilities, manufacture a second protected
 attribute, or reinterpret metadata as data. The direct
 parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
 common-tape gates on PC1. The preregistered smoke isolated the documented

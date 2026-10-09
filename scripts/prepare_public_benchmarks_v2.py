@@ -46,6 +46,7 @@ from tfoesuu.public_benchmarks_v2 import (
     V2_VALUE_ENCODING,
     canonical_scalar_token,
     evaluation_alignment_sha256,
+    training_alignment_sha256,
     validate_prepared_public_v2_directory,
 )
 
@@ -319,27 +320,47 @@ def prepare_one_v2(
     labels = heldout_labels[chosen]
     protected_values = _encode_frame(X.iloc[evaluation_positions][protected_columns], pd)
     feature_values = _encode_frame(X.iloc[evaluation_positions][feature_columns], pd)
+    training_labels = np.asarray(y.iloc[train_positions], dtype=np.int8)
+    training_protected_values = _encode_frame(X.iloc[train_positions][protected_columns], pd)
+    training_feature_values = _encode_frame(X.iloc[train_positions][feature_columns], pd)
     arrays = {
         "baseline_probabilities": probabilities,
         "evaluation_labels": labels,
         "source_row_positions": evaluation_positions,
         "protected_attribute_values": protected_values,
         "non_protected_feature_values": feature_values,
+        "training_labels": training_labels,
+        "training_source_row_positions": np.asarray(train_positions, dtype=np.int64),
+        "training_protected_attribute_values": training_protected_values,
+        "training_non_protected_feature_values": training_feature_values,
     }
 
+    all_protected_values = np.concatenate(
+        (training_protected_values, protected_values),
+        axis=0,
+    )
     catalog = {
-        name: sorted(set(protected_values[:, column].tolist()))
+        name: sorted(set(all_protected_values[:, column].tolist()))
         for column, name in enumerate(protected_columns)
     }
-    joint_counts: dict[str, int] = {}
+    evaluation_joint_counts: dict[str, int] = {}
     for row in protected_values.tolist():
         key = json.dumps(row, separators=(",", ":"))
-        joint_counts[key] = joint_counts.get(key, 0) + 1
-    supported = [count for count in joint_counts.values() if count >= minimum_joint_group_support]
-    if len(supported) < 2:
+        evaluation_joint_counts[key] = evaluation_joint_counts.get(key, 0) + 1
+    training_joint_counts: dict[str, int] = {}
+    for row in training_protected_values.tolist():
+        key = json.dumps(row, separators=(",", ":"))
+        training_joint_counts[key] = training_joint_counts.get(key, 0) + 1
+    supported = {
+        key
+        for key, count in training_joint_counts.items()
+        if count >= minimum_joint_group_support
+    }
+    evaluation_supported = set(evaluation_joint_counts).intersection(supported)
+    if len(supported) < 2 or len(evaluation_supported) < 2:
         raise ValueError(
-            f"{dataset_id}: fewer than two joint groups meet minimum support "
-            f"{minimum_joint_group_support}"
+            f"{dataset_id}: fewer than two evaluation groups have training support "
+            f"at threshold {minimum_joint_group_support}"
         )
 
     np.savez_compressed(output_dir / f"{dataset_id}.npz", **arrays)
@@ -383,8 +404,21 @@ def prepare_one_v2(
         "identifiability_scope": "observed-joint-group-comparisons-only",
         "minimum_joint_group_support": int(minimum_joint_group_support),
         "protected_value_catalog": catalog,
-        "joint_group_counts": joint_counts,
-        "evaluation_alignment_sha256": evaluation_alignment_sha256(**arrays),
+        "training_joint_group_counts": training_joint_counts,
+        "evaluation_joint_group_counts": evaluation_joint_counts,
+        "training_alignment_sha256": training_alignment_sha256(
+            training_labels=training_labels,
+            training_source_row_positions=arrays["training_source_row_positions"],
+            training_protected_attribute_values=training_protected_values,
+            training_non_protected_feature_values=training_feature_values,
+        ),
+        "evaluation_alignment_sha256": evaluation_alignment_sha256(
+            baseline_probabilities=probabilities,
+            evaluation_labels=labels,
+            source_row_positions=evaluation_positions,
+            protected_attribute_values=protected_values,
+            non_protected_feature_values=feature_values,
+        ),
         **target_meta,
     }
     (output_dir / f"{dataset_id}.json").write_text(

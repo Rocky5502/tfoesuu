@@ -10,6 +10,7 @@ from tfoesuu.public_benchmarks_v2 import (
     V2_NPZ_KEYS,
     canonical_scalar_token,
     evaluation_alignment_sha256,
+    training_alignment_sha256,
     validate_prepared_public_v2_directory,
 )
 
@@ -29,6 +30,8 @@ def _write_v2_directory(root: Path, source_root: Path) -> None:
         probabilities = np.array([0.2, 0.4, 0.6, 0.7], dtype=np.float64)
         labels = np.array([0, 1, 0, 1], dtype=np.int8)
         positions = np.array([1, 3, 7, 9], dtype=np.int64)
+        training_labels = np.array([1, 0, 1, 0, 1, 0, 1, 0], dtype=np.int8)
+        training_positions = np.array([0, 2, 4, 5, 6, 8, 10, 11], dtype=np.int64)
         protected = np.array(
             [
                 [canonical_scalar_token(f"g{row % 2}-{col}") for col in range(len(spec.protected_attributes))]
@@ -40,25 +43,36 @@ def _write_v2_directory(root: Path, source_root: Path) -> None:
             [[canonical_scalar_token(row), canonical_scalar_token(float(row) / 10)] for row in range(n_rows)],
             dtype=np.str_,
         )
+        training_protected = protected[[1, 0, 3, 2, 1, 0, 3, 2]].copy()
+        training_features = features[[1, 0, 3, 2, 1, 0, 3, 2]].copy()
         arrays = {
             "baseline_probabilities": probabilities,
             "evaluation_labels": labels,
             "source_row_positions": positions,
             "protected_attribute_values": protected,
             "non_protected_feature_values": features,
+            "training_labels": training_labels,
+            "training_source_row_positions": training_positions,
+            "training_protected_attribute_values": training_protected,
+            "training_non_protected_feature_values": training_features,
         }
         assert set(arrays) == V2_NPZ_KEYS
         np.savez_compressed(root / f"{spec.benchmark_id}.npz", **arrays)
+        all_protected = np.concatenate((training_protected, protected), axis=0)
         catalog = {
-            name: sorted(set(protected[:, col].tolist()))
+            name: sorted(set(all_protected[:, col].tolist()))
             for col, name in enumerate(spec.protected_attributes)
         }
-        joint_counts: dict[str, int] = {}
+        evaluation_joint_counts: dict[str, int] = {}
         for row in protected.tolist():
             key = json.dumps(row, separators=(",", ":"))
-            joint_counts[key] = joint_counts.get(key, 0) + 1
+            evaluation_joint_counts[key] = evaluation_joint_counts.get(key, 0) + 1
+        training_joint_counts: dict[str, int] = {}
+        for row in training_protected.tolist():
+            key = json.dumps(row, separators=(",", ":"))
+            training_joint_counts[key] = training_joint_counts.get(key, 0) + 1
         metadata = {
-            "schema": "tfoesuu-public-context-v2",
+            "schema": "tfoesuu-public-context-v2.1",
             "dataset_id": spec.benchmark_id,
             "dataset_name": spec.name,
             "source_url": spec.source_url,
@@ -111,8 +125,21 @@ def _write_v2_directory(root: Path, source_root: Path) -> None:
             "identifiability_scope": "observed-joint-group-comparisons-only",
             "minimum_joint_group_support": 2,
             "protected_value_catalog": catalog,
-            "joint_group_counts": joint_counts,
-            "evaluation_alignment_sha256": evaluation_alignment_sha256(**arrays),
+            "training_joint_group_counts": training_joint_counts,
+            "evaluation_joint_group_counts": evaluation_joint_counts,
+            "training_alignment_sha256": training_alignment_sha256(
+                training_labels=training_labels,
+                training_source_row_positions=training_positions,
+                training_protected_attribute_values=training_protected,
+                training_non_protected_feature_values=training_features,
+            ),
+            "evaluation_alignment_sha256": evaluation_alignment_sha256(
+                baseline_probabilities=probabilities,
+                evaluation_labels=labels,
+                source_row_positions=positions,
+                protected_attribute_values=protected,
+                non_protected_feature_values=features,
+            ),
         }
         (root / f"{spec.benchmark_id}.json").write_text(
             json.dumps(metadata, sort_keys=True), encoding="utf-8"
@@ -177,6 +204,20 @@ def test_v2_validator_rejects_protected_row_reordering(v2_directory):
         validate_prepared_public_v2_directory(prepared, source_root=sources)
 
 
+def test_v2_validator_rejects_training_row_reordering(v2_directory):
+    prepared, sources = v2_directory
+    path = prepared / "public-adult.npz"
+    with np.load(path, allow_pickle=False) as stored:
+        arrays = {name: stored[name] for name in stored.files}
+    arrays["training_protected_attribute_values"] = arrays[
+        "training_protected_attribute_values"
+    ][[1, 0, 2, 3, 4, 5, 6, 7]]
+    np.savez_compressed(path, **arrays)
+
+    with pytest.raises(ValueError, match="training alignment SHA-256"):
+        validate_prepared_public_v2_directory(prepared, source_root=sources)
+
+
 def test_v2_validator_rejects_protected_feature_leakage(v2_directory):
     prepared, sources = v2_directory
     path = prepared / "public-german.json"
@@ -205,7 +246,7 @@ def test_v2_validator_rejects_insufficient_joint_group_support(v2_directory):
     prepared, sources = v2_directory
     path = prepared / "public-adult.json"
     metadata = json.loads(path.read_text(encoding="utf-8"))
-    metadata["minimum_joint_group_support"] = 3
+    metadata["minimum_joint_group_support"] = 5
     path.write_text(json.dumps(metadata, sort_keys=True), encoding="utf-8")
     _replace_manifest_row(prepared, metadata)
 
