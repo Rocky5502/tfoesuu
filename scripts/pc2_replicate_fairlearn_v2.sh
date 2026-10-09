@@ -42,7 +42,11 @@ git -C "$upstream" worktree add --detach "$old_tree" \
 git -C "$upstream" worktree add --detach "$new_tree" \
   0cf59eccfdd364417787fe2c368a1c77c3f378b8
 
-PYTHONPATH="$repo/src" python3 "$repo/scripts/audit_fairlearn_evolving_pair.py" \
+audit_python="python3"
+if [[ -x /home/zbq/work/tfoesuu/.venv/bin/python ]]; then
+  audit_python="/home/zbq/work/tfoesuu/.venv/bin/python"
+fi
+PYTHONPATH="$repo/src" "$audit_python" "$repo/scripts/audit_fairlearn_evolving_pair.py" \
   "$old_tree" "$new_tree" --require source >/tmp/fairlearn_v2_source_audit.json
 
 mkdir -p "$results"
