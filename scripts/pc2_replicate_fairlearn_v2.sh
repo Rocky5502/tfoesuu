@@ -3,6 +3,7 @@ set -euo pipefail
 
 expected_sha="${1:?expected TFOESUU commit required}"
 bundle="${2:-/mnt/c/Users/Administrator/tfoesuu_fairlearn_v2.bundle}"
+upstream_bundle="${3:-}"
 repo="/home/zbq/work/tfoesuu-fairlearn-v2-${expected_sha:0:7}"
 upstream="/home/zbq/work/fairlearn-v2-upstream-${expected_sha:0:7}"
 old_tree="/home/zbq/work/fairlearn-old-e8cc637-${expected_sha:0:7}"
@@ -26,7 +27,15 @@ git -C "$repo" checkout --detach "$expected_sha"
 [[ "$(git -C "$repo" rev-parse HEAD)" == "$expected_sha" ]]
 [[ -z "$(git -C "$repo" status --porcelain)" ]]
 
-git clone --filter=blob:none https://github.com/fairlearn/fairlearn.git "$upstream"
+if [[ -n "$upstream_bundle" ]]; then
+  [[ -f "$upstream_bundle" ]] || {
+    echo "missing upstream bundle $upstream_bundle" >&2
+    exit 2
+  }
+  git clone "$upstream_bundle" "$upstream"
+else
+  git clone --filter=blob:none https://github.com/fairlearn/fairlearn.git "$upstream"
+fi
 git -C "$upstream" config core.autocrlf true
 git -C "$upstream" worktree add --detach "$old_tree" \
   e8cc63784de5410805c156715175fc60e2cd5653
