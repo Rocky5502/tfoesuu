@@ -4,6 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
+import numpy as np
+
+from tfoesuu.external_subject_analysis import bernoulli_disagreement_laws
+
 EXPECTED = {
     "old": "e8cc63784de5410805c156715175fc60e2cd5653",
     "new": "0cf59eccfdd364417787fe2c368a1c77c3f378b8",
@@ -85,6 +89,18 @@ def validate(old_path: Path, new_path: Path) -> dict[str, object]:
 
     old_control = reports["old"]["multi_equals_combined_by_seed"]
     assert isinstance(old_control, dict)
+    old_multi_p = np.asarray(mode("old", "multi")["pmf"], dtype=float)[:, 1]
+    old_combined_p = np.asarray(mode("old", "combined")["pmf"], dtype=float)[:, 1]
+    new_multi_p = np.asarray(mode("new", "multi")["pmf"], dtype=float)[:, 1]
+    new_combined_p = np.asarray(mode("new", "combined")["pmf"], dtype=float)[:, 1]
+    if not np.array_equal(new_multi_p, new_combined_p):
+        raise ValueError("new PMF fails the canonical-combination control")
+    if not np.array_equal(old_combined_p, new_combined_p):
+        raise ValueError("canonical control PMF changed across revisions")
+    laws = bernoulli_disagreement_laws(old_multi_p, new_multi_p)
+    changed_rows = int(np.count_nonzero(laws.common_uniform))
+    common_total = float(np.sum(laws.common_uniform))
+    independent_total = float(np.sum(laws.independent))
     group_counts = {
         version: {
             name: mode(version, name)["group_count"]
@@ -101,6 +117,20 @@ def validate(old_path: Path, new_path: Path) -> dict[str, object]:
         "documented_defect_reproduced": not all(old_control.values()),
         "group_counts": group_counts,
         "old_new_prediction_disagreements": disagreement_counts,
+        "exact_distributional_audit": {
+            "new_multi_equals_combined_pmf": True,
+            "old_new_combined_pmf_equal": True,
+            "affected_rows": changed_rows,
+            "rows": len(old_multi_p),
+            "common_tape_expected_disagreements": common_total,
+            "common_tape_mean_disagreement_probability": common_total
+            / len(old_multi_p),
+            "independent_tape_expected_disagreements": independent_total,
+            "independent_tape_mean_disagreement_probability": independent_total
+            / len(old_multi_p),
+            "independent_to_common_expected_disagreement_ratio": independent_total
+            / common_total,
+        },
     }
 
 

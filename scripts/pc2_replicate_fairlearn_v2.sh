@@ -89,7 +89,7 @@ else
   } >"$results/runtime-manifest.txt"
   "$uv_root/uv" pip freeze --python "$runtime/venv/bin/python" >"$results/pip-freeze.txt"
 fi
-python3 "$repo/scripts/validate_fairlearn_v2_results.py" \
+PYTHONPATH="$repo/src" "$audit_python" "$repo/scripts/validate_fairlearn_v2_results.py" \
   "$results/old.json" "$results/new.json" >"$results/validation.json"
 
 sha256sum "$results"/* | sort

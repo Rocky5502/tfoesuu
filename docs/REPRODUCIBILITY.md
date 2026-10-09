@@ -286,6 +286,13 @@ repeatability, threshold correspondence, cross-version common tapes, and the
 new revision's canonical-combination control. Generated transcripts are
 exploratory evidence and never overwrite a prior output directory.
 
+Validation also computes exact Bernoulli disagreement laws directly from the
+preserved PMFs. `tfoesuu.external_subject_analysis.bernoulli_disagreement_laws`
+returns `abs(p-q)` for a common uniform tape and
+`p*(1-q)+(1-p)*q` for independent tapes. These values are analytic expectations,
+not empirical estimates; rerunning more seeds on the same fixture is not a
+valid substitute for broader contexts.
+
 PC2 uses `scripts/pc2_replicate_fairlearn_v2.sh` in an isolated checkout. When
 Docker is unavailable it provisions uv 0.12.20 and CPython 3.8.20 under
 `/home/zbq/work` without modifying system packages or shell profiles. If GitHub

@@ -193,3 +193,27 @@ on its D: volume under `results/fairlearn_v2_pc2_3d7c87d` with SHA-256:
 
 Raw transcript hashes differ across hosts because platform strings and measured
 wall times are recorded. The validator's scientific fields agree exactly.
+
+### Exact distributional audit
+
+The preserved probability-mass functions make a larger seed sweep unnecessary
+for this fixture. For old/new Bernoulli marginals `p` and `q`, a shared uniform
+tape disagrees with exact probability `|p-q|`; independent tapes disagree with
+probability `p(1-q)+(1-p)q`. These identities were evaluated row by row, not
+estimated by Monte Carlo.
+
+- The repaired multi-column PMF equals its canonical-combined PMF exactly.
+- The old and new canonical-combined PMFs are exactly equal.
+- The affected old/new multi-column PMFs differ on 17 of 24 rows.
+- One common-tape pass over all 24 rows has exact expected disagreement count
+  `7.083333333333334` (mean probability `0.2951388888888889`).
+- Independent tapes have exact expected disagreement count
+  `8.083333333333334` (mean probability `0.3368055555555556`), a factor
+  `1.1411764705882352` larger.
+- PC1 exact-law validation SHA-256:
+  `0c62bbc79e91c55366f1884907d0f28e302d6af2ee47ca7264593f33e91c26a4`.
+
+Accordingly, further trials over the same 24 rows would add sampling noise but
+no information about the underlying law. Any larger experiment must vary
+genuine data contexts or protected-group structure under a separately frozen
+protocol; it must not inflate the seed count to manufacture evidence.

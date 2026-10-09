@@ -50,7 +50,9 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Freeze a statistical question before any larger Fairlearn matrix. The direct
+Audit whether the frozen public sources can support genuine multi-column
+protected contexts for a larger Fairlearn matrix; do not manufacture a second
+protected attribute. The direct
 parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
 common-tape gates on PC1. The preregistered smoke isolated the documented
 protected-group merge defect: old collapsed four groups to three and differed
@@ -68,3 +70,6 @@ bundles were used after its existing HTTPS CA failure; certificate verification
 was never bypassed. The protected PC2 baseline remains unchanged. Independent
 host replication is therefore closed; manuscript admission and any larger
 matrix remain gated on a frozen statistical question and approval where needed.
+The exact PMF audit closes the seed-count question for the 24-row fixture:
+common-tape and independent-tape disagreement laws are available analytically,
+so more seeds would add noise rather than evidence.
