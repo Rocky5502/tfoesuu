@@ -86,3 +86,14 @@ matrix remain gated on a frozen statistical question and approval where needed.
 The exact PMF audit closes the seed-count question for the 24-row fixture:
 common-tape and independent-tape disagreement laws are available analytically,
 so more seeds would add noise rather than evidence.
+
+Independent P19 verification is now closed for theorem parts (vi)--(vii).
+The audit re-derived both likelihood-ratio orientations, conditional
+familywise Ville bounds, Wald overshoot constants and integrability, arbitrary
+serial-order cost charging, and the Markov truncation coupling. An exact
+finite absorbing-chain oracle with log-likelihood increments
+{-log 2, 0, +log 2} found no counterexample and is now a regression test.
+No extension beyond the frozen equal-high null and singleton alternatives was
+admitted. The next safe task remains freezing the V2.1 analysis estimand,
+protected transformations, support rules, and old/new protocol before any
+public outcome run.

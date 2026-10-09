@@ -128,3 +128,36 @@ proved bound.
   freezes the successful null-scope attack.
 - planner tests ensure the public API now emits boundary schedules rather than
   falsely rejecting observable mixed topologies or manufacturing linear cost.
+
+## Independent sequential/truncation audit (2026-10-09)
+
+The likelihood ratio is oriented as dP_x/dP_0. On an unmatched boundary
+channel its only nonzero log increments are
+
+    log((tau+d)/tau) > 0,
+    log((r-d)/r) < 0.
+
+Their means are exactly -K_bnd under the null and J_bnd under the changed
+channel. Thus the paper's reciprocal-martingale type-II argument and both
+overshoot constants have the correct orientation. Disjoint unmatched groups
+and fresh tapes make each channel's Ville bound valid conditional on the
+history accumulated before that channel starts. For any fixed serial order,
+charging all unchanged channels at their complete null stopping costs is a
+valid upper bound under every singleton alternative, even though the actual
+procedure may stop earlier.
+
+The Wald step has no hidden infinite-expectation assumption. Bounded
+increments and positive probability of a finite same-sign informative run
+give a geometric tail for exiting any bounded likelihood interval. The
+pre-query deterministic truncation also couples correctly to the untruncated
+test: whenever truncation fires, the untruncated terminal cost on that same
+path must exceed the cap, so Markov applies directly to the already bounded
+alternative expectation.
+
+An executable exact oracle now checks a lattice instance with likelihood
+increments {-log 2, 0, +log 2} and absorbing levels {-2,+3}. Solving its
+finite absorbing chain gives null upper-crossing probability 3/31, changed
+lower-crossing probability 7/31, null expected time 470/31, and changed
+expected time 580/31. These satisfy respectively the declared beta/m,
+beta, H0, and H1 certificates without simulation. The audit therefore
+finds no counterexample to parts (vi)--(vii) within the frozen P19 scope.

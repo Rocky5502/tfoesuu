@@ -841,6 +841,11 @@ lower boundary.  Under the null, Ville's inequality and a union bound give
 type-I error at most \(m(\delta/m)=\delta\).  Under alternative \(x\),
 \(1/L_x\) is a nonnegative martingale, so the probability of crossing the
 lower boundary, and hence the miss probability, is at most \(\delta\).
+The channels use disjoint groups and fresh tapes.  Consequently these Ville
+bounds remain valid conditionally on the stopping history of every earlier
+channel in the fixed processing order; a false upper crossing on an earlier
+null channel is already a correct rejection under a singleton alternative and
+cannot create a miss.
 
 The log-likelihood increments are bounded.  Their null mean is
 \(-K_{\rm bnd}\), and a lower-boundary crossing overshoots by at most
@@ -849,6 +854,13 @@ The log-likelihood increments are bounded.  Their null mean is
 \(J_{\rm bnd}\), and an upper crossing overshoots by at most
 \(\log(1+d/\tau)\), giving \(\E_xT_x\le H_1\).  Summing costs and adjoining
 the residual zero-type-I control schedule proves the displayed bounds.  The
+exit times are integrable: from every interior likelihood state, a fixed
+finite run of identical informative increments exits through one boundary
+with probability bounded uniformly away from zero, giving a geometric tail
+over such runs.  This also supplies the integrability condition used in
+Wald's identity.  Under alternative \(x\), charging every unchanged channel
+at its full null stopping cost, including channels that would occur after
+\(x\), is an upper bound for every fixed processing order.  The
 lower endpoint of the asymptotic bracket is part~(i), because every unmatched
 channel contributes \(a\bar c_x/K_{\rm bnd}\); multiplying the lower and upper
 bounds by \(d^2\), using \(K_{\rm bnd}=b_2d^2+O(d^3)\), and observing that the
@@ -861,7 +873,10 @@ Markov's inequality therefore bounds the probability of truncating before the
 unbounded test decides by at most \(\delta-\eta\).  Truncation followed by
 acceptance cannot increase type-I error, while its pointwise type-II error is
 at most \(\eta+(\delta-\eta)=\delta\).  Appending the deterministic residual
-control schedule gives the displayed total cap.  With unit costs and
+control schedule gives the displayed total cap.  Indeed, on the coupled
+untruncated path, a pre-query truncation can occur only if the eventual
+untruncated declared cost exceeds \(B_\eta\); hence Markov is being applied to
+the complete untruncated cost, not to an optional prefix.  With unit costs and
 \(\eta=\delta/2\), the numerator defining \(B_\eta\) is
 \[
 \frac{(m-1)\log(2/\delta)+\log(2m/\delta)}{b_2d^2}

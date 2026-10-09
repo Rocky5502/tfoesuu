@@ -525,3 +525,29 @@
   regression preventing data-contract readiness from being mislabeled experimental readiness.
   Next task: freeze a support/age-transform/estimand protocol, then audit it before any Fairlearn
   run. Public outcome campaigns remain approval-gated.
+
+## 2026-10-09 22:01 +08:00 (14:01Z) — independent P19 sequential audit
+
+- Verified branch codex/research-audit-20261008 at full SHA
+  c1236c2f147f34479bd7aa8fb16cdf7dfdbaee48 before edits. PC1 had no scientific
+  GPU compute process; PC2 baseline remained clean on main at
+  149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b with no reported GPU compute process.
+  Completed frozen P12/P15 stages were not rerun.
+- Hostile re-derivation found no counterexample to P19 parts (vi)--(vii) within
+  the declared equal-high null and singleton-alternative scope. It checked LR
+  orientation, conditional serial-channel Ville bounds, reciprocal-martingale
+  misses, overshoot signs, Wald integrability, order-independent cost upper
+  charging, and the pre-query Markov truncation coupling.
+- Added a deterministic absorbing-chain oracle for the exact lattice case with
+  increments {-log 2, 0, +log 2} and boundaries {-2,+3}. Exact values are null
+  upper crossing 3/31, changed lower crossing 7/31, null mean time 470/31, and
+  changed mean time 580/31; all satisfy the beta/m, beta, H0, and H1
+  certificates. This is an exact computation, not a stochastic simulation.
+- Strengthened the manuscript proof with the conditional-history,
+  integrability, serial-order, and truncation-coupling arguments. Commands:
+  focused test_control_replay.py (37 passed), full pytest with isolated
+  basetemp (263 passed), touched-file Ruff, compileall, paper consistency
+  (16 TeX, 48 labels, 50 citations), bibliography policy, and frozen inventory
+  (10 artifacts, 828 rows); all passed. No dataset, result, or GPU artifact
+  changed. Next: preregister and adversarially audit the V2.1 analysis protocol
+  before any public outcome execution.

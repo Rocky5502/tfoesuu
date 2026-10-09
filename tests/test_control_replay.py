@@ -759,6 +759,58 @@ def test_boundary_familywise_sequential_bounds_match_exact_kl_and_costs():
     assert bound.alternative_expected_cost_upper == pytest.approx(expected_alternative)
 
 
+def test_boundary_sequential_lattice_case_has_exact_errors_and_wald_bounds():
+    """Audit the P19 SPRT with an exact three-point log-likelihood walk.
+
+    Here the informative likelihood ratios are 2 and 1/2, while all remaining
+    transcript states have likelihood ratio one.  With beta=1/4 and m=2 the
+    absorbing log2 boundaries are therefore the integer levels -2 and +3.
+    Solving the finite absorbing chain gives an exact, non-Monte-Carlo oracle
+    for both crossing errors and expected stopping times.
+    """
+
+    beta = 0.25
+    bound = boundary_familywise_sequential_bounds(
+        [1.0, 1.0],
+        p=0.60,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.10,
+        beta=beta,
+    )
+
+    transient_levels = (-1, 0, 1, 2)
+
+    def absorbing_chain(plus: float, minus: float, hold: float) -> tuple[float, float]:
+        matrix = np.eye(len(transient_levels))
+        time_rhs = np.ones(len(transient_levels))
+        upper_rhs = np.zeros(len(transient_levels))
+        for row, level in enumerate(transient_levels):
+            matrix[row, row] -= hold
+            if level + 1 < 3:
+                matrix[row, transient_levels.index(level + 1)] -= plus
+            else:
+                upper_rhs[row] += plus
+            if level - 1 > -2:
+                matrix[row, transient_levels.index(level - 1)] -= minus
+        start = transient_levels.index(0)
+        expected_time = float(np.linalg.solve(matrix, time_rhs)[start])
+        upper_probability = float(np.linalg.solve(matrix, upper_rhs)[start])
+        return expected_time, upper_probability
+
+    null_time, null_upper = absorbing_chain(0.10, 0.20, 0.70)
+    changed_time, changed_upper = absorbing_chain(0.20, 0.10, 0.70)
+
+    assert null_upper == pytest.approx(3.0 / 31.0)
+    assert null_upper <= beta / 2.0
+    assert 1.0 - changed_upper == pytest.approx(7.0 / 31.0)
+    assert 1.0 - changed_upper <= beta
+    assert null_time == pytest.approx(470.0 / 31.0)
+    assert changed_time == pytest.approx(580.0 / 31.0)
+    assert null_time <= bound.null_expected_rounds_per_candidate_upper
+    assert changed_time <= bound.changed_expected_rounds_upper
+
+
 def test_boundary_sequential_null_arm_bound_avoids_candidate_log_factor():
     common = {
         "p": 0.20,
