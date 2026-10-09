@@ -57,6 +57,12 @@ records byte hashes for the 15 prepared artifacts. These byte hashes are distinc
 dataset's `canonical_loaded_data_sha256`, which fingerprints the loader's canonical feature/target
 population before splitting.
 
+The protected-attribute names in v1 metadata are not row-level protected data. The fail-closed
+Fairlearn readiness audit is documented in `docs/FAIRLEARN_PUBLIC_CONTEXT_AUDIT.md`; it classifies
+five registry entries as candidates but zero frozen prepared artifacts as executable multi-column
+contexts. Any such experiment requires a separate v2 artifact contract and new preparation in a
+non-overwriting directory.
+
 Prepared artifacts may be evaluated by a later clean execution commit only through the explicit
 `tfoesuu-public-preparation-compatibility-v1` contract. The contract compares the Git blob IDs of:
 

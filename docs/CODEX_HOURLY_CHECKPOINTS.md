@@ -407,3 +407,30 @@
   scientific commit: `a3b1f92121c7c1a5ed4e839dcecc795eb0c8ef33`. Next target: audit whether
   the frozen public sources contain genuine multi-column protected contexts before proposing any
   larger Fairlearn protocol.
+
+## 2026-10-09 16:24 +08:00 — public-v1 Fairlearn context gap closed negatively
+
+- Verified branch `codex/research-audit-20261008` at clean starting SHA
+  `d869599341572709902590bbc34f8ba12973c08b`. PC1 showed desktop/UI GPU clients only; PC2's WSL
+  compute-process query returned no rows. No GPU job was launched because the input gate failed and
+  a surrogate would not answer the scientific question.
+- Audited the preparer, strict validator, frozen registry, and all seven PC2 artifacts read-only.
+  Five registry entries name two protected attributes, but every NPZ has exactly
+  `baseline_probabilities` and `evaluation_labels`. Protected names survive only in JSON metadata;
+  row-level values and held-out indices do not. The compact seven-artifact schema payload SHA-256 is
+  `9154f1cd625be433bcae77f543e085949acec8f813ac4af29656d3b049a36558`.
+- Found a second provenance limitation: the v1 preparer silently drops only protected columns that
+  happen to exist, then records the registry declaration. Thus metadata alone does not prove that
+  all declared columns were loaded. The five datasets are registry candidates, not source-verified
+  executable contexts.
+- Added two falsifying regressions, a strict code/CLI readiness gate, and a separately versioned v2
+  contract specification. The gate validates v1 first and reports **0/7 executable-ready**; with
+  `--require-ready` it exits 2. No dataset, frozen result, or external subject transcript changed.
+- Commands: read-only PC2 `numpy.load(..., allow_pickle=False)`/JSON schema inspection; focused
+  `pytest -q tests/test_prepared_public_validation.py --basetemp .pytest_tmp_fairlearn_context`;
+  full `pytest -q --basetemp .pytest_tmp_full_context`; touched-file Ruff; compileall; paper,
+  bibliography, and inventory checks; explicit CLI fail-closed check. Results: **11 focused and
+  245 full tests passed**, CLI exit 2 as required, Ruff/compileall/paper/bibliography green, and
+  inventory unchanged at 10 artifacts/828 rows. Next action: implement a
+  non-overwriting v2 preparer/validator with exact protected-column presence and row-alignment
+  corruption tests before any outcome run.

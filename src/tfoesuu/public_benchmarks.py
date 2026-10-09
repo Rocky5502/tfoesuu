@@ -357,6 +357,63 @@ def validate_prepared_public_directory(
     }
 
 
+def audit_prepared_v1_fairlearn_contexts(
+    prepared_dir: str | Path,
+    *,
+    expected_source_commit: str | None = None,
+) -> dict:
+    """Audit whether frozen v1 artifacts can drive multi-column Fairlearn.
+
+    This deliberately calls the strict v1 validator first.  The v1 NPZ
+    contract contains only probabilities and labels, so names declared in
+    metadata are not mistaken for row-level protected values.  A future
+    executable-context benchmark needs a separately versioned preparation
+    contract; it must not silently reinterpret or mutate these artifacts.
+    """
+
+    validation = validate_prepared_public_directory(
+        prepared_dir,
+        expected_source_commit=expected_source_commit,
+    )
+    subjects = []
+    registry_candidate_ids = []
+    executable_ready_ids = []
+    for spec in public_benchmark_registry_v1():
+        registry_candidate = len(spec.protected_attributes) >= 2
+        if registry_candidate:
+            registry_candidate_ids.append(spec.benchmark_id)
+        # The strict validator above proves the exact v1 NPZ schema is
+        # {baseline_probabilities, evaluation_labels}.  Neither field carries
+        # a row-level protected context.
+        materialized = False
+        executable_ready = registry_candidate and materialized
+        if executable_ready:
+            executable_ready_ids.append(spec.benchmark_id)
+        subjects.append(
+            {
+                "dataset_id": spec.benchmark_id,
+                "declared_protected_attributes": list(spec.protected_attributes),
+                "registry_multicolumn_candidate": registry_candidate,
+                "row_level_protected_values_materialized": materialized,
+                "fairlearn_executable_ready": executable_ready,
+                "reason": (
+                    "v1 stores protected names in metadata but no row-level values"
+                    if registry_candidate
+                    else "source registry declares fewer than two protected attributes"
+                ),
+            }
+        )
+
+    return {
+        "contract": "tfoesuu-public-fairlearn-context-audit-v1",
+        "prepared_validation": validation,
+        "registry_multicolumn_candidate_ids": registry_candidate_ids,
+        "executable_multicolumn_ids": executable_ready_ids,
+        "ready": bool(executable_ready_ids),
+        "subjects": subjects,
+    }
+
+
 def validate_preparation_source_compatibility(
     preparation_source_commit: str,
     execution_source_commit: str,

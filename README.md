@@ -283,3 +283,5 @@ A separate seven-dataset registry is frozen for the submission-facing finite-ins
 ## Public benchmark commands
 
 After core CI is green, install `requirements-public.txt`, prepare the seven public datasets with `scripts/prepare_public_benchmarks.py`, validate the complete prepared directory read-only with `scripts/validate_prepared_public_benchmarks.py`, run `experiments/gpu_public_replay_sweep.py`, then generate the submission figure with `scripts/render_public_results.py`. The preregistered TBD result templates remain in the repository but are excluded from the compiled manuscript until a validated frozen JSONL result matrix is available. The v1 evaluator duplicates each scalar evaluation probability into a synthetic two-endpoint edge; it does not materialize protected-attribute counterfactual pairs from the source rows.
+
+For Fairlearn executable-context work, run `scripts/audit_fairlearn_public_contexts.py <prepared-dir> --require-ready`. The frozen v1 schema fails this gate by design because protected names are metadata only; see `docs/FAIRLEARN_PUBLIC_CONTEXT_AUDIT.md`.

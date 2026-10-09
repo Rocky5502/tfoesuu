@@ -35,6 +35,9 @@
 1. Narrow theorem scopes can drift into broader fairness/null claims, especially around P17/P20.
 2. The v1 public graph uses synthetic duplicated-probability endpoints, not materialized empirical
    protected-attribute counterfactuals; all claims must retain that limitation.
+   A strict audit now also proves that protected names in v1 metadata cannot substitute for
+   row-level protected values: five registry entries are multi-column candidates, but zero frozen
+   prepared subjects are executable multi-column Fairlearn contexts.
 3. Publication experiments, figures, and PDF admission evidence remain incomplete.
 4. P19's nonadaptive fixed boundary block provably needs `|U| log |U|/d^2`, while sequential LR
    stopping removes the multiplicative log from expected null cost and is within the confidence-only
@@ -50,9 +53,13 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Audit whether the frozen public sources can support genuine multi-column
-protected contexts for a larger Fairlearn matrix; do not manufacture a second
-protected attribute. The direct
+Design a separately versioned, no-overwrite v2 preparation and corruption suite
+for genuine multi-column protected contexts; do not manufacture a second
+protected attribute or reinterpret v1 metadata as data. The frozen-v1 audit is
+closed: five registry entries name two protected attributes, but all seven PC2
+NPZ files contain only probabilities and labels, so zero are executable-context
+ready. The existing preparer also does not prove every declared protected
+column was present. The direct
 parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
 common-tape gates on PC1. The preregistered smoke isolated the documented
 protected-group merge defect: old collapsed four groups to three and differed

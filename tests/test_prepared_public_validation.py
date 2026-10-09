@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 from tfoesuu.public_benchmarks import (
+    audit_prepared_v1_fairlearn_contexts,
     public_benchmark_registry_v1,
     validate_prepared_public_directory,
 )
@@ -117,3 +118,38 @@ def test_strict_validation_rejects_source_commit_mismatch(tmp_path: Path):
             tmp_path,
             expected_source_commit="0" * 40,
         )
+
+
+def test_v1_fairlearn_audit_does_not_treat_metadata_names_as_row_values(
+    tmp_path: Path,
+):
+    _write_prepared_directory(tmp_path)
+
+    report = audit_prepared_v1_fairlearn_contexts(
+        tmp_path,
+        expected_source_commit=SHA,
+    )
+
+    assert report["registry_multicolumn_candidate_ids"] == [
+        "public-adult",
+        "public-german",
+        "public-compas",
+        "public-lawschool",
+        "public-default-credit",
+    ]
+    assert report["executable_multicolumn_ids"] == []
+    assert report["ready"] is False
+    assert all(
+        not subject["row_level_protected_values_materialized"]
+        for subject in report["subjects"]
+    )
+
+
+def test_v1_fairlearn_audit_rejects_an_unvalidated_artifact_directory(
+    tmp_path: Path,
+):
+    _write_prepared_directory(tmp_path)
+    (tmp_path / "public-adult.npz").unlink()
+
+    with pytest.raises(ValueError, match="prepared NPZ IDs"):
+        audit_prepared_v1_fairlearn_contexts(tmp_path, expected_source_commit=SHA)
