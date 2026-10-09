@@ -235,3 +235,5 @@
   `06f2851c2afa6efd08b4a851fd6f874ed5d655544c94b39d0311d37c48d8f930`.
 - No dataset or experiment-result artifact was created or overwritten. Next target: exact adaptive
   constants or bounded-horizon adaptive lower bounds, then the genuine executable-subject gate.
+- Validated theorem/code/manuscript change committed as
+  `2509be2ea7eab5efdfe9c85a14c4741adf599a42`.
