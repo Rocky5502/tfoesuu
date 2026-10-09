@@ -166,3 +166,18 @@ discrepancies for every dataset, including zeros. Four synthetic attacks pass
 and the complete suite is 285 passed. No public transcript exists or was
 generated. Next: connect the approval-gated historical executor to this schema
 and validate only synthetic subject runs; genuine execution remains blocked.
+
+The historical executor now emits that frozen transcript schema at commit
+`655abe5956dd3c12d5438bc0d3e8f8d37df0a5e5`. It rejects source-pair drift,
+invalid provenance hashes, split overlap, duplicate positions, group-cardinality
+drift, malformed seeds, and invalid PMFs before admitting a transcript. Eight
+focused tests and all 289 repository tests pass. In PC2's pinned Python 3.8.20
+runtime, the actual old and new Fairlearn classes both passed a synthetic-only
+end-to-end gate: two common tapes, repeated determinism, exact threshold
+correspondence, and native/canonical execution all succeeded. Canonical JSON
+SHA-256 values were `03f303fabc81c557d34fe601b89fc4d82be7bdc79679bae042dae142f83740df`
+(old) and `af31a5083b8eca463c83b621b854716ac21b77bd1f475c9a6dfd686b78b115e7`
+(new). These differ in pinned version identity and are not public results.
+No public context or outcome was loaded. The engineering blocker is closed;
+fresh user approval is now the sole gate before the bounded seven-dataset
+campaign.

@@ -683,3 +683,29 @@
   public transcript was created and no subject outcome was observed. Next:
   connect the historical executor to the frozen schema using synthetic inputs
   only; genuine execution remains approval-gated.
+
+## 2026-10-10 04:12 +08:00 (2026-10-09 20:12Z) — synthetic subject executor closure
+
+- Verified branch `codex/research-audit-20261008` clean at
+  `e8623a4b6c672bf7512f2cd144043e8910c7e7e4` before work. PC2's protected
+  baseline remained clean at `149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b`.
+  PC1 and PC2 GPUs were at 1% utilization; the listed processes were desktop
+  services, not research jobs. This historical Fairlearn gate is CPU-only.
+- Added executor falsification tests first; the red run failed at the missing
+  `run_dataset_transcript` import. Implemented pinned old/new source identity,
+  immutable lookup, split/alignment/cardinality/seed/PMF checks, two protected
+  modes, common tapes, repeated seeded calls, and exact threshold
+  correspondence. Focused tests: 8 passed; full suite: 289 passed; Ruff and
+  diff checks passed.
+- Committed code as `655abe5956dd3c12d5438bc0d3e8f8d37df0a5e5`.
+  Git bundle SHA-256:
+  `0d4537dfaa334176b371d290b25db6ecafea37562039078a78c16b820755260b`.
+  PC2 cloned it into an isolated checkout and ran the actual pinned old and new
+  `ThresholdOptimizer` classes under Python 3.8.20 on synthetic inputs only.
+  Both versions passed repeated determinism and exact threshold checks for both
+  modes and both tapes. Transcript hashes: old
+  `03f303fabc81c557d34fe601b89fc4d82be7bdc79679bae042dae142f83740df`;
+  new `af31a5083b8eca463c83b621b854716ac21b77bd1f475c9a6dfd686b78b115e7`.
+- No V2.1/V2.2 public context was loaded and no public outcome exists. The
+  executor/validator path is ready; fresh explicit user approval remains
+  required for the bounded seven-dataset campaign.

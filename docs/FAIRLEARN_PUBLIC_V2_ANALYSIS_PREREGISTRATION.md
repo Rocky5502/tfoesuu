@@ -133,3 +133,16 @@ remain unchanged single-attribute negative controls. It computes the maximum
 and mean row-wise PMF discrepancies for every dataset and cannot omit zeros.
 Four synthetic falsification cases cover missing records, repaired-control
 mismatch, tape drift, and prediction drift.
+
+## Synthetic executor verification
+
+The Python-3.8-compatible executor is connected to the transcript schema at
+commit `655abe5956dd3c12d5438bc0d3e8f8d37df0a5e5`. It rejects mismatched pinned
+commits, invalid provenance digests, overlapping or duplicate split positions,
+misaligned protected arrays, native/canonical cardinality drift, malformed
+seeds, and invalid PMFs. PC2 exercised the actual pinned old and new
+`ThresholdOptimizer` implementations under the historical runtime using only a
+synthetic fixture. Both versions passed common-tape, repeat-determinism, and
+exact PMF-threshold correspondence checks in native and canonical modes. This
+is an execution-path validation, not a result: no V2.1/V2.2 context was loaded
+and the authorization fence remains closed.
