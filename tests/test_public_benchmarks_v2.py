@@ -13,6 +13,11 @@ from tfoesuu.public_benchmarks_v2 import (
     training_alignment_sha256,
     validate_prepared_public_v2_directory,
 )
+from tfoesuu.public_score_companion_v2 import (
+    SCORE_NPZ_KEYS,
+    score_alignment_sha256,
+    validate_public_score_companion_v2,
+)
 
 SHA = "583190edf7fe238331dd5123525b168f8a87c6bd"
 
@@ -160,6 +165,52 @@ def v2_directory(tmp_path: Path) -> tuple[Path, Path]:
     return prepared, sources
 
 
+def _write_score_companion(root: Path, prepared: Path) -> None:
+    datasets = []
+    for spec in public_benchmark_registry_v1():
+        with np.load(prepared / f"{spec.benchmark_id}.npz", allow_pickle=False) as source:
+            training_positions = source["training_source_row_positions"]
+            evaluation_positions = source["source_row_positions"]
+            evaluation_scores = source["baseline_probabilities"]
+        training_scores = np.linspace(0.1, 0.8, len(training_positions), dtype=np.float64)
+        arrays = {
+            "training_source_row_positions": training_positions,
+            "evaluation_source_row_positions": evaluation_positions,
+            "training_scores": training_scores,
+            "evaluation_scores": evaluation_scores,
+        }
+        assert set(arrays) == SCORE_NPZ_KEYS
+        np.savez_compressed(root / f"{spec.benchmark_id}.npz", **arrays)
+        prepared_metadata = json.loads(
+            (prepared / f"{spec.benchmark_id}.json").read_text(encoding="utf-8")
+        )
+        metadata = {
+            "schema": "tfoesuu-public-score-companion-v2.2",
+            "dataset_id": spec.benchmark_id,
+            "prepared_training_alignment_sha256": prepared_metadata[
+                "training_alignment_sha256"
+            ],
+            "prepared_evaluation_alignment_sha256": prepared_metadata[
+                "evaluation_alignment_sha256"
+            ],
+            "model_contract": "V2.1 logistic regression, clipped to [0.1,0.8]",
+            "score_alignment_sha256": score_alignment_sha256(**arrays),
+        }
+        (root / f"{spec.benchmark_id}.json").write_text(
+            json.dumps(metadata, sort_keys=True), encoding="utf-8"
+        )
+        datasets.append(metadata)
+    manifest = {
+        "schema": "tfoesuu-public-score-companion-v2.2",
+        "prepared_manifest_sha256": _sha256(prepared / "prepared_v2_manifest.json"),
+        "preparation_source_commit": SHA,
+        "datasets": datasets,
+    }
+    (root / "score_companion_manifest.json").write_text(
+        json.dumps(manifest, sort_keys=True), encoding="utf-8"
+    )
+
+
 def test_v2_validator_accepts_aligned_complete_artifacts(v2_directory):
     prepared, sources = v2_directory
 
@@ -180,6 +231,64 @@ def test_v2_validator_accepts_aligned_complete_artifacts(v2_directory):
     assert report["source_bytes_verified"] is True
     assert report["readiness_scope"] == "representation-only"
     assert report["outcome_ready"] is False
+
+
+def test_score_companion_accepts_complete_aligned_scores(v2_directory, tmp_path):
+    prepared, _ = v2_directory
+    companion = tmp_path / "score_companion"
+    companion.mkdir()
+    _write_score_companion(companion, prepared)
+
+    report = validate_public_score_companion_v2(companion, prepared)
+
+    assert report["dataset_ids"] == sorted(
+        spec.benchmark_id for spec in public_benchmark_registry_v1()
+    )
+    assert report["evaluation_scores_reproduce_v2"] is True
+    assert report["outcome_ready"] is False
+
+
+def test_score_companion_rejects_training_score_reorder(v2_directory, tmp_path):
+    prepared, _ = v2_directory
+    companion = tmp_path / "score_companion"
+    companion.mkdir()
+    _write_score_companion(companion, prepared)
+    path = companion / "public-adult.npz"
+    with np.load(path, allow_pickle=False) as stored:
+        arrays = {name: stored[name] for name in stored.files}
+    arrays["training_scores"] = arrays["training_scores"][::-1]
+    np.savez_compressed(path, **arrays)
+
+    with pytest.raises(ValueError, match="score alignment"):
+        validate_public_score_companion_v2(companion, prepared)
+
+
+def test_score_companion_rejects_evaluation_score_drift(v2_directory, tmp_path):
+    prepared, _ = v2_directory
+    companion = tmp_path / "score_companion"
+    companion.mkdir()
+    _write_score_companion(companion, prepared)
+    path = companion / "public-meps21.npz"
+    with np.load(path, allow_pickle=False) as stored:
+        arrays = {name: stored[name] for name in stored.files}
+    arrays["evaluation_scores"] = arrays["evaluation_scores"].copy()
+    arrays["evaluation_scores"][0] += 0.01
+    np.savez_compressed(path, **arrays)
+
+    with pytest.raises(ValueError, match="evaluation scores do not reproduce"):
+        validate_public_score_companion_v2(companion, prepared)
+
+
+def test_score_companion_rejects_prepared_manifest_drift(v2_directory, tmp_path):
+    prepared, _ = v2_directory
+    companion = tmp_path / "score_companion"
+    companion.mkdir()
+    _write_score_companion(companion, prepared)
+    manifest = prepared / "prepared_v2_manifest.json"
+    manifest.write_text(manifest.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="prepared manifest SHA-256"):
+        validate_public_score_companion_v2(companion, prepared)
 
 
 def test_v2_validator_rejects_missing_protected_column(v2_directory):
