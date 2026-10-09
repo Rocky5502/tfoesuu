@@ -70,7 +70,7 @@ else
       https://releases.astral.sh/github/uv/releases/download/0.12.20/uv-installer.sh | \
       env UV_UNMANAGED_INSTALL="$uv_root" sh
   fi
-  [[ "$($uv_root/uv --version)" == "uv 0.12.20" ]]
+  [[ "$($uv_root/uv --version)" == "uv 0.12.20"* ]]
   mkdir -p "$runtime"
   export UV_PYTHON_INSTALL_DIR="$runtime/python"
   "$uv_root/uv" python install 3.8.20
