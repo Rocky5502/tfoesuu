@@ -225,5 +225,10 @@ control-coverage extremes (0 and 1). The exact mixed lower program now has
 proved two-term coefficients, but intermediate topologies cannot be represented
 by one scalar coverage fraction. A hybrid upper matches their finite-topology
 `d`-orders but still requires the explicit groups and costs and does not close
-exact constants. They remain in the topology search rather than the v1 rho-only
+exact constants. `boundary_familywise_fixed_design_lower_bound` reproduces the
+rankwise chi-square lower floors for disjoint boundary channels, while
+`boundary_familywise_sequential_bounds` reproduces the exact two-sided-SPRT KL,
+overshoot, and expected-cost bounds. The fixed allocation has a necessary
+`log |U|` factor; the unbounded sequential design removes it from expected null
+cost. Mixed fixtures remain in the topology search rather than the v1 rho-only
 grid. Generated rows are parameter specifications, never observed performance values.

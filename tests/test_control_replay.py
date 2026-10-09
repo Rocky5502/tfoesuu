@@ -5,6 +5,8 @@ import numpy as np
 import pytest
 
 from tfoesuu.control_replay import (
+    boundary_familywise_fixed_design_lower_bound,
+    boundary_familywise_sequential_bounds,
     control_replay_information_lower_bound,
     matched_control_contrast_witness,
     matched_control_replay_schedule,
@@ -669,6 +671,108 @@ def test_mixed_control_hybrid_schedule_splits_familywise_boundary_error():
     assert tuple(schedule.counts) == (expected_rounds,) * 3
     assert schedule.residual_control_cover_cost == pytest.approx(0.0)
     assert schedule.control_scale == 0
+
+
+def test_boundary_familywise_fixed_design_uses_exact_transcript_chi_square():
+    p, s, tau, d, beta = 0.20, 0.10, 0.10, 0.01, 0.05
+    old = (p, p)
+    null_new = (p + s + tau, p + s)
+    alt_new = (p + s + tau + d, p + s)
+    q0 = _shared_tape_transcript_distribution(old, null_new)
+    q1 = _shared_tape_transcript_distribution(old, alt_new)
+    chi_square = sum(q1[state] ** 2 / q0[state] for state in q0) - 1.0
+
+    bound = boundary_familywise_fixed_design_lower_bound(
+        8,
+        p=p,
+        shared_patch=s,
+        fairness_tolerance=tau,
+        d=d,
+        beta=beta,
+    )
+
+    remainder = 1.0 - p - s - tau
+    assert chi_square == pytest.approx(d * d * (1.0 / tau + 1.0 / remainder))
+    assert math.expm1(bound.transcript_renyi2) == pytest.approx(chi_square)
+
+
+def test_boundary_familywise_fixed_design_has_rankwise_logarithmic_floors():
+    candidates, beta = 8, 0.05
+    bound = boundary_familywise_fixed_design_lower_bound(
+        candidates,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=beta,
+        unit_cost=2.5,
+    )
+    decision_chi_square = (1.0 - 2.0 * beta) ** 2 / (beta * (1.0 - beta))
+    expected = np.log1p(decision_chi_square * np.arange(1, candidates + 1))
+    expected /= bound.transcript_renyi2
+
+    assert np.all(np.diff(bound.sorted_query_count_floors) > 0.0)
+    assert bound.sorted_query_count_floors == pytest.approx(expected)
+    assert bound.total_query_floor == pytest.approx(expected.sum())
+    assert bound.total_cost_floor == pytest.approx(2.5 * expected.sum())
+
+
+def test_boundary_familywise_fixed_design_is_quadratic_in_small_gap():
+    common = {
+        "candidates": 8,
+        "p": 0.20,
+        "shared_patch": 0.10,
+        "fairness_tolerance": 0.10,
+        "beta": 0.05,
+    }
+    coarse = boundary_familywise_fixed_design_lower_bound(d=2e-4, **common)
+    fine = boundary_familywise_fixed_design_lower_bound(d=1e-4, **common)
+
+    assert fine.total_query_floor / coarse.total_query_floor == pytest.approx(4.0, rel=2e-3)
+
+
+def test_boundary_familywise_sequential_bounds_match_exact_kl_and_costs():
+    costs = np.array([1.0, 2.0, 3.0])
+    p, s, tau, d, beta = 0.20, 0.10, 0.10, 0.01, 0.05
+    bound = boundary_familywise_sequential_bounds(
+        costs,
+        p=p,
+        shared_patch=s,
+        fairness_tolerance=tau,
+        d=d,
+        beta=beta,
+    )
+
+    assert bound.upper_likelihood_threshold == pytest.approx(len(costs) / beta)
+    assert bound.lower_likelihood_threshold == pytest.approx(beta)
+    assert bound.null_to_alternative_kl == pytest.approx(
+        threshold_fairness_replay_kl(p, s, tau, d)
+    )
+    assert bound.null_expected_total_cost_upper == pytest.approx(
+        bound.null_expected_rounds_per_candidate_upper * costs.sum()
+    )
+    expected_alternative = (
+        bound.null_expected_rounds_per_candidate_upper * (costs.sum() - costs)
+        + bound.changed_expected_rounds_upper * costs
+    )
+    assert bound.alternative_expected_cost_upper == pytest.approx(expected_alternative)
+
+
+def test_boundary_sequential_null_arm_bound_avoids_candidate_log_factor():
+    common = {
+        "p": 0.20,
+        "shared_patch": 0.10,
+        "fairness_tolerance": 0.10,
+        "d": 0.01,
+        "beta": 0.05,
+    }
+    one = boundary_familywise_sequential_bounds([1.0], **common)
+    many = boundary_familywise_sequential_bounds([1.0] * 20, **common)
+
+    assert many.null_expected_rounds_per_candidate_upper == pytest.approx(
+        one.null_expected_rounds_per_candidate_upper
+    )
+    assert many.changed_expected_rounds_upper > one.changed_expected_rounds_upper
 
 
 def test_mixed_control_hybrid_schedule_rejects_unobservable_candidate():

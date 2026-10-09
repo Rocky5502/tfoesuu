@@ -14,10 +14,14 @@ from .certificate import (
     threshold_residual_margins,
 )
 from .control_replay import (
+    BoundaryFamilywiseFixedDesignLowerBound,
+    BoundaryFamilywiseSequentialBounds,
     ControlReplayInformationLowerBound,
     ControlReplaySchedule,
     FractionalControlCover,
     MixedControlReplaySchedule,
+    boundary_familywise_fixed_design_lower_bound,
+    boundary_familywise_sequential_bounds,
     control_replay_information_lower_bound,
     matched_control_contrast_witness,
     matched_control_replay_schedule,
@@ -80,6 +84,8 @@ from .threshold_replay_benchmarks import (
 __all__ = [
     "AllocationResult",
     "BernoulliCommonUniformPair",
+    "BoundaryFamilywiseFixedDesignLowerBound",
+    "BoundaryFamilywiseSequentialBounds",
     "CertificatePruningResult",
     "ControlReplayInformationLowerBound",
     "ControlReplaySchedule",
@@ -112,6 +118,8 @@ __all__ = [
     "ThresholdReplayPhaseSpec",
     "active_vertex_count",
     "audit_finite_nuisance_information",
+    "boundary_familywise_fixed_design_lower_bound",
+    "boundary_familywise_sequential_bounds",
     "control_replay_information_lower_bound",
     "control_replay_structural_cases_v1",
     "counterfactual_replay_bounds",

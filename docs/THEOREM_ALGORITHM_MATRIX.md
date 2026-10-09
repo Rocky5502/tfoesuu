@@ -322,9 +322,12 @@ alternative is entirely unobservable.
 For a mixed topology, let U be the unmatched candidates. The implemented hybrid
 allocates beta/|U| to a P18 test on each cheapest boundary-only group and runs the
 matched-control schedule on A minus U. For fixed finite topology this matches the
-d^-2/d^-1 orders and boundary-minimum/residual-cover geometry. It does not match
-exact two-term constants, close `log |U|`, or support arbitrary heterogeneous
-composite nulls.
+d^-2/d^-1 orders and boundary-minimum/residual-cover geometry. The fixed boundary
+allocation necessarily pays Omega(|U| log |U|/d^2) in the disjoint unit-cost
+subfamily. A separate two-sided sequential LR bound removes the multiplicative
+log |U| from expected null cost, at the price of an unbounded horizon and an
+additive log |U| delay on the changed channel. Exact adaptive constants and
+arbitrary heterogeneous composite nulls remain unsupported.
 
 Frozen structural fixtures:
 `data/control_replay_structural_cases_v1.jsonl` (6 rows).

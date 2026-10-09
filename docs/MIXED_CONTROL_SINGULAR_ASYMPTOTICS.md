@@ -1,7 +1,7 @@
 # Mixed-control singular asymptotics
 
 Status: **PROVED + AUDITED for the exact P19 information lower program;
-ORDER-MATCHING HYBRID UPPER for each fixed finite topology**.
+ORDER-MATCHING HYBRID UPPER; FIXED/SEQUENTIAL FAMILYWISE GAP RESOLVED**.
 
 For fixed \(\tau>0\), let \(r=1-p-s-\tau\). The exact P19 information
 channels expand as
@@ -100,8 +100,35 @@ fully controlled and fully boundary-only extremes, and an unobservable
 candidate. A frozen counterexample test prevents accidental extension of the
 matched-control predicate to an arbitrary composite null.
 
+## Fixed allocation versus sequential expected cost
+
+For `m=|U|` disjoint unit-cost boundary channels, any nonadaptive deterministic
+allocation with familywise type-I and pointwise type-II errors at most beta has
+
+    sum_x n_x >= sum_{k=1}^m log(1 + D_beta k) / rho2,
+
+with `D_beta=(1-2 beta)^2/[beta(1-beta)]` and
+`rho2=log(1+d^2(1/tau+1/r))`. This is `Omega(m log m/d^2)` at fixed interior
+parameters, so the fixed hybrid's multiplicity penalty is not just a loose
+union bound.
+
+For the exact P19 simple null, a two-sided sequential likelihood-ratio tester
+with upper boundary `m/beta` and lower boundary `beta` has global type-I and
+pointwise type-II error at most beta. Its expected null rounds per boundary
+channel are at most
+
+    [log(1/beta) + log(r/(r-d))] / K_bnd,
+
+independent of `m`. The alternative channel uses at most
+
+    [log(m/beta) + log(1+d/tau)] / KL(P1||P0)
+
+expected rounds. The stopping horizon is unbounded; these statements do not
+extend to arbitrary composite nulls.
+
 ## Remaining target
 
-Close the exact two-term minimax constants and the possible `log |U|` gap. The
-hybrid theorem does not promote the general P20 conjecture or cover unknown
-background levels, nonexchangeable controls, or simultaneous alternatives.
+Close exact adaptive minimax constants and audit bounded-horizon adaptive
+allocations. The hybrid theorem does not promote the general P20 conjecture or
+cover unknown background levels, nonexchangeable controls, or simultaneous
+alternatives.

@@ -74,12 +74,29 @@ Therefore the theorem must retain:
 - global type-I allocation over all boundary tests;
 - observability of every unmatched candidate.
 
-## What remains open
+## Familywise gap resolution
 
-The pairwise-KL lower program has no `log m` term, while the hybrid uses a union
-bound. The audit proves matching (d^{-2})/(d^{-1}) orders and topology cost
-functionals for fixed finite m, not exact minimax constants or optimal dependence
-on the number of unmatched alternatives.
+The fixed-design `log m` factor is real. For deterministic boundary-channel
+counts `n_(1) <= ... <= n_(m)`, a uniform mixture over the `k` least-sampled
+singleton alternatives and exact transcript chi-square give
+
+    n_(k) >= log(1 + D_beta k) / rho2,
+
+where `D_beta=(1-2 beta)^2/[beta(1-beta)]` and
+`rho2=log(1+d^2(1/tau+1/r))`. Summing proves an
+`Omega(m log m/d^2)` unit-cost lower bound for nonadaptive fixed allocations.
+
+An unbounded-horizon sequential construction separates this from expected null
+cost. Process exact per-candidate likelihood ratios with upper boundary
+`m/beta` and lower boundary `beta`. Ville's inequality controls global type I;
+the reciprocal likelihood-ratio martingale controls each pointwise miss. Wald
+bounds give null rounds per channel
+
+    [log(1/beta) + log(r/(r-d))] / K_bnd,
+
+independent of `m`; only the changed channel retains additive `log m` delay.
+Thus topology-size dependence is resolved for these two regimes. Exact adaptive
+minimax constants and bounded-horizon adaptive allocations remain open.
 
 ## Executable guards
 
@@ -89,8 +106,10 @@ on the number of unmatched alternatives.
   checks a genuinely mixed topology.
 - `test_mixed_control_hybrid_schedule_splits_familywise_boundary_error` checks
   the all-boundary extreme and the `delta/m` allocation.
+- familywise fixed-design tests verify the exact one-round chi-square and every
+  rankwise lower floor; sequential-bound tests verify both KL orientations,
+  cost aggregation, and null per-channel independence from `m`.
 - `test_matched_control_statistic_is_not_valid_for_arbitrary_composite_null`
   freezes the successful null-scope attack.
 - planner tests ensure the public API now emits boundary schedules rather than
   falsely rejecting observable mixed topologies or manufacturing linear cost.
-

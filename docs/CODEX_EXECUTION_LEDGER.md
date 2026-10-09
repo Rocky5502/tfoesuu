@@ -36,8 +36,9 @@
 2. The v1 public graph uses synthetic duplicated-probability endpoints, not materialized empirical
    protected-attribute counterfactuals; all claims must retain that limitation.
 3. Publication experiments, figures, and PDF admission evidence remain incomplete.
-4. P19's hybrid upper matches mixed finite-topology d-orders, but exact two-term constants and the
-   possible `log |U|` topology-size gap remain open; no arbitrary composite-null extension is valid.
+4. P19's nonadaptive fixed boundary block provably needs `|U| log |U|/d^2`, while sequential LR
+   stopping removes the multiplicative log from expected null cost. Exact adaptive constants and
+   bounded-horizon adaptive allocation remain open; no arbitrary composite-null extension is valid.
 5. Repository-wide Ruff still has pre-existing findings outside the touched files.
 
 Resolved during this session: raw frozen-manifest SHA-256 values were not comparable across PC1 and
@@ -46,8 +47,8 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Audit the new P19 hybrid upper independently, quantify or close its exact-constant
-and `|U|` gaps, and continue feasibility work on a genuine evolving executable
+Audit P19's remaining exact adaptive constants and bounded-horizon allocation,
+and continue feasibility work on a genuine evolving executable
 subject without contaminating frozen v1 evidence. The strict prepared-subject
 validator, dual-GPU public exploratory smoke, portable provenance repair, mixed
 lower expansion, and finite-topology order-matching hybrid are complete. The

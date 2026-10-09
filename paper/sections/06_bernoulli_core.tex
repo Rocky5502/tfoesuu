@@ -663,6 +663,41 @@ topology and fixed \(\tau>0\), the mixed lower and upper bounds match the
 \(d^{-2}\) leading order and the boundary-minimum/control-cover cost geometry
 up to constants.  This does not match the exact two-term coefficients or close
 the dependence on \(m\).
+
+\item The multiplicative \(\log m\) term can be removed from the
+\emph{expected null cost} by allowing an unbounded sequential stopping time.
+Define the reverse boundary divergence
+\[
+J_{\rm bnd}(\tau,d)
+=
+(\tau+d)\log\frac{\tau+d}{\tau}
++(r-d)\log\frac{r-d}{r},
+\]
+and
+\[
+H_0=
+\frac{\log(1/\delta)+\log(r/(r-d))}{K_{\rm bnd}(\tau,d)},
+\qquad
+H_1=
+\frac{\log(m/\delta)+\log(1+d/\tau)}{J_{\rm bnd}(\tau,d)}.
+\]
+There is a sequential hybrid tester with type-I error and every pointwise
+type-II error at most \(\delta\), whose expected null declared cost is at most
+\[
+H_0\sum_{x\in U}\bar c_x
++L C_{\rm ctrl}^{A\setminus U}
++\sum_{i:q_i^\star>0}c_i.
+\]
+Under singleton alternative \(x\in U\), its expected boundary-block cost is
+at most
+\[
+H_0\sum_{z\in U\setminus\{x\}}\bar c_z+H_1\bar c_x.
+\]
+Thus the boundary block has expected null cost
+\(O(d^{-2}\log(1/\delta)\sum_{x\in U}\bar c_x)\), without a
+multiplicative \(\log m\); the changed channel still has additive
+\(\log m\) delay.  This statement concerns the exact P19 simple null and
+singleton alternatives, and does not give a bounded deterministic horizon.
 \end{enumerate}
 \end{theorem}
 
@@ -745,6 +780,73 @@ candidates cannot contain another high vertex, so they do not create a hidden
 cross-coverage term.  The construction relies on the exact equal-high P19 null
 and singleton alternatives; it is not valid for an arbitrary heterogeneous
 composite null or simultaneous multi-candidate changes.
+
+For (vi), on the cheapest boundary group for each \(x\in U\), let \(L_x(t)\)
+be the likelihood ratio of alternative \(x\) against the exact P19 null after
+\(t\) fresh rounds.  Process these channels in any fixed order, rejecting if
+the active likelihood ratio reaches \(m/\delta\), moving to the next channel
+if it reaches \(\delta\), and accepting after every channel has crossed its
+lower boundary.  Under the null, Ville's inequality and a union bound give
+type-I error at most \(m(\delta/m)=\delta\).  Under alternative \(x\),
+\(1/L_x\) is a nonnegative martingale, so the probability of crossing the
+lower boundary, and hence the miss probability, is at most \(\delta\).
+
+The log-likelihood increments are bounded.  Their null mean is
+\(-K_{\rm bnd}\), and a lower-boundary crossing overshoots by at most
+\(\log(r/(r-d))\).  Wald's identity therefore gives
+\(\E_0T_x\le H_0\).  Under alternative \(x\), the mean increment is
+\(J_{\rm bnd}\), and an upper crossing overshoots by at most
+\(\log(1+d/\tau)\), giving \(\E_xT_x\le H_1\).  Summing costs and adjoining
+the residual zero-type-I control schedule proves the displayed bounds.
+\end{proof}
+
+\begin{proposition}[A fixed-allocation familywise penalty]
+\label{prop:boundary-familywise-fixed}
+Consider \(m\) disjoint, unit-cost P19 boundary channels, and suppose a
+nonadaptive design takes deterministic query counts \(n_1,\ldots,n_m\).
+If a test has type-I error and every pointwise type-II error at most
+\(\delta\), write \(n_{(1)}\le\cdots\le n_{(m)}\).  Then, for every
+\(k\in\{1,\ldots,m\}\),
+\[
+n_{(k)}
+\ge
+\frac{\log(1+D_\delta k)}{\rho_2},
+\qquad
+D_\delta=\frac{(1-2\delta)^2}{\delta(1-\delta)},
+\qquad
+\rho_2=\log\!\left(1+d^2\left(\frac1\tau+\frac1r\right)\right).
+\]
+Consequently,
+\[
+\sum_{x=1}^m n_x
+\ge
+\frac1{\rho_2}\sum_{k=1}^m\log(1+D_\delta k)
+=\Omega\!\left(\frac{m\log m}{d^2}\right)
+\]
+for fixed \(\delta,\tau,r\).  Hence the \(\log m\) factor in the fixed
+boundary allocation of part~(v) is not merely a union-bound artifact.  The
+proposition does not cover adaptive allocations; part~(vi) exploits precisely
+that distinction for expected null cost.
+\end{proposition}
+
+\begin{proof}
+For one boundary round, the null masses \((\tau,r)\) change to
+\((\tau+d,r-d)\), so its chi-square divergence is
+\(d^2(1/\tau+1/r)\).  After \(n_x\) independent rounds the divergence is
+\(\exp(\rho_2n_x)-1\).  Fix the \(k\) least-sampled channels and mix their
+singleton alternatives uniformly.  Disjointness makes the mixture
+chi-square divergence from the null
+\[
+\frac1{k^2}\sum_{j=1}^k
+\bigl(\exp(\rho_2n_{(j)})-1\bigr)
+\le
+\frac{\exp(\rho_2n_{(k)})-1}{k}.
+\]
+Data processing through the terminal decision lower-bounds the same divergence
+by the Bernoulli decision divergence
+\(D_\delta\), because rejection has probability at most \(\delta\) under the
+null and at least \(1-\delta\) under the mixture.  Rearranging gives the
+rankwise bound; summing over \(k\) proves the claim.
 \end{proof}
 
 \begin{corollary}[Replay topology changes the small-effect exponent]

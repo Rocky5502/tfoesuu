@@ -111,6 +111,32 @@ class MixedControlReplaySchedule:
     additive_control_rounding_cap: float
 
 
+@dataclass(frozen=True)
+class BoundaryFamilywiseFixedDesignLowerBound:
+    """Familywise lower bound for disjoint unit-cost P19 boundary channels."""
+
+    candidates: int
+    transcript_renyi2: float
+    sorted_query_count_floors: np.ndarray
+    total_query_floor: float
+    total_cost_floor: float
+
+
+@dataclass(frozen=True)
+class BoundaryFamilywiseSequentialBounds:
+    """Two-sided-SPRT bounds for disjoint P19 boundary channels."""
+
+    candidates: int
+    upper_likelihood_threshold: float
+    lower_likelihood_threshold: float
+    null_to_alternative_kl: float
+    alternative_to_null_kl: float
+    null_expected_rounds_per_candidate_upper: float
+    changed_expected_rounds_upper: float
+    null_expected_total_cost_upper: float
+    alternative_expected_cost_upper: np.ndarray
+
+
 def _validate_bipartite_threshold_family(
     graph: GraphSpec,
     high_vertices: Iterable[int],
@@ -622,6 +648,137 @@ def mixed_control_replay_schedule(
         residual_control_cover_cost=residual_control_cover_cost,
         control_scale=control_scale,
         additive_control_rounding_cap=additive_control_rounding_cap,
+    )
+
+
+def boundary_familywise_fixed_design_lower_bound(
+    candidates: int,
+    *,
+    p: float,
+    shared_patch: float,
+    fairness_tolerance: float,
+    d: float,
+    beta: float,
+    unit_cost: float = 1.0,
+) -> BoundaryFamilywiseFixedDesignLowerBound:
+    """Lower bound the fixed-design cost of m disjoint boundary alternatives.
+
+    This scoped subfamily has exactly one independent boundary-only transcript
+    channel per candidate.  Under alternative i, only channel i changes.  For
+    any subset of k candidates, the uniform mixture must be separated from the
+    null by total variation at least 1-2*beta.  Its chi-square divergence is
+
+        k^-2 * sum_i (exp(rho2*n_i) - 1),
+
+    where rho2 is the one-query order-2 Renyi divergence and n_i is the fixed
+    query count for channel i. Data processing through the reject/accept event
+    requires chi-square divergence at least
+
+        D_beta = (1-2*beta)^2 / (beta*(1-beta)).
+
+    Sorting the counts and applying the inequality to every prefix gives
+
+        n_(k) >= log(1 + D_beta*k) / rho2.
+
+    The result proves the m*log(m)/d^2 familywise term for fixed positive
+    tolerance and fixed beta.  It does not cover adaptive designs, shared
+    groups, heterogeneous costs, or broader composite nulls.
+    """
+
+    if isinstance(candidates, bool) or not isinstance(candidates, int) or candidates < 1:
+        raise ValueError("candidates must be a positive integer")
+    if not (math.isfinite(unit_cost) and unit_cost > 0.0):
+        raise ValueError("unit_cost must be finite and positive")
+    if fairness_tolerance <= 0.0:
+        raise ValueError("familywise boundary lower bound requires fixed tolerance>0")
+    threshold_fairness_replay_bounds(
+        p,
+        shared_patch,
+        fairness_tolerance,
+        d,
+        beta,
+    )
+
+    r = 1.0 - p - shared_patch - fairness_tolerance
+    transcript_renyi2 = math.log1p(
+        d * d * (1.0 / fairness_tolerance + 1.0 / r)
+    )
+    separation = (1.0 - 2.0 * beta) ** 2 / (beta * (1.0 - beta))
+    ranks = np.arange(1, candidates + 1, dtype=float)
+    floors = np.log1p(separation * ranks) / transcript_renyi2
+    total = float(floors.sum())
+    return BoundaryFamilywiseFixedDesignLowerBound(
+        candidates=candidates,
+        transcript_renyi2=transcript_renyi2,
+        sorted_query_count_floors=floors,
+        total_query_floor=total,
+        total_cost_floor=unit_cost * total,
+    )
+
+
+def boundary_familywise_sequential_bounds(
+    costs: Sequence[float],
+    *,
+    p: float,
+    shared_patch: float,
+    fairness_tolerance: float,
+    d: float,
+    beta: float,
+) -> BoundaryFamilywiseSequentialBounds:
+    """Bound a familywise two-sided SPRT on exact P19 boundary transcripts.
+
+    For m disjoint singleton alternatives, process one likelihood ratio per
+    candidate.  Reject if any ratio reaches A=m/beta; move to the next candidate
+    when its ratio reaches B=beta; accept after all m lower crossings.  Ville's
+    inequality gives global type-I and pointwise type-II errors at most beta.
+
+    The null drift is -KL(P0||P1), so a bounded-overshoot Wald argument makes
+    the expected null rounds per candidate independent of A and hence of m.
+    The changed channel retains a log(m/beta) delay.  Stopping time is unbounded;
+    deterministic fixed designs remain subject to the familywise log(m) lower
+    bound above.
+    """
+
+    c = np.asarray(costs, dtype=float)
+    if c.ndim != 1 or len(c) < 1 or np.any(c <= 0.0) or np.any(~np.isfinite(c)):
+        raise ValueError("costs must be a nonempty vector of finite positive values")
+    if fairness_tolerance <= 0.0:
+        raise ValueError("familywise sequential bound requires fixed tolerance>0")
+    threshold_fairness_replay_bounds(
+        p,
+        shared_patch,
+        fairness_tolerance,
+        d,
+        beta,
+    )
+
+    tau = float(fairness_tolerance)
+    r = 1.0 - p - shared_patch - tau
+    null_to_alt = tau * math.log(tau / (tau + d)) + r * math.log(r / (r - d))
+    alt_to_null = (tau + d) * math.log((tau + d) / tau) + (r - d) * math.log(
+        (r - d) / r
+    )
+    m = len(c)
+    upper = m / beta
+    lower = beta
+    null_rounds = (
+        math.log(1.0 / beta) + math.log(r / (r - d))
+    ) / null_to_alt
+    changed_rounds = (
+        math.log(m / beta) + math.log1p(d / tau)
+    ) / alt_to_null
+    total_cost = float(c.sum())
+    alternative_cost = null_rounds * (total_cost - c) + changed_rounds * c
+    return BoundaryFamilywiseSequentialBounds(
+        candidates=m,
+        upper_likelihood_threshold=upper,
+        lower_likelihood_threshold=lower,
+        null_to_alternative_kl=null_to_alt,
+        alternative_to_null_kl=alt_to_null,
+        null_expected_rounds_per_candidate_upper=null_rounds,
+        changed_expected_rounds_upper=changed_rounds,
+        null_expected_total_cost_upper=null_rounds * total_cost,
+        alternative_expected_cost_upper=alternative_cost,
     )
 
 

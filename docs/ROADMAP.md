@@ -227,6 +227,12 @@ topology search rather than a misleading rho-only sweep. The v1 specification li
 `src/tfoesuu/replay_phase_benchmarks.py` and is guarded against accidental
 claim expansion by `tests/test_replay_phase_benchmarks.py`.
 
+The apparent familywise `log |U|` gap is now split by design class: exact
+chi-square mixtures prove it necessary for nonadaptive fixed boundary
+allocations, while a two-sided sequential LR construction removes the
+multiplicative log from expected null cost. Exact adaptive constants and
+bounded-horizon adaptive allocation remain research targets.
+
 Replay fidelity is recorded as a field but is frozen at 1.0 in v1.  No theorem
 currently supports a partial-fidelity exponent, so gamma-like replay-quality
 sweeps must not be interpreted as predicted phase transitions until a formal

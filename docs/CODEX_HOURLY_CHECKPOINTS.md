@@ -205,3 +205,33 @@
 - GPU state remained idle for research workloads on both PCs. No new numerical sweep was warranted
   by this theorem/proof task. Next scientific target: close or lower-bound the `log |U|` dependence
   and exact constants without weakening the composite-null scope fence.
+
+## 2026-10-09 08:20 +08:00 — P19 familywise fixed/sequential resolution
+
+- Started from clean branch `codex/research-audit-20261008` at
+  `33fefcee4a7bf2d77f2547fe759a8eedeed79254`. PC1's compute-process query showed only desktop/UI
+  processes; the read-only PC2 WSL command `/usr/lib/wsl/lib/nvidia-smi
+  --query-compute-apps=pid,process_name,used_gpu_memory --format=csv,noheader` returned no rows.
+  No GPU sweep was scientifically warranted for an exact proof/API task.
+- Resolved the apparent P19 `log |U|` gap by separating design classes. For `m` disjoint boundary
+  channels, deterministic nonadaptive counts satisfy the exact rankwise floors
+  `n_(k) >= log(1+D_beta k)/rho2`, proving `Omega(m log m/d^2)` unit-cost complexity. A two-sided
+  sequential LR test with thresholds `m/beta` and `beta` has familywise type-I and pointwise
+  type-II error at most `beta`; its expected null rounds per channel are independent of `m`, while
+  the changed channel retains additive `log m` delay and the stopping horizon is unbounded.
+- Implemented exact chi-square, both KL orientations, bounded-overshoot expected-cost formulas,
+  and public API exports. Added five falsifying/identity tests. At `p=.2,s=.1,tau=.1,d=.01,beta=.05`,
+  the certified null per-channel sequential bound stayed `5445.138735274` for `m=1,4,16,64`, while
+  the changed-channel bound rose from `5442.743003918` to `12765.752036510`.
+- Manuscript theorem part (vi), fixed-allocation proposition and proof, abstract, introduction,
+  results table, open-problem scope, proof/claim ledgers, roadmap, crosswalk, and reproducibility
+  guide now state the fixed-versus-sequential distinction and retain the exact P19 scope fence.
+- Exact validation: `.venv\\Scripts\\python.exe -m pytest --basetemp
+  "G:\\TFOESUU Project\\.tmp-pytest-codex-20261009\\full-familywise" -q` -> **223 passed**;
+  touched-file Ruff -> pass; `python -m compileall -q src experiments scripts` -> pass; manuscript
+  static check -> 48 labels/50 citations; bibliography policy -> pass; inventory -> 10 frozen
+  artifacts/828 rows. The LaTeX auto path first hit the known Windows decoding/toolchain problem;
+  explicit bundled Tectonic compiled a 43-page PDF successfully, temporary PDF SHA-256
+  `06f2851c2afa6efd08b4a851fd6f874ed5d655544c94b39d0311d37c48d8f930`.
+- No dataset or experiment-result artifact was created or overwritten. Next target: exact adaptive
+  constants or bounded-horizon adaptive lower bounds, then the genuine executable-subject gate.
