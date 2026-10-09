@@ -258,3 +258,30 @@ pipeline fail closed at the corresponding admission level. At the frozen
 candidate commit, `baseline` passes while `evolving` and `replay` return status
 2. Source eligibility is not execution authorization and is not manuscript
 evidence.
+
+## Fairlearn evolving-subject v2 smoke
+
+The accepted candidate and preregistered protocol are recorded in
+`docs/FAIRLEARN_EXECUTABLE_V2_PREREGISTRATION.md`. Source identity is checked
+before any container execution:
+
+```powershell
+python scripts/audit_fairlearn_evolving_pair.py `
+  "G:\TFOESUU Project\external_sources\fairlearn-old-e8cc637" `
+  "G:\TFOESUU Project\external_sources\fairlearn-new-0cf59ec" `
+  --require source
+```
+
+Build `external_subjects/fairlearn_v2/Dockerfile` and mount exactly one clean
+source tree read-only at `/subject`. Run `probe.py` once with `--version old`
+and once with `--version new`; preserve JSON outside Git. Validate without
+rerunning the subject:
+
+```powershell
+python scripts/validate_fairlearn_v2_results.py OLD.json NEW.json
+```
+
+The validator requires the exact revisions, package versions, rows, seeds,
+repeatability, threshold correspondence, cross-version common tapes, and the
+new revision's canonical-combination control. Generated transcripts are
+exploratory evidence and never overwrite a prior output directory.

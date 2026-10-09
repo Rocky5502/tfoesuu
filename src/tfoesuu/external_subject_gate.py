@@ -42,6 +42,79 @@ class ThemisGateDecision:
     reasons: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ExternalEvolutionEvidence:
+    """Evidence for admitting a chronological external software pair."""
+
+    old_commit_matches: bool
+    new_commit_matches: bool
+    both_checkouts_clean: bool
+    new_is_direct_child: bool
+    license_unchanged: bool
+    dependency_manifest_unchanged: bool
+    public_schema_unchanged: bool
+    random_draw_path_unchanged: bool
+    target_semantics_changed: bool
+    upstream_bugfix_documented: bool
+    environment_locked: bool
+    runtime_preflight_passed: bool
+    shared_tape_verified: bool
+
+
+@dataclass(frozen=True)
+class ExternalEvolutionDecision:
+    """Source, execution, and replay admission levels for an external pair."""
+
+    source_pair_ready: bool
+    execution_ready: bool
+    replay_ready: bool
+    reasons: tuple[str, ...]
+
+
+def evaluate_external_evolution_gate(
+    evidence: ExternalEvolutionEvidence,
+) -> ExternalEvolutionDecision:
+    """Fail closed when chronology, schema, semantics, or replay is unverified."""
+
+    source_checks = (
+        (evidence.old_commit_matches, "old commit mismatch"),
+        (evidence.new_commit_matches, "new commit mismatch"),
+        (evidence.both_checkouts_clean, "an external checkout is dirty"),
+        (evidence.new_is_direct_child, "new revision is not the direct child of old"),
+        (evidence.license_unchanged, "license changed across revisions"),
+        (
+            evidence.dependency_manifest_unchanged,
+            "dependency manifest changed across revisions",
+        ),
+        (evidence.public_schema_unchanged, "public execution schema changed"),
+        (
+            evidence.random_draw_path_unchanged,
+            "random draw path changed across revisions",
+        ),
+        (evidence.target_semantics_changed, "target semantics are unchanged"),
+        (evidence.upstream_bugfix_documented, "upstream bugfix is not documented"),
+    )
+    reasons = [message for passed, message in source_checks if not passed]
+    if not evidence.environment_locked:
+        reasons.append("compatibility environment is not locked")
+    if not evidence.runtime_preflight_passed:
+        reasons.append("runtime preflight has not passed")
+    if not evidence.shared_tape_verified:
+        reasons.append("shared random tape has not been verified")
+
+    source_ready = all(passed for passed, _ in source_checks)
+    execution_ready = (
+        source_ready and evidence.environment_locked and evidence.runtime_preflight_passed
+    )
+    replay_ready = execution_ready and evidence.shared_tape_verified
+    return ExternalEvolutionDecision(
+        source_pair_ready=source_ready,
+        execution_ready=execution_ready,
+        replay_ready=replay_ready,
+        reasons=tuple(reasons),
+    )
+
+
 def evaluate_themis_gate(evidence: ThemisGateEvidence) -> ThemisGateDecision:
     """Fail closed unless provenance, evolution, and replay gates are explicit.
 

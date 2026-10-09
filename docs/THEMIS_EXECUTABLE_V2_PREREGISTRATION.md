@@ -1,6 +1,6 @@
 # Preregistration: executable counterfactual-subject benchmark v2
 
-Status: **design frozen; no outcomes collected; not manuscript evidence**
+Status: **candidate rejected for evolution/replay; no outcomes collected; retained negative evidence**
 
 ## Scientific decision
 
@@ -11,7 +11,7 @@ kind would not repair the main semantic gap: execution on genuine inputs that
 differ in a protected attribute, with measured software invocations rather than
 declared oracle-work counts.
 
-The single next candidate is the Themis executable subject suite:
+The first screened candidate was the Themis executable subject suite:
 
 - upstream: <https://github.com/LASER-UMASS/Themis>;
 - pinned candidate commit: `a70f12a6a8f34cdd8b170b4dc59a78674c9e8950`;
@@ -79,6 +79,10 @@ Consequently `--require evolving` and `--require replay` exit with status 2.
 The deterministic-baseline source gate passes, but this is not execution
 authorization. A CPU one-pair outcome smoke remains blocked until a legitimate
 same-schema old/new pair and a locked compatibility environment exist.
+
+This candidate has been superseded by the admitted Fairlearn pair documented in
+`docs/FAIRLEARN_EXECUTABLE_V2_PREREGISTRATION.md`; the negative Themis audit is
+retained to prevent accidental reuse or outcome-driven rehabilitation.
 
 ## Frozen v2 question
 

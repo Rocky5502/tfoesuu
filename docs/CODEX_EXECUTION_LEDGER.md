@@ -50,13 +50,15 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Identify and preregister a legitimate same-schema, seedable evolving executable
-subject without contaminating frozen v1 evidence. The automated Themis gate now
-rejects the pinned candidate for evolution/replay: its apparent `loan.py`
-history is semantically unchanged, its demo variants were co-introduced, it has
-no dependency lock, and it exposes no subject random tape. The deterministic
-baseline remains source-eligible only; no outcome smoke is authorized yet. The
-strict prepared-subject validator, dual-GPU public exploratory smoke, portable
+Independently replicate the admitted Fairlearn evolving-subject smoke on PC2,
+then freeze a statistical question before any larger matrix. The direct
+parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
+common-tape gates on PC1. The preregistered smoke isolated the documented
+protected-group merge defect: old collapsed four groups to three and differed
+from its canonical control, while new retained four groups and matched the
+control for every frozen seed. This remains exploratory and outside manuscript
+results. The Themis candidate remains rejected for evolution/replay. The strict
+prepared-subject validator, dual-GPU public exploratory smoke, portable
 provenance repair, P19 mixed lower expansion, and bounded-horizon adaptive
-closure are complete. The 100,000-trial public matrix remains behind its
-explicit approval gate.
+closure are complete. The public publication matrix remains behind its explicit
+approval gate.
