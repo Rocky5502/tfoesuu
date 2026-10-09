@@ -662,7 +662,8 @@ and \(q^\star\) is an optimizer defining
 topology and fixed \(\tau>0\), the mixed lower and upper bounds match the
 \(d^{-2}\) leading order and the boundary-minimum/control-cover cost geometry
 up to constants.  This does not match the exact two-term coefficients or close
-the dependence on \(m\).
+the dependence on \(m\) within the broader adaptive expected-cost class; the
+next part separates those regimes.
 
 \item The multiplicative \(\log m\) term can be removed from the
 \emph{expected null cost} by allowing an unbounded sequential stopping time.
@@ -696,8 +697,23 @@ H_0\sum_{z\in U\setminus\{x\}}\bar c_z+H_1\bar c_x.
 Thus the boundary block has expected null cost
 \(O(d^{-2}\log(1/\delta)\sum_{x\in U}\bar c_x)\), without a
 multiplicative \(\log m\); the changed channel still has additive
-\(\log m\) delay.  This statement concerns the exact P19 simple null and
-singleton alternatives, and does not give a bounded deterministic horizon.
+\(\log m\) delay.  More precisely, if \(Q_0^\star(d)\) denotes the optimal
+expected null declared cost in this P19 family and
+\(a=\kl(1-\delta,\delta)\), then
+\[
+\frac{a}{b_2}\sum_{x\in U}\bar c_x
+\le
+\liminf_{d\downarrow0}d^2Q_0^\star(d)
+\le
+\limsup_{d\downarrow0}d^2Q_0^\star(d)
+\le
+\frac{\log(1/\delta)}{b_2}\sum_{x\in U}\bar c_x.
+\]
+The remaining multiplicative gap is therefore at most
+\(\log(1/\delta)/\kl(1-\delta,\delta)\), independent of topology size and
+equal to approximately \(1.1305\) at \(\delta=0.05\).  This statement concerns
+the exact P19 simple null and singleton alternatives, and does not give a
+bounded deterministic horizon.
 \end{enumerate}
 \end{theorem}
 
@@ -797,7 +813,11 @@ The log-likelihood increments are bounded.  Their null mean is
 \(\E_0T_x\le H_0\).  Under alternative \(x\), the mean increment is
 \(J_{\rm bnd}\), and an upper crossing overshoots by at most
 \(\log(1+d/\tau)\), giving \(\E_xT_x\le H_1\).  Summing costs and adjoining
-the residual zero-type-I control schedule proves the displayed bounds.
+the residual zero-type-I control schedule proves the displayed bounds.  The
+lower endpoint of the asymptotic bracket is part~(i), because every unmatched
+channel contributes \(a\bar c_x/K_{\rm bnd}\); multiplying the lower and upper
+bounds by \(d^2\), using \(K_{\rm bnd}=b_2d^2+O(d^3)\), and observing that the
+residual control cost is only \(O(d^{-1})\) proves the bracket.
 \end{proof}
 
 \begin{proposition}[A fixed-allocation familywise penalty]

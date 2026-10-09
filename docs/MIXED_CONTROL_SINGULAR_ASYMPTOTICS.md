@@ -126,6 +126,17 @@ independent of `m`. The alternative channel uses at most
 expected rounds. The stopping horizon is unbounded; these statements do not
 extend to arbitrary composite nulls.
 
+Combining this upper bound with the exact null information floor yields
+
+    [kl(1-beta,beta)/b2] * sum_x cbar_x
+      <= liminf d^2 Q0*(d)
+      <= limsup d^2 Q0*(d)
+      <= [log(1/beta)/b2] * sum_x cbar_x.
+
+The remaining leading-constant ratio is therefore the confidence-only quantity
+`log(1/beta)/kl(1-beta,beta)`, independent of `|U|`, topology, and costs. It is
+approximately `1.1304671072` at `beta=0.05`.
+
 ## Remaining target
 
 Close exact adaptive minimax constants and audit bounded-horizon adaptive

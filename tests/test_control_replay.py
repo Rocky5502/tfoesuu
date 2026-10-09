@@ -775,6 +775,45 @@ def test_boundary_sequential_null_arm_bound_avoids_candidate_log_factor():
     assert many.changed_expected_rounds_upper > one.changed_expected_rounds_upper
 
 
+def test_boundary_sequential_reports_exact_null_information_lower_bound():
+    costs = np.array([1.0, 2.0, 3.0])
+    beta = 0.05
+    bound = boundary_familywise_sequential_bounds(
+        costs,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=beta,
+    )
+    decision_kl = (1.0 - 2.0 * beta) * math.log((1.0 - beta) / beta)
+
+    assert bound.null_expected_total_cost_lower == pytest.approx(
+        decision_kl * costs.sum() / bound.null_to_alternative_kl
+    )
+    assert bound.null_expected_total_cost_upper > bound.null_expected_total_cost_lower
+
+
+def test_boundary_sequential_small_gap_constant_ratio_is_confidence_only():
+    beta = 0.05
+    bound = boundary_familywise_sequential_bounds(
+        [1.0, 7.0, 19.0],
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=1e-5,
+        beta=beta,
+    )
+    decision_kl = (1.0 - 2.0 * beta) * math.log((1.0 - beta) / beta)
+    expected_ratio = math.log(1.0 / beta) / decision_kl
+
+    assert bound.small_gap_upper_cost_coefficient / bound.small_gap_lower_cost_coefficient == (
+        pytest.approx(expected_ratio)
+    )
+    assert bound.asymptotic_confidence_gap_ratio == pytest.approx(expected_ratio)
+    assert bound.asymptotic_confidence_gap_ratio < 1.14
+
+
 def test_mixed_control_hybrid_schedule_rejects_unobservable_candidate():
     graph, high = _family()
     with pytest.raises(ValueError, match="absent from every legal group"):

@@ -37,8 +37,9 @@
    protected-attribute counterfactuals; all claims must retain that limitation.
 3. Publication experiments, figures, and PDF admission evidence remain incomplete.
 4. P19's nonadaptive fixed boundary block provably needs `|U| log |U|/d^2`, while sequential LR
-   stopping removes the multiplicative log from expected null cost. Exact adaptive constants and
-   bounded-horizon adaptive allocation remain open; no arbitrary composite-null extension is valid.
+   stopping removes the multiplicative log from expected null cost and is within the confidence-only
+   factor `log(1/beta)/kl(1-beta,beta)` of the leading information constant. Exact adaptive constants
+   and bounded-horizon adaptive allocation remain open; no arbitrary composite-null extension is valid.
 5. Repository-wide Ruff still has pre-existing findings outside the touched files.
 
 Resolved during this session: raw frozen-manifest SHA-256 values were not comparable across PC1 and

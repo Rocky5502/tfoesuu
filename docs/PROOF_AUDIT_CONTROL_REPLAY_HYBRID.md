@@ -96,7 +96,10 @@ bounds give null rounds per channel
 
 independent of `m`; only the changed channel retains additive `log m` delay.
 Thus topology-size dependence is resolved for these two regimes. Exact adaptive
-minimax constants and bounded-horizon adaptive allocations remain open.
+minimax constants and bounded-horizon adaptive allocations remain open. The
+exact lower-program coefficient and this upper bound bracket the leading null
+constant within `log(1/beta)/kl(1-beta,beta)`, a topology- and cost-independent
+factor equal to `1.1304671072` at `beta=0.05`.
 
 ## Executable guards
 

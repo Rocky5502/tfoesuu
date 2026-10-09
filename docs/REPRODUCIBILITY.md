@@ -230,5 +230,7 @@ rankwise chi-square lower floors for disjoint boundary channels, while
 `boundary_familywise_sequential_bounds` reproduces the exact two-sided-SPRT KL,
 overshoot, and expected-cost bounds. The fixed allocation has a necessary
 `log |U|` factor; the unbounded sequential design removes it from expected null
-cost. Mixed fixtures remain in the topology search rather than the v1 rho-only
-grid. Generated rows are parameter specifications, never observed performance values.
+cost. The returned exact lower cost and small-gap coefficients reproduce the
+confidence-only residual ratio `log(1/beta)/kl(1-beta,beta)`. Mixed fixtures
+remain in the topology search rather than the v1 rho-only grid. Generated rows
+are parameter specifications, never observed performance values.

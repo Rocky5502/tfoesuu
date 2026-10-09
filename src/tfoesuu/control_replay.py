@@ -133,8 +133,12 @@ class BoundaryFamilywiseSequentialBounds:
     alternative_to_null_kl: float
     null_expected_rounds_per_candidate_upper: float
     changed_expected_rounds_upper: float
+    null_expected_total_cost_lower: float
     null_expected_total_cost_upper: float
     alternative_expected_cost_upper: np.ndarray
+    small_gap_lower_cost_coefficient: float
+    small_gap_upper_cost_coefficient: float
+    asymptotic_confidence_gap_ratio: float
 
 
 def _validate_bipartite_threshold_family(
@@ -736,7 +740,9 @@ def boundary_familywise_sequential_bounds(
     the expected null rounds per candidate independent of A and hence of m.
     The changed channel retains a log(m/beta) delay.  Stopping time is unbounded;
     deterministic fixed designs remain subject to the familywise log(m) lower
-    bound above.
+    bound above.  The returned null lower bound is the exact pairwise
+    information floor, summed over disjoint channels.  The two small-gap
+    coefficients expose the remaining confidence-only constant gap.
     """
 
     c = np.asarray(costs, dtype=float)
@@ -768,6 +774,11 @@ def boundary_familywise_sequential_bounds(
         math.log(m / beta) + math.log1p(d / tau)
     ) / alt_to_null
     total_cost = float(c.sum())
+    decision_kl = binary_decision_kl(beta)
+    null_cost_lower = decision_kl * total_cost / null_to_alt
+    b2 = 0.5 * (1.0 / tau + 1.0 / r)
+    small_gap_lower = decision_kl * total_cost / b2
+    small_gap_upper = math.log(1.0 / beta) * total_cost / b2
     alternative_cost = null_rounds * (total_cost - c) + changed_rounds * c
     return BoundaryFamilywiseSequentialBounds(
         candidates=m,
@@ -777,8 +788,12 @@ def boundary_familywise_sequential_bounds(
         alternative_to_null_kl=alt_to_null,
         null_expected_rounds_per_candidate_upper=null_rounds,
         changed_expected_rounds_upper=changed_rounds,
+        null_expected_total_cost_lower=null_cost_lower,
         null_expected_total_cost_upper=null_rounds * total_cost,
         alternative_expected_cost_upper=alternative_cost,
+        small_gap_lower_cost_coefficient=small_gap_lower,
+        small_gap_upper_cost_coefficient=small_gap_upper,
+        asymptotic_confidence_gap_ratio=small_gap_upper / small_gap_lower,
     )
 
 

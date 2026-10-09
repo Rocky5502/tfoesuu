@@ -326,8 +326,10 @@ d^-2/d^-1 orders and boundary-minimum/residual-cover geometry. The fixed boundar
 allocation necessarily pays Omega(|U| log |U|/d^2) in the disjoint unit-cost
 subfamily. A separate two-sided sequential LR bound removes the multiplicative
 log |U| from expected null cost, at the price of an unbounded horizon and an
-additive log |U| delay on the changed channel. Exact adaptive constants and
-arbitrary heterogeneous composite nulls remain unsupported.
+additive log |U| delay on the changed channel. Its leading expected-null
+constant is within `log(1/beta)/kl(1-beta,beta)` of the information lower
+constant. Exact adaptive constants and arbitrary heterogeneous composite nulls
+remain unsupported.
 
 Frozen structural fixtures:
 `data/control_replay_structural_cases_v1.jsonl` (6 rows).
