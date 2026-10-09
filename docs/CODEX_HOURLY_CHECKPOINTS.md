@@ -639,3 +639,24 @@
 - Next: build and falsify the historical-runtime executor/transcript validator
   on synthetic fixtures only. Do not execute the seven-dataset old/new campaign
   without fresh approval.
+
+## 2026-10-10 02:09 +08:00 (2026-10-09 18:09Z) — approval-gated runtime core
+
+- Verified branch codex/research-audit-20261008 clean at full SHA
+  dcd4692abdfc811efc18ecbda3e297d1f7c22a25. PC1 and PC2 reported no
+  scientific GPU compute process; PC2 protected baseline remained clean at
+  149baf36. GPU use is invalid for this historical CPU subject.
+- Added four falsifying runner-core tests first; the red run failed at missing
+  package import. Implemented a Python-3.8-compatible immutable source-row
+  score lookup and external approval validator. Approval must bind the exact
+  protocol SHA-256, source pair, four seeds, bounded seven-dataset scope,
+  explicit user authority, and timestamp. Missing, duplicate-row, unknown-row,
+  scope-drift, or protocol-drift cases fail closed.
+- Local focused tests passed; full suite 281 passed, Ruff and compileall green.
+  Commit 3c5acec1573325a4b29851e89c5f7e00141d0cf8; bundle SHA-256
+  8e60e1b6efc6cf89b4a41bbf3d1a952f75fe0c6d213ffe36f1753de7aba86b69.
+- PC2 isolated clone ran the synthetic lookup and missing-approval rejection
+  under the exact historical runtime: Python 3.8.20, NumPy 1.20.3. No approval
+  record was created, no Fairlearn subject was imported, and no public outcome
+  was observed. Next: transcript schema and independent validator on synthetic
+  records only; genuine execution remains approval-gated.

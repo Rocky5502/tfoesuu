@@ -143,3 +143,15 @@ The report says runner-preflight-only and outcome_authorized=false.
 No subject outcome was observed. Next: implement the separately gated historical
 runtime executor and its transcript validator using synthetic fixtures only;
 the genuine seven-dataset execution remains approval-blocked.
+
+The historical-runtime runner core is now independently gated. It provides an
+immutable source-row score lookup estimator and validates a separate external
+approval record bound to the exact protocol hash, old/new commits, four seeds,
+bounded scope, explicit user authority, and timestamp. Missing or drifted
+approval fails before any Fairlearn import. Four falsifying tests pass, the
+full suite is 281 passed, and PC2's exact historical Python 3.8.20 / NumPy
+1.20.3 runtime passed a synthetic lookup plus missing-approval fail-closed
+check. Commit 3c5acec1573325a4b29851e89c5f7e00141d0cf8; bundle SHA-256
+8e60e1b6efc6cf89b4a41bbf3d1a952f75fe0c6d213ffe36f1753de7aba86b69.
+No genuine context or subject outcome was executed. Next: finish the
+transcript schema/validator and exercise it only on synthetic records.

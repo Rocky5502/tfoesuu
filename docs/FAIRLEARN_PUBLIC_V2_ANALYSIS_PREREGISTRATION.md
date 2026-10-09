@@ -115,3 +115,10 @@ The report explicitly retains `outcome_authorized=false` and
 - All seven datasets and all zero/negative findings must be reported together.
 - GPU use is scientifically inappropriate for the historical Fairlearn subject
   and cannot substitute for exact CPU execution.
+
+Fresh approval is represented by a separate, non-committed authorization
+record rather than by editing this preregistration after the fact. The record
+must bind the exact protocol SHA-256, old/new commits, four frozen seeds,
+bounded seven-dataset scope, explicit user authority, and timestamp. The
+Python-3.8-compatible runner core fails before subject import when that record
+is absent, malformed, scope-expanded, or bound to another protocol.
