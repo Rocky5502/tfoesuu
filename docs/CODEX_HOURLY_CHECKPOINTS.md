@@ -660,3 +660,26 @@
   record was created, no Fairlearn subject was imported, and no public outcome
   was observed. Next: transcript schema and independent validator on synthetic
   records only; genuine execution remains approval-gated.
+
+## 2026-10-10 03:09 +08:00 (2026-10-09 19:09Z) — transcript validator
+
+- Verified branch codex/research-audit-20261008 clean at full SHA
+  4770358b6a9de305af3eeb71862a37afb08d7195. PC1 and PC2 reported no scientific
+  GPU compute process; PC2 baseline remained clean at 149baf36. No source,
+  dataset, prepared artifact, or result changed.
+- Added four transcript attacks first; the red run failed at missing module
+  import. Implemented a strict fourteen-record validator for the complete
+  seven-dataset old/new census. It checks source/prepared/companion/plan
+  identities, source positions, group cardinality, probability-simplex PMFs,
+  full seeds, repeated determinism, exact threshold correspondence, common
+  tapes across two versions and two modes, repaired canonical conformance, and
+  single-attribute negative controls.
+- The first repaired-mismatch test exposed aliasing in the synthetic fixture
+  itself: native and canonical modes shared one mutable PMF list. The fixture
+  was repaired with a deep copy before the validator was accepted. This was a
+  test-harness defect, not subject evidence.
+- Focused synthetic attacks pass; full suite 285 passed, touched-file Ruff and
+  compileall green. Commit 855e467251e730247bf273f9d832e18c1d4f70c0. No
+  public transcript was created and no subject outcome was observed. Next:
+  connect the historical executor to the frozen schema using synthetic inputs
+  only; genuine execution remains approval-gated.

@@ -155,3 +155,14 @@ check. Commit 3c5acec1573325a4b29851e89c5f7e00141d0cf8; bundle SHA-256
 8e60e1b6efc6cf89b4a41bbf3d1a952f75fe0c6d213ffe36f1753de7aba86b69.
 No genuine context or subject outcome was executed. Next: finish the
 transcript schema/validator and exercise it only on synthetic records.
+
+The transcript validator is now complete at commit
+855e467251e730247bf273f9d832e18c1d4f70c0. It requires the full fourteen-record
+old/new census and independently checks every pinned identity, PMF validity,
+row/group cardinality, seed set, repeated determinism, exact PMF-threshold
+predictions, four-way common tapes, repaired canonical conformance, and
+single-attribute negative controls. It reports both maximum and mean exact PMF
+discrepancies for every dataset, including zeros. Four synthetic attacks pass
+and the complete suite is 285 passed. No public transcript exists or was
+generated. Next: connect the approval-gated historical executor to this schema
+and validate only synthetic subject runs; genuine execution remains blocked.

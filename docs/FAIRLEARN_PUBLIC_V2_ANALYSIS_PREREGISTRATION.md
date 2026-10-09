@@ -122,3 +122,14 @@ must bind the exact protocol SHA-256, old/new commits, four frozen seeds,
 bounded seven-dataset scope, explicit user authority, and timestamp. The
 Python-3.8-compatible runner core fails before subject import when that record
 is absent, malformed, scope-expanded, or bound to another protocol.
+
+The independent result validator requires exactly fourteen records: old and
+new for every registered dataset. It checks source commits, V2.1/V2.2/plan
+identities, row positions, native/canonical group cardinality, valid PMFs,
+complete seeds, repeated determinism, exact threshold correspondence, and one
+common uniform tape across both versions and both modes. The repaired
+multi-column PMF must equal its canonical control exactly; Bank and MEPS must
+remain unchanged single-attribute negative controls. It computes the maximum
+and mean row-wise PMF discrepancies for every dataset and cannot omit zeros.
+Four synthetic falsification cases cover missing records, repaired-control
+mismatch, tape drift, and prediction drift.
