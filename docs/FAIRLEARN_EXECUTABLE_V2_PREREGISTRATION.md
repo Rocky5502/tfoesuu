@@ -1,6 +1,6 @@
 # Preregistration: Fairlearn executable evolving-subject benchmark v2
 
-Status: **source, runtime, and replay gates passed; bounded exploratory smoke only**
+Status: **source, runtime, replay, and independent-host replication gates passed; bounded exploratory smoke only**
 
 ## Scientific purpose
 
@@ -165,5 +165,31 @@ Key SHA-256 values are:
 - `pip freeze`: `18f12df17d479da0107d8907c8b5b811c1cbf285388aae39b244f33b4ae737d0`.
 
 This is a genuine positive resolution of the executable evolving-subject gap at
-smoke scale. It remains excluded from manuscript results until independent-host
-replication, a frozen statistical question, and any required approval pass.
+smoke scale. It remains excluded from manuscript results until a frozen
+statistical question and any required approval pass.
+
+### Independent PC2 replication
+
+PC2 reproduced the protocol from isolated checkout
+`3d7c87d870b4c5adb244b47aa88e87c8c17f87ed`. Its existing protected baseline
+checkout was not modified. Because PC2 had neither Docker nor Python 3.8 and its
+Git HTTPS CA trust failed, the run did not disable TLS verification. Exact Git
+bundles were transferred from PC1, and the official uv 0.12.20 installer
+provisioned CPython 3.8.20 under `/home/zbq/work`; no system package or shell
+profile was changed.
+
+PC2 produced the identical scientific validation summary: old group counts
+3/4 versus new 4/4, old canonical-control failures at every frozen seed, new
+control passes at every seed, affected-path disagreements 8/7/7/8, control-path
+disagreements 0/0/0/0, and passed runtime/shared-tape gates. PC2 evidence lives
+on its D: volume under `results/fairlearn_v2_pc2_3d7c87d` with SHA-256:
+
+- old transcript: `0ae45afef8ebbe93e3f1eb84340984085c43db1af9e2749d521c20bef4527b39`;
+- new transcript: `c7fb577c562552f71037a182e34a26de3fbc1fcc9d9331c1191e3ff0fdd1bbe4`;
+- validation summary: `b2d9450420e6b9a489df4439fd694b5532b37986a3e0f2cfcb00f52f19d3ce1f`;
+- source audit: `bdc120ca2336e9e578d180d840c8a637d39c74a5a0cd76ba60f55140f190d2a6`;
+- runtime manifest: `e2d5292503734fa0dcaa99813be1fd0d0c6b6915fa14a6a3ee9b097354863a13`;
+- package freeze: `18f12df17d479da0107d8907c8b5b811c1cbf285388aae39b244f33b4ae737d0`.
+
+Raw transcript hashes differ across hosts because platform strings and measured
+wall times are recorded. The validator's scientific fields agree exactly.

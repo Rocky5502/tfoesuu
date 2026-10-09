@@ -50,8 +50,7 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Independently replicate the admitted Fairlearn evolving-subject smoke on PC2,
-then freeze a statistical question before any larger matrix. The direct
+Freeze a statistical question before any larger Fairlearn matrix. The direct
 parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
 common-tape gates on PC1. The preregistered smoke isolated the documented
 protected-group merge defect: old collapsed four groups to three and differed
@@ -63,9 +62,9 @@ provenance repair, P19 mixed lower expansion, and bounded-horizon adaptive
 closure are complete. The public publication matrix remains behind its explicit
 approval gate.
 
-PC2 replication preflight currently fails before source checkout or subject
-execution because neither Docker nor another Python 3.8 runtime is installed on
-PC2 (WSL provides Python 3.10.12). The protected PC2 baseline remains unchanged.
-Do not substitute its newer Python/dependency stack: either provision an
-isolated digest-pinned runtime as a separately reviewed reproducibility action,
-or retain PC2 replication as an explicit blocker.
+PC2 independently reproduced the exact scientific summary in an isolated uv
+0.12.20-managed CPython 3.8.20 runtime with the same dependency freeze. Git
+bundles were used after its existing HTTPS CA failure; certificate verification
+was never bypassed. The protected PC2 baseline remains unchanged. Independent
+host replication is therefore closed; manuscript admission and any larger
+matrix remain gated on a frozen statistical question and approval where needed.

@@ -285,3 +285,10 @@ The validator requires the exact revisions, package versions, rows, seeds,
 repeatability, threshold correspondence, cross-version common tapes, and the
 new revision's canonical-combination control. Generated transcripts are
 exploratory evidence and never overwrite a prior output directory.
+
+PC2 uses `scripts/pc2_replicate_fairlearn_v2.sh` in an isolated checkout. When
+Docker is unavailable it provisions uv 0.12.20 and CPython 3.8.20 under
+`/home/zbq/work` without modifying system packages or shell profiles. If GitHub
+TLS validation fails, supply a verified Fairlearn Git bundle as the third
+argument; never disable certificate verification. The PC1 and upstream bundle
+hashes must be retained with the external evidence.

@@ -374,3 +374,12 @@
   so no scientifically invalid GPU surrogate was launched. Next action: review an isolated PC2
   runtime provision or retain independent-host replication as an explicit blocker, then freeze a
   statistical question before any larger experiment.
+- Same-hour resolution: the GitHub clone then failed closed on PC2's existing CA trust problem;
+  certificate verification was not bypassed. Exact project and Fairlearn Git bundles were verified
+  on PC1 and transferred over the established SSH path. An isolated uv 0.12.20-managed CPython
+  3.8.20 runtime with the exact package freeze completed the PC2 run without changing the protected
+  baseline or system packages. PC2 reproduced the full scientific summary exactly (3/4 old groups,
+  4/4 new groups, old control failure and new control pass for all seeds, 8/7/7/8 affected-path and
+  0/0/0/0 control-path disagreements). PC2 transcript/validator/runtime hashes are frozen in
+  `docs/FAIRLEARN_EXECUTABLE_V2_PREREGISTRATION.md`. Independent-host replication is now closed;
+  the next gate is a frozen statistical question, not more unprincipled compute.
