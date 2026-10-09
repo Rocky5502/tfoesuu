@@ -314,3 +314,29 @@
 - No data or result artifact was changed. Validated scientific commit:
   `9efb7a5b228a87dfc4b2b1c9c4e5d5326fc3944e`. Next target: resume the genuine evolving
   executable-subject gate without contaminating frozen v1 evidence.
+
+## 2026-10-09 11:58 +08:00 — fail-closed Themis evolution gate
+
+- Started clean on `codex/research-audit-20261008` at
+  `512e4722abcf3cefc00220ee677e9b9e0c0a580c`. PC1's compute-process query showed only
+  desktop/UI clients; PC2's `Ubuntu-24.04` compute-process query returned no rows. No GPU job was
+  launched because the candidate failed the pre-outcome scientific gates.
+- Added four falsifying admission tests and implemented a three-level external-subject gate:
+  deterministic baseline, evolving pair, and replay-theorem readiness. The read-only auditor
+  verifies the pinned commit, clean tree, license hash, dependency manifests, exact Git source
+  bytes, normalized Python AST history, variant introduction commits, schema evidence, and subject
+  random-tape evidence. It never invokes the external subject.
+- On pinned Themis commit `a70f12a6a8f34cdd8b170b4dc59a78674c9e8950`, identity, cleanliness,
+  and license hash passed. `loan.py` has two Git blobs but one semantic AST hash
+  `2cd3bc94e1bcb5a2760e95345f6eae6c69c5813307deb2c31f238054258ed50c`;
+  `loan_2.py` and `loan_3.py` were co-introduced at `92432c77bbdada0838c8f924e37f5cd78016db4e`;
+  system G has one revision; no dependency lock or audited subject random tape exists.
+  `--require evolving` therefore exited 2. No fairness outcome was collected.
+- Validation commands: focused gate tests -> 4 passed; touched-file Ruff -> pass; compileall ->
+  pass. The first full run reached 207 passed plus 28 setup errors caused solely by a denied host
+  temp directory; rerunning with explicit `--basetemp` produced **235 passed**. Manuscript static
+  consistency (48 labels/50 citations), bibliography policy, and frozen inventory
+  (10 artifacts/828 rows) passed.
+- No dataset or result artifact changed. Validated scientific commit:
+  `769ca33e8037f75ca1a4f2e288ca8a7d06bd8483`. Next target: identify a legitimate chronological,
+  same-schema, seedable executable subject and preregister it before any outcome run.
