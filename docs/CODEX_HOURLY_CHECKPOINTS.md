@@ -340,3 +340,37 @@
 - No dataset or result artifact changed. Validated scientific commit:
   `769ca33e8037f75ca1a4f2e288ca8a7d06bd8483`. Next target: identify a legitimate chronological,
   same-schema, seedable executable subject and preregister it before any outcome run.
+
+## 2026-10-09 12:18 +08:00 — genuine Fairlearn evolving subject admitted
+
+- Started clean at `87ff45e44ca5675a2f8e8551338fded96aacbed1`. Screened documented external
+  candidates and froze Fairlearn's direct repair pair `e8cc63784de5410805c156715175fc60e2cd5653`
+  -> `0cf59eccfdd364417787fe2c368a1c77c3f378b8` before local execution. The pair
+  preserves the MIT license, dependency manifest, public `ThresholdOptimizer.predict` schema, and
+  random-draw implementation while changing only the documented long protected-group-name merge
+  defect from issue #728 / PR #763.
+- Added three falsifying generic admission tests; the deliberate red run failed at import, then the
+  seven-test gate suite passed. Built a digest-pinned Python 3.8.20 container with exact 2021
+  dependencies and verified both source revisions import as `0.6.2.dev0` with identical prediction
+  signatures. Frozen probe SHA-256:
+  `c4d5a27c7d7e4bd54e31e1cd04599a10450e5d0e958e5c40629d2f69033918d3`.
+- Ran the preregistered four-seed CPU smoke once. Old multi-column handling collapsed four groups to
+  three and failed its canonical-combined control for every seed; new retained four groups and
+  passed every control. Old/new disagreements in the affected path were 8, 7, 7, and 8 of 24 rows;
+  the canonical control path had zero disagreements at every seed. All repeated calls were bitwise
+  identical and all outputs matched the recorded shared uniforms and probability mass functions.
+- External evidence hashes: old `c22a17c62f3411499a51793e2c3705e49e778a1bd661a26b28a4f7d1a2f0eeda`;
+  new `dcc9c129cc51d6be130351e6abab15fd4d6d85b24835711e4df46821c80d1a19`;
+  validator `20df213d6c9540b96ab380680b6469f90dc287fdec1a2b4cf4ea1e220acb0a05`.
+  These are exploratory, external-to-Git artifacts and are not admitted manuscript results.
+- Validation: touched-file Ruff and compileall passed; full isolated suite -> **238 passed**;
+  manuscript static consistency (48 labels/50 citations), bibliography policy, and frozen inventory
+  (10 artifacts/828 rows) passed. Scientific commit:
+  `19c2ec629f5ebe9f1a07ab0dfce2d91338ca5db6`; isolated PC2 replication launcher commit:
+  `ccb69fc90ce20621b2e829bf078d7e39a021e608`.
+- PC2 replication stopped before checkout or execution because PC2 WSL has no Docker or other
+  Python 3.8 runtime (system Python is 3.10.12). The protected baseline was untouched. PC1 and PC2
+  GPU process queries showed no scientific compute jobs; the actual Fairlearn subject is CPU-only,
+  so no scientifically invalid GPU surrogate was launched. Next action: review an isolated PC2
+  runtime provision or retain independent-host replication as an explicit blocker, then freeze a
+  statistical question before any larger experiment.

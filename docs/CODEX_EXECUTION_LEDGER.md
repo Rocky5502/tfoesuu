@@ -62,3 +62,10 @@ prepared-subject validator, dual-GPU public exploratory smoke, portable
 provenance repair, P19 mixed lower expansion, and bounded-horizon adaptive
 closure are complete. The public publication matrix remains behind its explicit
 approval gate.
+
+PC2 replication preflight currently fails before source checkout or subject
+execution because neither Docker nor another Python 3.8 runtime is installed on
+PC2 (WSL provides Python 3.10.12). The protected PC2 baseline remains unchanged.
+Do not substitute its newer Python/dependency stack: either provision an
+isolated digest-pinned runtime as a separately reviewed reproducibility action,
+or retain PC2 replication as an explicit blocker.
