@@ -262,3 +262,31 @@
   `f5e6ae7f837490817961237efe5cb3bd29c4296d`. Next target: determine whether bounded-horizon
   adaptive allocation can avoid the fixed-allocation `|U| log |U|` penalty, without claiming more
   than the available lower bounds support.
+
+## 2026-10-09 10:13 +08:00 — P19 bounded-horizon adaptive closure
+
+- Started clean on `codex/research-audit-20261008` at
+  `cd52041fe8db97835e79cbfe9e6237e537f88e61`. PC1 again showed only desktop/UI GPU clients;
+  PC2's direct WSL compute-process query returned no rows. No GPU job was launched because the
+  target was a closed-form stopping/error argument, not an empirical quantity.
+- Added four falsifying tests before implementation; the red run failed at import as expected.
+  Implemented `boundary_familywise_truncated_sequential_bounds`, which runs the exact P19
+  sequential block at internal error `eta<beta`, reserves `beta-eta` for truncation, and caps
+  declared cost at `max_i E_i[cost]/(beta-eta)`. Truncation-to-accept cannot increase type I;
+  Markov's inequality limits each added miss probability to the reserved budget.
+- This closes the bounded-horizon topology-order question. At unit costs and fixed confidence,
+  the deterministic adaptive cap is `O((|U|+log |U|)/d^2)=O(|U|/d^2)`, while the null information
+  floor is `Omega(|U|/d^2)`. Nonadaptive fixed allocations remain
+  `Theta(|U| log |U|/d^2)`. The theorem explicitly leaves exact constants and optimal beta
+  dependence open; the Markov cap is a certificate, not a claim of practical finite-m optimality.
+- Exact executable checks cover error-budget accounting, heterogeneous worst alternatives,
+  invalid internal errors, and size growth. For `|U|=16,64,256`, the certified small-gap cap
+  coefficient per arm was `26.4834257092`, `25.7407680157`, and `25.4437049383`, respectively,
+  rather than growing like `log |U|`.
+- Validation: focused green run -> 4 passed; full isolated run -> **229 passed**; touched-file Ruff,
+  compileall, manuscript static consistency (48 labels/50 citations), bibliography policy, and
+  frozen inventory (10 artifacts/828 rows) all passed. Bundled Tectonic compiled a 44-page PDF;
+  temporary PDF SHA-256 `6486b9016fb9d20d506914723e32704c808e9cba019d3cce1bb9025d08fc34ed`.
+- No dataset or result artifact was changed. Validated scientific commit:
+  `956f7aee60608be05eb9a67a05109318639c8e4a`. Next target: optimize or sharpen the truncation
+  confidence allocation, then resume the genuine evolving executable-subject gate.
