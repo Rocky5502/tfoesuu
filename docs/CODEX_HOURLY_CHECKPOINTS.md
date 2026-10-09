@@ -613,3 +613,29 @@
   old/new outcome was executed and outcome_authorized remains false. Next:
   implement/audit the fail-closed subject runner without running the public
   campaign, then stop at the explicit approval gate.
+
+## 2026-10-10 01:08 +08:00 (2026-10-09 17:08Z) — fail-closed runner preflight
+
+- Verified branch codex/research-audit-20261008 clean at full SHA
+  3413ac3e31bf8f4dc496c9e51550126164c713cd. PC1 reported no scientific GPU
+  process. No datasets or existing results were edited; this CPU-only gate did
+  not warrant GPU use.
+- Added four falsifying preflight tests first; the red run failed at missing
+  module import. Implemented canonical length-prefixed tuple keys, exact
+  protected transformations, binary-label/group support auditing, and a
+  complete seven-dataset plan builder that validates V2.1, V2.2, and the
+  machine-readable protocol without importing or running Fairlearn.
+- Local validation reached 277 passed. Committed the preflight implementation
+  as 5c9f23717211b3e59b1e42aa43cb0b374233c54f; bundle SHA-256
+  5326c3a896d5ba0d024b2cd70bec8944e18a245fbb196cf229b17ecaa3ea9537.
+  The first remote shell gate failed safely because command substitution was
+  interpreted outside WSL; no output existed. The corrected explicit-path
+  command used the already isolated clone and did not weaken any check.
+- PC2 isolated preflight: 276 passed, one expected Torch-only skip. All seven
+  datasets passed frozen support, row alignment, and canonical-key injectivity.
+  Plan SHA-256 fa07b09ea675a44025ef923f28307ef2d6b1a98aa91354788cf9c5859c839a94;
+  report SHA-256 fbb15b8b21dda43f0cbb08cb86d355e0a8d26eb2cfa692559b1bc763916b48b8.
+  The report remains runner-preflight-only with outcome_authorized=false.
+- Next: build and falsify the historical-runtime executor/transcript validator
+  on synthetic fixtures only. Do not execute the seven-dataset old/new campaign
+  without fresh approval.

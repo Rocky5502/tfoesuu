@@ -131,6 +131,19 @@ def validate_public_fairlearn_v2_protocol(protocol: dict[str, Any]) -> dict[str,
     if seeds != [1, 104729, 130363, 155921] or len(set(seeds)) != len(seeds):
         raise ValueError("frozen seed list mismatch")
 
+    preflight = protocol.get("runner_preflight")
+    if not isinstance(preflight, dict):
+        raise TypeError("runner_preflight must be an object")
+    if not _GIT_RE.fullmatch(str(preflight.get("source_commit", ""))):
+        raise ValueError("runner preflight requires a full source commit")
+    for field in ("plan_sha256", "report_sha256"):
+        if not _SHA256_RE.fullmatch(str(preflight.get(field, ""))):
+            raise ValueError(f"runner preflight {field} must be SHA-256")
+    if preflight.get("scope") != "runner-preflight-only":
+        raise ValueError("runner preflight scope mismatch")
+    if preflight.get("outcome_authorized") is not False:
+        raise ValueError("runner preflight must not authorize outcomes")
+
     return {
         "schema": SCHEMA,
         "dataset_count": len(datasets),

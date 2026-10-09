@@ -92,5 +92,12 @@
     "primary_claim_rule": "complete seven-dataset census; report every dataset without significance filtering",
     "confidence_intervals": "none for exact deterministic PMF discrepancies",
     "exploratory_metrics": "label explicitly and do not promote to primary claims"
+  },
+  "runner_preflight": {
+    "source_commit": "5c9f23717211b3e59b1e42aa43cb0b374233c54f",
+    "plan_sha256": "fa07b09ea675a44025ef923f28307ef2d6b1a98aa91354788cf9c5859c839a94",
+    "report_sha256": "fbb15b8b21dda43f0cbb08cb86d355e0a8d26eb2cfa692559b1bc763916b48b8",
+    "scope": "runner-preflight-only",
+    "outcome_authorized": false
   }
 }

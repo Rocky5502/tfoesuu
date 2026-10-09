@@ -130,3 +130,16 @@ This closes preprocessing reproducibility, not the public-outcome approval
 gate. Next: independently audit the subject runner against the frozen protocol
 without executing outcomes, then request approval for the bounded public
 campaign if every source/runtime/common-tape/output gate passes.
+
+The non-executing subject-runner preflight is now implemented and reproduced
+on PC2. It validates the V2.1/V2.2 identities, protocol authorization fence,
+protected transforms, label/row support, canonical-key injectivity, and
+complete dataset census without importing Fairlearn. PC2 passed 276 tests with
+one expected Torch-only skip and produced plan SHA-256
+fa07b09ea675a44025ef923f28307ef2d6b1a98aa91354788cf9c5859c839a94;
+preflight report SHA-256
+fbb15b8b21dda43f0cbb08cb86d355e0a8d26eb2cfa692559b1bc763916b48b8.
+The report says runner-preflight-only and outcome_authorized=false.
+No subject outcome was observed. Next: implement the separately gated historical
+runtime executor and its transcript validator using synthetic fixtures only;
+the genuine seven-dataset execution remains approval-blocked.

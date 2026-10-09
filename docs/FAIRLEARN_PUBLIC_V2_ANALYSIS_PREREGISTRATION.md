@@ -91,6 +91,20 @@ and complete aligned acceptance.
 This closes the score-replay blocker. It is preprocessing evidence, not
 authorization for the public outcome campaign.
 
+## Fail-closed runner preflight
+
+A runner preflight at clean commit
+`5c9f23717211b3e59b1e42aa43cb0b374233c54f` validates the protocol, V2.1
+representation, V2.2 score companion, transformed support, injective canonical
+tuple keys, exact row alignment, and all pinned hashes without importing or
+executing Fairlearn. PC2 reproduced 10/2/4/4/4/4/2 groups and every frozen
+support minimum. Plan SHA-256:
+`fa07b09ea675a44025ef923f28307ef2d6b1a98aa91354788cf9c5859c839a94`;
+report SHA-256:
+`fbb15b8b21dda43f0cbb08cb86d355e0a8d26eb2cfa692559b1bc763916b48b8`.
+The report explicitly retains `outcome_authorized=false` and
+`readiness_scope=runner-preflight-only`.
+
 ## Release fences
 
 - The configuration retains `outcome_authorized=false` until fresh approval.
