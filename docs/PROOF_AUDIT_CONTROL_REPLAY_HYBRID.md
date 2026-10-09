@@ -108,6 +108,10 @@ by Markov's inequality and cannot increase type I. At fixed beta and unit costs,
 this deterministic adaptive cap is `O((m+log m)/d^2)=O(m/d^2)`. Part (i)'s null
 information floor is `Omega(m/d^2)`, so the adaptive deterministic-cap topology
 order is tight. Only exact constants and beta dependence remain open.
+Because the proof holds for every `eta` in `(0,beta)`, numerical minimization of
+the explicit cap over this single scalar is sound. The implementation retains
+the half split as a fallback certificate, so optimizer failure cannot weaken the
+proved bound.
 
 ## Executable guards
 

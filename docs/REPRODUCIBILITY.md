@@ -236,5 +236,7 @@ remain in the topology search rather than the v1 rho-only grid.
 `boundary_familywise_truncated_sequential_bounds` reproduces the deterministic
 Markov cost cap and its small-gap coefficient; tests pin exact error-budget
 accounting, heterogeneous worst alternatives, and the absence of an asymptotic
-`|U| log |U|` factor at fixed confidence. Generated rows are parameter
-specifications, never observed performance values.
+`|U| log |U|` factor at fixed confidence. Omitting `internal_error` minimizes
+the finite-sample cap over that one scalar and reports the half-split reference
+and improvement factor; an explicit value bypasses optimization. Generated rows
+are parameter specifications, never observed performance values.

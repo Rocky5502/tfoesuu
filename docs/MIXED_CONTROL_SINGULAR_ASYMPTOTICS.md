@@ -158,6 +158,9 @@ dominates expected null cost. Hence adaptive allocation has exact linear
 topology-size order at fixed confidence even under a deterministic cap, strictly
 improving the nonadaptive fixed-allocation `Theta(|U| log |U|/d^2)` order. The
 Markov construction does not claim optimal beta dependence or exact constants.
+The executable bound minimizes the certified cap over the one-dimensional
+internal error `eta` and explicitly compares against the safe half split
+`eta=beta/2`; it never returns a larger certificate than that reference.
 
 ## Remaining target
 

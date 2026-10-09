@@ -896,6 +896,52 @@ def test_truncated_boundary_sequential_rejects_invalid_internal_error():
         )
 
 
+def test_truncated_boundary_default_optimizes_error_split_against_half_split():
+    common = {
+        "costs": [1.0, 3.0, 11.0],
+        "p": 0.20,
+        "shared_patch": 0.10,
+        "fairness_tolerance": 0.10,
+        "d": 0.01,
+        "beta": 0.05,
+    }
+    optimized = boundary_familywise_truncated_sequential_bounds(**common)
+    half = boundary_familywise_truncated_sequential_bounds(
+        **common,
+        internal_error=0.025,
+    )
+
+    assert optimized.internal_error_optimized
+    assert not half.internal_error_optimized
+    assert 0.0 < optimized.internal_error < optimized.target_error
+    assert optimized.declared_cost_cap <= half.declared_cost_cap
+    assert optimized.half_split_declared_cost_cap == pytest.approx(half.declared_cost_cap)
+    assert optimized.cap_improvement_factor == pytest.approx(
+        half.declared_cost_cap / optimized.declared_cost_cap
+    )
+
+
+def test_truncated_boundary_optimized_split_matches_dense_grid():
+    common = {
+        "costs": [1.0, 2.0, 5.0, 13.0],
+        "p": 0.20,
+        "shared_patch": 0.10,
+        "fairness_tolerance": 0.10,
+        "d": 0.01,
+        "beta": 0.05,
+    }
+    optimized = boundary_familywise_truncated_sequential_bounds(**common)
+    grid_caps = [
+        boundary_familywise_truncated_sequential_bounds(
+            **common,
+            internal_error=eta,
+        ).declared_cost_cap
+        for eta in np.linspace(0.0025, 0.0475, 91)
+    ]
+
+    assert optimized.declared_cost_cap <= min(grid_caps) * (1.0 + 1e-6)
+
+
 def test_mixed_control_hybrid_schedule_rejects_unobservable_candidate():
     graph, high = _family()
     with pytest.raises(ValueError, match="absent from every legal group"):

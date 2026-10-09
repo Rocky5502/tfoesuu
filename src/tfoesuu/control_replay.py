@@ -5,7 +5,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.optimize import linprog
+from scipy.optimize import linprog, minimize_scalar
 
 from .graphs import GraphSpec
 from .partial_replay import _canonical_groups
@@ -156,6 +156,9 @@ class BoundaryFamilywiseTruncatedSequentialBounds:
     type_i_error_upper: float
     pointwise_type_ii_error_upper: float
     small_gap_declared_cost_cap_coefficient: float
+    internal_error_optimized: bool
+    half_split_declared_cost_cap: float
+    cap_improvement_factor: float
 
 
 def _validate_bipartite_threshold_family(
@@ -837,26 +840,65 @@ def boundary_familywise_truncated_sequential_bounds(
     type-I error.  At fixed beta and interior P19 parameters, the resulting cap
     is O((sum(costs) + max(costs)*log(m))/d^2).  For unit costs this is O(m/d^2),
     so adaptive allocation removes the fixed-design m*log(m) penalty even with
-    a deterministic declared-cost horizon.  The bound uses Markov truncation;
-    it is not claimed to have optimal beta dependence or exact constants.
+    a deterministic declared-cost horizon.  When ``internal_error`` is omitted,
+    a bounded scalar optimization minimizes the certified finite-sample cap and
+    is guarded never to do worse than the safe split ``eta=beta/2``.  The bound
+    uses Markov truncation; it is not claimed to have optimal beta dependence or
+    exact constants.
     """
 
-    eta = beta / 2.0 if internal_error is None else float(internal_error)
-    if not (math.isfinite(eta) and 0.0 < eta < beta):
-        raise ValueError("internal_error must lie strictly between zero and beta")
-
-    sequential = boundary_familywise_sequential_bounds(
-        costs,
-        p=p,
-        shared_patch=shared_patch,
-        fairness_tolerance=fairness_tolerance,
-        d=d,
-        beta=eta,
-    )
     c = np.asarray(costs, dtype=float)
+
+    def evaluate(
+        eta_value: float,
+    ) -> tuple[float, BoundaryFamilywiseSequentialBounds, int]:
+        candidate = boundary_familywise_sequential_bounds(
+            c,
+            p=p,
+            shared_patch=shared_patch,
+            fairness_tolerance=fairness_tolerance,
+            d=d,
+            beta=eta_value,
+        )
+        candidate_worst = int(np.argmax(candidate.alternative_expected_cost_upper))
+        candidate_cap = float(
+            candidate.alternative_expected_cost_upper[candidate_worst]
+            / (beta - eta_value)
+        )
+        return candidate_cap, candidate, candidate_worst
+
+    half_eta = beta / 2.0
+    half_cap, half_sequential, half_worst = evaluate(half_eta)
+    optimized = internal_error is None
+    if optimized:
+        epsilon = beta * 1e-10
+        if 0.0 < epsilon < beta - epsilon:
+            result = minimize_scalar(
+                lambda value: evaluate(float(value))[0],
+                bounds=(epsilon, beta - epsilon),
+                method="bounded",
+                options={"xatol": max(beta * 1e-12, np.nextafter(0.0, 1.0))},
+            )
+        else:
+            result = None
+        if (
+            result is not None
+            and result.success
+            and math.isfinite(float(result.fun))
+            and result.fun < half_cap
+        ):
+            eta = float(result.x)
+            cap, sequential, worst = evaluate(eta)
+        else:
+            eta = half_eta
+            cap, sequential, worst = half_cap, half_sequential, half_worst
+    else:
+        eta = float(internal_error)
+        if not (math.isfinite(eta) and 0.0 < eta < beta):
+            raise ValueError("internal_error must lie strictly between zero and beta")
+        cap, sequential, worst = evaluate(eta)
+
     error_budget = beta - eta
-    worst = int(np.argmax(sequential.alternative_expected_cost_upper))
-    cap = float(sequential.alternative_expected_cost_upper[worst] / error_budget)
 
     tau = float(fairness_tolerance)
     r = 1.0 - p - shared_patch - tau
@@ -881,6 +923,9 @@ def boundary_familywise_truncated_sequential_bounds(
         small_gap_declared_cost_cap_coefficient=float(
             alternative_coefficients.max() / error_budget
         ),
+        internal_error_optimized=optimized,
+        half_split_declared_cost_cap=half_cap,
+        cap_improvement_factor=half_cap / cap,
     )
 
 
