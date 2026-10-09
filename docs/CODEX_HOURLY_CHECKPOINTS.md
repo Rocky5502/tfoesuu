@@ -434,3 +434,4 @@
   inventory unchanged at 10 artifacts/828 rows. Next action: implement a
   non-overwriting v2 preparer/validator with exact protected-column presence and row-alignment
   corruption tests before any outcome run.
+- Validated scientific commit: `71f3a32938b9e3516b7cf6837616deafcedafd88`.
