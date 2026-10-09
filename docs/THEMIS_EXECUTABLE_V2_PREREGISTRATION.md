@@ -58,6 +58,28 @@ change is identified and a behavior-preserving compatibility environment is
 locked. This negative feasibility result is retained rather than manufacturing
 versions or wrapping deterministic outputs in synthetic randomness.
 
+## Automated fail-closed gate (2026-10-09)
+
+`scripts/audit_themis_evolving_pair.py` now reproduces the identity,
+provenance, semantic-history, schema, and random-tape admission decision without
+executing a subject or collecting a fairness outcome. The gate found:
+
+- `Themis2.0/loan.py` has two source blobs but only one normalized Python AST,
+  with semantic SHA-256
+  `2cd3bc94e1bcb5a2760e95345f6eae6c69c5813307deb2c31f238054258ed50c`;
+- `loan_2.py` and `loan_3.py` were introduced together at
+  `92432c77bbdada0838c8f924e37f5cd78016db4e`, so they are demo variants rather
+  than an observed chronological version transition;
+- the compact system-G wrapper has one Git revision, and its Python-2 syntax is
+  not silently treated as a compatible Python-3 executable; and
+- the pinned tree contains no dependency lock and exposes no audited subject
+  random tape.
+
+Consequently `--require evolving` and `--require replay` exit with status 2.
+The deterministic-baseline source gate passes, but this is not execution
+authorization. A CPU one-pair outcome smoke remains blocked until a legitimate
+same-schema old/new pair and a locked compatibility environment exist.
+
 ## Frozen v2 question
 
 Can the version-aware procedures operate on real executable input pairs that
@@ -106,6 +128,8 @@ Before any result is inspected:
 
 1. License and dependency audit.
 2. Read-only source inventory and wrapper feasibility check.
-3. CPU-only one-pair smoke with zero manuscript claims.
-4. Preregister the bounded matrix.
-5. Request publication-scale approval only after the smoke passes.
+3. Verify a chronological, behaviorally distinct old/new pair with one input
+   schema and a locked compatibility environment.
+4. CPU-only one-pair smoke with zero manuscript claims.
+5. Preregister the bounded matrix.
+6. Request publication-scale approval only after the smoke passes.

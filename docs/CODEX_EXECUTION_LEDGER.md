@@ -50,9 +50,13 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Audit P19's remaining exact adaptive constants and truncated-test confidence dependence,
-and continue feasibility work on a genuine evolving executable
-subject without contaminating frozen v1 evidence. The strict prepared-subject
-validator, dual-GPU public exploratory smoke, portable provenance repair, mixed
-lower expansion, and finite-topology order-matching hybrid are complete. The
-100,000-trial public matrix remains behind its explicit approval gate.
+Identify and preregister a legitimate same-schema, seedable evolving executable
+subject without contaminating frozen v1 evidence. The automated Themis gate now
+rejects the pinned candidate for evolution/replay: its apparent `loan.py`
+history is semantically unchanged, its demo variants were co-introduced, it has
+no dependency lock, and it exposes no subject random tape. The deterministic
+baseline remains source-eligible only; no outcome smoke is authorized yet. The
+strict prepared-subject validator, dual-GPU public exploratory smoke, portable
+provenance repair, P19 mixed lower expansion, and bounded-horizon adaptive
+closure are complete. The 100,000-trial public matrix remains behind its
+explicit approval gate.

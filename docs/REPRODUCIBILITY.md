@@ -240,3 +240,21 @@ accounting, heterogeneous worst alternatives, and the absence of an asymptotic
 the finite-sample cap over that one scalar and reports the half-split reference
 and improvement factor; an explicit value bypasses optimization. Generated rows
 are parameter specifications, never observed performance values.
+
+## External evolving-subject admission gate
+
+The Themis candidate is audited read-only outside this repository. The command
+below verifies the pinned Git identity, clean checkout, license hash, dependency
+locks, same-path semantic history, variant introduction commits, and available
+random-tape evidence. It does not invoke a subject or collect a fairness result.
+
+```powershell
+python scripts/audit_themis_evolving_pair.py `
+  "G:\TFOESUU Project\external_sources\themis-a70f12a" --require audit
+```
+
+Use `--require baseline`, `--require evolving`, or `--require replay` to make a
+pipeline fail closed at the corresponding admission level. At the frozen
+candidate commit, `baseline` passes while `evolving` and `replay` return status
+2. Source eligibility is not execution authorization and is not manuscript
+evidence.
