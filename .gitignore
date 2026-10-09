@@ -25,3 +25,5 @@ dist/
 # Downloaded/prepared public benchmark data (recreated from frozen registry/protocol)
 data/public_cache/
 data/public_prepared/
+data/public_prepared_v2/
+data/.public_prepared_v2.staging-*/

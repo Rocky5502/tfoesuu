@@ -53,13 +53,13 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Design a separately versioned, no-overwrite v2 preparation and corruption suite
-for genuine multi-column protected contexts; do not manufacture a second
-protected attribute or reinterpret v1 metadata as data. The frozen-v1 audit is
-closed: five registry entries name two protected attributes, but all seven PC2
-NPZ files contain only probabilities and labels, so zero are executable-context
-ready. The existing preparer also does not prove every declared protected
-column was present. The direct
+Freeze exact Default Credit raw source bytes from the registered UCI source,
+then run the bounded no-outcome V2 preparation/validation on PC2. The separate
+V2 schema, non-overwriting preparer, validator, and 15-test corruption suite are
+implemented. A read-only inventory proves six datasets have retained raw bytes;
+Default Credit does not, so no complete V2 output exists and readiness remains
+false. Do not infer it from V1 probabilities, manufacture a second protected
+attribute, or reinterpret metadata as data. The direct
 parent/child pair `e8cc637` -> `0cf59ec` passes source, locked-runtime, and
 common-tape gates on PC1. The preregistered smoke isolated the documented
 protected-group merge defect: old collapsed four groups to three and differed

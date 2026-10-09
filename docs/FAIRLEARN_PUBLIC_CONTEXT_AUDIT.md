@@ -55,6 +55,13 @@ not mutate v1.  Before any outcome run it must:
 7. pass a corruption suite covering absent columns, reordered rows, truncated
    group labels, unknown categories, and schema drift.
 
-Preparation and a bounded no-outcome validation are safe next engineering
-steps.  A seven-dataset outcome campaign and manuscript admission remain behind
-the explicit publication-scale approval gate.
+The separate V2 schema, non-overwriting preparer, validator, and corruption
+suite are now implemented in `docs/PUBLIC_BENCHMARK_V2_PROTOCOL.md`. A read-only
+PC2 inventory found retained source bytes for Adult, Bank, German, COMPAS, Law
+School, and MEPS, but not for Default Credit: its original `ucimlrepo` call did
+not preserve a raw file in the frozen data directory. Therefore no complete V2
+directory has been created yet. Reacquiring and freezing that seventh source
+from the registered UCI source is the remaining data-provenance gate.
+
+A seven-dataset outcome campaign and manuscript admission remain behind the
+explicit publication-scale approval gate.

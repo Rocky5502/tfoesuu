@@ -435,3 +435,34 @@
   non-overwriting v2 preparer/validator with exact protected-column presence and row-alignment
   corruption tests before any outcome run.
 - Validated scientific commit: `71f3a32938b9e3516b7cf6837616deafcedafd88`.
+
+## 2026-10-09 17:19 +08:00 (09:19Z) — separate public-context V2 contract
+
+- Started clean on branch `codex/research-audit-20261008` at full SHA
+  `583190edf7fe238331dd5123525b168f8a87c6bd`. The branch is local/untracked by a remote branch;
+  `main`/`origin/main` remain at frozen baseline `149baf36`. PC1 had 13.7 GiB free VRAM with only
+  desktop/UI clients; PC2 had 14.9 GiB free, no compute process, a clean baseline checkout, and
+  1.3 TiB free. Completed P12/P15 1k/10k/100k outputs were not rerun.
+- Added seven falsifying V2 validator tests first; the deliberate red run failed at import. Added
+  eight preparer/source-map tests before that implementation; its red run also failed at import.
+  The new separate contract stores aligned source row positions, protected values, raw
+  non-protected evaluation features, labels, probabilities, joint-group support, exact source
+  hashes, environment versions, and a row-wise alignment digest. It explicitly declares
+  observational contexts only and no identified counterfactual transform.
+- The preparer requires every protected column, forbids case aliases and protected-feature
+  leakage, refuses dirty source/partial registries/existing destinations, stages into a new
+  directory, and renames only after complete validation. V1 code, data, manifests, and results are
+  untouched. Corruption tests reject missing columns, row reorder, category drift, insufficient
+  support, incomplete environments, and source-byte mismatch.
+- Read-only PC2 audit: the raw directory has 15 files covering Adult, Bank, German, COMPAS, Law
+  School, and MEPS; ordered source-list digest
+  `73edce410b52b132befc77a10a2ed23fd77dbeebb395222e082c20c4bd500e3e`. Loading those six cached
+  populations confirmed all declared protected columns; loader schema digest
+  `5d69a1a723144733ae88858a492b0eed3bb56b5c1f61bb86200c786a45dcb0ad`.
+  Default Credit raw bytes were not retained by the original `ucimlrepo` call. Complete V2
+  preparation therefore failed closed at provenance; no V2 data or outcome was generated.
+- Validation: 15 focused tests and **260 full tests passed**; touched-file Ruff, compileall, paper
+  static consistency (48 labels/50 citations), bibliography policy, and frozen inventory
+  (10 artifacts/828 rows) passed. GPU work was not scientifically indicated. Next action: obtain
+  and hash the registered UCI Default Credit source without bypassing TLS, freeze a complete source
+  map, then run bounded CPU-only V2 preparation/validation on PC2. Public outcome runs remain gated.
