@@ -328,8 +328,10 @@ subfamily. A separate two-sided sequential LR bound removes the multiplicative
 log |U| from expected null cost, at the price of an unbounded horizon and an
 additive log |U| delay on the changed channel. Its leading expected-null
 constant is within `log(1/beta)/kl(1-beta,beta)` of the information lower
-constant. Exact adaptive constants and arbitrary heterogeneous composite nulls
-remain unsupported.
+constant. Markov truncation yields a deterministic adaptive cost cap with
+Theta(|U|/d^2) topology scaling at fixed confidence, versus the fixed-design
+Theta(|U| log |U|/d^2) order. Exact adaptive constants, optimal beta dependence,
+and arbitrary heterogeneous composite nulls remain unsupported.
 
 Frozen structural fixtures:
 `data/control_replay_structural_cases_v1.jsonl` (6 rows).

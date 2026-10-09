@@ -141,6 +141,23 @@ class BoundaryFamilywiseSequentialBounds:
     asymptotic_confidence_gap_ratio: float
 
 
+@dataclass(frozen=True)
+class BoundaryFamilywiseTruncatedSequentialBounds:
+    """Deterministic-cost truncation of the familywise P19 SPRT."""
+
+    candidates: int
+    target_error: float
+    internal_error: float
+    truncation_error_budget: float
+    declared_cost_cap: float
+    worst_alternative_index: int
+    null_expected_total_cost_upper: float
+    alternative_expected_cost_upper: np.ndarray
+    type_i_error_upper: float
+    pointwise_type_ii_error_upper: float
+    small_gap_declared_cost_cap_coefficient: float
+
+
 def _validate_bipartite_threshold_family(
     graph: GraphSpec,
     high_vertices: Iterable[int],
@@ -794,6 +811,76 @@ def boundary_familywise_sequential_bounds(
         small_gap_lower_cost_coefficient=small_gap_lower,
         small_gap_upper_cost_coefficient=small_gap_upper,
         asymptotic_confidence_gap_ratio=small_gap_upper / small_gap_lower,
+    )
+
+
+def boundary_familywise_truncated_sequential_bounds(
+    costs: Sequence[float],
+    *,
+    p: float,
+    shared_patch: float,
+    fairness_tolerance: float,
+    d: float,
+    beta: float,
+    internal_error: float | None = None,
+) -> BoundaryFamilywiseTruncatedSequentialBounds:
+    """Bound a deterministic-cost truncation of the familywise SPRT.
+
+    Run the unbounded sequential test with error ``eta < beta`` and accept the
+    null before the next query would make declared cost exceed ``C``.  Under
+    singleton alternative i, Markov's inequality bounds the added truncation
+    miss probability by ``E_i[cost] / C``.  Taking
+
+        C = max_i E_i[cost] / (beta - eta)
+
+    therefore preserves pointwise error beta, while truncation cannot increase
+    type-I error.  At fixed beta and interior P19 parameters, the resulting cap
+    is O((sum(costs) + max(costs)*log(m))/d^2).  For unit costs this is O(m/d^2),
+    so adaptive allocation removes the fixed-design m*log(m) penalty even with
+    a deterministic declared-cost horizon.  The bound uses Markov truncation;
+    it is not claimed to have optimal beta dependence or exact constants.
+    """
+
+    eta = beta / 2.0 if internal_error is None else float(internal_error)
+    if not (math.isfinite(eta) and 0.0 < eta < beta):
+        raise ValueError("internal_error must lie strictly between zero and beta")
+
+    sequential = boundary_familywise_sequential_bounds(
+        costs,
+        p=p,
+        shared_patch=shared_patch,
+        fairness_tolerance=fairness_tolerance,
+        d=d,
+        beta=eta,
+    )
+    c = np.asarray(costs, dtype=float)
+    error_budget = beta - eta
+    worst = int(np.argmax(sequential.alternative_expected_cost_upper))
+    cap = float(sequential.alternative_expected_cost_upper[worst] / error_budget)
+
+    tau = float(fairness_tolerance)
+    r = 1.0 - p - shared_patch - tau
+    b2 = 0.5 * (1.0 / tau + 1.0 / r)
+    null_coefficient = math.log(1.0 / eta) / b2
+    changed_coefficient = math.log(len(c) / eta) / b2
+    alternative_coefficients = (
+        null_coefficient * (float(c.sum()) - c) + changed_coefficient * c
+    )
+
+    return BoundaryFamilywiseTruncatedSequentialBounds(
+        candidates=len(c),
+        target_error=beta,
+        internal_error=eta,
+        truncation_error_budget=error_budget,
+        declared_cost_cap=cap,
+        worst_alternative_index=worst,
+        null_expected_total_cost_upper=sequential.null_expected_total_cost_upper,
+        alternative_expected_cost_upper=sequential.alternative_expected_cost_upper,
+        type_i_error_upper=eta,
+        pointwise_type_ii_error_upper=eta + error_budget,
+        small_gap_declared_cost_cap_coefficient=float(
+            alternative_coefficients.max() / error_budget
+        ),
     )
 
 

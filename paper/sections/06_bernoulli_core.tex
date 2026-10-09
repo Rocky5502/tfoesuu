@@ -714,6 +714,39 @@ The remaining multiplicative gap is therefore at most
 equal to approximately \(1.1305\) at \(\delta=0.05\).  This statement concerns
 the exact P19 simple null and singleton alternatives, and does not give a
 bounded deterministic horizon.
+
+\item A deterministic declared-cost horizon can be restored without returning
+to the fixed-allocation \(m\log m\) penalty.  Fix any
+\(\eta\in(0,\delta)\), let \(H_0(\eta)\) and \(H_1(\eta)\) denote the preceding
+quantities with \(\delta\) replaced by \(\eta\), and define
+\[
+B_\eta
+=
+\frac1{\delta-\eta}
+\max_{x\in U}
+\left\{
+H_0(\eta)\sum_{z\in U\setminus\{x\}}\bar c_z
++H_1(\eta)\bar c_x
+\right\}.
+\]
+Truncating the sequential boundary block immediately before its declared cost
+would exceed \(B_\eta\), and then accepting that block, gives type-I error at
+most \(\eta\), pointwise boundary type-II error at most \(\delta\), and the
+deterministic total hybrid cost cap
+\[
+B_\eta
++L C_{\rm ctrl}^{A\setminus U}
++\sum_{i:q_i^\star>0}c_i.
+\]
+For unit boundary costs, fixed \(\delta\), and \(\eta=\delta/2\), this cap is
+\[
+O\!\left(\frac{m+\log m}{d^2}\right)
+=O\!\left(\frac{m}{d^2}\right).
+\]
+Part~(i) gives a matching \(\Omega(m/d^2)\) lower bound for every deterministic
+cap.  Thus adaptive allocation removes the multiplicative \(\log m\) penalty
+even with a deterministic horizon, although this Markov truncation is not
+claimed to have optimal dependence on \(\delta\) or exact constants.
 \end{enumerate}
 \end{theorem}
 
@@ -818,6 +851,24 @@ lower endpoint of the asymptotic bracket is part~(i), because every unmatched
 channel contributes \(a\bar c_x/K_{\rm bnd}\); multiplying the lower and upper
 bounds by \(d^2\), using \(K_{\rm bnd}=b_2d^2+O(d^3)\), and observing that the
 residual control cost is only \(O(d^{-1})\) proves the bracket.
+
+For (vii), run the sequential boundary block from (vi) at internal error
+\(\eta\).  Under singleton alternative \(x\), its untruncated declared cost
+has expectation at most the expression inside braces defining \(B_\eta\).
+Markov's inequality therefore bounds the probability of truncating before the
+unbounded test decides by at most \(\delta-\eta\).  Truncation followed by
+acceptance cannot increase type-I error, while its pointwise type-II error is
+at most \(\eta+(\delta-\eta)=\delta\).  Appending the deterministic residual
+control schedule gives the displayed total cap.  With unit costs and
+\(\eta=\delta/2\), the numerator defining \(B_\eta\) is
+\[
+\frac{(m-1)\log(2/\delta)+\log(2m/\delta)}{b_2d^2}
++O(d^{-1}),
+\]
+which is \(O(m/d^2)\) at fixed \(\delta\).  Conversely, part~(i) gives null
+expected boundary cost at least
+\(m\kl(1-\delta,\delta)/K_{\rm bnd}=\Omega(m/d^2)\); every deterministic cost
+cap dominates this expectation.
 \end{proof}
 
 \begin{proposition}[A fixed-allocation familywise penalty]

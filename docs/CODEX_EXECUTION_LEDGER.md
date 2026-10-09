@@ -38,8 +38,10 @@
 3. Publication experiments, figures, and PDF admission evidence remain incomplete.
 4. P19's nonadaptive fixed boundary block provably needs `|U| log |U|/d^2`, while sequential LR
    stopping removes the multiplicative log from expected null cost and is within the confidence-only
-   factor `log(1/beta)/kl(1-beta,beta)` of the leading information constant. Exact adaptive constants
-   and bounded-horizon adaptive allocation remain open; no arbitrary composite-null extension is valid.
+   factor `log(1/beta)/kl(1-beta,beta)` of the leading information constant. Markov truncation retains
+   `Theta(|U|/d^2)` topology scaling under a deterministic adaptive cost cap at fixed confidence.
+   Exact adaptive constants and optimal confidence dependence remain open; no arbitrary composite-null
+   extension is valid.
 5. Repository-wide Ruff still has pre-existing findings outside the touched files.
 
 Resolved during this session: raw frozen-manifest SHA-256 values were not comparable across PC1 and
@@ -48,7 +50,7 @@ and add LF-normalized SHA-256 plus Git blob identity.
 
 ## Current task
 
-Audit P19's remaining exact adaptive constants and bounded-horizon allocation,
+Audit P19's remaining exact adaptive constants and truncated-test confidence dependence,
 and continue feasibility work on a genuine evolving executable
 subject without contaminating frozen v1 evidence. The strict prepared-subject
 validator, dual-GPU public exploratory smoke, portable provenance repair, mixed

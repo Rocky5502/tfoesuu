@@ -232,5 +232,9 @@ overshoot, and expected-cost bounds. The fixed allocation has a necessary
 `log |U|` factor; the unbounded sequential design removes it from expected null
 cost. The returned exact lower cost and small-gap coefficients reproduce the
 confidence-only residual ratio `log(1/beta)/kl(1-beta,beta)`. Mixed fixtures
-remain in the topology search rather than the v1 rho-only grid. Generated rows
-are parameter specifications, never observed performance values.
+remain in the topology search rather than the v1 rho-only grid.
+`boundary_familywise_truncated_sequential_bounds` reproduces the deterministic
+Markov cost cap and its small-gap coefficient; tests pin exact error-budget
+accounting, heterogeneous worst alternatives, and the absence of an asymptotic
+`|U| log |U|` factor at fixed confidence. Generated rows are parameter
+specifications, never observed performance values.

@@ -137,9 +137,31 @@ The remaining leading-constant ratio is therefore the confidence-only quantity
 `log(1/beta)/kl(1-beta,beta)`, independent of `|U|`, topology, and costs. It is
 approximately `1.1304671072` at `beta=0.05`.
 
+## Deterministic adaptive cost cap
+
+Run the sequential test at internal error `eta<beta`. If its declared boundary
+cost would exceed
+
+    B_eta = max_i E_i[cost] / (beta-eta),
+
+truncate and accept the boundary null. Markov's inequality adds at most
+`beta-eta` to each pointwise miss probability, while truncation cannot increase
+type I. Appending the deterministic control block gives a fully deterministic
+hybrid cost cap.
+
+For unit boundary costs, `eta=beta/2`, fixed beta, and fixed interior parameters,
+
+    B_eta = O((|U| + log |U|)/d^2) = O(|U|/d^2).
+
+The null information floor is `Omega(|U|/d^2)` and every deterministic cap
+dominates expected null cost. Hence adaptive allocation has exact linear
+topology-size order at fixed confidence even under a deterministic cap, strictly
+improving the nonadaptive fixed-allocation `Theta(|U| log |U|/d^2)` order. The
+Markov construction does not claim optimal beta dependence or exact constants.
+
 ## Remaining target
 
-Close exact adaptive minimax constants and audit bounded-horizon adaptive
-allocations. The hybrid theorem does not promote the general P20 conjecture or
-cover unknown background levels, nonexchangeable controls, or simultaneous
-alternatives.
+Close exact adaptive minimax constants and improve the truncated construction's
+confidence dependence. The hybrid theorem does not promote the general P20
+conjecture or cover unknown background levels, nonexchangeable controls, or
+simultaneous alternatives.

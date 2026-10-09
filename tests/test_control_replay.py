@@ -7,6 +7,7 @@ import pytest
 from tfoesuu.control_replay import (
     boundary_familywise_fixed_design_lower_bound,
     boundary_familywise_sequential_bounds,
+    boundary_familywise_truncated_sequential_bounds,
     control_replay_information_lower_bound,
     matched_control_contrast_witness,
     matched_control_replay_schedule,
@@ -812,6 +813,87 @@ def test_boundary_sequential_small_gap_constant_ratio_is_confidence_only():
     )
     assert bound.asymptotic_confidence_gap_ratio == pytest.approx(expected_ratio)
     assert bound.asymptotic_confidence_gap_ratio < 1.14
+
+
+def test_truncated_boundary_sequential_bound_spends_error_by_markov():
+    costs = np.array([1.0, 2.0, 5.0])
+    beta, internal_error = 0.05, 0.02
+    bound = boundary_familywise_truncated_sequential_bounds(
+        costs,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=beta,
+        internal_error=internal_error,
+    )
+    sequential = boundary_familywise_sequential_bounds(
+        costs,
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=internal_error,
+    )
+
+    assert bound.internal_error == pytest.approx(internal_error)
+    assert bound.truncation_error_budget == pytest.approx(beta - internal_error)
+    assert bound.declared_cost_cap == pytest.approx(
+        sequential.alternative_expected_cost_upper.max() / (beta - internal_error)
+    )
+    assert bound.null_expected_total_cost_upper == pytest.approx(
+        sequential.null_expected_total_cost_upper
+    )
+    assert bound.type_i_error_upper == pytest.approx(internal_error)
+    assert bound.pointwise_type_ii_error_upper == pytest.approx(beta)
+
+
+def test_truncated_boundary_sequential_cap_removes_m_log_m_at_fixed_error():
+    common = {
+        "p": 0.20,
+        "shared_patch": 0.10,
+        "fairness_tolerance": 0.10,
+        "d": 0.01,
+        "beta": 0.05,
+    }
+    small = boundary_familywise_truncated_sequential_bounds([1.0] * 16, **common)
+    large = boundary_familywise_truncated_sequential_bounds([1.0] * 256, **common)
+
+    assert large.small_gap_declared_cost_cap_coefficient / 256 < (
+        small.small_gap_declared_cost_cap_coefficient / 16
+    )
+    assert large.small_gap_declared_cost_cap_coefficient / (256 * math.log(256)) < (
+        small.small_gap_declared_cost_cap_coefficient / (16 * math.log(16))
+    )
+
+
+def test_truncated_boundary_sequential_cap_uses_worst_heterogeneous_alternative():
+    bound = boundary_familywise_truncated_sequential_bounds(
+        [1.0, 3.0, 11.0],
+        p=0.20,
+        shared_patch=0.10,
+        fairness_tolerance=0.10,
+        d=0.01,
+        beta=0.05,
+    )
+
+    assert bound.worst_alternative_index == 2
+    assert bound.declared_cost_cap == pytest.approx(
+        bound.alternative_expected_cost_upper[2] / bound.truncation_error_budget
+    )
+
+
+def test_truncated_boundary_sequential_rejects_invalid_internal_error():
+    with pytest.raises(ValueError, match="internal_error"):
+        boundary_familywise_truncated_sequential_bounds(
+            [1.0],
+            p=0.20,
+            shared_patch=0.10,
+            fairness_tolerance=0.10,
+            d=0.01,
+            beta=0.05,
+            internal_error=0.05,
+        )
 
 
 def test_mixed_control_hybrid_schedule_rejects_unobservable_candidate():

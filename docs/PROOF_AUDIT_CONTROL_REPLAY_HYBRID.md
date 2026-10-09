@@ -101,6 +101,14 @@ exact lower-program coefficient and this upper bound bracket the leading null
 constant within `log(1/beta)/kl(1-beta,beta)`, a topology- and cost-independent
 factor equal to `1.1304671072` at `beta=0.05`.
 
+The unbounded horizon is not essential for the topology-size improvement.
+Running at internal error `eta<beta` and accepting if the next query would cross
+`max_i E_i[cost]/(beta-eta)` adds at most `beta-eta` pointwise miss probability
+by Markov's inequality and cannot increase type I. At fixed beta and unit costs,
+this deterministic adaptive cap is `O((m+log m)/d^2)=O(m/d^2)`. Part (i)'s null
+information floor is `Omega(m/d^2)`, so the adaptive deterministic-cap topology
+order is tight. Only exact constants and beta dependence remain open.
+
 ## Executable guards
 
 - `mixed_control_replay_schedule` constructs both schedule blocks and fails on
