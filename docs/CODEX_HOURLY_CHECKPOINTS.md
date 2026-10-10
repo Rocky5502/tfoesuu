@@ -738,3 +738,12 @@
   `fresh campaign approval file is missing` and created no output. No public
   subject outcome was computed. Next action is the bounded seven-dataset run
   only after fresh explicit approval.
+- Audited the manuscript against the two distinct public protocols. The old
+  prose conflated the V1 theorem-aligned GPU simulation with V2 executable
+  Fairlearn behavior. Revised the evaluation section to separate them, freeze
+  the exact-PMF/software-behavior interpretation, retain the causal-fairness
+  exclusion, and identify the CPU-only historical runtime. Bibliography and
+  paper consistency checks passed. Bundled Tectonic produced a 45-page PDF;
+  visual inspection of pages 31--34 found no clipping, overlap, or broken
+  section flow. Existing narrow-table underfull/overfull warnings were
+  unchanged and do not originate in the new prose.

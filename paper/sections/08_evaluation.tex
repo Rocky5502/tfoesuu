@@ -68,11 +68,12 @@ P17 scope counterexample & 1 & Heterogeneous fair null that falsifies naive raw-
 
 \subsection{Public evaluation populations}
 
-The theorem-specification manifests are complemented by a separate seven-dataset
-public evaluation layer. These datasets do not establish the theorems; they
-supply realistic input populations and protected attributes for locally
-constructed old/new stochastic software versions. The raw datasets are never
-vendored into the repository. Their source metadata are frozen in
+The theorem-specification manifests are complemented by two noninterchangeable
+seven-dataset protocols: a theorem-aligned simulation and a direct executable
+software-version comparison. These datasets do not establish the theorems.
+They supply realistic covariate populations, and the second protocol also uses
+aligned observed protected attributes. The raw datasets are never vendored
+into the repository. Their source metadata are frozen in
 \texttt{data/public\_benchmark\_registry\_v1.jsonl}, and publication runs must record a
 local content hash before any result is admitted to the paper.
 
@@ -98,7 +99,8 @@ Default of Credit Card Clients & Binary classification & sex, age & UCI \cite{De
 \end{tabular}
 \end{table}
 
-The common protocol fits a simple local baseline predictor on non-protected
+\paragraph{Theorem-aligned v1 simulation.}
+The v1 protocol fits a simple local baseline predictor on non-protected
 features, converts its score to an interior Bernoulli probability, and defines
 the old program by a common-uniform randomized decision. In the v1 evaluator,
 each evaluation probability is duplicated into a controlled two-endpoint edge;
@@ -110,6 +112,23 @@ covariates determine a heterogeneous probability population, while the graph
 and counterfactual endpoints remain a synthetic theorem-aligned wrapper. This
 construction is not evidence that the source dataset supplies valid causal
 counterfactual worlds or satisfies the paper's fairness assumptions.
+
+\paragraph{Executable-version V2 protocol.}
+A separately versioned observational-context artifact preserves aligned
+training and evaluation rows, protected columns, labels, source-row positions,
+and non-protected score-model inputs. A score companion records the exact
+prefit training and evaluation probabilities without reconstructing discarded
+dataframe types. The executable subject is a pinned direct parent/child pair of
+Fairlearn's threshold optimizer: the child repairs multi-column protected-group
+handling while leaving the prediction and randomness implementations fixed.
+For each dataset and revision, the frozen primary estimand is the row-wise
+difference between exact randomized-prediction PMFs obtained from the native
+protected columns and from an injective encoding of the same ordered tuple.
+Single-attribute datasets are negative controls. This measures a software
+behavioral regression under observed groups; it is neither a causal fairness
+effect nor a population-level fairness estimate. The immutable input bridge,
+support rules, complete seven-dataset census, and source/runtime gates are
+frozen before execution. No V2 outcome is reported in this draft.
 
 Prepared inputs and experiment code carry separate provenance.  A later clean
 execution commit may consume an earlier prepared artifact only if a fail-closed
@@ -147,12 +166,14 @@ GPU with 16\,GiB-class memory (16{,}303\,MiB reported per device).
 Both hosts reported NVIDIA driver 591.86 and driver-advertised CUDA 13.1
 compatibility on October 8, 2026. The first host uses Windows with Python
 3.11 available; the second runs Ubuntu 22.04.5 under WSL2 with Python 3.12.2
-available. These observations establish the \emph{hardware inventory only}:
-they do not establish an installed CUDA-enabled PyTorch environment,
-successful kernels, full test-suite execution, or completed experimental
-measurements. Exact PyTorch, CUDA runtime, package versions, execution
-timestamps, and configuration fingerprints will be taken from validated
-run manifests, rather than inferred from driver version strings.
+available. Hardware inventory alone is not outcome evidence. Engineering
+smokes and preflights are excluded from submission-facing tables unless their
+complete manifests pass the corresponding release gate. Exact PyTorch, CUDA
+runtime, package versions, execution timestamps, and configuration
+fingerprints are taken from validated run manifests rather than inferred from
+driver version strings. The pinned executable-version protocol instead uses a
+CPU-only Python~3.8.20 historical runtime; GPU acceleration is scientifically
+irrelevant to that subject.
 
 \paragraph{Independent workers and reproducibility controls.}
 The two GPUs are separate devices on different machines, \emph{not} one

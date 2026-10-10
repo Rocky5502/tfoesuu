@@ -199,3 +199,11 @@ The historical runtime loaded all seven exact row censuses and validated both
 source trees. A missing-approval launch failed before output creation. No
 Fairlearn public outcome was executed; fresh approval remains the only campaign
 gate.
+
+The manuscript evaluation section is synchronized with this boundary. It now
+separates the theorem-aligned V1 GPU simulation from the V2 direct executable
+software comparison, states the exact-PMF estimand and single-attribute
+controls, and explicitly excludes causal or population-fairness interpretation.
+It also records that the historical subject is CPU-only. The 45-page manuscript
+compiled successfully with bundled Tectonic; targeted visual inspection of the
+four affected pages found no clipping, overlap, or broken flow.
