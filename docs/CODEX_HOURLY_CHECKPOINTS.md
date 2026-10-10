@@ -709,3 +709,32 @@
 - No V2.1/V2.2 public context was loaded and no public outcome exists. The
   executor/validator path is ready; fresh explicit user approval remains
   required for the bounded seven-dataset campaign.
+
+## 2026-10-10 14:14 +08:00 (2026-10-10 06:14Z) — immutable campaign input bridge
+
+- Resumed clean on `codex/research-audit-20261008` at
+  `7c3ba09b59ae9d8e8bd12b2af32506d68988a475`. PC2's protected baseline was
+  still clean at `149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b`; neither host had a research
+  GPU process. This historical subject remains CPU-only.
+- A hostile audit found a last-mile gap: the tested executor had no immutable
+  V2.1/V2.2-to-Python-3.8 input bridge and the final entry point did not itself
+  prove the source checkout clean. Added falsifying corruption, alignment,
+  shape, source-dirty, and exact-float tests before completing the bridge.
+- Commit `e73b6fda243b93e3b1c406f75d8daa09e28544c0` adds an outcome-free bundle
+  builder, exact hexadecimal score serialization, strict file census and
+  hashes, historical-runtime loader, clean Git/source-hash gate, approval-first
+  campaign entry point, and non-overwriting output. Local: 295 passed. Ruff,
+  compileall, and diff checks passed. Bundle-transfer SHA-256:
+  `6cf7354e437d6ddadd0ae21286a5e40984a23e16d5f41620c0678f10e99718cb`.
+- PC2 isolated verification under the exact V2.1 environment: 294 passed and
+  one expected Torch-only skip. It created only the new 13,597,580-byte input
+  directory `datasets/fairlearn_public_v2_inputs/e73b6fd`; manifest SHA-256
+  `2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e`.
+  Python 3.8 loaded all seven datasets with train/evaluation row counts:
+  Adult 33916/4096, Bank 5881/1961, COMPAS 3954/1319, Default 22500/4096,
+  German 750/250, Law School 16756/4096, and MEPS 11873/3958. Both pinned
+  source trees passed clean-commit and critical-file hashes.
+- The exact command path with a nonexistent approval returned
+  `fresh campaign approval file is missing` and created no output. No public
+  subject outcome was computed. Next action is the bounded seven-dataset run
+  only after fresh explicit approval.

@@ -146,3 +146,17 @@ synthetic fixture. Both versions passed common-tape, repeat-determinism, and
 exact PMF-threshold correspondence checks in native and canonical modes. This
 is an execution-path validation, not a result: no V2.1/V2.2 context was loaded
 and the authorization fence remains closed.
+
+The runtime boundary is now frozen as a separate input bundle rather than an
+implicit in-memory handoff. V2.1 row positions, labels, and transformed native
+and canonical groups are paired with V2.2 scores serialized using
+`float.hex`, so Python-version JSON formatting cannot perturb score bits. The
+bundle manifest binds every file to the analysis protocol, prepared manifest,
+score-companion manifest, and preflight-plan hashes. PC2 materialized the seven
+outcome-free inputs at commit `e73b6fda243b93e3b1c406f75d8daa09e28544c0`;
+manifest SHA-256 is
+`2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e`.
+The historical Python 3.8 runtime loaded the complete census and validated both
+pinned clean source trees. The campaign entry point validates fresh approval
+before mounting or importing Fairlearn and refuses an existing output path.
+A missing-approval rehearsal created no output and observed no subject result.

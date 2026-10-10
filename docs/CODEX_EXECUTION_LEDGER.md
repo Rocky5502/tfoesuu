@@ -181,3 +181,21 @@ SHA-256 values were `03f303fabc81c557d34fe601b89fc4d82be7bdc79679bae042dae142f83
 No public context or outcome was loaded. The engineering blocker is closed;
 fresh user approval is now the sole gate before the bounded seven-dataset
 campaign.
+
+A final hostile readiness audit found that the transcript executor still
+accepted only in-memory arrays: there was no immutable bridge from V2.1/V2.2
+into Python 3.8, and no last-mile clean-checkout check in the campaign entry
+point. Commit `e73b6fda243b93e3b1c406f75d8daa09e28544c0` closes both gaps. Scores
+cross the runtime boundary as exact hexadecimal IEEE-754 strings; every bundle
+file is byte-counted and hashed against the protocol/prepared/companion/plan
+identities. The runner verifies a clean pinned Git commit plus five critical
+source hashes before importing Fairlearn, writes only a new output, and checks
+fresh approval before any subject mount or import. All 295 local tests pass;
+PC2 independently passed 294 with one expected Torch-only skip. PC2 created the
+new 13,597,580-byte outcome-free bundle at
+`datasets/fairlearn_public_v2_inputs/e73b6fd`, manifest SHA-256
+`2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e`.
+The historical runtime loaded all seven exact row censuses and validated both
+source trees. A missing-approval launch failed before output creation. No
+Fairlearn public outcome was executed; fresh approval remains the only campaign
+gate.
