@@ -240,6 +240,32 @@ def validate_subject_checkout(checkout, version):
     return {"version": version, "commit": commit, "source_sha256": hashes}
 
 
+def validate_runner_checkout(checkout):
+    """Record the exact clean campaign-runner checkout identity."""
+
+    root = Path(checkout).resolve()
+    if not root.is_dir():
+        raise ValueError("campaign runner checkout is missing")
+    try:
+        commit = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        status = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise ValueError("campaign runner Git identity is unreadable") from exc
+    if not re.fullmatch(r"[0-9a-f]{40}", commit) or status:
+        raise ValueError("campaign runner is not a clean pinned commit")
+    return {"commit": commit, "clean": True}
+
+
 def _group_count(values):
     rows = np.asarray(values, dtype=object)
     if rows.ndim == 1:

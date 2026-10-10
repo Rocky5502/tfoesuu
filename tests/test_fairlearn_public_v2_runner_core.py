@@ -14,6 +14,7 @@ from external_subjects.fairlearn_public_v2.runner_core import (
     load_runner_input_bundle,
     run_dataset_transcript,
     validate_campaign_approval,
+    validate_runner_checkout,
     validate_subject_checkout,
 )
 
@@ -243,6 +244,8 @@ def test_subject_checkout_requires_pinned_clean_tree(tmp_path, monkeypatch):
 
     assert report["commit"] == OLD_COMMIT
     assert len(report["source_sha256"]) == 5
+    runner_report = validate_runner_checkout(checkout)
+    assert runner_report == {"commit": OLD_COMMIT, "clean": True}
 
     def dirty_git(command, **_kwargs):
         if "rev-parse" in command:
@@ -252,6 +255,8 @@ def test_subject_checkout_requires_pinned_clean_tree(tmp_path, monkeypatch):
     monkeypatch.setattr(runner_core.subprocess, "run", dirty_git)
     with pytest.raises(ValueError, match="clean pinned"):
         validate_subject_checkout(checkout, "old")
+    with pytest.raises(ValueError, match="clean pinned"):
+        validate_runner_checkout(checkout)
 
 
 def test_campaign_approval_is_external_and_bound_to_protocol(tmp_path):

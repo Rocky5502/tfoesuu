@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 
 import numpy as np
@@ -7,6 +8,9 @@ import numpy as np
 from .public_fairlearn_v2_protocol import EXPECTED_NEW, EXPECTED_OLD
 
 TRANSCRIPT_SCHEMA = "tfoesuu-fairlearn-public-v2-transcript-v1"
+CAMPAIGN_OUTPUT_SCHEMA = "tfoesuu-fairlearn-public-v2-campaign-output-v2"
+_SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+_GIT_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
 def _pmf(record: dict, mode: str) -> np.ndarray:
@@ -144,4 +148,104 @@ def validate_public_fairlearn_v2_transcripts(
         "new_repair_conformance": True,
         "single_attribute_negative_controls": True,
         "scope": "paired-software-behavior-only",
+    }
+
+
+def validate_public_fairlearn_v2_campaign_outputs(
+    old: dict,
+    new: dict,
+    protocol: dict,
+    *,
+    expected_protocol_sha256: str,
+    expected_runner_commit: str,
+    expected_input_bundle_manifest_sha256: str,
+) -> dict:
+    """Validate root provenance before admitting the paired transcript census."""
+
+    if not _SHA256_RE.fullmatch(expected_protocol_sha256):
+        raise ValueError("expected protocol SHA-256 is invalid")
+    if not _GIT_RE.fullmatch(expected_runner_commit):
+        raise ValueError("expected runner commit is invalid")
+    if not _SHA256_RE.fullmatch(expected_input_bundle_manifest_sha256):
+        raise ValueError("expected input bundle SHA-256 is invalid")
+    commits = {"old": EXPECTED_OLD, "new": EXPECTED_NEW}
+    documents = {"old": old, "new": new}
+    approval_hashes = set()
+    records = []
+    for version, document in documents.items():
+        if not isinstance(document, dict) or document.get("schema") != CAMPAIGN_OUTPUT_SCHEMA:
+            raise ValueError(f"{version}: campaign output schema mismatch")
+        if document.get("version") != version or document.get("commit") != commits[version]:
+            raise ValueError(f"{version}: campaign source identity mismatch")
+        if document.get("protocol_sha256") != expected_protocol_sha256:
+            raise ValueError(f"{version}: campaign protocol identity mismatch")
+        if (
+            document.get("input_bundle_manifest_sha256")
+            != expected_input_bundle_manifest_sha256
+        ):
+            raise ValueError(f"{version}: campaign input bundle identity mismatch")
+        runner = document.get("runner")
+        if (
+            not isinstance(runner, dict)
+            or runner.get("commit") != expected_runner_commit
+            or runner.get("clean") is not True
+        ):
+            raise ValueError(f"{version}: campaign runner identity mismatch")
+        approval = document.get("approval")
+        if (
+            not isinstance(approval, dict)
+            or approval.get("authorized") is not True
+            or approval.get("protocol_sha256") != expected_protocol_sha256
+            or not _SHA256_RE.fullmatch(str(approval.get("approval_sha256", "")))
+        ):
+            raise ValueError(f"{version}: campaign approval identity mismatch")
+        approval_hashes.add(approval["approval_sha256"])
+        source = document.get("source")
+        source_hashes = source.get("source_sha256") if isinstance(source, dict) else None
+        if (
+            not isinstance(source, dict)
+            or source.get("version") != version
+            or source.get("commit") != commits[version]
+            or not isinstance(source_hashes, dict)
+            or not source_hashes
+            or any(not _SHA256_RE.fullmatch(str(value)) for value in source_hashes.values())
+        ):
+            raise ValueError(f"{version}: campaign source hash identity mismatch")
+        runtime = document.get("runtime")
+        packages = runtime.get("packages") if isinstance(runtime, dict) else None
+        if (
+            not isinstance(runtime, dict)
+            or not str(runtime.get("python", "")).strip()
+            or not str(runtime.get("platform", "")).strip()
+            or not isinstance(packages, dict)
+            or set(packages)
+            != {"fairlearn", "numpy", "pandas", "scipy", "scikit_learn"}
+            or any(not str(value).strip() for value in packages.values())
+        ):
+            raise ValueError(f"{version}: campaign runtime identity is incomplete")
+        if (
+            not str(document.get("started_at", "")).strip()
+            or not str(document.get("finished_at", "")).strip()
+            or isinstance(document.get("elapsed_seconds"), bool)
+            or not isinstance(document.get("elapsed_seconds"), (int, float))
+            or document["elapsed_seconds"] < 0.0
+        ):
+            raise ValueError(f"{version}: campaign timing metadata is invalid")
+        version_records = document.get("records")
+        if (
+            not isinstance(version_records, list)
+            or len(version_records) != len(protocol["datasets"])
+            or any(row.get("version") != version for row in version_records)
+        ):
+            raise ValueError(f"{version}: campaign record partition mismatch")
+        records.extend(version_records)
+    if len(approval_hashes) != 1:
+        raise ValueError("old/new campaign approval identity mismatch")
+    report = validate_public_fairlearn_v2_transcripts(records, protocol)
+    return {
+        **report,
+        "campaign_provenance_valid": True,
+        "runner_commit": expected_runner_commit,
+        "input_bundle_manifest_sha256": expected_input_bundle_manifest_sha256,
+        "approval_sha256": next(iter(approval_hashes)),
     }
