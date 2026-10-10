@@ -7,16 +7,60 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from external_subjects.fairlearn_public_v2 import runner_core
 from external_subjects.fairlearn_public_v2.runner_core import (
     OLD_COMMIT,
     ScoreLookupEstimator,
+    load_runner_input_bundle,
     run_dataset_transcript,
     validate_campaign_approval,
+    validate_subject_checkout,
 )
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _write_runner_bundle(root: Path, protocol: Path) -> Path:
+    root.mkdir()
+    payload = {
+        "schema": "tfoesuu-fairlearn-public-v2-dataset-input-v1",
+        "dataset_id": "toy",
+        "training_positions": [1, 2],
+        "training_score_hex": [0.2.hex(), 0.8.hex()],
+        "training_labels": [0, 1],
+        "evaluation_positions": [3],
+        "evaluation_score_hex": [0.5.hex()],
+        "native_training_groups": [["a", "x"], ["b", "y"]],
+        "native_evaluation_groups": [["a", "x"]],
+        "canonical_training_groups": ["a|x", "b|y"],
+        "canonical_evaluation_groups": ["a|x"],
+    }
+    payload_path = root / "toy.json"
+    payload_path.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+    protocol_data = json.loads(protocol.read_text(encoding="utf-8"))
+    manifest = {
+        "schema": "tfoesuu-fairlearn-public-v2-input-bundle-v1",
+        "protocol_sha256": _sha256(protocol),
+        "prepared_manifest_sha256": protocol_data["prepared_input"]["manifest_sha256"],
+        "companion_manifest_sha256": protocol_data["score_model"][
+            "companion_manifest_sha256"
+        ],
+        "plan_sha256": protocol_data["runner_preflight"]["plan_sha256"],
+        "datasets": [
+            {
+                "dataset_id": "toy",
+                "path": "toy.json",
+                "bytes": payload_path.stat().st_size,
+                "sha256": _sha256(payload_path),
+            }
+        ],
+    }
+    (root / "input_bundle_manifest.json").write_text(
+        json.dumps(manifest, sort_keys=True), encoding="utf-8"
+    )
+    return payload_path
 
 
 def test_score_lookup_estimator_returns_scores_in_requested_order():
@@ -119,6 +163,95 @@ def test_run_dataset_transcript_rejects_misaligned_inputs(changes, message):
 
     with pytest.raises(ValueError, match=message):
         run_dataset_transcript(**arguments)
+
+
+def test_runner_input_bundle_round_trips_exact_float_hex(tmp_path):
+    protocol = tmp_path / "protocol.json"
+    protocol.write_text(
+        json.dumps(
+            {
+                "prepared_input": {"manifest_sha256": "b" * 64},
+                "score_model": {"companion_manifest_sha256": "c" * 64},
+                "runner_preflight": {"plan_sha256": "d" * 64},
+                "datasets": {"toy": {}},
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+    bundle = tmp_path / "bundle"
+    _write_runner_bundle(bundle, protocol)
+
+    loaded = load_runner_input_bundle(bundle, protocol)
+
+    assert len(loaded) == 1
+    assert loaded[0]["dataset_id"] == "toy"
+    assert loaded[0]["training_scores"] == [0.2, 0.8]
+    assert loaded[0]["evaluation_scores"] == [0.5]
+    assert loaded[0]["prepared_manifest_sha256"] == "b" * 64
+
+
+def test_runner_input_bundle_rejects_payload_corruption(tmp_path):
+    protocol = tmp_path / "protocol.json"
+    protocol.write_text(
+        json.dumps(
+            {
+                "prepared_input": {"manifest_sha256": "b" * 64},
+                "score_model": {"companion_manifest_sha256": "c" * 64},
+                "runner_preflight": {"plan_sha256": "d" * 64},
+                "datasets": {"toy": {}},
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+    bundle = tmp_path / "bundle"
+    payload = _write_runner_bundle(bundle, protocol)
+    payload.write_text("{}", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="identity mismatch"):
+        load_runner_input_bundle(bundle, protocol)
+
+
+def test_subject_checkout_requires_pinned_clean_tree(tmp_path, monkeypatch):
+    checkout = tmp_path / "fairlearn"
+    checkout.mkdir()
+    for relative in runner_core.EXPECTED_CHECKOUT_SHA256["old"]:
+        path = checkout / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("fixture", encoding="utf-8")
+
+    class _Result:
+        def __init__(self, stdout):
+            self.stdout = stdout
+
+    def clean_git(command, **_kwargs):
+        if "rev-parse" in command:
+            return _Result(OLD_COMMIT + "\n")
+        return _Result("")
+
+    monkeypatch.setattr(runner_core.subprocess, "run", clean_git)
+    monkeypatch.setattr(
+        runner_core,
+        "_sha256",
+        lambda path: runner_core.EXPECTED_CHECKOUT_SHA256["old"][
+            path.relative_to(checkout).as_posix()
+        ],
+    )
+
+    report = validate_subject_checkout(checkout, "old")
+
+    assert report["commit"] == OLD_COMMIT
+    assert len(report["source_sha256"]) == 5
+
+    def dirty_git(command, **_kwargs):
+        if "rev-parse" in command:
+            return _Result(OLD_COMMIT + "\n")
+        return _Result(" M fairlearn/_input_validation.py\n")
+
+    monkeypatch.setattr(runner_core.subprocess, "run", dirty_git)
+    with pytest.raises(ValueError, match="clean pinned"):
+        validate_subject_checkout(checkout, "old")
 
 
 def test_campaign_approval_is_external_and_bound_to_protocol(tmp_path):
