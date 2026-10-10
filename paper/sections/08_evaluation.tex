@@ -127,8 +127,20 @@ protected columns and from an injective encoding of the same ordered tuple.
 Single-attribute datasets are negative controls. This measures a software
 behavioral regression under observed groups; it is neither a causal fairness
 effect nor a population-level fairness estimate. The immutable input bridge,
-support rules, complete seven-dataset census, and source/runtime gates are
-frozen before execution. No V2 outcome is reported in this draft.
+support rules, complete seven-dataset census, and source/runtime gates were
+frozen before execution.
+
+The execution passed the provenance gates and the complete fourteen-record
+old/new census.  Table~\ref{tab:fairlearn-v2-results} reports every
+preregistered primary estimand.  The parent revision disagreed with its injective
+canonical control on Adult Census Income and Default of Credit Card Clients,
+but produced exact zeros on COMPAS, German Credit, and Law School GPA.  Both
+single-attribute controls were also exact zeros.  The repaired revision matched
+the canonical control exactly on all seven datasets.  These are deterministic
+software-behavior results on the frozen evaluation rows; they do not estimate a
+causal fairness effect or population generalization.
+
+\input{generated/fairlearn_public_v2_results}
 
 Prepared inputs and experiment code carry separate provenance.  A later clean
 execution commit may consume an earlier prepared artifact only if a fail-closed

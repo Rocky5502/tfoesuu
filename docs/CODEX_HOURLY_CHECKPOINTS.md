@@ -747,3 +747,36 @@
   visual inspection of pages 31--34 found no clipping, overlap, or broken
   section flow. Existing narrow-table underfull/overfull warnings were
   unchanged and do not originate in the new prose.
+
+## 2026-10-10 14:58 +08:00 (2026-10-10 06:58Z) — V2 campaign admission
+
+- Started on `codex/research-audit-20261008` at full SHA
+  `ade8ff3d8b764a4cbda7d06bbf062650542c5530`. The local GPU process census
+  contained desktop/UI processes only. The pinned Python 3.8 Fairlearn subject
+  is CPU-only, so GPU execution would not be scientifically valid.
+- Recorded fresh user authorization in an external approval object (SHA-256
+  `56fc7b2cb93b1503c0ac7bcfee984ec3155eaaae82d2a0179ca96c07cc34a106`).
+  PC2 ran the complete bounded seven-dataset old/new census from the immutable
+  input manifest `2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e`.
+  Old/new outputs hash to `3965581b561d689b7c537781646d73e6a6ea12f147308d598f404478710d32ab`
+  and `6a47d03fe207adf8683eace7cd11514a27bf076ce2b34147fce3e094730e1c9d`.
+  Independent validation SHA-256:
+  `cc07642b3d643b046de946023a8b373affb9697c0153c2f7abbbf545a2afd6f4`.
+- Exact primary results: Adult parent max/mean discrepancy 1/0.05521976534594683;
+  Default Credit 1/0.10234294181034484; every other parent dataset was zero.
+  The repaired revision was exactly zero on all seven. Both single-attribute
+  controls passed. All fourteen records and all four common-tape correspondence
+  checks passed; no confidence interval applies to deterministic exact PMFs.
+- Added five falsification tests and a provenance-locked result renderer. Full
+  suite: 304 passed in 12.23 s using a repository-local pytest root. Touched-file
+  Ruff, paper consistency, benchmark inventory, and bundled-Tectonic compilation
+  passed. The generated admission JSON SHA-256 is
+  `93609c26a4abb7da84bcc9de44186cf5ed8886d3060bfdcbe31ce1302f59f048`.
+- Admitted the full census to manuscript Table 5, including every null result and
+  the causal/population exclusion. Adversarial PDF review caught an initial
+  twelve-page float deferral; fixed placement now keeps the table beside the
+  claim on page 33. Color and grayscale renders passed. Final 45-page PDF
+  SHA-256: `dcf8e8a919d647da05fa76eb64544aaf000078f9249f2716713eeb0a6b97e251`.
+- Next: commit this coherent admission layer, then audit the remaining paper-wide
+  overfull boxes and release-language consistency. No million-trial, public
+  expansion, publication, or submission action is authorized.

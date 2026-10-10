@@ -1,0 +1,71 @@
+{
+  "schema": "tfoesuu-fairlearn-public-v2-admission-v1",
+  "source_artifacts": {
+    "new_sha256": "6a47d03fe207adf8683eace7cd11514a27bf076ce2b34147fce3e094730e1c9d",
+    "old_sha256": "3965581b561d689b7c537781646d73e6a6ea12f147308d598f404478710d32ab",
+    "protocol_sha256": "e8f96fbfbf9e9258aaf20768f4bc952bede0e43b3887f10322d2a25ed0e99291",
+    "registry_sha256": "b15ec8d941d16b7b2c8101b91704ee383131d904665e5864ef224cbf3c53a273"
+  },
+  "validation": {
+    "approval_sha256": "56fc7b2cb93b1503c0ac7bcfee984ec3155eaaae82d2a0179ca96c07cc34a106",
+    "campaign_provenance_valid": true,
+    "datasets": [
+      {
+        "dataset_id": "public-adult",
+        "new_max_abs_pmf_difference": 0.0,
+        "new_mean_abs_pmf_difference": 0.0,
+        "old_max_abs_pmf_difference": 1.0,
+        "old_mean_abs_pmf_difference": 0.05521976534594683
+      },
+      {
+        "dataset_id": "public-bank",
+        "new_max_abs_pmf_difference": 0.0,
+        "new_mean_abs_pmf_difference": 0.0,
+        "old_max_abs_pmf_difference": 0.0,
+        "old_mean_abs_pmf_difference": 0.0
+      },
+      {
+        "dataset_id": "public-compas",
+        "new_max_abs_pmf_difference": 0.0,
+        "new_mean_abs_pmf_difference": 0.0,
+        "old_max_abs_pmf_difference": 0.0,
+        "old_mean_abs_pmf_difference": 0.0
+      },
+      {
+        "dataset_id": "public-default-credit",
+        "new_max_abs_pmf_difference": 0.0,
+        "new_mean_abs_pmf_difference": 0.0,
+        "old_max_abs_pmf_difference": 1.0,
+        "old_mean_abs_pmf_difference": 0.10234294181034484
+      },
+      {
+        "dataset_id": "public-german",
+        "new_max_abs_pmf_difference": 0.0,
+        "new_mean_abs_pmf_difference": 0.0,
+        "old_max_abs_pmf_difference": 0.0,
+        "old_mean_abs_pmf_difference": 0.0
+      },
+      {
+        "dataset_id": "public-lawschool",
+        "new_max_abs_pmf_difference": 0.0,
+        "new_mean_abs_pmf_difference": 0.0,
+        "old_max_abs_pmf_difference": 0.0,
+        "old_mean_abs_pmf_difference": 0.0
+      },
+      {
+        "dataset_id": "public-meps21",
+        "new_max_abs_pmf_difference": 0.0,
+        "new_mean_abs_pmf_difference": 0.0,
+        "old_max_abs_pmf_difference": 0.0,
+        "old_mean_abs_pmf_difference": 0.0
+      }
+    ],
+    "input_bundle_manifest_sha256": "2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e",
+    "new_repair_conformance": true,
+    "record_count": 14,
+    "runner_commit": "ade8ff3d8b764a4cbda7d06bbf062650542c5530",
+    "schema": "tfoesuu-fairlearn-public-v2-validation-v1",
+    "scope": "paired-software-behavior-only",
+    "single_attribute_negative_controls": true
+  }
+}

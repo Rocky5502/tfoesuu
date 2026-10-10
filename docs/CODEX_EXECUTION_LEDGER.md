@@ -207,3 +207,27 @@ controls, and explicitly excludes causal or population-fairness interpretation.
 It also records that the historical subject is CPU-only. The 45-page manuscript
 compiled successfully with bundled Tectonic; targeted visual inspection of the
 four affected pages found no clipping, overlap, or broken flow.
+
+Fresh user authorization opened the bounded, frozen seven-dataset Fairlearn V2
+campaign. The provenance-complete rerun used clean runner commit
+`ade8ff3d8b764a4cbda7d06bbf062650542c5530`, immutable input-bundle manifest
+SHA-256 `2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e`,
+and approval SHA-256
+`56fc7b2cb93b1503c0ac7bcfee984ec3155eaaae82d2a0179ca96c07cc34a106`.
+The old/new output SHA-256 values are respectively
+`3965581b561d689b7c537781646d73e6a6ea12f147308d598f404478710d32ab`
+and `6a47d03fe207adf8683eace7cd11514a27bf076ce2b34147fce3e094730e1c9d`;
+the independent validation report SHA-256 is
+`cc07642b3d643b046de946023a8b373affb9697c0153c2f7abbbf545a2afd6f4`.
+All fourteen records passed. The parent differed from its canonical control on
+Adult (max 1, mean 0.05521976534594683) and Default Credit (max 1, mean
+0.10234294181034484), while COMPAS, German, Law School, Bank, and MEPS were
+exact zeros. The repair was exact on all seven datasets. These are deterministic
+software-behavior discrepancies, not causal or population-fairness estimates.
+
+A new fail-closed admission renderer revalidates raw campaign provenance before
+creating the complete-census JSON and booktabs table. Five new falsification
+tests bring the full suite to 304 passing tests. The manuscript now reports all
+seven datasets, including null findings; final-size color and grayscale review
+placed the table beside its claim on page 33. The final 45-page PDF SHA-256 is
+`dcf8e8a919d647da05fa76eb64544aaf000078f9249f2716713eeb0a6b97e251`.
