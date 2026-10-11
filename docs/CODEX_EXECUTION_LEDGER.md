@@ -231,3 +231,14 @@ tests bring the full suite to 304 passing tests. The manuscript now reports all
 seven datasets, including null findings; final-size color and grayscale review
 placed the table beside its claim on page 33. The final 45-page PDF SHA-256 is
 `dcf8e8a919d647da05fa76eb64544aaf000078f9249f2716713eeb0a6b97e251`.
+
+The manuscript release audit at starting SHA
+`1514af31dbd8f0fb7c37e967b2e909c50a01f48f` repaired three severe overfull
+boxes and a submission-critical float-order defect: the three principal
+evaluation tables and P17 audit figure had drifted to pages 42--45. The final
+46-page bundled-Tectonic build reports zero overfull boxes; evidence now appears
+beside its discussion on pages 32--36, Figure 4 remains with Table 6 on page 36,
+and related work begins on page 37. Color, grayscale, and first-page renders
+passed visual review. All 304 tests passed in 14.37 s and `git diff --check`
+passed. The stable PDF is 322,376 bytes with SHA-256
+`aa5e15be13d30cc40987d741f7b7a4c96436ddd446bc845aad68f7de0325720b`.

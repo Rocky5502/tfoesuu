@@ -1,6 +1,6 @@
-\begin{figure}[t]
+\begin{figure}[H]
 \centering
-\begin{tikzpicture}[x=0.86cm,y=0.72cm,
+\begin{tikzpicture}[x=0.855cm,y=0.68cm,
   axis/.style={draw=black!55,line width=0.65pt},
   guide/.style={draw=black!15,line width=0.45pt},
   focalLine/.style={draw=focalteal,line width=1.35pt},
@@ -12,7 +12,7 @@
 
 % Panel (a): exact structural ratio.
 \begin{scope}[shift={(0,0)}]
-\node[lab,anchor=west,font=\small\bfseries] at (0,6.35) {(a) Exact P17 geometry gap};
+\node[lab,anchor=west,font=\small\bfseries,fill=white,inner sep=1pt] at (0.85,6.58) {(a) Exact clique gap};
 \draw[axis,->] (0.5,0.75) -- (7.7,0.75);
 \draw[axis,->] (0.5,0.75) -- (0.5,6.65);
 \foreach \x/\n in {1.4/3,2.4/4,3.4/5,4.4/6,5.4/7,6.4/8}{
@@ -32,20 +32,26 @@
 
 % Panel (b): exact scope obstruction.
 \begin{scope}[shift={(9.0,0)}]
-\node[lab,anchor=west,font=\small\bfseries] at (0,6.35) {(b) Heterogeneous null breaks raw contrast};
+\node[lab,anchor=west,font=\small\bfseries,fill=white,inner sep=1pt] at (0,6.58) {(b) Heterogeneous null breaks raw contrast};
 \draw[axis,->] (0.45,3.4)--(7.9,3.4);
-\foreach \x/\v in {0.45/0,1.90/0.20,2.63/0.30,3.35/0.40,3.72/0.45,7.70/1}{
+\foreach \x in {0.45,1.90,2.63,3.35,3.72,7.70}{
   \draw[axis] (\x,3.31)--(\x,3.49);
-  \node[small,anchor=north] at (\x,3.18) {\v};
 }
+\node[small,anchor=north] at (0.45,3.18) {0};
+\node[small,anchor=north] at (1.90,3.18) {0.20};
+\node[small,anchor=north] at (2.63,2.91) {0.30};
+\node[small,anchor=north] at (3.35,3.18) {0.40};
+\node[small,anchor=north] at (3.72,2.91) {0.45};
+\node[small,anchor=north] at (7.70,3.18) {1};
 \draw[riskLine] (1.90,3.4)--(2.63,3.4);
 \draw[riskLine] (3.35,3.4)--(3.72,3.4);
 \node[small,text=risktone,anchor=south] at (2.27,3.67) {reject};
 \node[small,text=risktone,anchor=south] at (3.54,3.67) {reject};
-\node[lab,anchor=north] at (4.0,2.58) {shared tape $U$};
+\node[lab,anchor=north] at (4.0,2.40) {shared tape $U$};
 \node[lab,anchor=west] at (0.45,1.72) {Fairness null: $|0.30-0.45|=0.15\le\tau=0.20$};
 \node[lab,anchor=west,text=risktone] at (0.45,1.15) {Raw-contrast rejection measure: $0.10+0.05=0.15$};
-\node[small,anchor=west] at (0.45,0.52) {Therefore the homogeneous $C_{\rm vert}$ tester is not valid for the unrestricted composite null.};
+\node[small,anchor=west,text width=6.2cm,align=left] at (0.45,0.52)
+  {The homogeneous $C_{\rm vert}$ test is invalid for the unrestricted composite null.};
 \end{scope}
 \end{tikzpicture}
 \caption{Exact deterministic P17 audit evidence.  (a) For clique $K_n$ with legal

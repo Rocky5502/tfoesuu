@@ -780,3 +780,33 @@
 - Next: commit this coherent admission layer, then audit the remaining paper-wide
   overfull boxes and release-language consistency. No million-trial, public
   expansion, publication, or submission action is authorized.
+
+## 2026-10-11 09:15 +08:00 (2026-10-11 01:15Z) — manuscript layout release gate
+
+- Verified branch `codex/research-audit-20261008` at full SHA
+  `1514af31dbd8f0fb7c37e967b2e909c50a01f48f` before work. The local RTX 5070
+  Ti reported 5% utilization, 2,098/16,303 MiB, and 40 C; the compute census
+  contained desktop/UI processes only and no scientific GPU job. The admitted
+  V2 campaign was already complete, so launching another run had no scientific
+  value.
+- A paper-wide release audit found three severe overfull boxes (85.14 pt in the
+  planner path, 30.68 pt in the Gaussian variance sentence, and 119.03 pt in
+  the P17 figure) and deferred the evaluation tables/figure to pages 42--45,
+  far from their claims. Reflowed the affected prose, made code paths breakable,
+  repaired the P17 annotation/ticks, and pinned the submission-facing evidence
+  objects to their evaluation context.
+- Built with bundled Tectonic using
+  `tectonic --keep-logs --keep-intermediates --outdir build-layout-release5-20261011 main.tex`.
+  The final artifact has 46 pages and zero `Overfull \\hbox` warnings. The
+  inventory, public-benchmark, V2-result, and deterministic-evidence objects now
+  appear on pages 32, 33, 34, and 36; Figure 4 shares page 36 with its evidence
+  table, and related work begins on page 37. Full-size page 1 and pages 36--37,
+  plus grayscale page 36, passed visual inspection without clipping, overlap,
+  or illegible encoding.
+- Validation command
+  `.venv\\Scripts\\python.exe -m pytest -q --basetemp .pytest_tmp_layout_20261011`
+  passed all 304 tests in 14.37 s; `git diff --check` passed. Stable PDF:
+  `output/pdf/tfoesuu_stoc2027_v2_admission.pdf`, 322,376 bytes, SHA-256
+  `aa5e15be13d30cc40987d741f7b7a4c96436ddd446bc845aad68f7de0325720b`.
+- Next: commit the coherent layout repair and retain the existing approval gate
+  for any million-trial, dataset-expansion, publication, or submission action.

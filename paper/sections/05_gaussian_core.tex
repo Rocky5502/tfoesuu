@@ -80,7 +80,11 @@ n_v=\left\lceil
 \right\rceil.
 \]
 For each edge $(u,v)$, the empirical difference of the two vertex means has
-variance at most $\gamma^2/(8\log(2m/\delta))$.  Reject if an empirical edge
+variance at most
+\[
+\frac{\gamma^2}{8\log(2m/\delta)}.
+\]
+Reject if an empirical edge
 difference has magnitude at least $\gamma/2$.  Under the null, a Gaussian tail
 bound followed by a union bound controls all edges.  Under the alternative, an
 edge with true difference at least $\gamma$ can be missed only if its estimation

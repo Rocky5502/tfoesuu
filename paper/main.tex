@@ -48,14 +48,18 @@ the two versions.  We ask how many executions are necessary to certify that the
 patch has not introduced a fairness violation, and how this complexity changes
 with the available replay primitive.
 
-For Gaussian old--new differences, we identify an uncertainty-weighted graph
-quantity $\Psi(H,\nu)$ governing optimal allocation over the residual impacted
-graph $H$.  A non-adaptive tester uses
-$O(\Psi(H,\nu)\gamma^{-2}\log(|E(H)|/\delta))$ paired calls, while every
-adaptive $\delta$-correct tester requires
-$\Omega(\Psi(H,\nu)\gamma^{-2}\log(1/\delta))$ expected paired calls on a
-null instance.  Sound patch localization yields a linear separation on a
-matching family.
+For Gaussian old--new differences, the graph functional $\Psi(H,\nu)$ captures
+uncertainty and governs optimal allocation over the residual impacted graph
+$H$.  A non-adaptive tester uses
+\[
+O\!\left(\Psi(H,\nu)\gamma^{-2}\log(|E(H)|/\delta)\right)
+\]
+paired calls, while every adaptive $\delta$-correct tester requires
+\[
+\Omega\!\left(\Psi(H,\nu)\gamma^{-2}\log(1/\delta)\right)
+\]
+expected paired calls on a null instance.  Sound patch localization yields a
+linear separation on a matching family.
 
 For Bernoulli software, replay strength changes the small-effect exponent.
 With a nonzero fairness-neutral common patch effect, ordinary vertex-paired
