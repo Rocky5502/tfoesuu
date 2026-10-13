@@ -306,3 +306,14 @@ full-size color and grayscale inspection. The pre-release PDF SHA-256 is
 `69affbdf03ab1607857b232fd62c1e9c67b2f83227459b5e971246b661c2c349`.
 No GPU job was launched because every experiment admitted by the manuscript is
 already complete and another run would add no scientific information.
+
+The coherent source change was committed as
+`8271457701cf581363f4794299e3d53c1d1aa88f`. A source-only Overleaf ZIP was
+then rebuilt without generated TeX artifacts and compiled again from a fresh
+extraction. The clean-extract build passed at 44 pages with no overfull boxes
+or unresolved citations/references. Final artifacts:
+
+- ZIP SHA-256 `796f637d6ae10c587bcc401128a0d1478392c37fa53f9ac29701e5ae1763c13e`
+  (135,563 bytes; 31 entries).
+- PDF SHA-256 `e27195241f3260e5426e9cf2ba4e421b75216bda3f8b0839f6b3aa7f29a4179f`
+  (287,719 bytes; 44 US-Letter pages).

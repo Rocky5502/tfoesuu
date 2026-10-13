@@ -883,3 +883,9 @@
 - Next: commit the coherent source changes, rebuild from the packaged Overleaf
   source, and issue a new immutable ZIP/PDF/manifest without overwriting the
   earlier audited release.
+- Completed: source commit `8271457701cf581363f4794299e3d53c1d1aa88f`;
+  clean-extract Overleaf build passed. Final ZIP SHA-256
+  `796f637d6ae10c587bcc401128a0d1478392c37fa53f9ac29701e5ae1763c13e`;
+  final PDF SHA-256
+  `e27195241f3260e5426e9cf2ba4e421b75216bda3f8b0839f6b3aa7f29a4179f`.
+  No submission/upload action was taken.
