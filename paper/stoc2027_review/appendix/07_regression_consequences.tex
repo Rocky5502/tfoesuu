@@ -1,0 +1,285 @@
+\section{What Version Information Actually Buys}
+\label{arch:sec:consequences}
+
+The Gaussian core lets us separate three kinds of version information that are
+often conflated in regression testing: localization of where a change may occur,
+statistical coupling of old and new executions, and numerical slack in the old
+fairness certificate.  The first two can change query complexity directly.  The
+third, by itself, does not improve the worst-case rate when patch effects are
+unrestricted.
+
+\subsection{A linear separation from patch localization}
+
+Consider a fairness graph that is a matching of $M$ counterfactual edges and
+assume unit paired-delta variance at every vertex.  Compare two testers with the
+same paired execution oracle.  A \emph{patch-aware} tester receives a sound
+impact set identifying the unique edge on which behavior may have changed.  A
+\emph{location-unaware} tester is only promised that at most one edge changed,
+but is not told which edge.
+
+\begin{corollary}[Linear patch-locality separation]
+\label{arch:cor:locality-separation}
+Fix $\delta\in(0,1/2)$ and $\gamma>0$.  On the $M$-edge matching family above:
+\begin{enumerate}[label=(\roman*)]
+\item a patch-aware tester uses at most
+\[
+\frac{32\log(2/\delta)}{\gamma^2}+2
+\]
+paired-oracle calls; while
+\item every adaptive location-unaware $\delta$-correct tester with finite expected
+stopping time uses, on the all-neutral null instance,
+\[
+\E_0[T]\ge
+\frac{8M\,\kl(1-\delta,\delta)}{\gamma^2}.
+\]
+\end{enumerate}
+Consequently, for every fixed $\delta$, the worst-case separation is
+$\Omega(M)$.
+\end{corollary}
+
+\begin{proof}
+With a revealed sound impact edge, the relevant graph $H$ consists of one edge,
+for which the one-edge closed form gives $\Psi(H)=4$.  Substitution into
+\Cref{thm:upper} gives the first claim.
+
+Without the edge location, correctness must hold against an alternative on every
+one of the $M$ disjoint edges.  The relevant testing graph is therefore the full
+matching, for which the matching closed form gives $\Psi=4M$.  Applying
+\Cref{thm:lower} yields the second claim.  The ratio is linear in $M$ for fixed
+confidence.
+\end{proof}
+
+The comparison does not give the patch-aware algorithm a stronger execution
+oracle: its only additional information is the sound impact location.  Thus the
+separation quantifies, in a clean family, the statistical value of software
+change-impact information.
+
+\subsection{Old certificate slack is not enough in the minimax sense}
+
+Suppose an old edge $e=(u,v)$ is certified with gap
+$g_{0,e}=\mu_{0,u}-\mu_{0,v}$ satisfying $|g_{0,e}|\le\tau_e$.  It is tempting to
+expect large headroom $\tau_e-|g_{0,e}|$ to reduce the worst-case cost of testing
+the new version.  This intuition is false without a restriction on the patch.
+
+\begin{proposition}[No minimax gain from old slack alone]
+\label{arch:prop:slack-no-free-lunch}
+Consider a single fairness edge with Gaussian paired-delta observations of known
+variances $\nu_u^2,\nu_v^2>0$.  The old gap $g_0$ and threshold $\tau$ may be known
+exactly, with arbitrary slack $|g_0|\le\tau$.  A tester must distinguish
+\[
+\mathsf H_0:\ |g_0+\theta_u-\theta_v|\le\tau
+\]
+from
+\[
+\mathsf H_1:\ |g_0+\theta_u-\theta_v|\ge\tau+\gamma.
+\]
+For every adaptive $\delta$-correct tester with finite expected stopping time,
+there is a boundary null instance for which
+\[
+\E[T]\ge
+\frac{2\kl(1-\delta,\delta)}{\gamma^2}
+\min_{q_u,q_v>0}
+\left\{q_u+q_v:
+\frac{\nu_u^2}{q_u}+\frac{\nu_v^2}{q_v}\le1
+\right\}.
+\]
+In particular, the lower bound is independent of the old certificate slack.
+\end{proposition}
+
+\begin{proof}
+Choose a sign $s\in\{-1,+1\}$ and a null patch effect whose edge difference is
+\[
+\theta_u^{(0)}-\theta_v^{(0)}=s\tau-g_0,
+\]
+so the new program lies exactly on the fairness boundary.  Construct an
+alternative by increasing the signed edge difference by $\gamma$:
+\[
+\theta_u^{(1)}-\theta_v^{(1)}=s(\tau+\gamma)-g_0.
+\]
+The two hypotheses therefore differ by exactly $\gamma$ in the endpoint mean
+difference, regardless of $g_0$.  Splitting this $\gamma$ shift adversarially
+between the two endpoints and applying the same adaptive change-of-measure
+calculation as in \Cref{thm:lower} gives the stated bound.
+\end{proof}
+
+\Cref{arch:prop:slack-no-free-lunch} does not say that historical certificates are
+useless.  They can yield instance-dependent savings when the observed patch stays
+well inside the boundary, and they become powerful under structural assumptions
+that limit patch magnitude or direction.  The proposition says that such savings
+cannot be claimed as a uniform minimax consequence of old slack alone.
+
+
+\subsection{A two-axis information hierarchy}
+
+The preceding Gaussian separation isolates the value of knowing \emph{where} a
+patch may have changed behavior, while \Cref{thm:bernoulli-separation} isolates
+the value of knowing \emph{how to compare} the two versions through replayable
+randomness.  The two effects can be combined on a matching family.
+
+Let \(G\) consist of \(M\) disjoint counterfactual edges
+\(e_i=(u_i,v_i)\).  Fix \(p\in(0,1)\) and \(d\in(0,1-p)\).  The old version and
+the null new version have Bernoulli parameter \(p\) at every vertex.  Alternative
+\(i\) changes only \(u_i\) from \(p\) to \(p+d\).  Thus exactly one fairness edge
+may regress, but its location is unknown.
+
+\begin{corollary}[Unknown-location replay complexity]
+\label{arch:cor:bernoulli-location}
+Under common-uniform paired replay, a tester with no patch-location information
+can be \(\delta\)-correct using
+\[
+M\left\lceil
+\frac{\log\delta}{\log(1-d)}
+\right\rceil
+\]
+paired-oracle calls.  Conversely, every adaptive \(\delta\)-correct tester with
+finite expected stopping time satisfies on the all-neutral null
+\[
+\E_0[T]
+\ge
+\frac{M\,\kl(1-\delta,\delta)}
+{(1-p)\log\!\left(\frac{1-p}{1-p-d}\right)}.
+\]
+Consequently, for fixed interior \(p\),
+\[
+Q_{\rm pair}^{\rm unknown}(M,d,\delta)
+=
+\Theta\!\left(
+\frac{M\log(1/\delta)}{d}
+\right)
+\]
+up to universal constant factors for, say, \(\delta\le 1/4\).
+If a sound impact analysis identifies the affected edge in advance, the factor
+\(M\) disappears by \Cref{thm:bernoulli-separation}.
+\end{corollary}
+
+\begin{proof}
+For the upper bound, query each candidate vertex \(u_i\) for
+\[
+n=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil
+\]
+paired replay rounds and reject if any old/new discordance is observed.  Under the
+null, common-uniform replay makes every paired outcome identical, so the type-I
+error is exactly zero even though \(M\) locations are inspected.  Under
+alternative \(i\), only the samples at \(u_i\) are informative and each is
+discordant with probability \(d\); hence the miss probability is
+\((1-d)^n\le\delta\).
+
+For the lower bound, fix alternative \(i\).  As in
+\Cref{thm:bernoulli-separation}, a paired query to \(u_i\) contributes
+\[
+K_{\rm pair}
+=
+(1-p)\log\!\left(\frac{1-p}{1-p-d}\right)
+\]
+null-to-alternative KL, while every query to every other vertex has identical law
+under the two hypotheses and contributes zero.  Adaptive transcript
+change-of-measure therefore implies
+\[
+\E_0[N_{u_i}]K_{\rm pair}
+\ge
+\kl(1-\delta,\delta).
+\]
+The \(M\) candidate vertices are distinct.  Summing these inequalities over
+\(i=1,\ldots,M\) yields the stated lower bound.
+\end{proof}
+
+\Cref{arch:cor:bernoulli-location} should not be read as a claim that searching for one
+abnormal stochastic source is new; active sequential anomaly search is an
+established information-theoretic problem \cite{CohenZhao2015}.  Its role here is
+to expose a software-regression decomposition: sound change-impact information
+removes the multiplicative location-search cost, while replayable old/new
+randomness changes the small-patch dependence from quadratic to linear.
+
+
+\subsection{When old certificate headroom does become useful}
+
+\Cref{arch:prop:slack-no-free-lunch} rules out a minimax gain from old fairness slack
+when a patch is unrestricted.  The conclusion changes if program analysis
+provides a \emph{sound patch-effect envelope}.  For edge \(e=(u,v)\), let
+\[
+b_e
+\ge
+|(\mu_{1,u}-\mu_{0,u})-(\mu_{1,v}-\mu_{0,v})|
+=
+|\theta_u-\theta_v|.
+\]
+Such an envelope is deterministic side information about the patch; the theorem
+does not prescribe how it is obtained.
+
+\begin{proposition}[Zero-query certificate carryover]
+\label{arch:prop:certificate-pruning}
+Let the old edge gap \(g_{0,e}\) and fairness threshold \(\tau_e\) be known.  If
+\[
+|g_{0,e}|+b_e\le\tau_e,
+\]
+then edge \(e\) is fair under \(P_1\) and requires no stochastic execution to
+re-certify.
+\end{proposition}
+
+\begin{proof}
+Using \(g_{1,e}=g_{0,e}+\theta_u-\theta_v\) and the triangle inequality,
+\[
+|g_{1,e}|
+\le
+|g_{0,e}|+|\theta_u-\theta_v|
+\le
+|g_{0,e}|+b_e
+\le
+\tau_e.
+\]
+\end{proof}
+
+Define the \emph{residual regression graph} \(H^\star\) to contain exactly the
+edges for which
+\[
+|g_{0,e}|+b_e>\tau_e.
+\]
+All other fairness comparisons are discharged by
+\Cref{arch:prop:certificate-pruning} before any paired execution is performed.
+
+\begin{corollary}[Envelope-pruned Gaussian regression testing]
+\label{arch:cor:envelope-gaussian}
+Suppose paired deltas are Gaussian with known vertex variances \(\nu_v^2\), the
+old gaps \(g_{0,e}\) are known, and the tester faces the separated promise
+\[
+\mathsf H_0:\ |g_{1,e}|\le\tau_e\quad\forall e,
+\]
+versus
+\[
+\mathsf H_1:\ |g_{1,e}|\ge\tau_e+\gamma
+\quad\text{for some }e,
+\]
+for \(\gamma>0\).  If \(m^\star=|E(H^\star)|>0\), a non-adaptive tester exists
+using at most
+\[
+\frac{8\log(2m^\star/\delta)}{\gamma^2}
+\Psi(H^\star,\nu)
++
+|V(H^\star)|
+\]
+paired-oracle calls with error probability at most \(\delta\).  If
+\(m^\star=0\), zero paired-oracle calls suffice.
+\end{corollary}
+
+\begin{proof}
+Edges outside \(H^\star\) are fair by
+\Cref{arch:prop:certificate-pruning}.  On the residual graph, allocate paired samples
+exactly as in \Cref{thm:upper}.  For each residual edge \(e=(u,v)\), estimate
+\(\theta_u-\theta_v\), add the known offset \(g_{0,e}\), and reject if
+\[
+|g_{0,e}+\widehat\theta_u-\widehat\theta_v|
+\ge
+\tau_e+\gamma/2.
+\]
+The allocation makes every residual edge-difference estimation error at most
+\(\gamma/2\) simultaneously except with probability \(\delta\).  On this event,
+all fair instances are accepted and every alternative separated by \(\gamma\) is
+rejected.  The query count is the Gaussian allocation bound applied only to
+\(H^\star\).
+\end{proof}
+
+This result gives a precise role to retained certificate headroom.  Slack is not
+useful merely because it exists; it becomes computationally useful when coupled
+to sound information constraining what the patch can do.  Better static bounds
+shrink \(H^\star\), which can reduce both the number of tested comparisons and
+the graph allocation complexity \(\Psi\).

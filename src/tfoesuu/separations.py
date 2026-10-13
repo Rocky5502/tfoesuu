@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
+from collections.abc import Hashable
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -36,6 +37,28 @@ def binary_kl(a: float, b: float) -> float:
     return out
 
 
+def discrete_kl(
+    null: dict[Hashable, float], alternative: dict[Hashable, float]
+) -> float:
+    """Return KL(null || alternative) for explicit finite transcript laws."""
+
+    if not math.isclose(sum(null.values()), 1.0, abs_tol=1e-12) or not math.isclose(
+        sum(alternative.values()), 1.0, abs_tol=1e-12
+    ):
+        raise ValueError("transcript probabilities must each sum to one")
+    if any(value < 0.0 for value in (*null.values(), *alternative.values())):
+        raise ValueError("transcript probabilities must be nonnegative")
+    total = 0.0
+    for outcome, probability in null.items():
+        if probability == 0.0:
+            continue
+        reference = alternative.get(outcome, 0.0)
+        if reference == 0.0:
+            return math.inf
+        total += probability * math.log(probability / reference)
+    return total
+
+
 def binary_decision_kl(beta: float) -> float:
     """kl(1-beta, beta), the data-processing term in fixed-confidence tests."""
 
@@ -54,7 +77,7 @@ def _validate(p: float, d: float, beta: float) -> None:
 
 
 def paired_per_round_kl(p: float, d: float) -> float:
-    """Null-to-alternative KL for common-uniform replay at the changed endpoint.
+    """Null-to-alternative KL for a raw common-uniform old/new pair.
 
     H0 pair probabilities are:
       (1,1): p, (0,0): 1-p.
@@ -175,7 +198,7 @@ def _validate_common_patch(p: float, s: float, d: float, beta: float) -> None:
 
 
 def edge_coupled_common_patch_kl(p: float, s: float, d: float) -> float:
-    """Null-to-alternative KL for one four-way common-uniform edge replay.
+    """Null-to-alternative KL for one raw four-way common-uniform transcript.
 
     Old endpoints both use threshold p. Under H0 both new endpoints use p+s.
     Under H1 the first new endpoint uses p+s+d and the second remains p+s.
@@ -188,7 +211,7 @@ def edge_coupled_common_patch_kl(p: float, s: float, d: float) -> float:
 
 
 def vertex_paired_common_patch_kl(p: float, s: float, d: float) -> float:
-    """Null-to-alternative KL for one old/new paired call at the changed endpoint."""
+    """Null-to-alternative KL for one raw old/new pair at the changed endpoint."""
 
     if not (0.0 < p < 1.0 and 0.0 < s < 1.0 - p and 0.0 < d < 1.0 - p - s):
         raise ValueError("require p>0, s>0, d>0, and p+s+d<1")

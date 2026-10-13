@@ -1,0 +1,18 @@
+\input{review_preamble}
+\begin{document}
+% The unnumbered title page must not reuse the page.1 hyperlink destination.
+\hypersetup{pageanchor=false}
+\input{review_titlepage}
+\hypersetup{pageanchor=true}
+% Contents page is optional and excluded from the first twelve content pages by CFP.
+\pagenumbering{roman}
+\setcounter{tocdepth}{1} % fit the optional contents on exactly one uncounted page
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+\input{review_main_body}
+\input{appendix_body}
+\input{review_ai_methodology}
+\bibliographystyle{alpha}
+\bibliography{references}
+\end{document}

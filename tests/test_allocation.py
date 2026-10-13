@@ -9,6 +9,7 @@ from tfoesuu.allocation import (
     solve_psi_dual,
 )
 from tfoesuu.graphs import (
+    GraphSpec,
     clique_graph,
     complete_bipartite_graph,
     edge_graph,
@@ -36,6 +37,12 @@ def test_closed_forms_unit_variance():
         assert primal.max_constraint_violation < 1e-7
         assert expected is not None
         assert_close(primal.objective, expected, 1e-5)
+
+
+def test_clique_closed_form_excludes_edgeless_k1():
+    graph = GraphSpec(1, (), "clique", {})
+
+    assert exact_unit_variance_psi(graph) == 0.0
 
 
 def test_primal_dual_agree():

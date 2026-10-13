@@ -260,3 +260,21 @@ It confirms 594 comparisons, zero Bonferroni outliers, minimum exact p-value
 tests pass; Ruff and `git diff --check` pass. These remain theorem-family
 sufficient-statistic simulations, not instrumented runtime or public-software
 evidence. Neither GPU was used: no scientifically valid rerun was needed.
+
+## 2026-10-13 — final five-reviewer manuscript and reproducibility gate
+
+Independent R1--R5 audits exposed and resolved three submission-critical
+issues: the Gaussian allocation incorrectly optimized over isolated vertices;
+the Bernoulli results conflated delta-only and raw replay transcripts; and the
+editorial package duplicated full proof blocks. The final review source now
+uses active vertices, fail-closed allocation and resume guards, explicit oracle
+sigma-algebras and theorem domains, and one authoritative copy of every proof.
+
+The release includes the complete frozen 100k P12/P15 records, specs, admitted
+runner snapshots, manifest, exact-law report, and hashes. Closest-work
+positioning now explicitly covers Yan--Zhang 2022, Buselli et al. 2024, and
+Ajarra--Basu 2026 without priority overclaims. All 324 tests passed; touched-file
+Ruff and `git diff --check` passed. Bundled Tectonic produced a 44-page US
+Letter review PDF with no unresolved citations/references or overfull boxes.
+All 44 rendered pages passed visual inspection. PDF SHA-256:
+`1197c6b14a57f567b680916cdb67510459517dedccf669917f1052ef8e355b79`.

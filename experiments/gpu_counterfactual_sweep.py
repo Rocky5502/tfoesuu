@@ -21,6 +21,7 @@ from tfoesuu.counterfactual_benchmarks import (
     read_counterfactual_replay_jsonl,
 )
 from tfoesuu.separations import counterfactual_replay_bounds
+from tfoesuu.sweep_integrity import load_compatible_shard
 
 
 def run_one(
@@ -101,11 +102,7 @@ def worker(
     path = Path(output)
     shard = path.with_name(f"{path.stem}.gpu{device_id}{path.suffix}")
 
-    completed: set[str] = set()
-    if shard.exists():
-        for line in shard.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                completed.add(json.loads(line)["benchmark_id"])
+    completed = load_compatible_shard(shard, specs, trials=trials, device=device)
 
     with shard.open("a", encoding="utf-8") as fh:
         for spec in specs:
@@ -131,6 +128,8 @@ def main() -> None:
     devices = [int(x) for x in args.devices.split(",") if x.strip()]
     if not devices:
         raise ValueError("at least one CUDA device is required")
+    if len(devices) != len(set(devices)):
+        raise ValueError("CUDA device IDs must be unique")
 
     specs = (
         read_counterfactual_replay_jsonl(args.benchmark)
@@ -167,14 +166,18 @@ def main() -> None:
         shard = args.output.with_name(
             f"{args.output.stem}.gpu{dev}{args.output.suffix}"
         )
-        if shard.exists():
-            rows.extend(
-                json.loads(line)
-                for line in shard.read_text(encoding="utf-8").splitlines()
-                if line.strip()
-            )
+        rows.extend(
+            load_compatible_shard(
+                shard,
+                shards[devices.index(dev)],
+                trials=args.trials,
+                device=f"cuda:{dev}",
+            ).values()
+        )
 
     rows.sort(key=lambda row: row["benchmark_id"])
+    if len(rows) != len(specs):
+        raise RuntimeError(f"incomplete sweep: expected {len(specs)} rows, found {len(rows)}")
     with args.output.open("w", encoding="utf-8") as fh:
         for row in rows:
             fh.write(json.dumps(row, sort_keys=True) + "\n")

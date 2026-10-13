@@ -1,17 +1,22 @@
 \section{Coupled Differential Execution}
 \label{sec:coupled}
 
-A paired-oracle call at vertex $v$ draws one random tape $R$ and evaluates both
+A vertex-paired execution at vertex $v$ draws one random tape $R$ and evaluates both
 versions:
 \[
 Y_{0,v}=P_0(v;R),\qquad Y_{1,v}=P_1(v;R),
 \]
-returning
+producing the raw pair $(Y_{0,v},Y_{1,v})$ and the derived delta
 \[
 Z_v=Y_{1,v}-Y_{0,v}.
 \]
-Thus one paired-oracle call comprises two concrete program executions.  Then
-$\E[Z_v]=\theta_v$.  Write $\nu_v^2=\mathrm{Var}(Z_v)$.
+Thus one vertex-paired execution comprises two concrete program executions.
+The statistical observation is theorem-specific: the Gaussian results use a
+\emph{delta oracle} that reveals only $Z_v$, whereas the Bernoulli replay
+results explicitly use the raw pair.  Edge, suite, and group replay reveal the
+ordered raw outputs from all executions sharing the tape.  Fresh calls use
+independent tapes.  Then $\E[Z_v]=\theta_v$.  Write
+$\nu_v^2=\mathrm{Var}(Z_v)$.
 
 \begin{proposition}[Differential variance]
 \label{prop:diffvar}
@@ -38,10 +43,10 @@ vertex, then
 \qquad
 \widetilde\nu_v^2=2\sigma^2.
 \]
-Thus every paired-oracle-call bound homogeneous of degree one in the vertex
+Thus every Gaussian delta-oracle bound homogeneous of degree one in the vertex
 variances improves by factor $1-\rho$ under paired replay.
 \end{corollary}
 
 Common random numbers are not universally beneficial \cite{GlassermanYao1992}.
-The access model therefore exposes the actual paired-delta variance rather than
+The Gaussian access model therefore exposes the actual paired-delta variance rather than
 assuming positive correlation by fiat.

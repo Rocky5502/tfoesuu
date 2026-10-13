@@ -68,10 +68,10 @@ Thus $\mathsf H_1$ introduces a fairness regression of magnitude exactly $d$.
 
 \begin{theorem}[Replay changes small-patch complexity]
 \label{thm:bernoulli-separation}
-Fix $p\in(0,1)$ and $\delta\in(0,1/2)$.  For the one-edge family above:
+Fix $p\in(0,1)$, $d\in(0,1-p)$, and $\delta\in(0,1/2)$.  For the one-edge family above:
 
 \begin{enumerate}[label=(\roman*)]
-\item Under common-uniform paired replay, there is a test using
+\item Under common-uniform raw-pair replay, there is a test using
 \[
 n_{\rm pair}
 =
@@ -89,7 +89,7 @@ expected stopping time satisfies, on the null,
 {(1-p)\log\!\left(\frac{1-p}{1-p-d}\right)}.
 \]
 
-\item Under independent/fresh replay, a test using
+\item Under independent new-version observation, a test using
 \[
 n_{\rm ind}
 =
@@ -97,7 +97,7 @@ n_{\rm ind}
 \frac{2\log(1/\delta)}{d^2}
 \right\rceil
 \]
-new-version samples at $u$ is $\delta$-correct when the retained old baseline
+single-execution new-version calls at $u$ is $\delta$-correct when the retained old baseline
 $p$ is known.  Conversely, every adaptive $\delta$-correct independent-replay
 tester with finite expected stopping time satisfies
 \[
@@ -122,8 +122,7 @@ Q_{\rm ind}(d,\delta)
 \frac{\log(1/\delta)}{d^2}
 \right)
 \]
-as $d\to0$, up to constants depending on $p$ and the standard
-$\kl(1-\delta,\delta)$ versus $\log(1/\delta)$ equivalence.
+as $d\to0$ with $p$ and $\delta$ fixed, up to constants depending on them.
 \end{theorem}
 
 \begin{proof}
@@ -239,7 +238,9 @@ requiring four concrete program executions.
 
 \begin{theorem}[Counterfactual replay changes the small-gap exponent]
 \label{thm:counterfactual-replay}
-Fix \(p,s\) as above and \(\delta\in(0,1/2)\).
+Fix \(p>0\), \(s>0\), \(d>0\), \(p+s+d<1\), and
+\(\delta\in(0,1/2)\).  Vertex-paired and four-way rounds reveal their ordered
+raw outputs, and tapes are independent across rounds.
 
 \begin{enumerate}[label=(\roman*)]
 \item Under four-way counterfactual replay, there is a test using
@@ -272,7 +273,7 @@ n_{\rm vertex}
 \frac{2\log(1/\delta)}{d^2}
 \right\rceil
 \]
-paired-oracle calls.  Conversely, every adaptive \(\delta\)-correct
+raw vertex-pair rounds.  Conversely, every adaptive \(\delta\)-correct
 vertex-paired tester with finite expected stopping time satisfies
 \[
 \E_0[T]
@@ -445,7 +446,8 @@ admits a fixed-design synchronized-replay test using at most
 \frac{8(\tau+d)\log(1/\delta)}{d^2}
 \right\rceil
 \]
-rounds.  If $r-d$ is bounded below by a positive constant, these bounds give
+rounds.  If $r-d$ is bounded below by a positive constant, then as $d\to0$
+with $\delta$ fixed these bounds give
 \[
 Q_{\rm thr}(\tau,d,\delta)
 =
@@ -501,7 +503,7 @@ disparity is allowed.
 \Cref{thm:threshold-replay-phase} shows that a fixed positive fairness
 tolerance destroys the sparse one-edge witness.  Partial replay can recover that
 witness when the harness supplies a synchronized \emph{matched-background
-control}.
+control}.  Fix (p,s,\tau,d>0) with (p+s+\tau+d<1).
 
 Let \(H=(A\cup B,E)\) be bipartite, with every fairness edge crossing from a
 high class \(A\) to a low class \(B\).  All old thresholds equal \(p\).  Under
@@ -510,7 +512,9 @@ have new threshold \(p+s+\tau\), where \(\tau>0\).  Hence every fairness edge is
 exactly at tolerance \(\tau\).  Alternative \(x\in A\) raises only the new
 threshold of \(x\) by \(d\), so every incident edge has gap \(\tau+d\).
 
-Let \(S_1,\ldots,S_k\) be the legal replay groups with costs \(c_i>0\).  Define
+Let \(S_1,\ldots,S_k\) be legal replay groups of size at least two, with costs
+\(c_i>0\).  A query reveals the ordered raw old/new outputs for its group under
+one common tape, and different queries use independent tapes.  Define
 \[
 C_{x i}
 =
@@ -973,7 +977,7 @@ clarifies the relationship with P18: a high--low-only replay group remains in
 the quadratic thresholded regime, whereas adding a matched high control creates
 a new sparse transcript state and restores linear information.
 
-\subsection{Synchronized suite replay removes edge-count dependence}
+\subsection{Synchronized suite replay removes explicit edge-count dependence from rounds}
 
 Four-way replay can be lifted to a software-test-suite primitive when the
 programmer controls the random seed.  Let
@@ -996,8 +1000,9 @@ fairness-neutral patch shift \(s>0\).  Under an alternative indexed by an edge
 \begin{theorem}[Synchronized suite replay]
 \label{thm:suite-replay}
 Let \(H=(V,E)\) contain at least one fairness edge and fix
-\(\delta\in(0,1/2)\).  In the family above, there is a test that distinguishes
-the null from the union of all single-edge differential alternatives using
+\(\delta\in(0,1/2)\).  A raw suite round reveals both version outputs at every
+active vertex under one common tape.  There is a test that distinguishes the
+null from the union of all single-changed-endpoint alternatives using
 \[
 T_{\rm suite}
 =
@@ -1036,7 +1041,8 @@ Q_{\rm suite}^{\rm exec}
 \frac{n_+\log(1/\delta)}{d}
 \right)
 \]
-as \(d\to0\).  The bound is independent of \(|E|\).
+as \(d\to0\).  The round bound has no explicit \(|E|\) factor; the execution
+cost remains $2n_+$ per round and can scale with the graph.
 \end{theorem}
 
 \begin{proof}

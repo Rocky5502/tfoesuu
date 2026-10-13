@@ -1,0 +1,25 @@
+\begin{titlepage}
+\centering
+\vspace*{0.5in}
+{\LARGE\bfseries Testing Fairness of Evolving Software\\[4pt] under Uncertainty\par}
+\vspace{0.6in}
+{\large Chandan Kumar Sah\textsuperscript{1}\quad Li Zhang\textsuperscript{1}\quad Xiaoli Lian\textsuperscript{1,*}\par}
+\vspace{0.22in}
+{\normalsize\textsuperscript{1}The State Key Laboratory of Complex \& Critical Software Environment,\\
+School of Computer Science \& Engineering, Beihang University, Beijing, China\par}
+\vspace{0.12in}
+{\normalsize \href{mailto:sahchandan98@buaa.edu.cn}{sahchandan98@buaa.edu.cn}\quad
+\href{mailto:lily@buaa.edu.cn}{lily@buaa.edu.cn}\quad
+\href{mailto:lianxiaoli@buaa.edu.cn}{lianxiaoli@buaa.edu.cn}\par}
+{\normalsize *Corresponding author.\par}
+\vspace{0.15in}
+{\normalsize ORCID: \href{https://orcid.org/0009-0002-4017-7970}{0009-0002-4017-7970} (Sah); \href{https://orcid.org/0000-0002-2258-5893}{0000-0002-2258-5893} (Zhang); \href{https://orcid.org/0000-0002-6100-7068}{0000-0002-6100-7068} (Lian).\par}
+\vspace{0.55in}
+\begin{minipage}{0.92\textwidth}
+\begin{center}{\large\bfseries Abstract}\end{center}
+Software updates must preserve fairness even when repeated executions are random. We study the number of program executions required to certify that a patch has not introduced a fairness regression, given a prior certificate, sound change-impact information, and explicitly specified random-tape replay access. A counterfactual graph couples fairness comparisons while old/new replay exposes patch effects rather than absolute outcomes.
+For Gaussian paired differences, an uncertainty-weighted graph allocation $\Psi(H,\nu)$ bounds fixed-design testing and adaptive null information. For Bernoulli threshold programs, four-way counterfactual replay changes the small-effect dependence from quadratic to linear, but a fixed positive fairness tolerance restores quadratic scaling. Partial replay exposes distinct edge-witness and active-vertex fractional covers; matched-background controls recover linear scaling in a scoped heterogeneous family. We also distinguish a fixed-allocation familywise logarithm from sequential expected-null savings. The bounds hold under declared null classes, cost units, and replay semantics; unrestricted heterogeneous and composite-null optimality remains open.
+Our validation suite uses deterministic theorem fixtures, exact finite-law oracle checks, and a seven-population analysis of a historical protected-group encoding defect. The parent revision exhibits nonzero discrepancies for two populations, whereas the repaired revision agrees with a canonical group encoding for all seven. These finite-row software-behavior comparisons neither estimate causal discrimination nor validate the replay-complexity bounds. Our contribution is a theorem-driven account of when software-evolution information and replay alter the cost of fairness regression certification.
+\end{minipage}
+\vfill
+\end{titlepage}

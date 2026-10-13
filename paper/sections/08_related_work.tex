@@ -25,6 +25,16 @@ observation-efficient auditing of a fixed system.  Our target is the
 execution-query complexity of \emph{version-aware} fairness regression when the
 old and new programs remain executable.
 
+Yan and Zhang actively audit demographic parity for a fixed model
+\cite{YanZhang2022}, while Ajarra and Basu study PAC auditing after strategic
+model updates through their SP dimension for statistical parity
+\cite{AjarraBasu2026}. Neither work models executable old/new transcript
+coupling or charges concrete program executions. Buselli et al. use ``unfair
+regression'' for sensitive-group imbalance in negative prediction flips after
+model updates \cite{BuselliEtAl2024}; our term instead denotes a new violation
+on a declared counterfactual edge, and our objective is its replay query
+complexity.
+
 \paragraph{Common random numbers, paired observations, and couplings.}
 Shared randomness is classical.  Common-random-number methods reduce uncertainty
 in stochastic-system comparisons and have long been used with
@@ -111,7 +121,7 @@ of synchronized suite replay, with replay rounds kept distinct from concrete
 executions.  Third, P17's contribution is not fractional covering itself but the
 active-vertex geometry induced by legal partial-replay groups in the stated
 homogeneous family.  Fourth, P19 does not invent matched controls: it identifies
-a new control-cover geometry and an exact mixture of first- and second-order
+a control-cover geometry and an exact mixture of first- and second-order
 information channels in a scoped heterogeneous fairness-preserving null, together
 with a boundary/control hybrid attaining the finite-topology orders. Claims
 outside these audited families remain explicitly open.

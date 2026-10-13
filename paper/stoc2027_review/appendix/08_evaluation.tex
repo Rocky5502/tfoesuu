@@ -1,0 +1,264 @@
+\section{Computational Validation and Experimental Protocol}
+\label{arch:sec:evaluation}
+
+The empirical component of this paper is intentionally a \emph{theorem
+falsification and reproducibility layer}, not a leaderboard study. Its purpose
+is to check whether executable implementations reproduce the exact structural
+predictions of proved results, to search for counterexamples outside proved
+scope, and to measure finite-instance constants only after the corresponding
+theorem gate is frozen. We therefore distinguish deterministic specification
+results from stochastic publication experiments throughout.
+
+\subsection{Research questions}
+
+\begin{description}[leftmargin=1.8cm,labelwidth=1.45cm,style=nextline]
+\item[\textbf{RQ1}] \textbf{Graph allocation.}
+Do executable Gaussian allocation instances reproduce the predicted dependence
+on the uncertainty-weighted graph quantity $\Psi(H,\nu)$ across graph families,
+variance profiles, and effect sizes?
+
+\item[\textbf{RQ2}] \textbf{Replay advantage.}
+Under matched old/new, four-way, and suite replay access, do finite-instance
+runs reproduce the theorem-predicted small-effect laws, including the P18
+transition from $d^{-1}$ behavior at $\tau=O(d)$ to $d^{-2}$ behavior at fixed
+positive fairness tolerance?
+
+\item[\textbf{RQ3}] \textbf{Partial synchronized replay.}
+Does executable group scheduling reproduce the $C_{\rm vert}$ geometry in the
+homogeneous family, the new $C_{\rm ctrl}$ geometry when matched-background
+controls are available, and the predicted quadratic fallback when they are not?
+
+\item[\textbf{RQ4}] \textbf{Reproducibility and robustness.}
+Are theorem-facing conclusions invariant to regenerated manifests, exact seeds,
+graph materialization, implementation round-trips, and clean-checkout execution?
+\end{description}
+
+\subsection{Frozen specification datasets}
+
+\Cref{arch:tab:benchmark-inventory} records the complete checked-in specification
+inventory. These are synthetic \emph{inputs with exact ground truth}, not
+observational datasets and not measured outcomes. They are deliberately compact
+so reviewers can regenerate every configuration and audit theorem/code
+correspondence.
+
+\begin{table}[H]
+\centering
+\caption{Frozen benchmark/specification inventory. Row counts describe
+deterministic test configurations, not empirical sample sizes.}
+\label{arch:tab:benchmark-inventory}
+\normalsize
+\begin{tabular}{@{}p{0.34\textwidth}r p{0.48\textwidth}@{}}
+\toprule
+Artifact & Rows & Primary role \\
+\midrule
+Gaussian allocation grid & 384 & Graph families, variance profiles, effect-size and allocation stress. \\
+Paired replay grid & 54 & Paired-versus-independent Bernoulli replay specifications. \\
+Executable software subjects & 32 & Randomized software configurations exercising the execution interface. \\
+Four-way counterfactual replay & 144 & Common-effect and differential-effect regimes for P15. \\
+P18 threshold phase grid & 24 & Zero, matched-scale, and fixed positive fairness tolerances across four differential margins. \\
+P19 control-replay fixtures & 6 & Exact control-cover feasibility, weighted-cover values, and boundary-only quadratic structure. \\
+P17 partial replay stress grid & 168 & Group size, graph family, group cost, and small-effect stress. \\
+P17 structural fixtures & 8 & Exact equality, finite-gap, and infeasible-witness constructions. \\
+P17 scope counterexample & 1 & Heterogeneous fair null that falsifies naive raw-contrast generalization. \\
+\midrule
+\textbf{Total} & \textbf{821} & Deterministic, regenerable specification rows. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Public evaluation populations}
+
+The theorem-specification manifests are complemented by two noninterchangeable
+seven-dataset protocols: a theorem-aligned simulation and a direct executable
+software-version comparison. These datasets do not establish the theorems.
+They supply realistic covariate populations, and the second protocol also uses
+aligned observed protected attributes. The raw datasets are never vendored
+into the repository. Their source metadata are frozen in
+\texttt{data/public\_benchmark\_registry\_v1.jsonl}, and publication runs must record a
+local content hash before any result is admitted to the paper.
+
+\begin{table}[H]
+\centering
+\caption{Planned public benchmark populations. The executable old/new software
+versions are constructed locally from each dataset under the frozen protocol;
+no pretrained model or external model API is used.}
+\label{arch:tab:public-datasets}
+\normalsize
+\begin{tabular}{@{}p{0.25\textwidth}p{0.25\textwidth}p{0.20\textwidth}p{0.20\textwidth}@{}}
+\toprule
+Dataset & Task & Protected attributes & Provenance \\
+\midrule
+Adult Census Income & Binary classification & sex, race & UCI \cite{AdultDatasetUCI} \\
+Bank Marketing & Binary classification & age & UCI \cite{BankMarketingUCI} \\
+Statlog German Credit & Binary classification & sex, age & UCI \cite{GermanCreditUCI} \\
+ProPublica COMPAS & Binary classification & race, sex & ProPublica \cite{ProPublicaCOMPAS2016} \\
+Law School GPA & Regression to thresholded decision & race, gender & AIF360 \cite{BellamyEtAl2019} \\
+MEPS Panel 21 & Binary classification & race & AIF360/AHRQ \cite{BellamyEtAl2019} \\
+Default of Credit Card Clients & Binary classification & sex, age & UCI \cite{DefaultCreditUCI} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Theorem-aligned simulation protocol.}
+The simulation protocol fits a simple local baseline predictor on non-protected
+features, converts its score to an interior Bernoulli probability, and defines
+the old program by a common-uniform randomized decision. In this evaluator,
+each evaluation probability is duplicated into a controlled two-endpoint edge;
+the prepared artifact does not store or mutate protected-attribute values and
+therefore does not materialize an empirical counterfactual pair. The new program
+is produced by a frozen patch specification with a common shift and, when
+required by the experiment, a differential endpoint shift. Thus public
+covariates determine a heterogeneous probability population, while the graph
+and counterfactual endpoints remain a synthetic theorem-aligned wrapper. This
+construction is not evidence that the source dataset supplies valid causal
+counterfactual worlds or satisfies the paper's fairness assumptions.
+
+\paragraph{Historical executable-software protocol.}
+A separately versioned observational-context artifact preserves aligned
+training and evaluation rows, protected columns, labels, source-row positions,
+and non-protected score-model inputs. A score companion records the exact
+prefit training and evaluation probabilities without reconstructing discarded
+dataframe types. The executable subject is a pinned direct parent/child pair of
+Fairlearn's threshold optimizer: the child repairs multi-column protected-group
+handling while leaving the prediction and randomness implementations fixed.
+For each dataset and revision, the frozen primary estimand is the row-wise
+difference between exact randomized-prediction PMFs obtained from the native
+protected columns and from an injective encoding of the same ordered tuple.
+Single-attribute datasets are negative controls. This measures a software
+behavioral regression under observed groups; it is neither a causal fairness
+effect nor a population-level fairness estimate. The immutable input bridge,
+support rules, complete seven-dataset census, and source/runtime gates were
+frozen before execution.
+
+The recorded experiment passed the specified provenance checks and contains the complete fourteen-record
+old/new census.  Table~\ref{tab:historical-census} reports every
+preregistered primary estimand.  The parent revision disagreed with its injective
+canonical control on Adult Census Income and Default of Credit Card Clients,
+but produced exact zeros on COMPAS, German Credit, and Law School GPA.  Both
+single-attribute controls were also exact zeros.  The repaired revision matched
+the canonical control exactly on all seven datasets.  These are deterministic
+software-behavior results on the frozen evaluation rows; they do not estimate a
+causal fairness effect or population generalization.
+
+\input{generated/fairlearn_public_v2_results}
+
+Prepared inputs and experiment code carry separate provenance.  A later clean
+execution commit may consume an earlier prepared artifact only if a fail-closed
+compatibility check verifies identical Git objects for the preparation script,
+frozen public registry, and public dependency contract.  Every admitted result
+then records both commits and the digest of that compatibility contract; any
+preparation-surface change requires re-preparation rather than metadata edits.
+
+\paragraph{Simulation unit and execution accounting.}
+The public GPU evaluator implements a controlled \emph{Bernoulli threshold-law
+simulation}, not a wall-clock profile of an instrumented operating system.
+Independent and old--new vertex-paired baselines sample their exact binomial
+sufficient statistics. In the frozen single-changed-edge experiment, the
+four-way, suite, and localized tester share the same common-tape threshold
+witness trace; all other edges are null and cannot trigger the pathwise witness.
+Their reported \emph{concrete program executions} therefore count the calls
+required by the declared replay schedule, rather than GPU kernel executions
+actually performed by this sufficient-statistic simulator. Shared witness
+errors are deliberately correlated across these three access models and
+must not be interpreted as three independent empirical replicates. No
+generalization to arbitrary stochastic software, uncontrolled nondeterminism,
+or heterogeneous patch nulls follows from this experiment.
+\subsection{Experimental settings and baselines}
+
+Every stochastic publication run is keyed by the repository commit, a frozen
+JSONL row, an explicit seed, the execution backend, and a machine-environment
+record. CPU experiments are used for exact or moderate-size checks; GPU sweeps
+are reserved for high-trial finite-instance studies after the relevant theorem
+and manifest are frozen. No pretrained model or external API is used.
+
+\paragraph{Two-workstation execution environment (preflight).}
+The planned local study uses two independent workstations, each independently
+identified by the operating system as containing one NVIDIA GeForce RTX 5070 Ti
+GPU with 16\,GiB-class memory (16{,}303\,MiB reported per device).
+Both hosts reported NVIDIA driver 591.86 and driver-advertised CUDA 13.1
+compatibility on October 8, 2026. The first host uses Windows with Python
+3.11 available; the second runs Ubuntu 22.04.5 under WSL2 with Python 3.12.2
+available. Hardware inventory alone is not outcome evidence. Engineering
+smokes and preflights are excluded from submission-facing tables unless their
+complete manifests pass the corresponding release gate. The admitted P12/P15
+manifest binds source, runners, specifications, trial budgets, and result
+hashes, but does not contain a complete PyTorch/CUDA environment fingerprint;
+we therefore make no environment-sensitive performance claim. The pinned executable-version protocol instead uses a
+CPU-only Python~3.8.20 historical runtime; GPU acceleration is scientifically
+irrelevant to that subject.
+
+\paragraph{Independent workers and reproducibility controls.}
+The two GPUs are separate devices on different machines, \emph{not} one
+shared-memory two-GPU accelerator. A Windows controller on the first host
+can dispatch an SSH command to the second host, whose Ubuntu WSL2 checkout
+performs computations locally; the second host's Windows D: volume is
+designated for persistent datasets, logs, and result artifacts. Before a
+shard begins, both workers must have the same clean Git commit and
+a checked, frozen manifest. Shards are assigned disjoint configuration
+identifiers with explicit seeds, device information, input hashes, and
+trial budgets. Results may be merged only after verifying those keys and
+recording failures as well as successes. Trial budgets are staged from
+$10^3$ exploratory replications through $10^4$ and $10^5$, with larger
+rare-error sweeps contingent on passing earlier validation gates.
+Per-worker GPU runtime and memory are not equated with the
+\emph{concrete program execution} complexity used in theorems.
+No two-host performance or publication-scale empirical result is asserted;
+the admitted 100k campaign is used only for exact oracle-law validation.
+
+The comparison set is access-model based rather than model based:
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt]
+\item fresh/independent execution where no old--new coupling is available;
+\item old/new vertex pairing under a common tape;
+\item four-way edge replay when both endpoints can share that tape;
+\item synchronized-suite replay when one tape covers all active inputs; and
+\item declared-group partial replay, including the $C_{\rm edge}$ witness
+schedule and the $C_{\rm vert}$ raw-contrast schedule where its assumptions hold.
+\end{enumerate}
+Primary quantities are concrete program executions, replay rounds, empirical
+type-I/type-II error for stochastic runs, and normalized scheduling cost.
+Whenever a theorem is asymptotic in $d$, the finite-instance study varies $d$
+over the frozen manifest rather than fitting an exponent to hand-selected
+points.
+
+\subsection{Current deterministic audit results}
+
+Before any publication-scale stochastic sweep, the repository already supports
+exact deterministic checks. \Cref{arch:tab:deterministic-evidence} reports only
+facts that follow from the committed specifications and executable theorem
+checks; it intentionally does not report fabricated performance numbers.
+
+\begin{table}[H]
+\centering
+\caption{Current deterministic evidence available before stochastic publication
+runs. Pass condition states what the executable audit must verify.}
+\label{arch:tab:deterministic-evidence}
+\normalsize
+\begin{tabular}{@{}p{0.23\textwidth}p{0.33\textwidth}p{0.35\textwidth}@{}}
+\toprule
+Audit target & Frozen evidence & Pass condition \\
+\midrule
+P17 stress geometry & 168 parameter rows & Materialized group/cost geometry is valid; $C_{\rm vert}\le C_{\rm edge}$; rounded active-vertex exposure attains the required miss bound. \\
+P17 structural gap & 8 exact fixtures & One equality case, six clique cases with $C_{\rm edge}/C_{\rm vert}=n-1$, and one finite-$C_{\rm vert}$/infeasible-$C_{\rm edge}$ case agree with the LP implementations. \\
+P17 scope boundary & 1 heterogeneous fair-null fixture & New-version gap is $0.15\le\tau=0.20$, while the homogeneous raw-contrast predicate rejects on tape set $(0.20,0.30]\cup(0.40,0.45]$ of exact measure $0.15$. \\
+P18 tolerance phase & 24 parameter rows & Every row yields positive exact transcript KL and a valid theorem schedule; zero-tolerance rows recover the linear replay regime while fixed positive tolerances probe the quadratic regime. \\
+P19 control geometry & 6 exact fixtures & Fractional control-cover feasibility and expected costs match the frozen specifications; the boundary-only fixture remains information-observable but loses the linear control channel. \\
+Manifest integrity & 821 total rows & All frozen artifacts exist, IDs are unique, row counts meet the frozen inventory, and regenerators round-trip exactly. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\input{figures/p17_audit}
+
+The frozen P12/P15 oracle campaign has now been independently admitted from
+complete per-configuration records.  It contains 54 paired-replay and 144
+four-way-replay configurations, each with 100,000 trials.  Revalidation checked
+594 empirical rates against their exact binomial laws: zero comparisons crossed
+the familywise $0.05$ Bonferroni threshold, the minimum exact $p$-value was
+$4.6476\times10^{-4}$, and the maximum absolute empirical deviation was
+$2.4271\times10^{-3}$.  The raw-result SHA-256 digests are
+\texttt{f00458f5\ldots 6f1035} (P12) and
+\texttt{e0750e5d\ldots 274ab} (P15).  The accompanying evidence directory
+contains the full records, admission manifest, and machine-readable validation
+report.  These checks validate the sufficient-statistic simulator against the
+declared finite laws; they are neither proof evidence nor runtime measurements
+for executable software.

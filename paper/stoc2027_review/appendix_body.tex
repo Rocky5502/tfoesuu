@@ -1,0 +1,25 @@
+\clearpage
+\onecolumn
+\appendix
+\section{Further proofs and technical details}
+We provide additional proofs, detailed versions of the test constructions, and the experimental protocol. The definitions and observation assumptions are those stated in the main text unless explicitly strengthened below.
+
+\input{appendix/03_localization.tex}
+
+\input{appendix/04_coupled_execution.tex}
+
+\input{appendix/07_regression_consequences.tex}
+
+\input{appendix/07_open_problems.tex}
+
+\input{appendix/08_evaluation.tex}
+
+\section{Experimental protocol and falsification tests}
+\paragraph{Empirical design validity.}
+The CPU historical-version subject and GPU sufficient-statistic simulators answer different questions. The Fairlearn table is a complete deterministic census of native-versus-canonical protected-tuple encoding discrepancies on finite evaluation rows. It is not a causal fairness estimate; therefore we do not add confidence intervals or infer demographic discrimination. Conversely, the frozen P12/P15 simulation campaigns target error behavior under theorem-specified Bernoulli families. Their admitted 198-row, 100,000-trial-per-configuration records include exact source revision, specification hashes, sampling laws, seeds, independent worker assignment, all outcomes, and merged-result hashes. A passed unit test or a completed accelerator job alone is not a measured error-rate estimate; the admitted evidence was instead checked against 594 exact finite laws.
+
+\paragraph{Falsification-oriented validation.}
+The validation cases compare the Gaussian null construction with each graph-family closed form, examine the one-edge $\tau\downarrow0$ boundary of \Cref{eq:ktau}; contrast the P17 witness-cover and raw-information geometries on a clique and an infeasible-witness graph; and distinguish fixed-allocation from sequential costs on disjoint channels. The software-version comparison holds evaluation rows, protected-group tuple ordering, admissible group support, historical dependencies, and source bytes fixed. All five exact-zero populations are retained.
+
+\section{Conclusion}
+Reusing software-evolution information can eliminate old obligations without executions, and replayable randomness can change the small-effect cost of the remaining obligations. The attainable gain depends sharply on the fairness tolerance and on which version/input combinations can share randomness. Graph allocation, partial-replay covering, and matched controls formalize that dependence. Future work should test the boundary between known and unknown controls and characterize composite-nuisance replay without overstating currently scoped guarantees.

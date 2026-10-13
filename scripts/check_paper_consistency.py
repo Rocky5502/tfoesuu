@@ -31,7 +31,12 @@ CITE_RE = re.compile(r"\\(?:cite|citep|citet)\{([^}]+)\}")
 BIBKEY_RE = re.compile(r"@\w+\s*\{\s*([^,\s]+)\s*,", re.IGNORECASE)
 BIBENTRY_RE = re.compile(r"@(\w+)\s*\{\s*([^,\s]+)\s*,([\s\S]*?)\n\}", re.IGNORECASE)
 # Primary archival records for items to which the publisher assigns no DOI.
-NON_DOI_KEYS = {"GeorgeJohnVijaykeerthySaha2020", "ProPublicaCOMPAS2016"}
+NON_DOI_KEYS = {
+    "AjarraBasu2026",
+    "GeorgeJohnVijaykeerthySaha2020",
+    "ProPublicaCOMPAS2016",
+    "YanZhang2022",
+}
 
 FROZEN_DATA_ROWS = {
     "benchmark_v1.jsonl": 384,

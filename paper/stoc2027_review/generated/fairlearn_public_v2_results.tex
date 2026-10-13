@@ -1,0 +1,25 @@
+\begin{table}[H]
+\centering
+\caption{Historical protected-group encoding comparison across seven input populations. Entries are maxima and means of exact row-wise absolute differences between native and canonical randomized-prediction probability masses; zero indicates agreement on the evaluated rows.}
+\label{tab:historical-census}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+& \multicolumn{2}{c}{Parent $|\Delta\mathrm{PMF}|$} & \multicolumn{2}{c}{Repaired $|\Delta\mathrm{PMF}|$} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+Dataset & Max & Mean & Max & Mean \\
+\midrule
+Adult Census Income & 1.0000 & 0.0552 & 0.0000 & 0.0000 \\
+Bank Marketing & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
+Statlog German Credit & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
+ProPublica COMPAS & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
+Law School GPA & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
+MEPS Panel 21 & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
+Default of Credit Card Clients & 1.0000 & 0.1023 & 0.0000 & 0.0000 \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+\begin{minipage}{0.98\linewidth}\footnotesize
+The primary analysis uses deterministic exact PMFs. No confidence interval applies; four preselected common-tape seeds served as implementation-correspondence checks. All datasets, including exact zeros, are reported.
+\end{minipage}
+\end{table}

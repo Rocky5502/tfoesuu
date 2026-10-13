@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 
 import numpy as np
 from scipy.optimize import minimize
@@ -17,6 +17,24 @@ class AllocationResult:
     success: bool
     message: str
     max_constraint_violation: float
+
+
+def require_valid_allocation(allocation: AllocationResult) -> AllocationResult:
+    """Fail closed before a run consumes an untrustworthy optimizer result."""
+
+    trustworthy = (
+        allocation.success
+        and math.isfinite(allocation.objective)
+        and np.all(np.isfinite(allocation.q))
+        and np.all(allocation.q >= 0.0)
+        and allocation.max_constraint_violation <= 1e-7
+    )
+    if not trustworthy:
+        raise RuntimeError(
+            "allocation solver failed: "
+            f"{allocation.message}; violation={allocation.max_constraint_violation!r}"
+        )
+    return allocation
 
 
 def _validate(n: int, edges: Iterable[Edge], variances: Sequence[float]) -> tuple[list[Edge], np.ndarray]:
@@ -190,6 +208,8 @@ def psi_conic_certificate(
 def exact_unit_variance_psi(graph: GraphSpec) -> float | None:
     """Closed forms used as theorem sanity checks for selected graph families."""
 
+    if graph.m == 0:
+        return 0.0
     if graph.family == "edge":
         return 4.0
     if graph.family == "matching":

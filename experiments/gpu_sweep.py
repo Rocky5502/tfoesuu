@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-from tfoesuu.allocation import solve_psi
+from tfoesuu.allocation import require_valid_allocation, solve_psi
 from tfoesuu.benchmarks import BenchmarkSpec, benchmark_v1, read_jsonl
 from tfoesuu.graphs import clique_graph, matching_graph, path_graph, star_graph
 
@@ -55,7 +55,7 @@ def run_one(spec: BenchmarkSpec, trials: int, device: str) -> dict:
     else:
         raise ValueError(f"unknown variance profile: {spec.variance_profile}")
     variance = np.maximum(base * profile, 1e-12)
-    alloc = solve_psi(graph, variance)
+    alloc = require_valid_allocation(solve_psi(graph, variance))
     L = math.log(2 * graph.m / spec.beta)
     counts = np.ceil(8 * L * alloc.q / spec.gamma**2).astype(np.int64)
     active = counts > 0

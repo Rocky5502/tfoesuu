@@ -1,0 +1,38 @@
+{
+  "artifacts": {
+    "p12": {
+      "execution_host": "pc2",
+      "expected_rows": 54,
+      "log_location": "/mnt/d/Rocky Work/TFOESUU/results/preview100k-p12-149baf36-20261008T170650Z.log",
+      "log_sha256": "8124165668b700951803b4e204a92cdcb87317baf67867c65a0cd3a105e465a4",
+      "result_path": "results/preview100k-p12-pc2-149baf36-20261008T170650Z.jsonl",
+      "result_sha256": "f00458f50d225c8c5bde5cb235c6f67fbc67102157768369df8cd350956f1035",
+      "runner_git_blob": "faf598fd0902b5adc5da02c82b925e8a8d4f806b",
+      "runner_path": "experiments/gpu_replay_sweep.py",
+      "runner_sha256": "281ccd9c41ec73ddc2a089a928ef9b5c17680c88ab035f377a680ff55d8cb0a3",
+      "spec_git_blob": "fd8b653879e2958059738cb842f2bf76bc73a7b8",
+      "spec_lf_sha256": "369ec06517df57f0658b67c3439883a420ae66657ab98f48c6dc6d80257748a8",
+      "spec_path": "data/replay_benchmark_v1.jsonl",
+      "spec_sha256": "7be684d05a1c611ad623428d797b0bc5d86cf2269eb01057ba2013035cd58e78"
+    },
+    "p15": {
+      "execution_host": "pc1",
+      "expected_rows": 144,
+      "log_location": "results/preview100k-p15-pc1-149baf36-20261008T170640Z.log",
+      "result_path": "results/preview100k-p15-pc1-149baf36-20261008T170640Z.jsonl",
+      "result_sha256": "e0750e5d46215909aa710d83bca8ad748877e66f786aa9106e883ce94da274ab",
+      "runner_git_blob": "27d28d107432290fa609d6aa72214549eb6c95e2",
+      "runner_path": "experiments/gpu_counterfactual_sweep.py",
+      "runner_sha256": "29f4ec5ae398b1cab400ca11e1bfb51fd40005599d00ad235b45d855cb270602",
+      "spec_git_blob": "b7b71118dca2eac7ae2a8881412c9e694ab55576",
+      "spec_lf_sha256": "3c26e7afb5afef5366aaa6d5eff18a28f7c00ca191236b5ae510741e651b6ec2",
+      "spec_path": "data/counterfactual_replay_benchmark_v1.jsonl",
+      "spec_sha256": "18a261adb82b89cb34332bfbfc548b79c12f447980f1f1573dbc3e5a3978b645"
+    }
+  },
+  "familywise_alpha": 0.05,
+  "require_no_bonferroni_outliers": true,
+  "schema": "tfoesuu-p12-p15-preview-admission-v1",
+  "source_commit": "149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b",
+  "trials_per_configuration": 100000
+}

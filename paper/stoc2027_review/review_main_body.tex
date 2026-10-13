@@ -1,0 +1,223 @@
+\section{Introduction}
+Fairness testing is usually presented as an audit of one fixed system. Software, however, evolves: a previously certified program $P_0$ is replaced by a patched program $P_1$, and the auditor must decide whether the change has introduced a forbidden discrepancy. When execution is stochastic, evaluating the same input twice may not give the same result. The central question becomes not only \emph{which comparisons} remain necessary but also \emph{which old/new executions can share randomness}. Buselli et al. use ``unfair regression'' for sensitive-group imbalance in negative prediction flips after an update \cite{BuselliEtAl2024}; here a \emph{fairness regression} is instead a new violation on a declared counterfactual edge.
+
+We formulate a query-complexity problem on a counterfactual graph $G=(V,E)$ whose vertices are valid program inputs and whose edges encode fairness comparisons. A sound impact set or sound effect envelope can eliminate edges without reexecution. For the residual graph, a tester chooses among old/new paired calls, four-way edge replay, full-suite replay, and restricted shared-randomness groups. These are different information resources, and a replay \emph{round} is not interchangeable with a concrete program execution.
+
+The evidence-reuse workflow is summarized in \Cref{fig:pipeline}. The motivation draws on fairness testing \cite{GalhotraBrunMeliou2017,UdeshiAroraChattopadhyay2018,AlbarghouthiEtAl2017}, regression selection and nondeterministic testing \cite{RothermelHarrold1996,YooHarman2012,YuanLinShi2026}, and common-random-number coupling \cite{GlassermanYao1992,BartheEtAl2017}. The central theoretical question concerns the \emph{interaction} among these ingredients: how topology, software change, statistical uncertainty, and legal replay actions jointly determine testing cost. We do not claim that coupling, fractional covering, or sequential likelihood-ratio testing is itself new.
+
+\paragraph{Main message.} Under tightly specified random-tape laws, stronger replay can change the dependence on a small fairness regression from $d^{-2}$ to $d^{-1}$. The improvement is not universal: positive tolerance, heterogeneous benign patch effects, and unavailable controls can remove it. Conversely, an appropriate control topology can restore the first-order information channel. Theorems and lower bounds therefore must explicitly name the observation law, comparator family, null class, and cost unit.
+
+\paragraph{Principal results.} First, the Gaussian delta oracle induces an uncertainty-weighted graph allocation whose static upper and adaptive null-side lower bounds match up to confidence constants and a logarithmic familywise factor (\Cref{thm:upper,thm:lower}). Second, raw common-uniform replay yields a linear $d^{-1}$ information channel for sparse Bernoulli changes, while fixed positive tolerance restores quadratic $d^{-2}$ scaling (\Cref{thm:bernoulli-separation,thm:threshold-replay-phase}). Third, partial replay separates edge-witness and active-vertex cover geometries; in the declared two-class family, matched-background controls recover the linear channel, whereas boundary-only channels retain quadratic cost and exhibit a fixed-allocation familywise penalty removed from expected null cost by sequential stopping (\Cref{thm:control-replay,prop:boundary-familywise-fixed}). Certificate-aware localization and the executable historical defect connect these results to evolving software. Detailed proofs, counterexamples, and the experimental protocol follow.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[node distance=3mm and 3mm, >=Latex,
+ every node/.style={font=\normalsize},
+ block/.style={draw=linegray,fill=boxedgray,rounded corners=1pt,align=center,text width=3.2cm,minimum height=1.06cm,inner sep=5pt},
+ narrow/.style={draw=linegray,fill=white,rounded corners=1pt,align=center,text width=3.2cm,minimum height=1.06cm,inner sep=5pt}]
+\node[block] (cert) {Certified $P_0$, patched $P_1$\\fairness graph and impact set};
+\node[block,right=of cert] (res) {Sound pruning\\residual graph $H$};
+\node[block,right=of res] (access) {Declared replay oracle\\and concrete costs};
+\node[block,right=of access] (test) {Scope-matched tester\\decision and certificate};
+\draw[->] (cert)--(res);\draw[->](res)--(access);\draw[->](access)--(test);
+\node[narrow,below=4mm of res] (gauss) {Gaussian paired deltas\\$\Psi(H,\nu)$};
+\node[narrow,below=4mm of access] (bern) {Edge / suite replay\\$d^{-1}$ vs. $d^{-2}$};
+\node[narrow,below=4mm of test] (groups) {Partial groups\\$C_{\rm vert}$, $C_{\rm ctrl}$};
+\draw[->] (access.south) |- (gauss.north);\draw[->] (access.south)--(bern.north);\draw[->] (access.south) |- (groups.north);
+\end{tikzpicture}
+\caption{Evidence-reuse pipeline. The lower branches are distinct, scoped observation models, not interchangeable methods. Sound pruning precedes sampling; every reported bound includes its oracle cost convention.}
+\Description{Flow of certified previous software through sound pruning and three theorem-scoped replay strategies into a version-aware fairness decision.}
+\label{fig:pipeline}
+\end{figure}
+
+\section{Model and oracle hierarchy}
+For each version $j\in\{0,1\}$ let $P_j:\mathcal X\times\mathcal R\to\mathcal Y$ be executable under random tape $R$. Write $\mu_{j,v}=\E[P_j(v;R)]$. A fairness edge $e=(u,v)$ requires $|\mu_{j,u}-\mu_{j,v}|\le\tau_e$ for a tolerance $\tau_e\ge0$. The old version is certified; $P_1$ must be tested. Let $\theta_v=\mu_{1,v}-\mu_{0,v}$ and $g_{j,e}=\mu_{j,u}-\mu_{j,v}$. Then
+\begin{equation}\label{eq:change-identity}
+g_{1,e}=g_{0,e}+\theta_u-\theta_v.
+\end{equation}
+A distributionally sound impact set $C_\Delta\subseteq V$ guarantees unchanged output laws outside it; a stronger replay-sound set guarantees pathwise old/new equality under a shared tape. All newly violated edges must meet $C_\Delta$. More generally, an upper bound $b_e$ on $|\theta_u-\theta_v|$ certifies edge $e$ without execution when $|g_{0,e}|+b_e\le\tau_e$.
+
+\paragraph{Calls, rounds, and cost.} A single-version call executes one program version once. A vertex-paired execution runs $P_0(v;R)$ and $P_1(v;R)$ at one shared tape, costing two concrete executions. Its \emph{raw-pair} observation retains both outputs; the Gaussian \emph{delta oracle} instead reveals only their difference. Four-way, suite, and group replay retain all ordered raw outputs generated on their common tape. Fresh rounds use independent tapes. Four-way replay costs four executions; full-suite replay costs $2n_+$ per round; and a legal group $S$ costs $2|S|$ unless a different charge $c(S)$ is declared. Equal execution counts do not make these observation sigma-algebras interchangeable.
+
+\paragraph{Core versus full fairness.} A Gaussian subproblem tests $H_0:\theta_u=\theta_v$ for every impacted edge against $H_1:\exists(u,v),\ |\theta_u-\theta_v|\ge\gamma$. This \emph{patch-neutrality} test is not the same as general thresholded preservation. Positive margin is essential: no uniformly finite worst-case query budget can distinguish exactly fair boundary instances from arbitrarily small violations under stochastic observations. The complete thresholded problem needs declared headroom or margin assumptions.
+
+\begin{researchalgorithm}{Algorithm 1. Version-aware fairness-regression audit}\label{alg:audit}
+\textbf{Input:} certified $P_0$, patch $P_1$, graph $G$, $\tau$, error $\delta$, sound impact/effect envelopes, legal replay groups.\\
+\textbf{1.} Retain edges not eliminated by sound localization or $|g_{0,e}|+b_e\le\tau_e$.\\
+\textbf{2.} Identify Gaussian/threshold-Bernoulli law, null scope, legal tape synchronization, cost units.\\
+\textbf{3.} Choose the \emph{proved} matching schedule: $\Psi$ allocation; four-way/suite replay; $C_{\rm vert}$ raw contrast; or matched-background controls.\\
+\textbf{4.} Execute the selected test; stop and decide according to its proved decision rule. Record concrete executions, error target, witness, and scope.\\
+\textbf{5.} Reject unsupported composite-null or weak-replay extrapolations; return \emph{not certified} if no valid theorem applies.
+\end{researchalgorithm}
+
+\section{Gaussian paired-execution complexity}
+A vertex-paired old/new difference $Z_v=P_1(v;R)-P_0(v;R)$ has mean $\theta_v$ and variance
+\begin{equation}\label{eq:variance}
+\nu_v^2=\mathrm{Var}(P_1(v;R))+\mathrm{Var}(P_0(v;R))-2\mathrm{Cov}(P_1(v;R),P_0(v;R)).
+\end{equation}
+Assume independent calls and $Z_v\sim\mathcal N(\theta_v,\nu_v^2)$ with \emph{known} $\nu_v^2>0$. Write $V_+(H)$ for vertices incident to a residual edge. One active-vertex sample supports all incident fairness edges. This reuse is captured by the convex allocation
+\begin{equation}\label{eq:psi}
+\Psi(H,\nu)=\min_{q_v>0,\ v\in V_+(H)}\left\{\sum_{v\in V_+(H)}q_v:\frac{\nu_u^2}{q_u}+\frac{\nu_v^2}{q_v}\le1\ (u,v)\in E(H)\right\}.
+\end{equation}
+\textbf{Gaussian allocation bounds.} For a nonempty residual graph, a static $\delta$-correct test takes at most $8\Psi(H,\nu)\gamma^{-2}\log(2|E(H)|/\delta)+|V_+(H)|$ Gaussian delta-oracle calls; every adaptive $\delta$-correct tester with finite null stopping expectation needs at least
+\begin{equation}\label{eq:psi-lb}
+\E_0[T]\ge\frac{2\kl(1-\delta,\delta)}{\gamma^2}\,\Psi(H,\nu).
+\end{equation}
+The proof of the upper bound scales an optimal allocation $q^\star$, thresholds empirical edge differences at $\gamma/2$, and uses Gaussian tails and a union bound. For the lower bound, change only the endpoints of each edge and optimize their mean shift under a fixed separation; adaptive transcript KL and data processing force each inequality in \Cref{eq:psi}. The results match graph/variance and margin dependence but retain a $\log|E|$ gap between the \emph{static upper} and \emph{adaptive-null lower} bounds.
+
+The primal has a standard rotated-SOC representation, and duality gives
+\begin{equation}\label{eq:psi-dual}
+\Psi(H,\nu)=\max_{\lambda_e\ge0}\left[2\sum_{v\in V_+(H)}\nu_v\sqrt{\sum_{e\ni v}\lambda_e}-\sum_e\lambda_e\right].
+\end{equation}
+For unit variances: one edge costs $4$, a $k$-edge matching $4k$, clique $K_n$ with $n\ge2$ costs $2n$, and complete bipartite $K_{a,b}$ costs $(\sqrt a+\sqrt b)^2$. The graph is algorithmically relevant: samples at shared vertices can be reused rather than charged independently to every edge. Graph-based max--min experimental design is established \cite{SinghSinghDavidov2025}; our increment is the allocation induced by paired old/new execution, vertex reuse, and an adaptive null-side converse.
+
+\begin{researchalgorithm}{Algorithm 2. Gaussian graph allocation}\label{alg:gaussian}
+\textbf{Input:} residual $H$, known variances $\nu_v^2$, margin $\gamma$, error $\delta$.\\
+If $E(H)=\varnothing$, accept with zero calls. Otherwise solve \Cref{eq:psi} for $q^\star$; for each $v\in V_+(H)$, collect $n_v=\lceil8q_v^\star\log(2|E|/\delta)/\gamma^2\rceil$ Gaussian delta observations. Reject patch-neutrality when some $|\bar Z_u-\bar Z_v|\ge\gamma/2$; otherwise accept.\\
+\textbf{Guarantee:} $\delta$-correct for the stated separated Gaussian problem; explicit sample-sharing and concrete-cost accounting.
+\end{researchalgorithm}
+
+\section{Why synchronized replay changes the exponent}
+For Bernoulli programs $P_j(v;U)=\mathbf 1\{U\le p_{j,v}\}$ under a common uniform tape, the signed old/new difference is supported only on an interval of length $d=|p_{1,v}-p_{0,v}|$: its variance is $d(1-d)$, whereas fresh independent sampling has constant-order variance at interior $p$. This sparse witness drives the first separation.
+
+\textbf{One-edge replay separation.} For fixed interior $p$ and a null with identical endpoint patches, the optimal small-effect dependence under raw-pair replay is $\Theta(d^{-1}\log(1/\delta))$, with a zero-type-I witness test using
+\begin{equation}\label{eq:pair-steps}
+L(d,\delta)=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil
+\end{equation}
+rounds. Independent new-version sampling needs a quadratic-in-$1/d$ number of observations, namely $\Theta(d^{-2}\log(1/\delta))$. The adaptive lower bound follows from binary transcript KL; the comparison assumes the specified oracle and retained baseline.
+
+\textbf{Four-way edge replay.} Consider a fairness-neutral common shift $s>0$ and an extra differential shift $d$ on one endpoint. Sharing $U$ only across versions at one vertex fails to cancel the nuisance in the joint edge comparison; sharing $U$ across \emph{both versions and both endpoints} does cancel the common shift pathwise. For $r=1-p-s$, every adaptive $\delta$-correct four-way tester has
+\begin{equation}\label{eq:four-kl}
+\E_0[T]\ge\frac{\kl(1-\delta,\delta)}{r\log(r/(r-d))},
+\end{equation}
+whereas the sparse-witness test uses $L(d,\delta)$ rounds with zero type-I error. Ordinary vertex-paired access in this family has $\Theta(d^{-2}\log(1/\delta))$ small-$d$ complexity. This is an \emph{access-model} result, not a claim that all software can synchronize four executions.
+
+\textbf{Tolerance phase transition.} The rare-event advantage has a sharp limit. Compare a null on the composite fairness boundary with endpoint disparity $\tau$ to an alternative of gap $\tau+d$. One synchronized round has exact null-to-alternative KL
+\begin{equation}\label{eq:ktau}
+K_\tau(d)=\tau\log\frac{\tau}{\tau+d}+r\log\frac r{r-d},\quad r=1-p-s-\tau.
+\end{equation}
+Here the first term is defined as zero at $\tau=0$. Adaptive change of measure yields a lower bound $\kl(1-\delta,\delta)/K_\tau(d)$; a fixed composite-null threshold test uses at most $\lceil8(\tau+d)\log(1/\delta)/d^2\rceil$ synchronized rounds. Under the stated interior condition, the resulting order is
+\begin{equation}\label{eq:phase}
+Q_{\rm thr}=\Theta\left(\frac{\tau+d}{d^2}\log\frac1\delta\right).
+\end{equation}
+Thus $\tau=O(d)$ retains $d^{-1}$, while fixed $\tau>0$ yields $d^{-2}$. The exact KL calculation and monotone binomial tail test are essential: this is not a universal phase diagram for arbitrary null distributions.
+
+\begin{researchalgorithm}{Algorithm 3. Four-way replay witness}\label{alg:fourway}
+\textbf{Input:} two endpoints, versions $P_0,P_1$, raw four-way common-tape access, $d$, $\delta$, and a declared homogeneous null.\\
+For $t=1,\ldots,L(d,\delta)$, draw a fresh $U_t$ and evaluate both versions at both endpoints with the \emph{same} $U_t$. Reject if their old/new patch deltas differ; otherwise accept.\\
+\textbf{Guarantee:} zero type-I error and pointwise type-II at most $\delta$ under the scoped one-edge family. Each round costs four concrete executions.
+\end{researchalgorithm}
+
+\textbf{Suite replay.} One shared tape across the entire active suite reveals all edge-wise patch-delta differences per round. In the homogeneous single-changed-endpoint family the tester needs $L(d,\delta)$ rounds, hence $2n_+L(d,\delta)$ concrete executions, independent of $|E|$ in \emph{round count}. The suite oracle is more informative per round but not necessarily cheaper per concrete execution.
+
+\section{Partial replay: topology and controls}
+Real systems may synchronize only subsets $S$ from a legal group family $\mathcal S$. Distinguish two incidence matrices: $A_{eS}=\mathbf1\{e\subseteq S\}$ records whether group $S$ witnesses edge $e$, whereas $B_{vS}=\mathbf1\{v\in S\}$ records whether the group exposes a changed active vertex. With group costs $c_S>0$, define
+\begin{align}\label{eq:covers}
+C_{\rm edge}&=\min\{c^\top a:Aa\ge\mathbf1,\ a\ge0\},\\
+C_{\rm vert}&=\min\{c^\top q:Bq\ge\mathbf1,\ q\ge0\}.
+\end{align}
+Always $C_{\rm vert}\le C_{\rm edge}$ for the specified active set; the gap can grow. For clique $K_n$ with only pair groups and unit costs, $C_{\rm edge}=\binom n2$ and $C_{\rm vert}=n/2$, so the ratio is $n-1$. Some legal group families cover every active vertex but no group contains certain fairness-edge endpoints, making the edge-witness cover infeasible while the information cover remains finite.
+
+\textbf{Achievability has a scope restriction.} In the homogeneous single-changed-endpoint family, a within-group vector of old/new deltas is constant under the null. Querying each group $S_i$ $n_i=\lceil L(d,\delta)q_i^\star\rceil$ times and rejecting a nonconstant vector gives zero type-I error and pointwise type-II at most $\delta$, at declared cost at most $L C_{\rm vert}+\sum_{q_i^\star>0}c_i$. Raw-transcript change of measure yields the matching active-vertex \emph{combinatorial} information floor. This extension fails for heterogeneous benign patch effects: a deterministic fair-null counterexample has new gap $0.15\le\tau=0.20$ while the homogeneous test rejects on a tape set of measure $0.15$. The more general composite null therefore remains open.
+
+\textbf{Matched backgrounds.} A heterogeneous two-class threshold family admits another controlled repair. Some groups expose a candidate and a same-background control (first-order information); boundary-only groups do not (second-order information). With the corresponding incidence matrices $C,R$ and per-action KL values, the null expected declared cost obeys
+\begin{equation}\label{eq:p19-lp}
+\min_{n\ge0}\{c^\top n:(K_{\rm ctrl}C+K_{\rm bnd}R)n\ge\kl(1-\delta,\delta)\mathbf1\}.
+\end{equation}
+At fixed positive tolerance, $K_{\rm ctrl}=\Theta(d)$ while $K_{\rm bnd}=\Theta(d^2)$. If the fractional $C_{\rm ctrl}=\min\{c^\top q:Cq\ge\mathbf1\}$ is finite, a zero-type-I control witness uses $O(C_{\rm ctrl}d^{-1}\log(1/\delta))$ declared cost. Without a legal matched-background control, the boundary-only family remains quadratic. These statements are proved for the declared two-class/bipartite null, not arbitrary protected-group populations.
+
+\begin{researchalgorithm}{Algorithm 4. Scope-aware partial replay}\label{alg:partial}
+\textbf{Input:} legal groups, declared null family, group costs, target $d,\delta$.\\
+\textbf{Homogeneous:} solve $C_{\rm vert}$; schedule $\lceil Lq_i^\star\rceil$ tapes/group and test within-group patch-delta constancy.\\
+\textbf{Two-class matched-control:} solve $C_{\rm ctrl}$; schedule matched-background witness groups.\\
+\textbf{Otherwise:} refuse a linear-regime guarantee; boundary-only and composite-null handling need their proper tests and validity conditions.
+\end{researchalgorithm}
+
+\textbf{Mixed-topology refinement.} For each fixed finite partial-control topology, we derive two-term small-$d$ asymptotics for its information lower program and a hybrid testing construction matching the leading \emph{orders}. A disjoint unit-cost boundary family of $m$ alternatives has a fixed nonadaptive allocation penalty $\Omega(m\log m/d^2)$, whereas sequential likelihood-ratio stopping removes the multiplicative $\log m$ from \emph{expected null cost} with $\Theta(m/d^2)$ topology scaling at fixed confidence. A deterministic truncation bound preserves the latter scale. This does \emph{not} prove exact mixed minimax constants or unrestricted optimal confidence dependence; those remain open. The proof relies on a mixture chi-square argument for fixed designs and optional-stopping-valid likelihood-ratio martingales for adaptive stopping.
+
+\begin{table}[t]
+\centering
+\caption{Asymptotic testing costs in the stated Bernoulli families. These are mathematical guarantees, \emph{not measured speedups}. Different rows assume different replay oracles and null classes; group costs are not automatically concrete program executions.}
+\label{tab:theory-regimes}
+\normalsize
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\textwidth}{@{}p{0.32\textwidth}p{0.34\textwidth}X@{}}
+\toprule
+Access and hypothesis family & Established small-$d$ order & Unit and qualification\\
+\midrule
+Fresh independent sampling, one edge & $\Theta(d^{-2}\log(1/\delta))$ & Samples; interior known baseline\\
+Paired common-uniform replay, one edge & $\Theta(d^{-1}\log(1/\delta))$ & Paired rounds; two executions each\\
+Four-way replay with a benign common shift & $\Theta(d^{-1}\log(1/\delta))$ & Four-way rounds; four executions each\\
+Four-way replay, fixed positive tolerance & $\Theta(d^{-2}\log(1/\delta))$ & Four-way rounds; interior boundary law\\
+Matched-background controls, two-class family & $O(C_{\rm ctrl}d^{-1}\log(1/\delta))$ & Declared group-cost upper bound\\
+Disjoint boundary-only channels & fixed: $\Omega(md^{-2}\log m)$; sequential: $\Theta(md^{-2})$ & Fixed confidence; latter is expected null cost\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Experimental verification and executable subject}
+\paragraph{Evidence categories.} We distinguish (i) 821 deterministic theorem-testing specifications, (ii) seven observed population inputs in an executable software-version comparison, and (iii) stochastic simulations under the mathematical oracle models. Specification counts are not trial counts. The frozen P12/P15 campaign contains 198 configurations (54 paired-replay and 144 four-way-replay), each with 100,000 trials. Independent revalidation performed 594 exact binomial-law comparisons: none crossed the familywise $0.05$ Bonferroni threshold; the minimum exact $p$-value was $4.65\times10^{-4}$ and the maximum absolute deviation from its exact law was $2.43\times10^{-3}$. These are sufficient-statistic oracle checks, not runtime measurements, proof evidence, or evaluations of real software. Thus \Cref{tab:theory-regimes} continues to summarize mathematical bounds rather than measured speedups.
+
+\paragraph{Historical executable change.} A pinned historical parent/repair pair of Fairlearn's threshold optimizer \cite{BirdEtAl2020Fairlearn} provides an executable software subject. The child repairs multi-column protected-group handling; the controlled comparison holds the randomized decision law fixed. The primary metric is the exact row-wise absolute difference between the native protected-group randomized-prediction PMF and an injective canonical encoding of the same \emph{ordered tuple}. It quantifies a software-behavior representation discrepancy, \emph{not} causal discrimination or population fairness. Single-attribute populations act as negative controls. The full $7\times2$ parent/repair census, including five exact-zero populations, is reported in \Cref{tab:historical-census}. Source records for the two nonzero populations are \cite{AdultDatasetUCI,DefaultCreditUCI}.
+
+
+
+These are deterministic, finite-row PMF comparisons; sampling confidence intervals do not apply. The parent defect is \emph{not} a fairness-regression-rate estimate, and its zeros are equally important: five populations do not exhibit a discrepancy for this particular exact metric. The parent/child change is a real software version transition, but it does not experimentally establish the general stochastic replay theorems. It instead validates the separate software-evolution motivation. No pretrained model or model API is a research subject.
+
+\paragraph{Reproducibility and scope.} The analysis includes negative controls, exact fractional-cover fixtures, and a heterogeneous-null counterexample. Historical comparisons use recorded source revisions, dataset hashes, protected-category ordering, and pinned dependencies. They execute on a CPU and are distinct from the random-tape simulator. The latter's hardware throughput is not evidence of the execution cost of an actual software test. The complete P12/P15 records, hashes, seeds, manifest, and independent validation report accompany the editable artifact; no hardware speedup claim is made.
+
+\section{Two revealing finite configurations}
+\label{sec:worked}
+The asymptotic theorems have different operational consequences even on small graphs. The following exact instances help separate \emph{program fairness edges}, \emph{which observations are permitted}, and \emph{which transcripts a tester can use}. They are deterministic constructions rather than empirical estimates.
+
+\subsection{Same fairness graph, different control access}
+Consider the specified bipartite two-class family with three candidates in the high-background class and one low-background reference. The three fairness edges join each high candidate to the low reference. Hold that fairness graph, the null/alternative thresholds, and all cost definitions fixed. Only the legal shared-tape groups change.
+
+\paragraph{Boundary-only access.} Suppose the only legal groups are the three high--low pairs. Every candidate remains observable; nevertheless, each comparison puts two different background probabilities into the same tape. There is no group containing a candidate and a matched high-background control. Under a fixed positive tolerance $\tau$, the exact boundary channel obeys the small-effect expansion
+\begin{equation}\label{eq:bnd-expansion}
+K_{\rm bnd}(\tau,d)=\frac{d^2}{2}\left(\frac1\tau+\frac1r\right)+O(d^3),
+\end{equation}
+with $r$ the residual interior mass. In particular, every legal group yields only second-order information, and the necessary sample cost is quadratic in $1/d$. The software update is no less real; what disappears is the \emph{replay channel} that exposes it as a sparse witness.
+
+\paragraph{Matched-control access.} Keep the same fairness graph but allow the three high--high pairs as replay groups. Their candidate/group incidence matrix covers the three high vertices, and symmetry yields the exact fractional cover
+\begin{equation}\label{eq:triangle-cover}
+\begin{aligned}
+C_{\rm ctrl}&=\min_{q\ge0}(q_{12}+q_{13}+q_{23})=\tfrac32,\\
+\text{s.t. }&q_{12}+q_{13}\ge1,\\
+&q_{12}+q_{23}\ge1,\quad q_{13}+q_{23}\ge1.
+\end{aligned}
+\end{equation}
+Indeed, assigning $1/2$ to each pair attains $3/2$, while summing the three constraints proves the same lower bound. Under the two-class null, a same-background control has the same pathwise old/new patch delta as an unchanged candidate. An extra shift of size $d$ at one candidate makes their deltas disagree exactly when a shared uniform tape falls in the newly added length-$d$ interval. The resulting information is first-order in $d$, and an upward-rounded fractional schedule achieves the theorem's $O(d^{-1}\log(1/\delta))$ scale. This calculation is about \emph{declared group cost}; if one wishes to compare executable cost, every two-vertex old/new group query must be converted to four program executions.
+
+Thus the same three fairness obligations admit different asymptotic certification costs solely because the replay topology changes. The lesson is not that a favorable coupling can always be imposed, but that its availability must be part of the input specification.
+
+\subsection{Why a witness-only planner can be suboptimal}
+The gap between edge-witness coverage and raw-transcript information does not disappear by adding more pair groups. For $K_n$, allow as legal groups all size-two vertex pairs with unit cost. Every fairness edge needs its own witness group, forcing $C_{\rm edge}=\binom n2$. But every vertex participates in $n-1$ groups; assigning weight $1/(n-1)$ to each group meets the active-vertex constraints, yielding $C_{\rm vert}=n/2$. Their ratio is exactly $n-1$, unbounded as $n$ grows.
+
+A stronger obstruction uses the three-vertex path with legal groups $\{0,2\}$ and $\{1,2\}$. The edge $\{0,1\}$ is in no legal group, hence $C_{\rm edge}=\infty$; nevertheless, all relevant active vertices appear in at least one group, and $C_{\rm vert}$ is finite. Within the specified homogeneous single-changed-endpoint family, full raw old/new output vectors make it possible to exploit that latter information. Under arbitrary heterogeneous fair nulls, the same raw-contrast predicate can fire spuriously, so LP feasibility alone does not establish validity for composite nulls.
+
+\subsection{What the experiments can and cannot establish}
+The theoretical instances fix threshold distributions and permit exact KL and fractional-LP evaluation. Their simulations can falsify an implementation by comparing finite-sample outcomes to these laws, but agreement does not prove theorems or demonstrate real-world causal fairness. In contrast, the historical protected-tuple defect tests whether a genuine old/new software change disagrees with a canonical group representation. The two positive parent-revision comparisons and five negative controls provide source-level evidence without pretending that the finite census estimates an underlying population effect. Together, these two evidence layers connect mathematical access models to real evolving code while preserving the distinction between the abstractions and the observed software behavior.
+
+\section{Relation to prior work and limits}
+Software fairness testing and directed test generation motivate the specification but do not provide our replay hierarchy \cite{GalhotraBrunMeliou2017,UdeshiAroraChattopadhyay2018,ZhangEtAl2020,ChenEtAl2024}. Yan and Zhang actively audit demographic parity for a fixed model \cite{YanZhang2022}; Ajarra and Basu study PAC auditing after strategic model updates via their SP dimension for statistical parity \cite{AjarraBasu2026}. Neither work models executable old/new transcript coupling or charges concrete executions. Buselli et al. mitigate group imbalance in negative prediction flips after model updates \cite{BuselliEtAl2024}, whereas our edgewise property and query-complexity objective are different. Incremental and regression testing explain reuse across versions \cite{RothermelHarrold1996,YooHarman2012,LiSunLeungZhang2013,YinEtAl2025}. Fixed-model individual-fairness verification and relational $k$-safety specifications \cite{GeorgeJohnVijaykeerthySaha2020,ChristakisEtAl2023} do not by themselves establish version-aware stochastic replay bounds. Efficient action selection for active sequential testing is likewise established \cite{GanJiaLiTayur2026}; our claimed distinctions therefore concern the exact legal old/new transcript, fairness-null family, and concrete execution accounting, not sequential sensing as such. Common random numbers and paired designs are standard \cite{GlassermanYao1992,Connor1987,McNemar1947,NelsonMatejcik1995}; adaptive allocation and controlled sensing already have deep theory \cite{Chernoff1959,CohenZhao2015,NaghshvarJavidi2013,NitinawaratAtiaVeeravalli2013,DeshmukhVeeravalliBhashyam2021,MalloyNowak2014}; graph-structured design and property testing supply related frameworks \cite{SinghSinghDavidov2025,GoldreichGoldwasserRon1998,GoldreichRon1997,BlaisSeth2024,BunDesaiPinto2026,PintoPalitRaskhodnikova2026}.
+
+Our distinct claim is a \emph{version-aware, fairness-graph-constrained} hierarchy of legal replay transcripts and costs, where explicit null classes permit both exponent shifts and converse results. The study does not characterize general composite nuisance classes (a general composite-nuisance characterization remains conjectural), unknown-variance anytime-valid procedures, arbitrary unsound impact reports, uncontrolled software nondeterminism, or causal discrimination in the observational populations. These distinctions are essential to separating the present statements from classical controlled sensing, coupling, and graph-structured experimental design.
+
+\section{Validity conditions and limitations}
+\label{sec:gate}
+\paragraph{Which claims have matching hypotheses?}
+The Gaussian upper and lower bounds hold with independent calls, known positive vertex variances, a positive separation margin, and the specified delta oracle. The Bernoulli $d^{-1}$ advantage assumes a common threshold tape and a sparse changed interval. Suite-replay results assume the entire active suite can share the same tape; the execution cost grows with the number of executed vertices. Partial-replay $C_{\rm vert}$ achievability uses a homogeneous single-changed-endpoint null, and the heterogeneous control result uses declared control classes. None of these assumptions follows merely from the existence of a protected attribute or from GPU simulation.
+
+\paragraph{Avoiding incorrect lower-bound transference.}
+A transcript-KL lower bound depends on what the observation reveals. Replacing a full raw transcript with only an edgewise witness can make an apparent lower bound too large: the partial-replay information geometry is governed by active vertices, not edges, in its homogeneous family. Similarly, for a composite null there is one unknown but globally fixed nuisance parameter; minimizing allocations separately at each null parameter and imposing a common allocation against all nulls lead to different mathematical quantities. We do not promote either interchange into a general adaptive minimax equivalence. A matching minimax theorem for this broader composite-nuisance setting remains open.
+
+\paragraph{Unit comparability and adaptivity.}
+A vertex-paired physical execution uses two program executions whether it exposes a raw pair or only a Gaussian delta; an edge-synchronized call uses four; a complete suite round costs $2n_+$ executions. Group costs may represent $2|S|$ runs or another explicitly declared charge. A theorem comparing $d$-exponents for different oracle classes does not automatically imply wall-clock or energy savings. The familywise $\log m$ penalty applies to deterministic fixed boundary allocations in the stated independent-channel family; sequential stopping improves expected null cost. The resulting bound is neither a uniform improvement for all alternative stopping times nor proof of exact optimal constants in mixed topologies.
+
+\paragraph{Limits of interpretation.}
+The theory provides algorithmic and information-theoretic certificates for explicit program laws. It does not establish fairness of every updated deployed service, soundness of arbitrary static analysis, replay of nonseedable external nondeterminism, or freedom from protected-feature leakage in an unrelated model pipeline. The central value is sharper \emph{verification cost accounting}, not a universal method for measuring societal fairness. The role of replay topology and certificate reuse must therefore be interpreted alongside prior results in controlled sensing, adaptive testing, coupling, regression selection, and property testing.
+
+\noindent\textit{The next section states the principal results formally and supplies proof arguments; additional supporting proofs and experimental details appear in the appendix.}\par
+\medskip
+\input{formal_results}

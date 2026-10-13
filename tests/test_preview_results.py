@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from tfoesuu import preview_results
 from tfoesuu.counterfactual_benchmarks import CounterfactualReplayBenchmarkSpec
 from tfoesuu.preview_results import validate_preview_campaign
 from tfoesuu.replay_benchmarks import ReplayBenchmarkSpec
@@ -176,4 +177,15 @@ def test_preview_campaign_fails_closed_on_corruption(tmp_path, mutation, message
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
 
     with pytest.raises(ValueError, match=message):
+        validate_preview_campaign(manifest_path, base_dir=tmp_path)
+
+
+def test_preview_campaign_rejects_mismatched_declared_git_blob(tmp_path, monkeypatch):
+    manifest_path, _ = _campaign(tmp_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["artifacts"]["p12"]["spec_git_blob"] = "1" * 40
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setattr(preview_results, "_git_blob_at_commit", lambda *_: "2" * 40)
+
+    with pytest.raises(ValueError, match="Git blob mismatch"):
         validate_preview_campaign(manifest_path, base_dir=tmp_path)

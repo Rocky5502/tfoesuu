@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
+import subprocess
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
@@ -250,7 +252,26 @@ def _validate_p15(
     return audits
 
 
-def _resolve_and_hash(base_dir: Path, record: dict[str, Any], kind: str) -> tuple[Path, Path]:
+def _git_blob_at_commit(base_dir: Path, commit: str, path: str) -> str:
+    completed = subprocess.run(
+        ["git", "-C", str(base_dir), "rev-parse", f"{commit}:{path}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    blob = completed.stdout.strip()
+    if completed.returncode != 0 or len(blob) != 40:
+        raise ValueError(f"cannot resolve Git blob {commit}:{path}")
+    return blob
+
+
+def _resolve_and_hash(
+    base_dir: Path,
+    record: dict[str, Any],
+    kind: str,
+    *,
+    source_commit: str,
+) -> tuple[Path, Path]:
     spec_path = (base_dir / record["spec_path"]).resolve()
     result_path = (base_dir / record["result_path"]).resolve()
     for path, field in (
@@ -271,8 +292,21 @@ def _resolve_and_hash(base_dir: Path, record: dict[str, Any], kind: str) -> tupl
             raise ValueError(f"LF-normalized SHA-256 mismatch for {kind} specification")
     if "runner_path" in record:
         runner = (base_dir / record["runner_path"]).resolve()
-        if not runner.is_file() or _sha256(runner) != record.get("runner_sha256"):
+        if not runner.is_file():
+            raise ValueError(f"missing {kind} runner: {runner}")
+        if "runner_git_blob" not in record and _sha256(runner) != record.get("runner_sha256"):
             raise ValueError(f"SHA-256 mismatch for {kind} runner")
+    for path_field, blob_field in (
+        ("spec_path", "spec_git_blob"),
+        ("runner_path", "runner_git_blob"),
+    ):
+        if blob_field in record:
+            observed_blob = _git_blob_at_commit(base_dir, source_commit, record[path_field])
+            if observed_blob != record[blob_field]:
+                raise ValueError(
+                    f"Git blob mismatch for {kind} {path_field}: "
+                    f"expected {record[blob_field]}, observed {observed_blob}"
+                )
     return spec_path, result_path
 
 
@@ -286,7 +320,7 @@ def validate_preview_campaign(
     if manifest.get("schema") != SCHEMA:
         raise ValueError(f"unsupported preview manifest schema: {manifest.get('schema')}")
     source_commit = manifest.get("source_commit")
-    if not isinstance(source_commit, str) or len(source_commit) != 40:
+    if not isinstance(source_commit, str) or re.fullmatch(r"[0-9a-f]{40}", source_commit) is None:
         raise ValueError("source_commit must be a full 40-character Git SHA")
     trials = manifest.get("trials_per_configuration")
     if not isinstance(trials, int) or trials <= 0:
@@ -299,8 +333,12 @@ def validate_preview_campaign(
         raise ValueError("manifest must contain exactly the P12 and P15 artifacts")
     root = Path(base_dir) if base_dir is not None else manifest_file.parent
 
-    p12_spec_path, p12_result_path = _resolve_and_hash(root, artifacts["p12"], "P12")
-    p15_spec_path, p15_result_path = _resolve_and_hash(root, artifacts["p15"], "P15")
+    p12_spec_path, p12_result_path = _resolve_and_hash(
+        root, artifacts["p12"], "P12", source_commit=source_commit
+    )
+    p15_spec_path, p15_result_path = _resolve_and_hash(
+        root, artifacts["p15"], "P15", source_commit=source_commit
+    )
     p12_rows = _read_rows(p12_result_path)
     p15_rows = _read_rows(p15_result_path)
     audits = _validate_p12(

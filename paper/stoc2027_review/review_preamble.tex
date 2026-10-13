@@ -1,0 +1,41 @@
+% STOC 2027 REVIEW submission format (NOT camera-ready ACM SIGCONF).
+% Official CFP: letter paper, 11pt or larger, one column, single spaced, 1-inch margins.
+\documentclass[11pt,letterpaper,oneside]{article}
+\usepackage[margin=1in,letterpaper]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs,microtype,tabularx,enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalize,noabbrev]{cleveref}
+\definecolor{boxedgray}{RGB}{246,247,249}
+\definecolor{linegray}{RGB}{154,160,170}
+\definecolor{focalteal}{HTML}{1F6F5F}
+\definecolor{risktone}{HTML}{B5473C}
+\newtcolorbox{researchalgorithm}[2][]{enhanced,colback=boxedgray,colframe=linegray,coltitle=black,attach boxed title to top left={xshift=1mm,yshift=-1mm},boxed title style={colback=boxedgray,colframe=linegray,sharp corners},title={#2},fonttitle=\bfseries\normalsize,sharp corners,boxrule=0.45pt,left=6pt,right=6pt,top=6pt,bottom=6pt,before skip=6pt,after skip=6pt,#1}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\kl}{\mathrm{kl}}
+\newcommand{\PsiG}{\Psi}
+\newtheorem{claim}{Claim}[section]
+\newtheorem{theorem}[claim]{Theorem}
+\newtheorem{proposition}[claim]{Proposition}
+\newtheorem{corollary}[claim]{Corollary}
+\newtheorem{lemma}[claim]{Lemma}
+\newtheorem{definition}[claim]{Definition}
+\newtheorem{remark}[claim]{Remark}
+\newtheorem{conjecture}[claim]{Conjecture}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\Prb}{\mathbb{P}}
+\newcommand{\Impact}{C_{\Delta}}
+\newcommand{\ImpEdges}{E_{\Delta}}
+\providecommand{\Description}[1]{}
+\setlength{\parskip}{3pt plus 1pt minus 1pt}
+\setlength{\parindent}{13pt}
+\emergencystretch=2em
+\hypersetup{pdftitle={Testing Fairness of Evolving Software under Uncertainty},pdfauthor={Chandan Kumar Sah; Li Zhang; Xiaoli Lian}}

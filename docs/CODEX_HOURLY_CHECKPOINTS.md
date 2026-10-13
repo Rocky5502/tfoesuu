@@ -835,3 +835,28 @@
   Ruff and `git diff --check` passed. Next: commit this evidence boundary, then
   reconcile and compile the supplied editorial Overleaf tree without
   overwriting the authoritative research source.
+
+## 2026-10-13 18:55 +08:00 — final audited Overleaf release gate
+
+- Branch: `codex/final-submission-audit-20261012`; starting checkpoint SHA
+  `f879b6d482fc9a584a469ff372025139aa3620df`. No GPU job was launched: the
+  admitted 100k evidence was complete and another run had no scientific value.
+- R1--R5 reviews completed. Final R1 Gaussian and R2 Bernoulli verdicts are GO;
+  R3 accepts the scoped oracle-law evidence; R4 accepts novelty positioning;
+  R5's duplication, evidence, and first-12-page issues were resolved.
+- Added Git-blob verification for the frozen source binding and fail-closed
+  resume checks for trial budget, device, seed, full spec, unexpected IDs, and
+  duplicate IDs. The release carries both raw JSONLs, both specs, admitted
+  runner snapshots, manifest, report, and evidence README.
+- Validation: `PYTHONPATH=.;src .venv\\Scripts\\pytest.exe -q` with a local
+  base temp passed 324 tests in 13.52 s; touched-file Ruff passed; the immutable
+  campaign revalidated 198 rows and 594 finite laws with zero Bonferroni
+  outliers; `git diff --check` passed.
+- Manuscript: direct bundled-Tectonic build succeeded, 44 US-Letter pages,
+  zero undefined citations/references and zero overfull boxes. Every rendered
+  page was visually inspected. Stable PDF:
+  `output/stoc2027_final_2026-10-13/TFOESUU_STOC2027_REVIEW_AUDITED_2026-10-13.pdf`,
+  SHA-256 `1197c6b14a57f567b680916cdb67510459517dedccf669917f1052ef8e355b79`.
+- Next: create a source-only Overleaf ZIP from the reconciled repository tree,
+  verify archive contents/hashes and clean build, then commit the coherent
+  final-audit changes. No upload or submission is authorized.
