@@ -810,3 +810,28 @@
   `aa5e15be13d30cc40987d741f7b7a4c96436ddd446bc845aad68f7de0325720b`.
 - Next: commit the coherent layout repair and retain the existing approval gate
   for any million-trial, dataset-expansion, publication, or submission action.
+
+## 2026-10-13 14:42 +08:00 — 100k preview admission gate
+
+- Branch/SHA at start: `codex/final-submission-audit-20261012` /
+  `5c115824e63caed23674f6cae93f30a53bfadcb1`; only the new validator worktree
+  changes were present. PC1 reported RTX 5070 Ti utilization 25%, 2,568/16,303
+  MiB, 43 C with desktop/UI processes only. PC2 reported 1%, 6,248/16,303 MiB,
+  55 C and no identified TFOESUU job. No GPU run was launched because the
+  authorized 100k evidence already existed and a rerun would add no scientific
+  information.
+- Falsifying command before implementation:
+  `.venv\\Scripts\\python.exe -m pytest -q tests\\test_preview_results.py --basetemp .pytest_tmp_preview_red`
+  failed on the intentionally missing `tfoesuu.preview_results` module.
+- Added the fail-closed validator, CLI, immutable manifest, and six corruption
+  regressions. The real validation command was
+  `.venv\\Scripts\\python.exe scripts\\validate_preview_results.py data\\p12_p15_100k_preview_manifest_v1.json --base-dir . --output data\\p12_p15_100k_preview_validation_v1.json`.
+- Result: 198/198 rows, 594 comparisons, zero Bonferroni outliers; validation
+  report SHA-256
+  `32ea2d88d6475c4880d607e13023151e3f84c4a78eac05ee5e0be64b37d5c9c5`.
+  P12/P15 result hashes are respectively `f00458f5...1035` and
+  `e0750e5d...74ab`.
+- Checks: targeted tests 6 passed; full suite 310 passed in 14.79 s; touched-file
+  Ruff and `git diff --check` passed. Next: commit this evidence boundary, then
+  reconcile and compile the supplied editorial Overleaf tree without
+  overwriting the authoritative research source.

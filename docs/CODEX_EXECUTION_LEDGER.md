@@ -242,3 +242,21 @@ and related work begins on page 37. Color, grayscale, and first-page renders
 passed visual review. All 304 tests passed in 14.37 s and `git diff --check`
 passed. The stable PDF is 322,376 bytes with SHA-256
 `aa5e15be13d30cc40987d741f7b7a4c96436ddd446bc845aad68f7de0325720b`.
+
+## 2026-10-13 — final-submission evidence admission
+
+Resumed on `codex/final-submission-audit-20261012` at
+`5c115824e63caed23674f6cae93f30a53bfadcb1`. The recovered P12/P15 100k
+outputs matched the checkpointed SHA-256 values, but there was no executable
+admission boundary. A corruption-first validator now binds the complete 198-row
+census to the frozen source commit, specification and runner hashes, exact
+schedules, CUDA labels, trial counts, and exact finite binomial laws.
+
+The generated validation report has SHA-256
+`32ea2d88d6475c4880d607e13023151e3f84c4a78eac05ee5e0be64b37d5c9c5`.
+It confirms 594 comparisons, zero Bonferroni outliers, minimum exact p-value
+`0.00046475515380564977`, and maximum absolute empirical deviation
+`0.002427090218361183`. Six targeted corruption tests and all 310 repository
+tests pass; Ruff and `git diff --check` pass. These remain theorem-family
+sufficient-statistic simulations, not instrumented runtime or public-software
+evidence. Neither GPU was used: no scientifically valid rerun was needed.
