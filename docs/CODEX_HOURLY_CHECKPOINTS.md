@@ -860,3 +860,26 @@
 - Next: create a source-only Overleaf ZIP from the reconciled repository tree,
   verify archive contents/hashes and clean build, then commit the coherent
   final-audit changes. No upload or submission is authorized.
+
+## 2026-10-13 19:24 +08:00 — pre-submission typography and visual gate
+
+- Start: `codex/final-submission-audit-20261012` at
+  `381e9c8556fc95425fa092a854eea6de6cf401c5`; preserved the existing final
+  release artifacts. PC1 was idle for research purposes (RTX 5070 Ti: 1%,
+  3,012/16,303 MiB, 45 C). No scientifically redundant GPU rerun was started.
+- CFP audit: official review format is nonanonymous, 11-point or larger,
+  single-column, single-spaced, US Letter with one-inch margins and no review
+  page limit. The merits/key ideas remain within content pages 1--12; the
+  12-page `acmart` limit is camera-ready-only.
+- Source audit/fix: normalized 117 legacy display blocks. The compiled closure
+  now has 130 sequentially numbered, uniquely labeled equations and a static
+  regression gate. Removed the two remaining ``et al.'' prose constructions.
+- Figure 1: replaced the dense inline diagram with editable TikZ emphasizing
+  evidence reuse, sound pruning, replay-law declaration, and scope-matched
+  certification. Full-size color and grayscale renders passed.
+- Checks: 325 tests passed (13.42 s); review/general static gates passed; Ruff
+  and `git diff --check` passed. Tectonic: 44 pages, no overfull boxes or
+  unresolved citations/references. Every page was rerendered and inspected.
+- Next: commit the coherent source changes, rebuild from the packaged Overleaf
+  source, and issue a new immutable ZIP/PDF/manifest without overwriting the
+  earlier audited release.

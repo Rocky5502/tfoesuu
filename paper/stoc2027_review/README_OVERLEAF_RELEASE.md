@@ -23,6 +23,9 @@ No experimental value was inferred from a PDF, log message, or unit-test count.
   execution ledger and release manifest.
 - Citation keys, referenced labels, duplicate labels, and bibliography output
   are checked on the final TeX closure.
+- All 130 displayed equations are numbered and uniquely labeled; the review
+  static gate rejects raw unnumbered display blocks and unlabeled numbered
+  environments.
 - Every final PDF page is rendered for visual inspection before packaging.
 
 If local latexmk cannot invoke BibTeX, check that the BibTeX executable is installed and on PATH. This release does not contain any compiled binaries. In the editorial container, `/usr/bin/bibtex` was a broken symlink, while the installed `bibtex.original` executable worked; this was a toolchain issue, not a source-code citation error.

@@ -22,16 +22,16 @@ but is not told which edge.
 Fix $\delta\in(0,1/2)$ and $\gamma>0$.  On the $M$-edge matching family above:
 \begin{enumerate}[label=(\roman*)]
 \item a patch-aware tester uses at most
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-001}
 \frac{32\log(2/\delta)}{\gamma^2}+2
-\]
+\end{equation}
 paired-oracle calls; while
 \item every adaptive location-unaware $\delta$-correct tester with finite expected
 stopping time uses, on the all-neutral null instance,
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-002}
 \E_0[T]\ge
 \frac{8M\,\kl(1-\delta,\delta)}{\gamma^2}.
-\]
+\end{equation}
 \end{enumerate}
 Consequently, for every fixed $\delta$, the worst-case separation is
 $\Omega(M)$.
@@ -66,36 +66,36 @@ the new version.  This intuition is false without a restriction on the patch.
 Consider a single fairness edge with Gaussian paired-delta observations of known
 variances $\nu_u^2,\nu_v^2>0$.  The old gap $g_0$ and threshold $\tau$ may be known
 exactly, with arbitrary slack $|g_0|\le\tau$.  A tester must distinguish
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-003}
 \mathsf H_0:\ |g_0+\theta_u-\theta_v|\le\tau
-\]
+\end{equation}
 from
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-004}
 \mathsf H_1:\ |g_0+\theta_u-\theta_v|\ge\tau+\gamma.
-\]
+\end{equation}
 For every adaptive $\delta$-correct tester with finite expected stopping time,
 there is a boundary null instance for which
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-005}
 \E[T]\ge
 \frac{2\kl(1-\delta,\delta)}{\gamma^2}
 \min_{q_u,q_v>0}
 \left\{q_u+q_v:
 \frac{\nu_u^2}{q_u}+\frac{\nu_v^2}{q_v}\le1
 \right\}.
-\]
+\end{equation}
 In particular, the lower bound is independent of the old certificate slack.
 \end{proposition}
 
 \begin{proof}
 Choose a sign $s\in\{-1,+1\}$ and a null patch effect whose edge difference is
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-006}
 \theta_u^{(0)}-\theta_v^{(0)}=s\tau-g_0,
-\]
+\end{equation}
 so the new program lies exactly on the fairness boundary.  Construct an
 alternative by increasing the signed edge difference by $\gamma$:
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-007}
 \theta_u^{(1)}-\theta_v^{(1)}=s(\tau+\gamma)-g_0.
-\]
+\end{equation}
 The two hypotheses therefore differ by exactly $\gamma$ in the endpoint mean
 difference, regardless of $g_0$.  Splitting this $\gamma$ shift adversarially
 between the two endpoints and applying the same adaptive change-of-measure
@@ -126,27 +126,27 @@ may regress, but its location is unknown.
 \label{arch:cor:bernoulli-location}
 Under common-uniform paired replay, a tester with no patch-location information
 can be \(\delta\)-correct using
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-008}
 M\left\lceil
 \frac{\log\delta}{\log(1-d)}
 \right\rceil
-\]
+\end{equation}
 paired-oracle calls.  Conversely, every adaptive \(\delta\)-correct tester with
 finite expected stopping time satisfies on the all-neutral null
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-009}
 \E_0[T]
 \ge
 \frac{M\,\kl(1-\delta,\delta)}
 {(1-p)\log\!\left(\frac{1-p}{1-p-d}\right)}.
-\]
+\end{equation}
 Consequently, for fixed interior \(p\),
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-010}
 Q_{\rm pair}^{\rm unknown}(M,d,\delta)
 =
 \Theta\!\left(
 \frac{M\log(1/\delta)}{d}
 \right)
-\]
+\end{equation}
 up to universal constant factors for, say, \(\delta\le 1/4\).
 If a sound impact analysis identifies the affected edge in advance, the factor
 \(M\) disappears by \Cref{thm:bernoulli-separation}.
@@ -154,9 +154,9 @@ If a sound impact analysis identifies the affected edge in advance, the factor
 
 \begin{proof}
 For the upper bound, query each candidate vertex \(u_i\) for
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-011}
 n=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil
-\]
+\end{equation}
 paired replay rounds and reject if any old/new discordance is observed.  Under the
 null, common-uniform replay makes every paired outcome identical, so the type-I
 error is exactly zero even though \(M\) locations are inspected.  Under
@@ -166,19 +166,19 @@ discordant with probability \(d\); hence the miss probability is
 
 For the lower bound, fix alternative \(i\).  As in
 \Cref{thm:bernoulli-separation}, a paired query to \(u_i\) contributes
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-012}
 K_{\rm pair}
 =
 (1-p)\log\!\left(\frac{1-p}{1-p-d}\right)
-\]
+\end{equation}
 null-to-alternative KL, while every query to every other vertex has identical law
 under the two hypotheses and contributes zero.  Adaptive transcript
 change-of-measure therefore implies
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-013}
 \E_0[N_{u_i}]K_{\rm pair}
 \ge
 \kl(1-\delta,\delta).
-\]
+\end{equation}
 The \(M\) candidate vertices are distinct.  Summing these inequalities over
 \(i=1,\ldots,M\) yields the stated lower bound.
 \end{proof}
@@ -196,29 +196,29 @@ randomness changes the small-patch dependence from quadratic to linear.
 \Cref{arch:prop:slack-no-free-lunch} rules out a minimax gain from old fairness slack
 when a patch is unrestricted.  The conclusion changes if program analysis
 provides a \emph{sound patch-effect envelope}.  For edge \(e=(u,v)\), let
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-014}
 b_e
 \ge
 |(\mu_{1,u}-\mu_{0,u})-(\mu_{1,v}-\mu_{0,v})|
 =
 |\theta_u-\theta_v|.
-\]
+\end{equation}
 Such an envelope is deterministic side information about the patch; the theorem
 does not prescribe how it is obtained.
 
 \begin{proposition}[Zero-query certificate carryover]
 \label{arch:prop:certificate-pruning}
 Let the old edge gap \(g_{0,e}\) and fairness threshold \(\tau_e\) be known.  If
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-015}
 |g_{0,e}|+b_e\le\tau_e,
-\]
+\end{equation}
 then edge \(e\) is fair under \(P_1\) and requires no stochastic execution to
 re-certify.
 \end{proposition}
 
 \begin{proof}
 Using \(g_{1,e}=g_{0,e}+\theta_u-\theta_v\) and the triangle inequality,
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-016}
 |g_{1,e}|
 \le
 |g_{0,e}|+|\theta_u-\theta_v|
@@ -226,14 +226,14 @@ Using \(g_{1,e}=g_{0,e}+\theta_u-\theta_v\) and the triangle inequality,
 |g_{0,e}|+b_e
 \le
 \tau_e.
-\]
+\end{equation}
 \end{proof}
 
 Define the \emph{residual regression graph} \(H^\star\) to contain exactly the
 edges for which
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-017}
 |g_{0,e}|+b_e>\tau_e.
-\]
+\end{equation}
 All other fairness comparisons are discharged by
 \Cref{arch:prop:certificate-pruning} before any paired execution is performed.
 
@@ -241,22 +241,22 @@ All other fairness comparisons are discharged by
 \label{arch:cor:envelope-gaussian}
 Suppose paired deltas are Gaussian with known vertex variances \(\nu_v^2\), the
 old gaps \(g_{0,e}\) are known, and the tester faces the separated promise
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-018}
 \mathsf H_0:\ |g_{1,e}|\le\tau_e\quad\forall e,
-\]
+\end{equation}
 versus
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-019}
 \mathsf H_1:\ |g_{1,e}|\ge\tau_e+\gamma
 \quad\text{for some }e,
-\]
+\end{equation}
 for \(\gamma>0\).  If \(m^\star=|E(H^\star)|>0\), a non-adaptive tester exists
 using at most
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-020}
 \frac{8\log(2m^\star/\delta)}{\gamma^2}
 \Psi(H^\star,\nu)
 +
 |V(H^\star)|
-\]
+\end{equation}
 paired-oracle calls with error probability at most \(\delta\).  If
 \(m^\star=0\), zero paired-oracle calls suffice.
 \end{corollary}
@@ -266,11 +266,11 @@ Edges outside \(H^\star\) are fair by
 \Cref{arch:prop:certificate-pruning}.  On the residual graph, allocate paired samples
 exactly as in \Cref{thm:upper}.  For each residual edge \(e=(u,v)\), estimate
 \(\theta_u-\theta_v\), add the known offset \(g_{0,e}\), and reject if
-\[
+\begin{equation}\label{eq:appendix-07-regression-consequences-021}
 |g_{0,e}+\widehat\theta_u-\widehat\theta_v|
 \ge
 \tau_e+\gamma/2.
-\]
+\end{equation}
 The allocation makes every residual edge-difference estimation error at most
 \(\gamma/2\) simultaneously except with probability \(\delta\).  On this event,
 all fair instances are accepted and every alternative separated by \(\gamma\) is

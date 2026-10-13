@@ -278,3 +278,31 @@ Ruff and `git diff --check` passed. Bundled Tectonic produced a 44-page US
 Letter review PDF with no unresolved citations/references or overfull boxes.
 All 44 rendered pages passed visual inspection. PDF SHA-256:
 `1197c6b14a57f567b680916cdb67510459517dedccf669917f1052ef8e355b79`.
+
+## 2026-10-13 — final equation, CFP, and Figure 1 polish
+
+At starting SHA `381e9c8556fc95425fa092a854eea6de6cf401c5`, the official STOC 2027 CFP
+was rechecked against the review source. The manuscript remains an 11-point,
+single-column, US-Letter full version with one-inch margins; the title page and
+optional contents page precede the first twelve content pages, and the main
+merits, technical ideas, and proof architecture occur in that initial window.
+The later 12-page `acmart` rule applies to the accepted camera-ready version,
+not this review submission.
+
+The compiled source closure contained 117 legacy unnumbered displays. They
+were converted mechanically to stable numbered `equation` environments with
+unique labels, yielding 130 numbered/labeled displays and no duplicate labels.
+A new fail-closed static checker rejects raw display math, unlabeled numbered
+environments, duplicate labels, format drift, and use of ``et al.'' contrary
+to the CFP's reference guidance. Figure 1 was rebuilt as editable TikZ with a
+four-stage evidence-reuse path, three explicitly noninterchangeable replay-law
+branches, a restrained teal/gray system, and accessible alt text.
+
+Validation: 325 tests passed in 13.42 s; review and general paper static gates
+passed; touched Python Ruff passed after correction; `git diff --check` passed.
+Bundled Tectonic produced 44 US-Letter pages with zero overfull boxes and zero
+unresolved citations/references. All 44 pages were rerendered; Figure 1 passed
+full-size color and grayscale inspection. The pre-release PDF SHA-256 is
+`69affbdf03ab1607857b232fd62c1e9c67b2f83227459b5e971246b661c2c349`.
+No GPU job was launched because every experiment admitted by the manuscript is
+already complete and another run would add no scientific information.
