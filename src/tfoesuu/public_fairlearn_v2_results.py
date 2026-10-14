@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from collections import defaultdict
 from collections.abc import Sequence
 
 import numpy as np
@@ -51,6 +52,138 @@ def _validate_seed_records(record: dict, pmfs: dict[str, np.ndarray], seeds: lis
                 raise ValueError("prediction threshold correspondence failed")
             if row.get("repeat_identical") is not True:
                 raise ValueError("repeated seeded prediction is not identical")
+
+
+def _protected_tuple(value: object) -> tuple[str, ...]:
+    if isinstance(value, (list, tuple)):
+        return tuple(str(component) for component in value)
+    return (str(value),)
+
+
+def _legacy_merge_map(groups: object) -> dict[tuple[str, ...], set[str]]:
+    """Reproduce the pinned parent's multi-column NumPy merge behavior."""
+
+    if not isinstance(groups, list) or not groups:
+        raise ValueError("protected groups must be a nonempty list")
+    values = np.asarray(groups)
+    if values.ndim == 1:
+        merged = values
+    elif values.ndim == 2 and values.shape[1] == 1:
+        merged = values[:, 0]
+    elif values.ndim == 2:
+        merged = np.apply_along_axis(
+            lambda row: ",".join(
+                str(component).replace("\\", "\\\\").replace(",", "\\,")
+                for component in row
+            ),
+            axis=1,
+            arr=values,
+        )
+    else:
+        raise ValueError("protected groups must be a one- or two-dimensional census")
+    result: dict[tuple[str, ...], set[str]] = defaultdict(set)
+    for group, encoded in zip(groups, merged, strict=True):
+        result[_protected_tuple(group)].add(str(encoded))
+    return result
+
+
+def summarize_public_fairlearn_v2_rows(
+    records: Sequence[dict],
+    evaluation_contexts: dict[str, dict],
+) -> list[dict]:
+    """Compute exact row and protected-tuple discrepancy counts.
+
+    The campaign transcript intentionally contains no protected values.  This
+    audit therefore requires the separately frozen input contexts and rejects
+    any row-order drift before joining them to the exact PMFs.
+    """
+
+    by_key = {
+        (row.get("dataset_id"), row.get("version")): row
+        for row in records
+        if isinstance(row, dict)
+    }
+    if len(by_key) != len(records):
+        raise ValueError("row audit requires unique transcript records")
+    dataset_ids = {dataset_id for dataset_id, _ in by_key}
+    expected_keys = {
+        (dataset_id, version)
+        for dataset_id in dataset_ids
+        for version in ("old", "new")
+    }
+    if set(by_key) != expected_keys or set(evaluation_contexts) != dataset_ids:
+        raise ValueError("row audit requires a complete transcript and context census")
+
+    reports = []
+    for dataset_id in sorted(dataset_ids):
+        old_record = by_key[(dataset_id, "old")]
+        new_record = by_key[(dataset_id, "new")]
+        context = evaluation_contexts[dataset_id]
+        positions = context.get("evaluation_positions")
+        groups = context.get("native_evaluation_groups")
+        training_groups = context.get("native_training_groups")
+        if (
+            not isinstance(positions, list)
+            or positions != old_record.get("source_row_positions")
+            or positions != new_record.get("source_row_positions")
+        ):
+            raise ValueError(f"{dataset_id}: evaluation positions are not aligned")
+        if not isinstance(groups, list) or len(groups) != len(positions):
+            raise ValueError(f"{dataset_id}: protected groups are not aligned")
+        training_map = _legacy_merge_map(training_groups)
+        evaluation_map = _legacy_merge_map(groups)
+        if set(training_map) != set(evaluation_map):
+            raise ValueError(f"{dataset_id}: training/evaluation protected support differs")
+        encoding_mismatches = [
+            list(protected)
+            for protected in sorted(training_map)
+            if training_map[protected] != evaluation_map[protected]
+        ]
+
+        old_multi = _pmf(old_record, "multi")[:, 1]
+        old_canonical = _pmf(old_record, "canonical")[:, 1]
+        new_multi = _pmf(new_record, "multi")[:, 1]
+        new_canonical = _pmf(new_record, "canonical")[:, 1]
+        parent_difference = np.abs(old_multi - old_canonical)
+        repair_difference = np.abs(new_multi - new_canonical)
+        grouped: dict[tuple[str, ...], list[float]] = defaultdict(list)
+        for group, difference in zip(groups, parent_difference, strict=True):
+            grouped[_protected_tuple(group)].append(float(difference))
+
+        group_reports = []
+        for protected, differences in sorted(grouped.items()):
+            values = np.asarray(differences, dtype=float)
+            affected = int(np.count_nonzero(values))
+            group_reports.append(
+                {
+                    "protected_tuple": list(protected),
+                    "evaluation_rows": int(values.size),
+                    "parent_affected_rows": affected,
+                    "parent_affected_fraction": affected / int(values.size),
+                    "parent_max_abs_pmf_difference": float(values.max()),
+                    "parent_mean_abs_pmf_difference": float(values.mean()),
+                }
+            )
+
+        parent_affected = int(np.count_nonzero(parent_difference))
+        reports.append(
+            {
+                "dataset_id": dataset_id,
+                "evaluation_rows": len(positions),
+                "parent_affected_rows": parent_affected,
+                "parent_affected_fraction": parent_affected / len(positions),
+                "parent_max_abs_pmf_difference": float(parent_difference.max()),
+                "parent_mean_abs_pmf_difference": float(parent_difference.mean()),
+                "repair_affected_rows": int(np.count_nonzero(repair_difference)),
+                "repair_affected_fraction": (
+                    int(np.count_nonzero(repair_difference)) / len(positions)
+                ),
+                "parent_encoding_mismatched_group_count": len(encoding_mismatches),
+                "parent_encoding_mismatched_protected_tuples": encoding_mismatches,
+                "groups": group_reports,
+            }
+        )
+    return reports
 
 
 def validate_public_fairlearn_v2_transcripts(

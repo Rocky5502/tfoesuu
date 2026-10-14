@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 
 from tfoesuu.public_fairlearn_v2_results import (
+    summarize_public_fairlearn_v2_rows,
     validate_public_fairlearn_v2_campaign_outputs,
     validate_public_fairlearn_v2_transcripts,
 )
@@ -195,3 +196,102 @@ def test_campaign_output_validator_rejects_provenance_drift(field, message):
             expected_runner_commit="b" * 40,
             expected_input_bundle_manifest_sha256="a" * 64,
         )
+
+
+def _evaluation_contexts():
+    return {
+        dataset_id: {
+            "evaluation_positions": [10, 20],
+            "native_training_groups": [["group-a"], ["group-b"]],
+            "native_evaluation_groups": [["group-a"], ["group-b"]],
+        }
+        for dataset_id in PROTOCOL["datasets"]
+    }
+
+
+def test_row_audit_reports_exact_counts_fractions_and_groups():
+    rows = summarize_public_fairlearn_v2_rows(_records(), _evaluation_contexts())
+    adult = next(row for row in rows if row["dataset_id"] == "public-adult")
+
+    assert adult["evaluation_rows"] == 2
+    assert adult["parent_affected_rows"] == 1
+    assert adult["parent_affected_fraction"] == 0.5
+    assert adult["repair_affected_rows"] == 0
+    assert adult["parent_encoding_mismatched_group_count"] == 0
+    assert adult["groups"] == [
+        {
+            "protected_tuple": ["group-a"],
+            "evaluation_rows": 1,
+            "parent_affected_rows": 1,
+            "parent_affected_fraction": 1.0,
+            "parent_max_abs_pmf_difference": pytest.approx(0.1),
+            "parent_mean_abs_pmf_difference": pytest.approx(0.1),
+        },
+        {
+            "protected_tuple": ["group-b"],
+            "evaluation_rows": 1,
+            "parent_affected_rows": 0,
+            "parent_affected_fraction": 0.0,
+            "parent_max_abs_pmf_difference": 0.0,
+            "parent_mean_abs_pmf_difference": 0.0,
+        },
+    ]
+
+
+def test_row_audit_rejects_context_alignment_drift():
+    contexts = _evaluation_contexts()
+    contexts["public-adult"]["evaluation_positions"] = [20, 10]
+
+    with pytest.raises(ValueError, match="evaluation positions"):
+        summarize_public_fairlearn_v2_rows(_records(), contexts)
+
+
+def test_row_audit_reproduces_parent_split_dependent_string_truncation():
+    contexts = _evaluation_contexts()
+    contexts["public-adult"]["native_training_groups"] = [
+        ["Female", "Amer-Indian-Eskimo"],
+        ["Male", "White"],
+    ]
+    contexts["public-adult"]["native_evaluation_groups"] = [
+        ["Male", "White"],
+        ["Female", "Amer-Indian-Eskimo"],
+    ]
+    rows = summarize_public_fairlearn_v2_rows(_records(), contexts)
+    adult = next(row for row in rows if row["dataset_id"] == "public-adult")
+
+    assert adult["parent_encoding_mismatched_group_count"] == 1
+    assert adult["parent_encoding_mismatched_protected_tuples"] == [
+        ["Female", "Amer-Indian-Eskimo"]
+    ]
+
+
+def test_committed_row_audit_is_bound_to_admitted_results():
+    admission = json.loads(
+        (ROOT / "data" / "fairlearn_public_v2_results_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    audit = json.loads(
+        (ROOT / "data" / "fairlearn_public_v2_row_audit_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert audit["source_artifacts"]["old_sha256"] == admission["source_artifacts"][
+        "old_sha256"
+    ]
+    assert audit["source_artifacts"]["new_sha256"] == admission["source_artifacts"][
+        "new_sha256"
+    ]
+    by_id = {row["dataset_id"]: row for row in audit["datasets"]}
+    assert (
+        by_id["public-adult"]["parent_affected_rows"],
+        by_id["public-adult"]["evaluation_rows"],
+    ) == (244, 4096)
+    assert (
+        by_id["public-default-credit"]["parent_affected_rows"],
+        by_id["public-default-credit"]["evaluation_rows"],
+    ) == (443, 4096)
+    assert sum(row["parent_affected_rows"] for row in by_id.values()) == 687
+    assert sum(row["repair_affected_rows"] for row in by_id.values()) == 0
+    assert by_id["public-adult"]["parent_encoding_mismatched_group_count"] == 7
+    assert by_id["public-default-credit"]["parent_encoding_mismatched_group_count"] == 2

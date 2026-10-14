@@ -157,3 +157,25 @@ This completion does not retroactively make V1 executable, authorize a larger
 campaign, or turn the result into a causal-fairness estimate. The raw datasets
 and historical runtime outputs remain external frozen evidence rather than Git
 content.
+
+## Row-level and protected-tuple audit
+
+The post-admission audit
+`data/fairlearn_public_v2_row_audit_v1.json` joins the immutable transcript rows
+to the separately hashed input bundle only after exact source-row alignment.
+Its reproducible entry point is `scripts/audit_public_fairlearn_v2_rows.py`.
+The parent differs on 244/4,096 Adult evaluation rows (5.95703125%) and
+443/4,096 Default Credit rows (10.8154296875%); the repair differs on 0 rows.
+All 687 nonzero parent rows lie in protected tuples whose parent encodings differ
+between the frozen training and evaluation splits: seven of ten Adult tuples and
+the two Default Credit `age>=25` tuples. Group sizes, counts, fractions, maxima,
+and means are retained without post-selection.
+
+This is a bounded reproduction of the known defect in Fairlearn issue #728 and
+its direct-child repair PR #763, not a claim of discovering a new Fairlearn bug.
+The parent uses `numpy.apply_along_axis` to merge multi-column values, permitting
+split-dependent fixed-width string truncation. Bank and MEPS are single-column
+negative controls and bypass that path. COMPAS, German, and Law School retain
+identical parent keys across the frozen splits, which explains their observed
+zeros but does not establish general parent correctness. The committed aggregate
+contains no raw third-party rows.

@@ -130,15 +130,32 @@ effect nor a population-level fairness estimate. The immutable input bridge,
 support rules, complete seven-dataset census, and source/runtime gates were
 frozen before execution.
 
-The recorded experiment passed the specified provenance checks and contains the complete fourteen-record
-old/new census.  Table~\ref{tab:historical-census} reports every
-preregistered primary estimand.  The parent revision disagreed with its injective
-canonical control on Adult Census Income and Default of Credit Card Clients,
-but produced exact zeros on COMPAS, German Credit, and Law School GPA.  Both
-single-attribute controls were also exact zeros.  The repaired revision matched
-the canonical control exactly on all seven datasets.  These are deterministic
-software-behavior results on the frozen evaluation rows; they do not estimate a
-causal fairness effect or population generalization.
+The recorded experiment passed the specified provenance checks and contains the
+complete fourteen-record old/new census.  Table~\ref{tab:historical-census}
+reports every preregistered primary estimand together with exact affected-row
+counts.  The parent revision disagreed with its injective canonical control on
+244 of 4,096 Adult rows and 443 of 4,096 Default Credit rows.  The discrepancies
+are confined respectively to seven of ten and two of four protected tuples; in
+Default Credit the two affected tuples are the two sex values paired with
+\texttt{age>=25}.  The repaired revision matched the canonical control on every
+evaluated row.
+
+This pattern reproduces the known Fairlearn defect reported in
+\href{https://github.com/fairlearn/fairlearn/issues/728}{issue~\#728} and repaired
+by the direct-child
+\href{https://github.com/fairlearn/fairlearn/pull/763}{pull request~\#763}; it is
+not a new bug discovery.  The parent used \texttt{numpy.apply\_along\_axis} to
+concatenate multi-column protected values.  Its fixed-width string result can
+truncate the same tuple differently when training and evaluation arrays induce
+different widths.  Replaying that exact merge produces split-dependent keys for
+the same seven Adult and two Default Credit tuples.  Bank and MEPS are
+single-attribute controls and bypass the merge.  COMPAS, German Credit, and Law
+School produce identical parent keys across the frozen splits, explaining their
+exact zeros without treating them as evidence that the parent implementation is
+generally correct.  The group-stratified audit is preserved in
+\texttt{data/fairlearn\_public\_v2\_row\_audit\_v1.json}.  These deterministic
+software-behavior results do not estimate a causal fairness effect or population
+generalization.
 
 \input{generated/fairlearn_public_v2_results}
 

@@ -924,3 +924,40 @@
   GitHub did not start their jobs, reporting failed account payments or an
   insufficient spending limit. No runner executed repository code; resolving
   GitHub billing/spending is the remaining external CI gate.
+
+## 2026-10-14 17:51 +08:00 — Fairlearn exact row/group audit
+
+- Start: clean branch `codex/final-submission-audit-20261012` at full SHA
+  `7465b246dff45e65ea6927b1c45a9f735695ee4e`. Five live risks were incomplete
+  claim-level literature comparison, missing Fairlearn row/group evidence,
+  simulator-versus-scaling ambiguity, claim/source-tree drift, and unavailable
+  GitHub-hosted CI. The row/group validity gap was the highest-value locally
+  falsifiable task.
+- PC1 reported RTX 5070 Ti utilization 22%, 8,065/16,303 MiB, 43 C; PC2
+  reported 1%, 7,910/16,303 MiB, 53 C. No TFOESUU GPU job was launched because
+  the historical subject and exact-PMF audit are CPU-only.
+- Recovered the preserved PC2 raw outputs and immutable input bundle read-only.
+  Hash gates matched old `3965581b...d32ab`, new `6a47d03f...e1c9d`, and bundle
+  manifest `2435e006...686e`. The initial falsifying test failed at the missing
+  `summarize_public_fairlearn_v2_rows` import, as intended.
+- Implemented exact row alignment, affected counts/fractions, full
+  protected-tuple strata, and a reproduction of the pinned parent's
+  split-dependent fixed-width NumPy merge. Results: Adult 244/4,096 (5.96%),
+  Default Credit 443/4,096 (10.82%), all other parent populations zero, repair
+  0 across every row. Parent keys mismatch for seven Adult and two Default
+  Credit tuples; this exactly localizes all 687 affected rows.
+- Verified against official Fairlearn issue #728, PR #763, and direct-child
+  commit `0cf59ecc...`: the case study reproduces a known defect and is now
+  labeled accordingly. Bank/MEPS bypass the multi-column merge; the other three
+  zero multi-column datasets retain identical parent keys across frozen splits.
+- Aggregate row-audit SHA-256:
+  `bce7829545445bb77ca874469c6fe71a2c1bd2759b607e4dc57ae0d24e56fd34`.
+  Checks: 334 tests passed in 13.75 s; touched-file Ruff and all static paper
+  gates passed. The LaTeX skill's Windows TeX-Live probe hit a GBK decoding bug,
+  so its documented bundled-Tectonic fallback was invoked directly. Final build:
+  45 US-Letter pages, no overfull/undefined-reference findings; page 38 passed
+  visual inspection. PDF SHA-256:
+  `74990d6bf9805a74f0cca8530605bd8a38aab5c4cbedfb961ca4d44289268012`.
+- Next: commit this coherent evidence repair, then begin the hostile
+  claim-by-claim novelty audit using primary published sources. Human proof and
+  author sign-off remain explicitly outside automated certification.

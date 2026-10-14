@@ -107,6 +107,8 @@ scripts/
   check_review_submission.py  STOC review-format/equation-label gate
   validate_preview_results.py P12/P15 exact finite-law admission
   render_public_fairlearn_v2_results.py  Provenance-locked V2 result renderer
+  audit_public_fairlearn_v2_rows.py      Exact row/group audit of frozen V2 outputs
+  render_public_fairlearn_v2_row_audit.py  Provenance-locked affected-row table
   freeze_submission_artifacts.py Whole-repository submission checksum manifest
   record_publication_run.py      Per-run benchmark/result provenance
   verify_environment.py
@@ -124,6 +126,7 @@ data/
   p12_p15_100k_preview_manifest_v1.json         admitted 198-configuration campaign
   p12_p15_100k_preview_validation_v1.json       594 exact-law comparisons
   fairlearn_public_v2_results_v1.json           admitted seven-population census
+  fairlearn_public_v2_row_audit_v1.json         affected-row/group aggregate audit
 
 paper/stoc2027_review/       Authoritative STOC review-submission LaTeX source
 docs/                        proof audits, novelty matrix, roadmap, GPU runbook

@@ -94,6 +94,94 @@ def render_results_table(report: dict, registry: list[dict]) -> str:
     )
 
 
+def render_row_audit_table(admission: dict, row_audit: dict, registry: list[dict]) -> str:
+    """Render the provenance-bound row-count extension of the complete census."""
+
+    if row_audit.get("schema") != "tfoesuu-fairlearn-public-v2-row-audit-v1":
+        raise ValueError("row audit schema mismatch")
+    admitted_sources = admission.get("source_artifacts", {})
+    audit_sources = row_audit.get("source_artifacts", {})
+    for name in ("old_sha256", "new_sha256", "protocol_sha256"):
+        if admitted_sources.get(name) != audit_sources.get(name):
+            raise ValueError(f"row audit {name} does not match admitted results")
+    validation = row_audit.get("validation", {})
+    if (
+        validation.get("campaign_provenance_valid") is not True
+        or validation.get("new_repair_conformance") is not True
+        or validation.get("scope") != "paired-software-behavior-only"
+    ):
+        raise ValueError("row audit validation boundary is incomplete")
+
+    admitted = admission.get("validation", {})
+    admitted_by_id = {row.get("dataset_id"): row for row in admitted.get("datasets", [])}
+    audit_by_id = {row.get("dataset_id"): row for row in row_audit.get("datasets", [])}
+    registry_by_id = {row.get("benchmark_id"): row for row in registry}
+    if not registry_by_id or set(admitted_by_id) != set(audit_by_id) or set(audit_by_id) != set(
+        registry_by_id
+    ):
+        raise ValueError("row audit requires the complete admitted registry census")
+
+    body = []
+    for registry_row in registry:
+        dataset_id = registry_row["benchmark_id"]
+        result = audit_by_id[dataset_id]
+        admitted_result = admitted_by_id[dataset_id]
+        rows = result.get("evaluation_rows")
+        affected = result.get("parent_affected_rows")
+        fraction = result.get("parent_affected_fraction")
+        repair_affected = result.get("repair_affected_rows")
+        if (
+            isinstance(rows, bool)
+            or not isinstance(rows, int)
+            or rows <= 0
+            or isinstance(affected, bool)
+            or not isinstance(affected, int)
+            or not 0 <= affected <= rows
+            or fraction != affected / rows
+            or repair_affected != 0
+            or result.get("parent_max_abs_pmf_difference")
+            != admitted_result.get("old_max_abs_pmf_difference")
+            or result.get("parent_mean_abs_pmf_difference")
+            != admitted_result.get("old_mean_abs_pmf_difference")
+        ):
+            raise ValueError(f"{dataset_id}: row audit disagrees with admitted estimands")
+        body.append(
+            f"{registry_row['name']} & {affected}/{rows} ({100 * fraction:.2f}\\%) & "
+            f"{result['parent_max_abs_pmf_difference']:.4f} & "
+            f"{result['parent_mean_abs_pmf_difference']:.4f} & {repair_affected}/{rows} \\\\"
+        )
+    return "\n".join(
+        [
+            r"\begin{table}[H]",
+            r"\centering",
+            (
+                r"\caption{Historical protected-group encoding comparison. Affected rows have "
+                r"nonzero exact native-versus-canonical randomized-prediction PMF discrepancy; "
+                r"the full seven-population census, including zeros, is retained.}"
+            ),
+            r"\label{tab:historical-census}",
+            r"\small",
+            r"\begin{tabular}{@{}lrrrr@{}}",
+            r"\toprule",
+            r"Dataset & Parent affected & Parent max & Parent mean & Repair affected \\",
+            r"\midrule",
+            *body,
+            r"\bottomrule",
+            r"\end{tabular}",
+            r"\vspace{2pt}",
+            r"\begin{minipage}{0.98\linewidth}\footnotesize",
+            (
+                r"The comparison uses deterministic exact PMFs on frozen evaluation rows, so no "
+                r"sampling confidence interval applies. Counts are descriptive software-behavior "
+                r"results, not causal or population-fairness estimates."
+            ),
+            r"\end{minipage}",
+            r"\end{table}",
+            "",
+        ]
+    )
+
+
 def admit_campaign_outputs(
     *,
     old_path: Path,

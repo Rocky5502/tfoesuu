@@ -1,0 +1,480 @@
+{
+  "datasets": [
+    {
+      "dataset_id": "public-adult",
+      "evaluation_rows": 4096,
+      "groups": [
+        {
+          "evaluation_rows": 14,
+          "parent_affected_fraction": 0.35714285714285715,
+          "parent_affected_rows": 5,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.23925,
+          "protected_tuple": [
+            "Female",
+            "Amer-Indian-Eskimo"
+          ]
+        },
+        {
+          "evaluation_rows": 37,
+          "parent_affected_fraction": 0.13513513513513514,
+          "parent_affected_rows": 5,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.06474012474012476,
+          "protected_tuple": [
+            "Female",
+            "Asian-Pac-Islander"
+          ]
+        },
+        {
+          "evaluation_rows": 178,
+          "parent_affected_fraction": 0.16292134831460675,
+          "parent_affected_rows": 29,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.1390917846198745,
+          "protected_tuple": [
+            "Female",
+            "Black"
+          ]
+        },
+        {
+          "evaluation_rows": 7,
+          "parent_affected_fraction": 1.0,
+          "parent_affected_rows": 7,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.2980417335473515,
+          "protected_tuple": [
+            "Female",
+            "Other"
+          ]
+        },
+        {
+          "evaluation_rows": 1089,
+          "parent_affected_fraction": 0.15977961432506887,
+          "parent_affected_rows": 174,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.15589251096826856,
+          "protected_tuple": [
+            "Female",
+            "White"
+          ]
+        },
+        {
+          "evaluation_rows": 24,
+          "parent_affected_fraction": 0.20833333333333334,
+          "parent_affected_rows": 5,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.20833333333333334,
+          "protected_tuple": [
+            "Male",
+            "Amer-Indian-Eskimo"
+          ]
+        },
+        {
+          "evaluation_rows": 82,
+          "parent_affected_fraction": 0.23170731707317074,
+          "parent_affected_rows": 19,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.22955731707317073,
+          "protected_tuple": [
+            "Male",
+            "Asian-Pac-Islander"
+          ]
+        },
+        {
+          "evaluation_rows": 206,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "Male",
+            "Black"
+          ]
+        },
+        {
+          "evaluation_rows": 23,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "Male",
+            "Other"
+          ]
+        },
+        {
+          "evaluation_rows": 2436,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "Male",
+            "White"
+          ]
+        }
+      ],
+      "parent_affected_fraction": 0.0595703125,
+      "parent_affected_rows": 244,
+      "parent_encoding_mismatched_group_count": 7,
+      "parent_encoding_mismatched_protected_tuples": [
+        [
+          "Female",
+          "Amer-Indian-Eskimo"
+        ],
+        [
+          "Female",
+          "Asian-Pac-Islander"
+        ],
+        [
+          "Female",
+          "Black"
+        ],
+        [
+          "Female",
+          "Other"
+        ],
+        [
+          "Female",
+          "White"
+        ],
+        [
+          "Male",
+          "Amer-Indian-Eskimo"
+        ],
+        [
+          "Male",
+          "Asian-Pac-Islander"
+        ]
+      ],
+      "parent_max_abs_pmf_difference": 1.0,
+      "parent_mean_abs_pmf_difference": 0.05521976534594683,
+      "repair_affected_fraction": 0.0,
+      "repair_affected_rows": 0
+    },
+    {
+      "dataset_id": "public-bank",
+      "evaluation_rows": 1961,
+      "groups": [
+        {
+          "evaluation_rows": 33,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "age<25"
+          ]
+        },
+        {
+          "evaluation_rows": 1928,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "age>=25"
+          ]
+        }
+      ],
+      "parent_affected_fraction": 0.0,
+      "parent_affected_rows": 0,
+      "parent_encoding_mismatched_group_count": 0,
+      "parent_encoding_mismatched_protected_tuples": [],
+      "parent_max_abs_pmf_difference": 0.0,
+      "parent_mean_abs_pmf_difference": 0.0,
+      "repair_affected_fraction": 0.0,
+      "repair_affected_rows": 0
+    },
+    {
+      "dataset_id": "public-compas",
+      "evaluation_rows": 1319,
+      "groups": [
+        {
+          "evaluation_rows": 147,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "African-American",
+            "Female"
+          ]
+        },
+        {
+          "evaluation_rows": 663,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "African-American",
+            "Male"
+          ]
+        },
+        {
+          "evaluation_rows": 107,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "Caucasian",
+            "Female"
+          ]
+        },
+        {
+          "evaluation_rows": 402,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "Caucasian",
+            "Male"
+          ]
+        }
+      ],
+      "parent_affected_fraction": 0.0,
+      "parent_affected_rows": 0,
+      "parent_encoding_mismatched_group_count": 0,
+      "parent_encoding_mismatched_protected_tuples": [],
+      "parent_max_abs_pmf_difference": 0.0,
+      "parent_mean_abs_pmf_difference": 0.0,
+      "repair_affected_fraction": 0.0,
+      "repair_affected_rows": 0
+    },
+    {
+      "dataset_id": "public-default-credit",
+      "evaluation_rows": 4096,
+      "groups": [
+        {
+          "evaluation_rows": 101,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "1",
+            "age<25"
+          ]
+        },
+        {
+          "evaluation_rows": 1564,
+          "parent_affected_fraction": 0.12531969309462915,
+          "parent_affected_rows": 196,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.12081329923273657,
+          "protected_tuple": [
+            "1",
+            "age>=25"
+          ]
+        },
+        {
+          "evaluation_rows": 260,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "2",
+            "age<25"
+          ]
+        },
+        {
+          "evaluation_rows": 2171,
+          "parent_affected_fraction": 0.11377245508982035,
+          "parent_affected_rows": 247,
+          "parent_max_abs_pmf_difference": 1.0,
+          "parent_mean_abs_pmf_difference": 0.10605467049984911,
+          "protected_tuple": [
+            "2",
+            "age>=25"
+          ]
+        }
+      ],
+      "parent_affected_fraction": 0.108154296875,
+      "parent_affected_rows": 443,
+      "parent_encoding_mismatched_group_count": 2,
+      "parent_encoding_mismatched_protected_tuples": [
+        [
+          "1",
+          "age>=25"
+        ],
+        [
+          "2",
+          "age>=25"
+        ]
+      ],
+      "parent_max_abs_pmf_difference": 1.0,
+      "parent_mean_abs_pmf_difference": 0.10234294181034484,
+      "repair_affected_fraction": 0.0,
+      "repair_affected_rows": 0
+    },
+    {
+      "dataset_id": "public-german",
+      "evaluation_rows": 250,
+      "groups": [
+        {
+          "evaluation_rows": 18,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "female",
+            "age<25"
+          ]
+        },
+        {
+          "evaluation_rows": 52,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "female",
+            "age>=25"
+          ]
+        },
+        {
+          "evaluation_rows": 20,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "male",
+            "age<25"
+          ]
+        },
+        {
+          "evaluation_rows": 160,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "male",
+            "age>=25"
+          ]
+        }
+      ],
+      "parent_affected_fraction": 0.0,
+      "parent_affected_rows": 0,
+      "parent_encoding_mismatched_group_count": 0,
+      "parent_encoding_mismatched_protected_tuples": [],
+      "parent_max_abs_pmf_difference": 0.0,
+      "parent_mean_abs_pmf_difference": 0.0,
+      "repair_affected_fraction": 0.0,
+      "repair_affected_rows": 0
+    },
+    {
+      "dataset_id": "public-lawschool",
+      "evaluation_rows": 4096,
+      "groups": [
+        {
+          "evaluation_rows": 172,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "black",
+            "female"
+          ]
+        },
+        {
+          "evaluation_rows": 119,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "black",
+            "male"
+          ]
+        },
+        {
+          "evaluation_rows": 1643,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "white",
+            "female"
+          ]
+        },
+        {
+          "evaluation_rows": 2162,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "white",
+            "male"
+          ]
+        }
+      ],
+      "parent_affected_fraction": 0.0,
+      "parent_affected_rows": 0,
+      "parent_encoding_mismatched_group_count": 0,
+      "parent_encoding_mismatched_protected_tuples": [],
+      "parent_max_abs_pmf_difference": 0.0,
+      "parent_mean_abs_pmf_difference": 0.0,
+      "repair_affected_fraction": 0.0,
+      "repair_affected_rows": 0
+    },
+    {
+      "dataset_id": "public-meps21",
+      "evaluation_rows": 3958,
+      "groups": [
+        {
+          "evaluation_rows": 2467,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "Non-White"
+          ]
+        },
+        {
+          "evaluation_rows": 1491,
+          "parent_affected_fraction": 0.0,
+          "parent_affected_rows": 0,
+          "parent_max_abs_pmf_difference": 0.0,
+          "parent_mean_abs_pmf_difference": 0.0,
+          "protected_tuple": [
+            "White"
+          ]
+        }
+      ],
+      "parent_affected_fraction": 0.0,
+      "parent_affected_rows": 0,
+      "parent_encoding_mismatched_group_count": 0,
+      "parent_encoding_mismatched_protected_tuples": [],
+      "parent_max_abs_pmf_difference": 0.0,
+      "parent_mean_abs_pmf_difference": 0.0,
+      "repair_affected_fraction": 0.0,
+      "repair_affected_rows": 0
+    }
+  ],
+  "schema": "tfoesuu-fairlearn-public-v2-row-audit-v1",
+  "source_artifacts": {
+    "input_bundle_manifest_sha256": "2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e",
+    "new_sha256": "6a47d03fe207adf8683eace7cd11514a27bf076ce2b34147fce3e094730e1c9d",
+    "old_sha256": "3965581b561d689b7c537781646d73e6a6ea12f147308d598f404478710d32ab",
+    "protocol_sha256": "e8f96fbfbf9e9258aaf20768f4bc952bede0e43b3887f10322d2a25ed0e99291"
+  },
+  "validation": {
+    "campaign_provenance_valid": true,
+    "new_repair_conformance": true,
+    "record_count": 14,
+    "runner_commit": "ade8ff3d8b764a4cbda7d06bbf062650542c5530",
+    "scope": "paired-software-behavior-only"
+  }
+}

@@ -1,25 +1,23 @@
 \begin{table}[H]
 \centering
-\caption{Historical protected-group encoding comparison across seven input populations. Entries are maxima and means of exact row-wise absolute differences between native and canonical randomized-prediction probability masses; zero indicates agreement on the evaluated rows.}
+\caption{Historical protected-group encoding comparison. Affected rows have nonzero exact native-versus-canonical randomized-prediction PMF discrepancy; the full seven-population census, including zeros, is retained.}
 \label{tab:historical-census}
 \small
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-& \multicolumn{2}{c}{Parent $|\Delta\mathrm{PMF}|$} & \multicolumn{2}{c}{Repaired $|\Delta\mathrm{PMF}|$} \\
-\cmidrule(lr){2-3}\cmidrule(l){4-5}
-Dataset & Max & Mean & Max & Mean \\
+Dataset & Parent affected & Parent max & Parent mean & Repair affected \\
 \midrule
-Adult Census Income & 1.0000 & 0.0552 & 0.0000 & 0.0000 \\
-Bank Marketing & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
-Statlog German Credit & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
-ProPublica COMPAS & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
-Law School GPA & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
-MEPS Panel 21 & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
-Default of Credit Card Clients & 1.0000 & 0.1023 & 0.0000 & 0.0000 \\
+Adult Census Income & 244/4096 (5.96\%) & 1.0000 & 0.0552 & 0/4096 \\
+Bank Marketing & 0/1961 (0.00\%) & 0.0000 & 0.0000 & 0/1961 \\
+Statlog German Credit & 0/250 (0.00\%) & 0.0000 & 0.0000 & 0/250 \\
+ProPublica COMPAS & 0/1319 (0.00\%) & 0.0000 & 0.0000 & 0/1319 \\
+Law School GPA & 0/4096 (0.00\%) & 0.0000 & 0.0000 & 0/4096 \\
+MEPS Panel 21 & 0/3958 (0.00\%) & 0.0000 & 0.0000 & 0/3958 \\
+Default of Credit Card Clients & 443/4096 (10.82\%) & 1.0000 & 0.1023 & 0/4096 \\
 \bottomrule
 \end{tabular}
 \vspace{2pt}
 \begin{minipage}{0.98\linewidth}\footnotesize
-The primary analysis uses deterministic exact PMFs. No confidence interval applies; four preselected common-tape seeds served as implementation-correspondence checks. All datasets, including exact zeros, are reported.
+The comparison uses deterministic exact PMFs on frozen evaluation rows, so no sampling confidence interval applies. Counts are descriptive software-behavior results, not causal or population-fairness estimates.
 \end{minipage}
 \end{table}

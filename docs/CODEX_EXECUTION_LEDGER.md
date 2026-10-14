@@ -358,3 +358,43 @@ exactly. GitHub accepted both workflow dispatches but did not start either job:
 the service reported failed account payments or an insufficient spending
 limit. This is an external CI-infrastructure blocker, not a test failure; the
 complete local gates above remain the available verification evidence.
+
+## 2026-10-14 — historical Fairlearn row-level adversarial audit
+
+Resumed clean on `codex/final-submission-audit-20261012` at
+`7465b246dff45e65ea6927b1c45a9f735695ee4e`. The active risk review prioritized
+the missing row counts, protected-tuple strata, exact-zero mechanism, and
+issue-history comparison in the admitted Fairlearn case study. PC2's frozen raw
+old/new outputs remained intact at the recorded SHA-256 values
+`3965581b561d689b7c537781646d73e6a6ea12f147308d598f404478710d32ab`
+and `6a47d03fe207adf8683eace7cd11514a27bf076ce2b34147fce3e094730e1c9d`.
+They and the immutable input bundle were copied read-only to a temporary audit
+directory; no dataset or result was overwritten.
+
+A red-first test failed on the intentionally absent row-audit function. The new
+fail-closed audit validates the original campaign, input-bundle file census and
+hashes, source-row order, complete old/new census, and protected support before
+joining exact PMFs to protected tuples. The resulting aggregate has SHA-256
+`bce7829545445bb77ca874469c6fe71a2c1bd2759b607e4dc57ae0d24e56fd34`.
+The parent affects 244/4,096 Adult rows (5.95703125%) and 443/4,096 Default
+Credit rows (10.8154296875%); the repair affects zero rows. All 687 nonzero rows
+lie in the seven Adult and two Default Credit tuples whose parent string keys
+differ between the frozen training and evaluation splits.
+
+The mechanism was independently reproduced from the pinned parent code and
+checked against the official Fairlearn issue #728, direct-child repair commit
+`0cf59eccfdd364417787fe2c368a1c77c3f378b8`, and PR #763. This is a
+multi-population reproduction of a known fixed-width NumPy string-merge defect,
+not a new bug discovery. Bank and MEPS bypass the merge as single-column
+controls; COMPAS, German, and Law School have identical parent encodings across
+the frozen splits, explaining their exact zeros without implying general parent
+correctness.
+
+Validation: 334 tests passed in 13.75 s; six touched Python files passed Ruff;
+bibliography, general-paper, review-format, equation-label, and diff gates
+passed. Bundled Tectonic produced a 45-page US-Letter, unencrypted PDF with no
+overfull boxes or unresolved references. Page 38 passed full-resolution visual
+inspection; PDF SHA-256 is
+`74990d6bf9805a74f0cca8530605bd8a38aab5c4cbedfb961ca4d44289268012`.
+Neither GPU was used: PC1 and PC2 reported 22%/1% utilization from existing
+desktop workloads, and this exact-PMF audit is CPU-only.

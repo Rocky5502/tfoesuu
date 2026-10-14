@@ -4,7 +4,10 @@ import copy
 
 import pytest
 
-from tfoesuu.public_fairlearn_v2_reporting import render_results_table
+from tfoesuu.public_fairlearn_v2_reporting import (
+    render_results_table,
+    render_row_audit_table,
+)
 
 REGISTRY = [
     {"benchmark_id": "public-adult", "name": "Adult Census Income"},
@@ -31,6 +34,45 @@ REPORT = {
             "old_mean_abs_pmf_difference": 0.05521976534594683,
             "new_max_abs_pmf_difference": 0.0,
             "new_mean_abs_pmf_difference": 0.0,
+        },
+    ],
+}
+
+ADMISSION = {
+    "source_artifacts": {
+        "old_sha256": "a" * 64,
+        "new_sha256": "b" * 64,
+        "protocol_sha256": "c" * 64,
+    },
+    "validation": REPORT,
+}
+
+ROW_AUDIT = {
+    "schema": "tfoesuu-fairlearn-public-v2-row-audit-v1",
+    "source_artifacts": ADMISSION["source_artifacts"],
+    "validation": {
+        "campaign_provenance_valid": True,
+        "new_repair_conformance": True,
+        "scope": "paired-software-behavior-only",
+    },
+    "datasets": [
+        {
+            "dataset_id": "public-adult",
+            "evaluation_rows": 100,
+            "parent_affected_rows": 6,
+            "parent_affected_fraction": 0.06,
+            "parent_max_abs_pmf_difference": 1.0,
+            "parent_mean_abs_pmf_difference": 0.05521976534594683,
+            "repair_affected_rows": 0,
+        },
+        {
+            "dataset_id": "public-bank",
+            "evaluation_rows": 50,
+            "parent_affected_rows": 0,
+            "parent_affected_fraction": 0.0,
+            "parent_max_abs_pmf_difference": 0.0,
+            "parent_mean_abs_pmf_difference": 0.0,
+            "repair_affected_rows": 0,
         },
     ],
 }
@@ -72,3 +114,17 @@ def test_results_table_fails_closed_on_incomplete_or_invalid_report(mutation, me
 
     with pytest.raises(ValueError, match=message):
         render_results_table(report, REGISTRY)
+
+
+def test_row_audit_table_reports_counts_and_fails_closed_on_hash_drift():
+    table = render_row_audit_table(ADMISSION, ROW_AUDIT, REGISTRY)
+
+    assert "6/100 (6.00\\%)" in table
+    assert "0/50 (0.00\\%)" in table
+    assert "Repair affected" in table
+    assert "not causal or population-fairness estimates" in table
+
+    corrupted = copy.deepcopy(ROW_AUDIT)
+    corrupted["source_artifacts"]["old_sha256"] = "d" * 64
+    with pytest.raises(ValueError, match="does not match admitted results"):
+        render_row_audit_table(ADMISSION, corrupted, REGISTRY)
