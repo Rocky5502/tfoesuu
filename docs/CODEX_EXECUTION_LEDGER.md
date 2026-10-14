@@ -398,3 +398,45 @@ inspection; PDF SHA-256 is
 `74990d6bf9805a74f0cca8530605bd8a38aab5c4cbedfb961ca4d44289268012`.
 Neither GPU was used: PC1 and PC2 reported 22%/1% utilization from existing
 desktop workloads, and this exact-PMF audit is CPU-only.
+
+## 2026-10-14 — hostile P12--P19 novelty audit
+
+Resumed clean on `codex/final-submission-audit-20261012` at
+`8573adaff1a53e628f3b201b024d149910281a43`. The five highest-impact remaining
+risks were (1) a topic-level rather than theorem-level collision audit, (2)
+overreading the P19 sequential/nonadaptive comparison as a generic discovery,
+(3) absent independent human literature sign-off, (4) simulator-law evidence
+that must not be presented as real-software scaling, and (5) unavailable
+GitHub-hosted CI because of the account billing/spending-limit block.
+
+A red-first release test failed on the absent claim-level audit and absent
+manuscript novelty fence. The new
+`docs/HOSTILE_NOVELTY_AUDIT_P12_P19.md` compares P12--P19 against primary
+paired-proportion, controlled-sensing, sequential-testing, graph-design, and
+active-fairness sources by mathematical overlap, transcript law, null scope,
+and cost unit. It classifies P12/P13/P14/P16/P18 as specialized access-model
+instantiations and P15/P17/P19 as scoped extensions. It explicitly forbids
+claims to common random numbers, paired inference, fractional cover, generic
+action-information LPs, or generic removal of multiplicity penalties. No
+automated search is represented as independent human novelty certification.
+
+The review manuscript now cites Malek et al. (AISTATS 2017) and Malloy--Nowak
+at the P19 sequential comparison and states that this part is a specialized
+instantiation whose possible increment is the replay-derived first-/second-order
+mixed channel. A fail-closed test requires every P12--P19 replay claim, the
+principal primary-source identifiers, the verdict vocabulary, and narrow
+manuscript wording.
+
+Validation: the red test first failed 2/6 as intended, then passed 6/6. The
+first full run encountered only a Windows global pytest-temp permission error;
+rerunning with repository-local `--basetemp=.pytest_tmp_novelty_full_20261014`
+passed **336 tests in 12.72 s**. Touched Python Ruff, bibliography, general
+paper, review-format/equation-label, and diff gates passed. Direct bundled
+Tectonic compilation produced a 45-page, US-Letter, unencrypted PDF with no
+overfull boxes, unresolved references, or `??` markers. The edited page 8
+passed full-resolution visual inspection; validation PDF SHA-256 is
+`126384a613d815b717ee092b87044f105eedfad54a2599b5e704ef132fa8f4c8`.
+PC1 reported 2% utilization and 7,949/16,303 MiB; PC2 reported 1% and
+7,911/16,303 MiB. No GPU job was launched because this literature/manuscript
+audit has no scientifically valid GPU workload and the authorized campaigns
+are complete.

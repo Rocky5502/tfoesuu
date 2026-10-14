@@ -961,3 +961,33 @@
 - Next: commit this coherent evidence repair, then begin the hostile
   claim-by-claim novelty audit using primary published sources. Human proof and
   author sign-off remain explicitly outside automated certification.
+
+## 2026-10-14 17:59 +08:00 — hostile novelty and wording gate
+
+- Start: clean branch `codex/final-submission-audit-20261012` at full SHA
+  `8573adaff1a53e628f3b201b024d149910281a43`. Highest risks: theorem-level
+  literature collision, generic interpretation of P19 adaptivity, missing
+  human novelty sign-off, simulator/real-software evidence confusion, and the
+  external GitHub CI billing block.
+- Red-first command:
+  `.venv\Scripts\python.exe -m pytest tests/test_release_surface.py -q` ->
+  expected 2 failures for the absent audit and absent narrow manuscript fence.
+- Added `docs/HOSTILE_NOVELTY_AUDIT_P12_P19.md`, primary-source identifiers,
+  exact overlap/oracle/null/cost comparisons, a durable verdict for every
+  P12--P19 claim, README/claim-ledger links, and a regression test. Manuscript
+  wording now cites sequential multiple-testing prior art and limits P19's
+  increment to the replay-derived mixed information channels.
+- Verification: targeted 6 passed; full suite with local isolated temp base
+  **336 passed in 12.72 s**; Ruff, bibliography, general-paper,
+  review-submission/equation-label, and diff gates passed. The first full run's
+  64 setup errors were solely the inaccessible global Windows pytest temp root;
+  no assertion failed, and the isolated rerun resolved the environment issue.
+- PDF: bundled Tectonic built 45 US-Letter pages, unencrypted, with no overfull
+  boxes, unresolved references, or `??` markers. Page 8 visual inspection
+  passed. SHA-256:
+  `126384a613d815b717ee092b87044f105eedfad54a2599b5e704ef132fa8f4c8`.
+- GPUs: PC1 2%, 7,949/16,303 MiB, 42 C; PC2 1%, 7,911/16,303 MiB, 49 C. No
+  research GPU job was running or warranted. Next: commit and push this coherent
+  novelty repair, then audit whether the preserved 100k records support a
+  genuinely measured scaling figure without conflating exact-law simulator
+  validation with executable-software evidence.

@@ -302,7 +302,7 @@ The mixed-control singular analysis is documented in `docs/MIXED_CONTROL_SINGULA
 - Known adjacent theories—fairness testing, paired binary inference, common random numbers, active anomaly search, pairwise experimental design—are cited explicitly instead of being relabeled as novel.
 - Every long experiment records configuration, seed, environment, source commit, and output checksum.
 
-See [docs/THEOREM_ALGORITHM_MATRIX.md](docs/THEOREM_ALGORITHM_MATRIX.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/NOVELTY_MATRIX.md](docs/NOVELTY_MATRIX.md), [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md), and [docs/ARTIFACT_FREEZE.md](docs/ARTIFACT_FREEZE.md).
+See [docs/THEOREM_ALGORITHM_MATRIX.md](docs/THEOREM_ALGORITHM_MATRIX.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/NOVELTY_MATRIX.md](docs/NOVELTY_MATRIX.md), the claim-level [docs/HOSTILE_NOVELTY_AUDIT_P12_P19.md](docs/HOSTILE_NOVELTY_AUDIT_P12_P19.md), [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md), and [docs/ARTIFACT_FREEZE.md](docs/ARTIFACT_FREEZE.md).
 
 
 ## Public benchmark layer

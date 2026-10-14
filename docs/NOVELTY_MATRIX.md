@@ -1,5 +1,9 @@
 # Novelty matrix
 
+The theorem-level hostile comparison and its submission wording constraints are
+maintained in `docs/HOSTILE_NOVELTY_AUDIT_P12_P19.md`.  This shorter matrix is a
+topic-level index; it must not be used alone to certify priority.
+
 | Ingredient | Established literature | What we must *not* claim | Our research question |
 |---|---|---|---|
 | Regression test selection | IEEE TSE; STVR survey | Inventing regression selection | Query complexity of a fairness property after a stochastic patch |
@@ -39,3 +43,18 @@ Current high-value results/targets:
 13. **open:** amortized complexity across multiple software versions.
 
 A reviewer should be able to remove every generic ingredient above and still identify a theorem whose statement fundamentally depends on **software evolution and version-aware access**.
+
+## Audited theorem-level verdicts
+
+- **P12, P13, P14, P16, P18:** specialized instantiations in the declared
+  software-replay access model.  Their ingredients and broad statistical
+  phenomena are prior art.
+- **P15:** scoped extension: the defensible increment is the four-output
+  executable transcript separation, not common-random-number cancellation.
+- **P17:** scoped extension and possible distinct replay-information geometry;
+  fractional covers and graph design are established, and human literature
+  sign-off remains required.
+- **P19:** scoped extension and possible distinct mixed replay-information law;
+  controlled sensing, action-information programs, matched controls, and
+  sequential removal of nonadaptive penalties are established, and human
+  literature sign-off remains required.

@@ -46,3 +46,4 @@ general statements.
   their empirical errors are correlated.
 - P20, T1--T7, and any heterogeneous P17 generalization remain outside abstract/contribution claims
   unless `docs/PROOF_STATUS.md` is explicitly changed after proof and independent audit.
+- `docs/HOSTILE_NOVELTY_AUDIT_P12_P19.md` controls novelty wording: P12/P13/P14/P16/P18 are specialized access-model instantiations; P15/P17/P19 are scoped extensions whose generic statistical and optimization ingredients remain prior art. Independent human literature sign-off is still required.
