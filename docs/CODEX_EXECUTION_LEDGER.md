@@ -348,3 +348,13 @@ unencrypted. No GPU job was launched because all authorized evidence was
 complete and a rerun would be scientifically redundant. A repository-wide
 Ruff scan still reports 63 legacy findings outside this change and is not
 misrepresented as passing.
+
+The coherent repository release surface was committed as
+`b79169e14164d506f33f912c378c214524d99d72`, frozen from a clean tree into a
+299-file manifest with SHA-256
+`7b6354e7901f3533cc1bb780c158dec0a12257c78f853f9e4d8bd4d07539871c`, and
+pushed to `origin/codex/final-submission-audit-20261012`; the remote SHA matched
+exactly. GitHub accepted both workflow dispatches but did not start either job:
+the service reported failed account payments or an insufficient spending
+limit. This is an external CI-infrastructure blocker, not a test failure; the
+complete local gates above remain the available verification evidence.

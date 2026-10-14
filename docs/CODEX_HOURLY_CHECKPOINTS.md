@@ -916,3 +916,11 @@
   campaigns are complete, so additional use would not produce valid new
   evidence. Next: commit this coherent release surface, validate from a clean
   commit, push the research branch (never `main`), and verify the remote SHA.
+- Completed release commit `b79169e14164d506f33f912c378c214524d99d72`.
+  Clean-tree freeze: 299 tracked files, zero extras, manifest SHA-256
+  `7b6354e7901f3533cc1bb780c158dec0a12257c78f853f9e4d8bd4d07539871c`.
+  The branch was pushed and `git ls-remote` returned the identical SHA.
+- GitHub runs `38530588063` (CI) and `38530588034` (paper) were created but
+  GitHub did not start their jobs, reporting failed account payments or an
+  insufficient spending limit. No runner executed repository code; resolving
+  GitHub billing/spending is the remaining external CI gate.
