@@ -19,7 +19,8 @@ pytest -q
 ```
 
 Optional GPU and public-benchmark dependencies remain separate in
-`requirements-gpu.txt` and `requirements-public.txt`.
+`requirements-gpu.txt`, `requirements-public.txt`, and
+`requirements-public-v2.txt`.
 
 ## Claim lifecycle
 

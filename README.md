@@ -70,6 +70,9 @@ src/tfoesuu/
   partial_replay.py           Legal replay groups + integral P17 upper constructions
   partial_replay_lower.py     Fractional witness schedule + active-vertex information floor
   partial_replay_benchmarks.py Deterministic P17 theorem-falsification specifications
+  preview_results.py         Fail-closed P12/P15 100k campaign admission
+  public_benchmarks_v2.py    Protected-context V2 preparation and validation
+  public_fairlearn_v2_*.py   Historical Fairlearn execution/provenance boundary
   planner.py                 Fail-closed theorem-backed TFOESUU execution planner
 
 experiments/
@@ -101,6 +104,9 @@ scripts/
   run_publication_suite.py      Integrated CPU/GPU theorem-facing publication runner
   check_bibliography.py
   check_paper_consistency.py
+  check_review_submission.py  STOC review-format/equation-label gate
+  validate_preview_results.py P12/P15 exact finite-law admission
+  render_public_fairlearn_v2_results.py  Provenance-locked V2 result renderer
   freeze_submission_artifacts.py Whole-repository submission checksum manifest
   record_publication_run.py      Per-run benchmark/result provenance
   verify_environment.py
@@ -114,9 +120,12 @@ data/
   partial_replay_benchmark_v1.jsonl          168 frozen P17 parameter-stress rows
   partial_replay_structural_cases_v1.jsonl   8 exact P17 structural theorem fixtures
   partial_replay_scope_cases_v1.jsonl        deterministic P17 scope counterexamples
-  public_benchmark_registry_v1.jsonl            7 planned public evaluation datasets
+  public_benchmark_registry_v1.jsonl            7 frozen public evaluation datasets
+  p12_p15_100k_preview_manifest_v1.json         admitted 198-configuration campaign
+  p12_p15_100k_preview_validation_v1.json       594 exact-law comparisons
+  fairlearn_public_v2_results_v1.json           admitted seven-population census
 
-paper/                       Overleaf-ready STOC manuscript
+paper/stoc2027_review/       Authoritative STOC review-submission LaTeX source
 docs/                        proof audits, novelty matrix, roadmap, GPU runbook
 tests/                       deterministic unit/theorem sanity tests
 .github/workflows/           CPU CI + real LaTeX/PDF build CI
@@ -129,9 +138,15 @@ The repository separates dependency surfaces so theorem/CPU validation remains l
 - `requirements.txt`: core runtime dependencies only;
 - `requirements-dev.txt`: core + pytest/ruff for local development and CI;
 - `requirements-gpu.txt`: core + PyTorch for local GPU simulation sweeps;
-- `requirements-public.txt`: optional public-benchmark preparation dependencies.
+- `requirements-public.txt`: optional V1 public-benchmark dependencies;
+- `requirements-public-v2.txt`: V1 dependencies plus deterministic legacy-XLS
+  support required by the protected-context V2 preparation.
 
 The package metadata in `pyproject.toml` is the canonical installable-project definition. Keep lower bounds synchronized when dependencies change.
+
+Equivalent editable installs are `pip install -e ".[dev]"`,
+`pip install -e ".[gpu]"`, `pip install -e ".[public]"`, and
+`pip install -e ".[public-v2]"`.
 
 ## CPU setup and validation
 
@@ -147,6 +162,7 @@ pip install -e .
 pytest -q
 python scripts/check_bibliography.py
 python scripts/check_paper_consistency.py
+python scripts/check_review_submission.py
 
 python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
 python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
@@ -187,9 +203,9 @@ python scripts/run_publication_suite.py --mode smoke \
 python scripts/run_publication_suite.py --mode publication \
   --output-dir results/publication_cpu
 
-# Publication run plus all frozen GPU sweeps
+# Bounded publication run plus frozen GPU sweeps (through 100k only)
 python scripts/run_publication_suite.py --mode publication \
-  --gpu-devices 0,1 --gpu-trials 1000000 \
+  --gpu-devices 0,1 --gpu-trials 100000 \
   --output-dir results/publication_full
 ```
 
@@ -208,8 +224,12 @@ The Overleaf-ready paper now contains, in the main compiled closure:
 - the complete 821-row deterministic specification inventory;
 - a deterministic audit-results table;
 - an exact P17 structural/scope figure;
-- a separate seven-public-dataset registry that remains preregistered until its
-  adapters and frozen result matrix pass the publication gate.
+- the admitted P12/P15 campaign: 198 configurations at 100,000 trials each and
+  594 exact-law comparisons with zero familywise-Bonferroni outliers;
+- a complete seven-population historical Fairlearn census. The parent differs
+  from the canonical protected-tuple control on Adult and Default Credit, the
+  other five parent populations are exact zeros, and the repair agrees exactly
+  on all seven. This is software-behavior evidence, not causal fairness.
 
 ## Two local NVIDIA GPUs
 
@@ -227,15 +247,18 @@ python experiments/gpu_sweep.py --devices 0 --trials 10000 --benchmark data/benc
 python experiments/gpu_replay_sweep.py --devices 0 --trials 10000 --benchmark data/replay_benchmark_v1.jsonl --output results/smoke_replay.jsonl
 ```
 
-Then use both GPUs:
+Then use both GPUs for an authorized bounded stage:
 
 ```bash
-python experiments/gpu_sweep.py --devices 0,1 --trials 1000000 --benchmark data/benchmark_v1.jsonl --output results/gpu_sweep_1m.jsonl
-python experiments/gpu_replay_sweep.py --devices 0,1 --trials 1000000 --benchmark data/replay_benchmark_v1.jsonl --output results/replay_gpu_sweep_1m.jsonl
-python experiments/gpu_counterfactual_sweep.py --devices 0,1 --trials 1000000 --benchmark data/counterfactual_replay_benchmark_v1.jsonl --output results/counterfactual_gpu_sweep_1m.jsonl
+python experiments/gpu_sweep.py --devices 0,1 --trials 100000 --benchmark data/benchmark_v1.jsonl --output results/gpu_sweep_100k.jsonl
+python experiments/gpu_replay_sweep.py --devices 0,1 --trials 100000 --benchmark data/replay_benchmark_v1.jsonl --output results/replay_gpu_sweep_100k.jsonl
+python experiments/gpu_counterfactual_sweep.py --devices 0,1 --trials 100000 --benchmark data/counterfactual_replay_benchmark_v1.jsonl --output results/counterfactual_gpu_sweep_100k.jsonl
 ```
 
-See [docs/GPU_RUNBOOK.md](docs/GPU_RUNBOOK.md) before any long run. The policy is staged: 10^3 -> 10^4 -> 10^5 -> 10^6-10^7 trials/config only after earlier gates are clean.
+See [docs/GPU_RUNBOOK.md](docs/GPU_RUNBOOK.md) before any long run. The approved
+frozen P12/P15 evidence stops at $10^5$ trials per configuration. Million-trial
+or larger campaigns require fresh authorization and a demonstrated scientific
+need; completed admitted campaigns must not be rerun merely to consume GPUs.
 
 ## Data policy
 
@@ -250,7 +273,11 @@ Large raw Monte Carlo outputs belong in `results/` and are git-ignored.
 
 ## Paper and Overleaf
 
-The `paper/` directory is directly Overleaf-ready. CI performs both static citation/cross-reference checks and a real LaTeX build. A successful `paper` workflow uploads the compiled PDF as a GitHub Actions artifact.
+The authoritative review source is `paper/stoc2027_review/main.tex`. CI applies
+the general manuscript checker and the STOC-specific review gate, then builds
+that entry point as an 11-point, single-column US-Letter manuscript. Generated
+PDFs, Overleaf ZIPs, and local build directories are release artifacts: they
+are not committed or pushed to GitHub.
 
 ## Theorem-driven phase benchmark
 
@@ -280,10 +307,34 @@ See [docs/THEOREM_ALGORITHM_MATRIX.md](docs/THEOREM_ALGORITHM_MATRIX.md), [docs/
 A separate seven-dataset registry is frozen for the submission-facing finite-instance evaluation: Adult, Bank Marketing, German Credit, COMPAS, Law School GPA, MEPS Panel 21, and Default Credit.  The raw datasets are not committed.  Each publication run must freeze source/preprocessing hashes and construct old/new stochastic software versions locally so the benchmark exercises the replay model rather than merely reporting generic classifier fairness metrics.
 
 
-## Public benchmark commands
+## Public benchmark commands and admitted status
 
-After core CI is green, install `requirements-public.txt`, prepare the seven public datasets with `scripts/prepare_public_benchmarks.py`, validate the complete prepared directory read-only with `scripts/validate_prepared_public_benchmarks.py`, run `experiments/gpu_public_replay_sweep.py`, then generate the submission figure with `scripts/render_public_results.py`. The preregistered TBD result templates remain in the repository but are excluded from the compiled manuscript until a validated frozen JSONL result matrix is available. The v1 evaluator duplicates each scalar evaluation probability into a synthetic two-endpoint edge; it does not materialize protected-attribute counterfactual pairs from the source rows.
+V1 remains a deliberately failing negative control for executable multi-column
+Fairlearn contexts: protected names are metadata only. Inspect it with
+`scripts/audit_fairlearn_public_contexts.py <prepared-dir> --require-ready`; the
+gate must fail rather than reinterpret V1 as row-level protected data.
 
-For Fairlearn executable-context work, run `scripts/audit_fairlearn_public_contexts.py <prepared-dir> --require-ready`. The frozen v1 schema fails this gate by design because protected names are metadata only; see `docs/FAIRLEARN_PUBLIC_CONTEXT_AUDIT.md`.
+For V2 work, install `requirements-public-v2.txt`. The non-overwriting
+preparer and validator are `scripts/prepare_public_benchmarks_v2.py` and
+`scripts/validate_prepared_public_benchmarks_v2.py`; the immutable protocol is
+documented in [docs/PUBLIC_BENCHMARK_V2_PROTOCOL.md](docs/PUBLIC_BENCHMARK_V2_PROTOCOL.md).
+V2 preserves aligned train/evaluation protected values, non-protected features,
+source bytes, and split identities. Raw datasets remain external and must never
+be added to Git.
 
-The separate V2 context contract is implemented by `scripts/prepare_public_benchmarks_v2.py` and `scripts/validate_prepared_public_benchmarks_v2.py`; see `docs/PUBLIC_BENCHMARK_V2_PROTOCOL.md`. V2 never overwrites V1, requires hashes for explicit raw-source files, preserves aligned protected values and non-protected evaluation features, and makes no causal-counterfactual claim.
+The authorized historical Fairlearn campaign is complete. Its admitted summary
+is `data/fairlearn_public_v2_results_v1.json`, produced only after validation of
+the 14 old/new records, source identities, input-bundle manifest, approval
+record, common-tape correspondence, and single-attribute controls. Do not infer
+causal or population-fairness conclusions from this finite-row software census.
+
+The P12/P15 GPU campaign can be revalidated without rerunning it:
+
+```bash
+python scripts/validate_preview_results.py \
+  data/p12_p15_100k_preview_manifest_v1.json \
+  --base-dir . --output /tmp/p12_p15_validation.json
+```
+
+This checks all 198 configurations and 594 exact-law comparisons against the
+frozen result records and source/specification hashes.

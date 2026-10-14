@@ -317,3 +317,34 @@ or unresolved citations/references. Final artifacts:
   (135,563 bytes; 31 entries).
 - PDF SHA-256 `e27195241f3260e5426e9cf2ba4e421b75216bda3f8b0839f6b3aa7f29a4179f`
   (287,719 bytes; 44 US-Letter pages).
+
+## 2026-10-14 — repository and GitHub release-surface audit
+
+Resumed on `codex/final-submission-audit-20261012` at
+`82a2b4caa37ce5216b70f1fff274c6682cfce363`. The audit found five material
+release risks: stale README claims about the completed public V2 census; an
+ambiguous manuscript-source pointer; undocumented V2 dependencies; CI that did
+not enforce the final review-format/equation gate or compile the authoritative
+review tree; and a research branch not yet published to the remote.
+
+A red-first release-surface test exposed the documentation, dependency-extra,
+and CI gaps (three expected failures). The repaired surface now identifies
+`paper/stoc2027_review/main.tex` as the authoritative source, documents the
+complete 198-configuration P12/P15 campaign and fourteen-record Fairlearn V2
+census, exposes reproducible `public` and `public-v2` package extras, and makes
+both static manuscript gates part of CI. Generated PDFs, Overleaf ZIPs, build
+directories, and experiment scratch output are excluded from Git; tracked TeX
+source is retained for reproducibility.
+
+The frozen 100k evidence revalidated independently: 198 records, 594 exact-law
+comparisons, zero Bonferroni outliers, minimum exact p-value
+`0.00046475515380564977`, and maximum absolute empirical deviation
+`0.002427090218361183`. The report SHA-256 is
+`32ea2d88d6475c4880d607e13023151e3f84c4a78eac05ee5e0be64b37d5c9c5`.
+The full suite passed 329 tests in 16.25 s; the new targeted test passed 4/4;
+touched-file Ruff, both manuscript static gates, the benchmark inventory, and
+`git diff --check` passed. The existing final PDF is 44-page US Letter and
+unencrypted. No GPU job was launched because all authorized evidence was
+complete and a rerun would be scientifically redundant. A repository-wide
+Ruff scan still reports 63 legacy findings outside this change and is not
+misrepresented as passing.

@@ -18,7 +18,15 @@ paper/*.log
 paper/*.out
 paper/*.toc
 paper/*.pdf
-output/pdf/*.pdf
+paper/**/build*/
+paper/**/*.aux
+paper/**/*.bbl
+paper/**/*.blg
+paper/**/*.log
+paper/**/*.out
+paper/**/*.toc
+paper/**/*.pdf
+output/
 *.egg-info/
 build/
 dist/

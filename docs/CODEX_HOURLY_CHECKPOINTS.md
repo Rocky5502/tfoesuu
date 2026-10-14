@@ -889,3 +889,30 @@
   final PDF SHA-256
   `e27195241f3260e5426e9cf2ba4e421b75216bda3f8b0839f6b3aa7f29a4179f`.
   No submission/upload action was taken.
+
+## 2026-10-14 15:45 +08:00 — repository release and remote-sync gate
+
+- Start: branch `codex/final-submission-audit-20261012`, full SHA
+  `82a2b4caa37ce5216b70f1fff274c6682cfce363`; `origin/main` remained at the
+  verified baseline `149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b`.
+- Five highest-impact risks were stale V2 README claims, an ambiguous paper
+  source pointer, undocumented V2 dependencies, incomplete manuscript CI, and
+  the absence of the final research branch on GitHub. Added a red-first
+  release-surface regression (three expected failures), then repaired README,
+  dependency extras, Make targets, CI workflows, ignore rules, public-protocol
+  status, and the submission checklist. Generated paper/output artifacts are
+  ignored and will not be committed or pushed.
+- Evidence command:
+  `.venv\Scripts\python.exe scripts\validate_preview_results.py data\p12_p15_100k_preview_manifest_v1.json --base-dir . --output %TEMP%\tfoesuu_p12_p15_validation_20261014.json`.
+  Result: 198 records, 594 comparisons, zero Bonferroni outliers; report
+  SHA-256 `32ea2d88d6475c4880d607e13023151e3f84c4a78eac05ee5e0be64b37d5c9c5`.
+- Verification: new release-surface test 4 passed; full suite 329 passed in
+  16.25 s; touched-file Ruff passed; bibliography, general-paper, review-format,
+  equation-label, and benchmark-inventory gates passed. `pdfinfo` confirms the
+  final artifact is 44-page US Letter and unencrypted. Repository-wide Ruff
+  still has 63 pre-existing findings outside this patch; no unrelated mass
+  rewrite was attempted.
+- GPUs: no experiment launched. The authorized P12/P15 and Fairlearn V2
+  campaigns are complete, so additional use would not produce valid new
+  evidence. Next: commit this coherent release surface, validate from a clean
+  commit, push the research branch (never `main`), and verify the remote SHA.

@@ -22,6 +22,7 @@ replay-smoke:
 paper-check:
 	python scripts/check_bibliography.py
 	python scripts/check_paper_consistency.py
+	python scripts/check_review_submission.py
 
 paper-pdf: paper-check
-	cd paper && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+	cd paper/stoc2027_review && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex

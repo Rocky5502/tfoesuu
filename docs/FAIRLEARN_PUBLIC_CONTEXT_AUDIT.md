@@ -68,5 +68,13 @@ independently validated under clean commit `d0790b3`; hashes are in
 the experiment-design gate: age is high-cardinality in German and Default
 Credit, and no old/new Fairlearn outcome has been run.
 
-A seven-dataset outcome campaign and manuscript admission remain behind the
-explicit publication-scale approval gate.
+A subsequent preregistration and explicit authorization opened the bounded
+seven-dataset campaign. The provenance-complete old/new execution and
+independent admission are now finished; the immutable admitted summary is
+`data/fairlearn_public_v2_results_v1.json`. All fourteen old/new records passed
+the source, protocol, common-tape, support, and negative-control gates. The
+parent differs from its canonical protected-tuple control on Adult and Default
+Credit and is exactly zero on the other five populations; the repaired revision
+agrees exactly on all seven. These later results close the outcome gate without
+changing this document's V1 failure finding. They are deterministic
+software-behavior comparisons, not causal or population-fairness estimates.

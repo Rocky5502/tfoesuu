@@ -139,3 +139,21 @@ reproduce V2.1 exactly, including MEPS because generation uses the original
 source dataframe dtypes rather than inferred token types. The manifest and
 external validation hashes are frozen in the downstream preregistration.
 Readiness remains score-replay-only and does not authorize subject outcomes.
+
+## Subsequent authorized outcome and admission
+
+After the protocol, source identities, score companion, approval record, and
+historical runtimes were frozen, the bounded seven-dataset old/new campaign was
+explicitly authorized and completed. The admitted, repository-facing summary
+is `data/fairlearn_public_v2_results_v1.json`. Its validation object binds 14
+old/new records to runner commit
+`ade8ff3d8b764a4cbda7d06bbf062650542c5530`, input-bundle manifest SHA-256
+`2435e006a8a445e0e94e7248745f5ce9b1349361d4b49b7ffd18488bcebc686e`,
+and the frozen protocol/registry artifacts. The repair matches the canonical
+protected-tuple control on all seven populations. The parent differs on Adult
+and Default Credit and is exactly zero on the remaining five.
+
+This completion does not retroactively make V1 executable, authorize a larger
+campaign, or turn the result into a causal-fairness estimate. The raw datasets
+and historical runtime outputs remain external frozen evidence rather than Git
+content.

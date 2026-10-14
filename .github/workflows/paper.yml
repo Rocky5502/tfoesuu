@@ -5,11 +5,13 @@ on:
     paths:
       - "paper/**"
       - "scripts/check_paper_consistency.py"
+      - "scripts/check_review_submission.py"
       - ".github/workflows/paper.yml"
   pull_request:
     paths:
       - "paper/**"
       - "scripts/check_paper_consistency.py"
+      - "scripts/check_review_submission.py"
       - ".github/workflows/paper.yml"
   workflow_dispatch:
 
@@ -24,7 +26,9 @@ jobs:
           python-version: "3.12"
 
       - name: Static manuscript consistency
-        run: python scripts/check_paper_consistency.py
+        run: |
+          python scripts/check_paper_consistency.py
+          python scripts/check_review_submission.py
 
       - name: Install TeX toolchain
         run: |
@@ -38,11 +42,11 @@ jobs:
             texlive-science
 
       - name: Compile manuscript
-        working-directory: paper
+        working-directory: paper/stoc2027_review
         run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 
       - uses: actions/upload-artifact@v4
         with:
           name: stoc-manuscript-pdf
-          path: paper/main.pdf
+          path: paper/stoc2027_review/main.pdf
           if-no-files-found: error
