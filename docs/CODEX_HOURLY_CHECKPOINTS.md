@@ -1020,3 +1020,18 @@
   justified only after a stochastic executable old/new subject passes the
   declared replay-oracle gate. Next: commit/push this evidence boundary, then
   continue the remaining human-sign-off and external-CI release blockers.
+
+### Same-checkpoint source-only Overleaf freeze
+
+- Committed and pushed the evidence boundary as
+  `92d3288df697b65efaf88fc239b853db62d26146`, with remote SHA equality.
+- Packaged exactly the 31 tracked review-source entries; rejected generated
+  PDF/text/build content. ZIP size 136,687 bytes; SHA-256
+  `dea6d44778c64ad827a3f02cc5cdb0b7e494c0fe78e25eb650a61d46ed9d618b`.
+- A first extraction compile invocation used the repository working directory
+  and failed before TeX execution. The corrected fresh-extraction build passed:
+  45 US-Letter pages, unencrypted, no overfull or unresolved-reference warning;
+  PDF SHA-256
+  `b196c2aa4aade56b2d24edbfcefc02ef4846ca82fb7a24d72e35be1f526fedb0`.
+  Main-text page 7 and appendix page 39 passed visual inspection. Temporary
+  release work directories were removed; the external ZIP was retained.

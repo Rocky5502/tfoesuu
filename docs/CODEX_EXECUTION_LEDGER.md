@@ -480,3 +480,18 @@ passed. Bundled Tectonic produced 45 US-Letter pages with no overfull or
 unresolved-reference warning. The edited main-text and appendix pages passed
 full-resolution visual inspection. Validation PDF SHA-256 is
 `bfb9a006c00fc4e760e13baceae02cf2e5f2f19aba5df1921d93f2328c662cc8`.
+
+A source-only Overleaf ZIP was then frozen from the tracked
+`paper/stoc2027_review` tree at commit
+`92d3288df697b65efaf88fc239b853db62d26146`. It contains 31 entries and no
+PDF, build directory, or extracted text. The immutable external artifact is
+`TFOESUU_STOC2027_FINAL_AUDITED_OVERLEAF_2026-10-14.zip`, 136,687 bytes,
+SHA-256
+`dea6d44778c64ad827a3f02cc5cdb0b7e494c0fe78e25eb650a61d46ed9d618b`.
+The first extraction-check command used the wrong working directory and failed
+before TeX execution; rerunning from the extracted root succeeded. The fresh
+extraction compiled to 45 US-Letter, unencrypted pages, and the two edited
+pages passed full-resolution visual inspection. Clean-extract PDF SHA-256 was
+`b196c2aa4aade56b2d24edbfcefc02ef4846ca82fb7a24d72e35be1f526fedb0`.
+Temporary staging, extraction, and rendered-page files were removed after
+verification; the ZIP and prior release artifacts were preserved.
