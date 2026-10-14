@@ -2,7 +2,7 @@
 
 Source of truth: the [official STOC 2027 Call for Papers](https://acm-stoc.org/stoc2027/stoc2027-cfp.html).
 Re-check the live CFP before submission in case instructions change. Last
-live-CFP verification: **2026-10-13**.
+live-CFP verification: **2026-10-14**.
 
 ## Dates
 
@@ -39,7 +39,10 @@ live-CFP verification: **2026-10-13**.
 - [x] The mandatory AI Methodology disclosure is placed at the end of the paper body immediately before the final bibliography.
 - [x] Audited local PDF has no security restrictions on copying or printing.
 - [x] Final manuscript consistency, equation-label, cross-reference, and bibliography checks pass.
-- [x] Final LaTeX build passed from a clean extraction of the Overleaf package. GitHub CI must pass again on the pushed branch.
+- [x] Final LaTeX build passed from a clean extraction of the Overleaf package.
+  The pushed branch matches locally; GitHub-hosted CI is externally blocked by
+  the account spending limit, so the complete local gate is the current
+  machine-verifiable release evidence.
 
 ## Generative-AI disclosure
 
@@ -68,11 +71,19 @@ Before submission:
 
 - [ ] Freeze the final submission Git SHA after human-author sign-off; the current audited research branch is recorded in the execution ledger.
 - [ ] Generate the whole-submission checksum manifest with `scripts/freeze_submission_artifacts.py --require-clean`.
-- [ ] Freeze benchmark manifests and SHA-256 hashes, including the 24-row P18 phase grid, the 168-row P17 stress grid, the separate 8-row P17 structural-case manifest, and the deterministic P17 scope-falsification manifest.
-- [x] Run the complete local CPU suite and manuscript static gates; 329 tests passed at the repository release gate. Confirm GitHub CI after push.
-- [ ] Run the 168-row P17 executable manifest validator and archive its deterministic validation summary.
+- [x] Freeze benchmark manifests and SHA-256 hashes, including the 24-row P18 phase grid, the 168-row P17 stress grid, the separate 8-row P17 structural-case manifest, and the deterministic P17 scope-falsification manifest.
+  Their SHA-256 values are respectively `d73c9e8d065ae2e5efe617fd31900d70d8cf7eae858d17498b5ceb8741bf8ff9`,
+  `fa61d7820dd5d911ae6c9bcd506ad5b26e7313f63b048e2b6db148318c585942`,
+  `78d4ddf3514528bc54a6c99481ad8d02830516dd80f7730d493d4774b9a349c3`, and
+  `9759ad422d50bb8477280b1901020d5095f3d8f1d50f0a2d788c612a4acf2442`.
+- [x] Run the complete local CPU suite and manuscript static gates; 336 tests passed at the latest repository release gate. GitHub-hosted CI remains blocked by the external account spending limit.
+- [x] Run the 168-row P17 executable manifest validator and archive its deterministic validation summary. The checked-in theorem tests re-execute every row; `scripts/summarize_submission_evidence.py` reports the 821-row theorem-facing inventory and exact scope counterexample.
 - [x] Run the authorized frozen P12/P15 campaigns through 100,000 trials per configuration; do not infer authorization for larger campaigns.
-- [ ] Record GPU names, NVIDIA driver, CUDA/PyTorch versions, exact commands, benchmark hashes, output hashes, and git SHA.
+- [ ] Complete the historical GPU environment record. GPU names,
+  CUDA/PyTorch versions, exact commands, benchmark/output hashes, worker
+  assignment, and frozen Git SHA are recorded; the driver-version field was
+  not captured in the immutable 100k result manifest and must not be inferred
+  retrospectively from the current machines.
 - [x] Archive the exact Overleaf-ready source and compiled PDF outside Git; generated manuscript artifacts are intentionally not pushed to the repository.
 - [x] Verify submission-facing result tables/figures against immutable admission manifests and source hashes.
 

@@ -1035,3 +1035,28 @@
   `b196c2aa4aade56b2d24edbfcefc02ef4846ca82fb7a24d72e35be1f526fedb0`.
   Main-text page 7 and appendix page 39 passed visual inspection. Temporary
   release work directories were removed; the external ZIP was retained.
+
+## 2026-10-14 22:40 +08:00 — release-acceptance reconciliation
+
+- Start: clean, pushed branch `codex/final-submission-audit-20261012` at
+  `21b0e308cc0d2fb8e224f75cfd67eaae886f79f5`.
+- Rechecked the live official STOC 2027 CFP. The recorded deadline and review
+  format, first-twelve-content-page, public-posting, video, authorship, and AI
+  disclosure requirements remain current; no policy drift was found.
+- Re-executed the frozen inventory and P17/P18 theorem-facing validators. The
+  inventory contains 10 artifacts/828 rows overall; the theorem-facing summary
+  contains 821 rows. The P17/P18 focused tests passed 10/10.
+- Recorded the four previously omitted release hashes: P18 phase grid
+  `d73c9e8...ff9`, P17 stress grid `fa61d782...942`, P17 structural fixtures
+  `78d4ddf3...49c3`, and P17 scope counterexample `9759ad42...2442`.
+- Corrected the critical audit's stale preview-validation hash to
+  `cd6b4394...20bb`, and separated closed automated gates from required human
+  sign-off and external service gates. The missing historical NVIDIA driver
+  field remains open rather than being inferred from current telemetry.
+- Validation: 17 focused release tests passed; review gate reports 15 TeX
+  files, 130 numbered/labeled displays, and 170 total labels; manuscript,
+  bibliography, and diff gates passed. No scientific claim or manuscript
+  source changed, so a redundant PDF or GPU rerun was not performed.
+- Remaining action: commit/push this release-control correction, then generate
+  a clean release-candidate checksum manifest. A final submission freeze still
+  requires human-author sign-off.

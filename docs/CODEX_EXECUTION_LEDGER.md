@@ -495,3 +495,28 @@ pages passed full-resolution visual inspection. Clean-extract PDF SHA-256 was
 `b196c2aa4aade56b2d24edbfcefc02ef4846ca82fb7a24d72e35be1f526fedb0`.
 Temporary staging, extraction, and rendered-page files were removed after
 verification; the ZIP and prior release artifacts were preserved.
+
+## 2026-10-14 — release-acceptance reconciliation
+
+The live official STOC 2027 call was rechecked on October 14. Its deadline,
+non-anonymous authorship, public-posting consent, 11-point single-column Letter
+format, one-inch margins, first-twelve-content-page rule, complete-proof rule,
+video requirement, and substantive-AI disclosure language remain consistent
+with the submission checklist and review source. No venue-rule drift was found.
+
+The final checklist had stale open boxes for already completed machine gates.
+The 168-row P17 executable validator, the 24-row P18 inventory, the 8-row P17
+structural fixtures, and the one-row deterministic P17 scope counterexample all
+revalidated. Their hashes are now recorded in the checklist. Focused release
+checks passed 17 tests; review-format/equation-label, manuscript consistency,
+bibliography, and diff gates passed. The review tree still has 130 numbered,
+uniquely labeled displayed equations and 170 total labels.
+
+No scientific result changed. Remaining gates are deliberately human or
+external: author theorem/citation/reproduction sign-off, authorship and COI
+confirmations, HotCRP consent/upload, the required author video, the final
+post-sign-off Git/artifact freeze, and the missing historical NVIDIA driver
+field. The driver version was not recorded in the immutable 100k manifest and
+will not be reconstructed from current-machine telemetry. GitHub-hosted CI
+remains blocked by the account spending limit; the complete local gates are
+the current machine-verifiable evidence. No GPU run was scientifically needed.
