@@ -143,6 +143,9 @@ def test_preview_campaign_accepts_complete_formula_consistent_census(tmp_path):
     assert report["comparison_count"] == 6
     assert report["all_schedules_exact"] is True
     assert report["all_empirical_rates_valid"] is True
+    assert report["schedule_counts_are_formula_derived"] is True
+    assert report["instrumented_runtime_present"] is False
+    assert report["supports_empirical_sample_complexity_fit"] is False
 
 
 @pytest.mark.parametrize(

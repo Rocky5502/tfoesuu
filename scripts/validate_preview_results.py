@@ -23,7 +23,8 @@ def main() -> None:
         return
     if args.output.exists():
         raise FileExistsError(f"refusing to overwrite existing report: {args.output}")
-    args.output.write_text(rendered, encoding="utf-8")
+    with args.output.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(rendered)
 
 
 if __name__ == "__main__":

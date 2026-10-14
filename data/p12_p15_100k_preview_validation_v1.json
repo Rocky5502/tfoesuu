@@ -4,6 +4,7 @@
   "bonferroni_outlier_count": 0,
   "bonferroni_threshold": 8.417508417508418e-05,
   "comparison_count": 594,
+  "instrumented_runtime_present": false,
   "maximum_absolute_empirical_deviation": 0.002427090218361183,
   "minimum_exact_p_value": 0.00046475515380564977,
   "p12_record_count": 54,
@@ -13,7 +14,9 @@
     "p12": "f00458f50d225c8c5bde5cb235c6f67fbc67102157768369df8cd350956f1035",
     "p15": "e0750e5d46215909aa710d83bca8ad748877e66f786aa9106e883ce94da274ab"
   },
+  "schedule_counts_are_formula_derived": true,
   "schema": "tfoesuu-p12-p15-preview-validation-v1",
   "source_commit": "149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b",
+  "supports_empirical_sample_complexity_fit": false,
   "trials_per_configuration": 100000
 }

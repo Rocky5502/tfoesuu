@@ -13,7 +13,7 @@ runtime and do not prove the paper's theorems.
   runner identities, expected row counts, and admission policy.
 - `p12_p15_100k_preview_validation_v1.json`: independent exact-law validation;
   SHA-256
-  `32ea2d88d6475c4880d607e13023151e3f84c4a78eac05ee5e0be64b37d5c9c5`.
+  `cd6b4394bb87c42bb58861892b6eb1f05e7ef6ac084de50ebd6d864b8f5a20bb`.
 - `replay_benchmark_v1.jsonl` and `counterfactual_replay_benchmark_v1.jsonl`:
   frozen P12/P15 specifications.
 - `gpu_replay_sweep_source_snapshot.py` and
@@ -28,3 +28,8 @@ The manifest binds the runs to source revision
 `149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b`. The repository validator is
 `scripts/validate_preview_results.py`; raw result paths can be overridden when
 the files are stored outside the source tree.
+
+The validation report records that the sample schedules are formula-derived,
+the frozen rows contain no instrumented runtime, and the campaign does not
+support an empirical sample-complexity fit. The records validate exact finite
+laws; they do not measure a scaling exponent or executable-software runtime.

@@ -991,3 +991,32 @@
   novelty repair, then audit whether the preserved 100k records support a
   genuinely measured scaling figure without conflating exact-law simulator
   validation with executable-software evidence.
+
+## 2026-10-14 18:07 +08:00 — P12/P15 scaling-evidence falsification
+
+- Start: clean/pushed research branch at
+  `b3d24bc973113beb9625df3335c1b8c3ae744fe5`. The frozen 198-row campaign and
+  594 exact-law comparisons were re-read without modifying raw results.
+- Negative finding: every recorded sample count is the theorem-prescribed
+  schedule for that `(law,d,beta)` and each law has only one evaluated budget.
+  There is no independent budget axis, stopping-time trace, instrumented
+  runtime, or real-software execution. Consequently, the campaign cannot
+  estimate an observed `d` exponent; fitting its schedules would be circular.
+- Red-first test: the validation report initially lacked interpretation fields
+  and failed on `schedule_counts_are_formula_derived`. Implemented a
+  machine-readable three-field fence, portable LF report output, a complete
+  scientific audit, and synchronized main/appendix wording. No empirical
+  scaling figure was added.
+- Current validation-report SHA-256:
+  `cd6b4394bb87c42bb58861892b6eb1f05e7ef6ac084de50ebd6d864b8f5a20bb`;
+  repository and Overleaf evidence copies match byte-for-byte.
+- Verification: preview tests 7 passed; full suite **336 passed in 12.76 s**;
+  touched Ruff, bibliography, paper, review/equation, and diff gates passed.
+  Tectonic: 45 US-Letter pages, no overfull or unresolved-reference warning;
+  edited pages 7 and 39 visually passed. PDF SHA-256
+  `bfb9a006c00fc4e760e13baceae02cf2e5f2f19aba5df1921d93f2328c662cc8`.
+- GPU decision: no run. Additional Monte Carlo under exactly known binomial
+  laws is scientifically redundant. A new empirical scaling campaign is
+  justified only after a stochastic executable old/new subject passes the
+  declared replay-oracle gate. Next: commit/push this evidence boundary, then
+  continue the remaining human-sign-off and external-CI release blockers.

@@ -440,3 +440,43 @@ PC1 reported 2% utilization and 7,949/16,303 MiB; PC2 reported 1% and
 7,911/16,303 MiB. No GPU job was launched because this literature/manuscript
 audit has no scientifically valid GPU workload and the authorized campaigns
 are complete.
+
+## 2026-10-14 — P12/P15 empirical-scaling evidence audit
+
+Continued from clean, pushed commit
+`b3d24bc973113beb9625df3335c1b8c3ae744fe5`. A falsifying release test first
+failed because the 100k validator did not state whether its records could
+support an empirical sample-complexity fit. Direct schema inspection showed
+that every row contains one theorem-prescribed schedule for each law; the
+round/execution count therefore changes with `d` by construction. The records
+contain empirical decision rates but no independent sample-budget axis,
+per-trial stopping time, instrumented wall time, or executable-software
+runtime. A log--log fit of those schedules would regress the formula on its own
+input and falsely label a theoretical curve as an observed exponent.
+
+The validator now emits three fail-closed interpretation fields:
+`schedule_counts_are_formula_derived=true`,
+`instrumented_runtime_present=false`, and
+`supports_empirical_sample_complexity_fit=false`. The portable report writer
+uses explicit LF bytes; the repository and Overleaf evidence copies regenerate
+byte-for-byte with SHA-256
+`cd6b4394bb87c42bb58861892b6eb1f05e7ef6ac084de50ebd6d864b8f5a20bb`.
+`docs/P12_P15_SCALING_EVIDENCE_AUDIT.md` records the negative result and the
+smallest valid future design: independently preregistered budget grids with
+confidence intervals around target-error crossings, only after a stochastic
+executable subject satisfies the replay-oracle gate.
+
+The main text and appendix now state that the admitted campaign cannot
+independently estimate a scaling exponent, so no empirical-complexity figure
+is reported. This preserves the 100k campaign's valid role--594 exact-law
+simulator checks--without overstating it. Another GPU run would reproduce
+already-known binomial power curves and add no scientific information, so none
+was launched.
+
+Validation: the focused red test failed on the missing fields, then all seven
+preview tests passed; the complete suite passed **336 tests in 12.76 s**.
+Touched-file Ruff, bibliography, paper static, review/equation, and diff gates
+passed. Bundled Tectonic produced 45 US-Letter pages with no overfull or
+unresolved-reference warning. The edited main-text and appendix pages passed
+full-resolution visual inspection. Validation PDF SHA-256 is
+`bfb9a006c00fc4e760e13baceae02cf2e5f2f19aba5df1921d93f2328c662cc8`.

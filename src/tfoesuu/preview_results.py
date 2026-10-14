@@ -355,6 +355,15 @@ def validate_preview_campaign(
             trials=trials,
         )
     )
+    runtime_fields = {
+        "elapsed_seconds",
+        "gpu_time_seconds",
+        "runtime_seconds",
+        "wall_time_seconds",
+    }
+    instrumented_runtime_present = any(
+        runtime_fields.intersection(row) for row in (*p12_rows, *p15_rows)
+    )
     threshold = float(alpha) / len(audits)
     outliers = sum(p_value < threshold for p_value, _ in audits)
     if manifest.get("require_no_bonferroni_outliers") and outliers:
@@ -373,6 +382,9 @@ def validate_preview_campaign(
         "maximum_absolute_empirical_deviation": max(difference for _, difference in audits),
         "all_schedules_exact": True,
         "all_empirical_rates_valid": True,
+        "schedule_counts_are_formula_derived": True,
+        "instrumented_runtime_present": instrumented_runtime_present,
+        "supports_empirical_sample_complexity_fit": False,
         "result_sha256": {
             "p12": _sha256(p12_result_path),
             "p15": _sha256(p15_result_path),
