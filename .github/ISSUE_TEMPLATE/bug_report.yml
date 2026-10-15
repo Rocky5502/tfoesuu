@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a reproducible software defect (not a security vulnerability).
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "For security-sensitive problems, follow SECURITY.md instead. Do not paste secrets or protected row-level data."
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: Explain the failure with a minimal, non-sensitive example.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include command, platform, Python version, relevant oracle and assumptions.
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Version and provenance
+      description: Commit hash, dataset/spec hash and error trace if relevant.
