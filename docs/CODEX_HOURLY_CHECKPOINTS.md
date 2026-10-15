@@ -1100,3 +1100,8 @@
   47 unencrypted Letter pages with zero fatal/undefined/overfull log matches.
   Extracted PDF SHA-256 `578766a2...1fcec4`; all 47 pages rendered and changed
   pages visually inspected.
+- Feature branch pushed with local/remote equality at
+  `b5de2d481b7b659a571bbb5097be1de16ca25e6f`. GitHub created both workflow
+  records but executed zero steps: check annotations report the existing
+  account payment/spending-limit block. Local validation remains the only
+  executed CI-equivalent evidence; no workflow failure is attributed to code.

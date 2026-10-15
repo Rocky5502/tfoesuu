@@ -587,3 +587,11 @@ and SHA-256
 All 47 pages were rendered; the changed main-text and appendix pages received
 full-resolution visual inspection. A convenience copy is
 `TFOESUU_STOC2027_AUDITED_RELEASE_2026-10-15.pdf` beside the ZIP.
+
+The feature branch was pushed with local/remote equality at
+`b5de2d481b7b659a571bbb5097be1de16ca25e6f`. The GitHub `ci` and `paper`
+workflows created failed records but ran zero steps. Their check annotations
+state that recent account payments failed or the spending limit must be
+increased. This is an external billing gate, not a test or compilation failure;
+the complete local and clean-extraction gates above remain the executed
+evidence.
