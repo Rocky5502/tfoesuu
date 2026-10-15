@@ -1,0 +1,11 @@
+{
+  "candidate_only_overlap": {
+    "alternative_nuisance": "1/4",
+    "null_nuisance": "3/10"
+  },
+  "counterexample_false_reject": 0.9504637433623375,
+  "counterexample_horizon": 299,
+  "exact_shared_nuisance_cases": 24,
+  "reverse_kl": "infinity",
+  "shifted_null_witness_mass": "1/100"
+}

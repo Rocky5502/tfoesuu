@@ -571,7 +571,9 @@ but edge $\{0,1\}$ belongs to no legal group, so the witness LP is infeasible.
 Assume every vertex appearing in a legal replay group has old threshold $p$
 and, under the null, new threshold $p+s$.  Under each alternative, exactly one
 fairness-active endpoint $x$ instead has new threshold $p+s+d$, with
-$p,s,d>0$ and $p+s+d<1$.  Suppose $C_{\rm vert}<\infty$.  Let $q^\star$
+$p,s,d>0$ and $p+s+d<1$.  Assume also that every legal group in this
+proposition contains at least two distinct vertices.  Suppose
+$C_{\rm vert}<\infty$.  Let $q^\star$
 solve the active-vertex LP, set
 \begin{equation}\label{eq:formal-results-047}
 L=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil,
@@ -972,6 +974,8 @@ expected boundary cost at least
 cap dominates this expectation.
 \end{proof}
 
+
+\input{appendix/09_robust_matched_nuisance}
 
 \begin{proposition}[A fixed-allocation familywise penalty]
 \label{prop:boundary-familywise-fixed}

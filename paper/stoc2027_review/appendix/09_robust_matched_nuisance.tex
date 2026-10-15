@@ -1,0 +1,110 @@
+% Audited October 15 addition: a nuisance-invariant special case and scope fence.
+% This is not the missing general P19 composite-null theorem.
+\subsection{A nuisance-invariant matched witness and a scope obstruction}
+\label{sec:unknown-shared-threshold}
+
+Exact \emph{pathwise} agreement can remove a shared threshold nuisance without
+estimating it. Equal \emph{mean} patch effects, however, do not suffice. The
+coupling and stopped-KL ingredients are classical
+\cite{GlassermanYao1992,NitinawaratAtiaVeeravalli2013}; the proposition records
+their consequence for the declared ordered four-output software transcript.
+It is a patch-neutrality comparison (or a zero-tolerance edge), not a general
+positive-tolerance fairness guarantee or a solution to composite controlled
+sensing.
+
+\begin{proposition}[Unknown exactly shared background and a matching obstruction]
+\label{prop:unknown-shared-control}
+Let one four-way round retain the ordered transcript
+\(
+X=(P_0(x;U),P_1(x;U),P_0(y;U),P_1(y;U))
+\), where \(P_j(z;U)=\mathbf 1\{U\le p_{j,z}\}\), the same
+\(U\sim\mathrm{Unif}[0,1]\) is used for all four outputs, and tapes are
+independent between rounds. Fix \(\delta\in(0,1/2)\) and known \(d>0\).
+\begin{enumerate}[label=(\roman*)]
+\item Let
+\(
+\mathcal N_d=\{(p,h):0<p<h<h+d<1\}
+\).
+For \((p,h)\in\mathcal N_d\), the null thresholds are
+\((p,p)\to(h,h)\), whereas the corresponding alternative is
+\((p,p)\to(h+d,h)\). The patch-delta discrepancy witness has probability
+zero under every null and exactly \(d\) under every corresponding alternative.
+Consequently,
+\begin{equation}\label{eq:unknown-shared-horizon}
+L(d,\delta)=\left\lceil\frac{\log\delta}{\log(1-d)}\right\rceil
+\end{equation}
+independent rounds have uniform type-I error zero and type-II error at most
+\(\delta\), at a cost of \(4L(d,\delta)\) concrete program executions.
+
+Conversely, consider a sequential tester adapted to the independent-round
+transcript filtration, terminating with a decision, whose two errors are at
+most \(\delta\) uniformly over the paired null/alternative families. For every
+fixed \((p,h)\in\mathcal N_d\), if its null expected stopping time is finite,
+then
+\begin{equation}\label{eq:unknown-shared-lower}
+\E_{0,p,h}[T]\ge
+\frac{\kl(1-\delta,\delta)}
+{(1-h)\log\bigl((1-h)/(1-h-d)\bigr)}.
+\end{equation}
+Thus, for fixed \(\delta\) and nuisance restricted to any fixed compact subset
+of \(\{(p,h):0<p<h<1\}\), the minimax null-expected round complexity is
+\(\Theta(d^{-1})\) as \(d\downarrow0\). This is only a null-side converse;
+the reverse single-round KL is infinite.
+
+\item Consider instead the fair null with old thresholds \((p,p+\eta)\) and
+new thresholds \((p+s,p+s+\eta)\), where
+\begin{equation}\label{eq:mean-matching-domain}
+0<p<p+\eta<p+s<p+s+\eta<1.
+\end{equation}
+Both vertices have expected patch effect \(s\), and both versions have edge
+disparity \(\eta\le\tau\). Nevertheless, their tape-wise patch deltas disagree
+with probability exactly \(2\eta\) per round. Applying the zero-witness
+procedure for \(L(d,\delta)\) rounds to this fair null has false-rejection
+probability
+\begin{equation}\label{eq:mean-matching-failure}
+1-(1-2\eta)^{L(d,\delta)},
+\end{equation}
+which tends to one for fixed \(\eta>0\) as \(d\downarrow0\). Equality of mean
+patch effects therefore cannot replace pathwise matching.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+For part (i), in the coordinate order of the proposition, the complete
+single-round laws are
+\begin{align}
+P_{0,p,h}:&\quad
+1111:p,\qquad 0101:h-p,\qquad 0000:1-h,
+\label{eq:unknown-shared-null-atoms}\\
+P_{1,p,h}:&\quad
+1111:p,\qquad 0101:h-p,\qquad 0100:d,\qquad
+0000:1-h-d.
+\label{eq:unknown-shared-alt-atoms}
+\end{align}
+The new atom \(0100\) is exactly the patch-delta discrepancy event. This gives
+the two witness probabilities and the miss probability \((1-d)^L\).
+Moreover, \(\operatorname{supp}(P_{0,p,h})\) is a strict subset of
+\(\operatorname{supp}(P_{1,p,h})\), and hence
+\begin{equation}\label{eq:unknown-shared-kl-directions}
+D(P_{0,p,h}\Vert P_{1,p,h})
+=(1-h)\log\!\frac{1-h}{1-h-d},
+\qquad
+D(P_{1,p,h}\Vert P_{0,p,h})=\infty.
+\end{equation}
+Under the null, the one-round log-likelihood increment is bounded. The stopped
+transcript chain rule and data processing through the terminal decision give
+\(\E_{0,p,h}[T]D(P_{0,p,h}\Vert P_{1,p,h})\ge
+\kl(1-\delta,\delta)\), proving \Cref{eq:unknown-shared-lower}.
+Uniformly when \(1-h\) is bounded away from zero,
+\(
+D(P_{0,p,h}\Vert P_{1,p,h})=d+d^2/(2(1-h))+O(d^3)
+\), while \(L(d,\delta)=\Theta(d^{-1})\) at fixed \(\delta\).
+
+For part (ii), the two patch-delta indicators correspond to intervals
+\((p,p+s]\) and \((p+\eta,p+s+\eta]\). Under
+\Cref{eq:mean-matching-domain}, their symmetric difference consists of two
+disjoint intervals of length \(\eta\), so its measure is \(2\eta\).
+Independence between rounds proves \Cref{eq:mean-matching-failure} and its
+limit. The endpoint mean shifts are both \(s\), while both the old and new
+inter-endpoint disparities equal \(\eta\).
+\end{proof}

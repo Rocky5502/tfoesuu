@@ -1,3 +1,4 @@
+import hashlib
 from pathlib import Path
 
 import tomllib
@@ -94,3 +95,46 @@ def test_review_submission_uses_narrow_novelty_language():
     assert all(phrase not in lowered for phrase in forbidden)
     assert "specialized instantiation" in body
     assert "MalekEtAl2017" in body
+
+
+def test_p19_sequential_supplement_is_frozen_and_narrow():
+    root = (
+        ROOT
+        / "paper"
+        / "stoc2027_review"
+        / "supplemental"
+        / "p19_simple_null_20261014"
+    )
+    expected = {
+        "p19_sequential_audit.py": (
+            "0f9ccd5f17f5dd4ea31829dfc82fb2ef855cab55fe99c5653a2c54bea26fc7f1"
+        ),
+        "results/p19_sequential_observations.csv": (
+            "3d59d674928bd93aab69dbb519ef2920aecc5c923afda43ec322a3c212089546"
+        ),
+    }
+    for relative, digest in expected.items():
+        assert hashlib.sha256((root / relative).read_bytes()).hexdigest() == digest
+
+    readme = (root / "README_RESEARCH_AUDIT.md").read_text(encoding="utf-8")
+    assert "NOT the frozen PC1/PC2 P12/P15 campaign" in readme
+    assert "not a historical executable Fairlearn runtime" in readme
+    assert "not inferred theorem exponents" in readme
+
+
+def test_unknown_shared_nuisance_manuscript_fences_support_and_domain():
+    appendix = (
+        ROOT
+        / "paper"
+        / "stoc2027_review"
+        / "appendix"
+        / "09_robust_matched_nuisance.tex"
+    ).read_text(encoding="utf-8")
+    body = (ROOT / "paper" / "stoc2027_review" / "review_main_body.tex").read_text(
+        encoding="utf-8"
+    )
+
+    assert "0<p<p+\\eta<p+s<p+s+\\eta<1" in appendix
+    assert "D(P_{1,p,h}\\Vert P_{0,p,h})=\\infty" in appendix
+    assert "not a general" in appendix
+    assert "does not extend the P19" in body

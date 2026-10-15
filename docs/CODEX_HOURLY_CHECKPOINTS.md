@@ -1060,3 +1060,32 @@
 - Remaining action: commit/push this release-control correction, then generate
   a clean release-candidate checksum manifest. A final submission freeze still
   requires human-author sign-off.
+
+## 2026-10-15 20:45 +08:00 — composite-nuisance proof sprint
+
+- Branch/start: `research/stoc2027-composite-nuisance-20261015` from
+  `e64b781eeeddd5b1c37f750ce13164c761671aa5`; intake ZIP SHA-256
+  `e16f0feb...2f67b`; complete external backup verified.
+- Scientific result: exact shared-threshold witness N1 proved from the full
+  four-output law; forward KL finite and reverse KL infinite. Incoming N2
+  domain was falsified at negative `p` and repaired to require
+  `0<p<p+eta<p+s<p+s+eta<1`. N2 now gives exact false-witness mass `2 eta`;
+  N3 records candidate-only overlap. P20 and the stochastic executable-subject
+  gap remain open.
+- Reproduction: attached P19 CPU study reran 57,600 trials and reproduced the
+  canonical CSV byte-for-byte (`3d59d674...9546`). The manuscript labels its
+  six-point slopes descriptive and not measured software-runtime scaling.
+- Tests/checks: 26 focused tests passed; full suite **347 passed in 13.65 s**
+  with repository-local `--basetemp`; Ruff, bibliography, paper static,
+  review/equation-label, and diff checks passed. An earlier default-temp run
+  had 283 passes and 64 setup errors solely because the global pytest temp root
+  was inaccessible.
+- Paper: Tectonic built 47 unencrypted US-Letter pages; no undefined
+  reference/citation, overfull box, or TeX error. PDF SHA-256
+  `347a0a481543bec69061852e7963b6b7ee685f64553bbeb4257ca0f9a9eaee3f`;
+  edited main and appendix pages passed 144-dpi visual inspection.
+- GPU state/decision: PC1 and PC2 RTX 5070 Ti devices were reachable during
+  intake; no scientifically justified GPU job was launched. Exact-law checks
+  and the reproducible CPU study dominate additional Monte Carlo evidence.
+- Next: freeze the source ZIP, compile it from a clean extraction, commit and
+  push the feature branch, then report human/external submission blockers.

@@ -1,3 +1,4 @@
 # Frozen JSONL manifests must have identical checkout bytes on Windows and Linux.
 data/*.jsonl text eol=lf
 *.sh text eol=lf
+*.pdf binary

@@ -520,3 +520,49 @@ field. The driver version was not recorded in the immutable 100k manifest and
 will not be reconstructed from current-machine telemetry. GitHub-hosted CI
 remains blocked by the account spending limit; the complete local gates are
 the current machine-verifiable evidence. No GPU run was scientifically needed.
+
+## 2026-10-15 — ten-perspective nuisance-theory sprint
+
+Started from clean commit `e64b781eeeddd5b1c37f750ce13164c761671aa5`
+and preserved every newer local commit on feature branch
+`research/stoc2027-composite-nuisance-20261015`. The supplied Overleaf ZIP
+SHA-256 is
+`e16f0febf989957e24155e9fb49ce41e7a9e37073b5d40f12f61e22c4a52f67b`;
+a complete immutable intake backup is stored outside the repository under
+`Oct 15 overleaf/intake-backup-20261015-144346-complete`.
+
+The adversarial proof audit found one material draft defect: the proposed
+shifted-support counterexample omitted `p>0`, so clipped negative thresholds
+could satisfy the displayed conditions while invalidating the atom law. The
+hypothesis is now `0<p<p+eta<p+s<p+s+eta<1`, guarded by a negative-domain
+regression test. The exact shared-nuisance theorem was independently reduced
+to complete transcript laws. Its null support is a strict subset of the
+alternative support, the forward KL is
+`(1-h) log((1-h)/(1-h-d))`, and the reverse KL is infinite. The result is
+therefore recorded only as supporting N1; N2 is the shifted-support scope
+counterexample and N3 is candidate-only marginal nonidentifiability. P20
+remains open and no abstract/headline claim was enlarged.
+
+Added the canonical exact-law implementation and adversarial tests, a
+dependency-free Overleaf supplement, a theorem/novelty matrix, a detailed
+proof audit, and a ten-role internal meta-review explicitly distinguished from
+independent peer review. The attached P19 sequential CPU study was rerun from
+source: all 57,600 trials reproduced its canonical CSV byte-for-byte, SHA-256
+`3d59d674928bd93aab69dbb519ef2920aecc5c923afda43ec322a3c212089546`.
+Its six-point slopes remain descriptive checks rather than theorem estimates.
+
+The first full-suite invocation used pytest's global Windows temporary root
+and produced 64 setup `PermissionError`s after 283 passing tests. The
+established repository-local `--basetemp` rerun passed all **347 tests in
+13.65 s**. Ruff, bibliography, paper consistency, review-format/equation, and
+diff checks passed. Direct bundled Tectonic produced 47 unencrypted US-Letter
+pages, with no undefined reference, missing citation, overfull box, or TeX
+error; PDF SHA-256 is
+`347a0a481543bec69061852e7963b6b7ee685f64553bbeb4257ca0f9a9eaee3f`.
+Main-text pages containing the scope paragraph and P19 plot and appendix pages
+containing the complete proposition were visually inspected at 144 dpi.
+
+No GPU experiment was launched. PC1 and PC2 both expose RTX 5070 Ti devices,
+but the new identities are exact and the supplied stochastic check already
+reproduces. Additional Monte Carlo would consume GPU-hours without resolving
+P20, novelty, or the executable-subject gap.
