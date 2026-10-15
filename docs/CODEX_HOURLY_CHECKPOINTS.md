@@ -1100,6 +1100,18 @@
   47 unencrypted Letter pages with zero fatal/undefined/overfull log matches.
   Extracted PDF SHA-256 `578766a2...1fcec4`; all 47 pages rendered and changed
   pages visually inspected.
+
+## 2026-10-15 21:00 +08:00 — main-branch promotion
+
+- User explicitly authorized promotion of all audited work to `main`.
+- Verified `origin/main` (`149baf36...`) was an ancestor; local `main` advanced
+  by fast-forward only, with no force push or merge conflict.
+- Post-promotion validation exposed a CRLF checkout mismatch for the frozen
+  P19 script: 346 tests passed and only the byte-hash fence failed. Added an
+  explicit LF repository attribute; script and CSV hashes now match their
+  frozen values.
+- Final local-main validation: **347 passed in 13.19 s**; Ruff, bibliography,
+  paper static, and review/equation-label gates passed.
 - Feature branch pushed with local/remote equality at
   `b5de2d481b7b659a571bbb5097be1de16ca25e6f`. GitHub created both workflow
   records but executed zero steps: check annotations report the existing

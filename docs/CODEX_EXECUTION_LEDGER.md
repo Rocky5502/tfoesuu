@@ -595,3 +595,19 @@ state that recent account payments failed or the spending limit must be
 increased. This is an external billing gate, not a test or compilation failure;
 the complete local and clean-extraction gates above remain the executed
 evidence.
+
+## 2026-10-15 — audited promotion to `main`
+
+At the user's explicit request, fetched `origin`, verified that remote `main`
+at `149baf36fe7fa4c5d9bf96a0fcee445566fc9f8b` was an ancestor of the audited
+feature tip, and advanced local `main` by `--ff-only`; no force push, conflict
+resolution, or history rewrite was used. The first main-branch validation found
+a Windows checkout portability issue rather than a scientific failure: 346
+tests passed, while the frozen P19 source hash failed because Git had materialized
+that one script with CRLF. The repository attributes now force LF for the
+hash-bound script. Its working-tree SHA-256 is again
+`0f9ccd5f17f5dd4ea31829dfc82fb2ef855cab55fe99c5653a2c54bea26fc7f1`;
+the canonical CSV retains SHA-256
+`3d59d674928bd93aab69dbb519ef2920aecc5c923afda43ec322a3c212089546`.
+The complete rerun on local `main` passed **347 tests in 13.19 s**. Ruff,
+bibliography, manuscript consistency, and review/equation gates also passed.
