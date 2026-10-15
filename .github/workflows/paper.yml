@@ -51,7 +51,7 @@ jobs:
         working-directory: paper/stoc2027_review
         run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: stoc-manuscript-pdf
           path: paper/stoc2027_review/main.pdf
