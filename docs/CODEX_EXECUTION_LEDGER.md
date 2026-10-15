@@ -566,3 +566,24 @@ No GPU experiment was launched. PC1 and PC2 both expose RTX 5070 Ti devices,
 but the new identities are exact and the supplied stochastic check already
 reproduces. Additional Monte Carlo would consume GPU-hours without resolving
 P20, novelty, or the executable-subject gap.
+
+### Definitive Overleaf release freeze
+
+The first clean-root supplement invocation exposed an import-path packaging
+defect: the exact nuisance test only ran from its own directory. Commit
+`37a9197` made the supplement root-runnable, and `d9d963c` refreshed the
+Overleaf instructions and equation count. The definitive source-only release
+contains 45 tracked inputs:
+
+- ZIP: `TFOESUU_STOC2027_OVERLEAF_P19_NUISANCE_RELEASE_2026-10-15.zip`
+- bytes: `163783`
+- SHA-256: `badca88ce9204ed5bbf9cd9d211d51e3021913a209657117a16e75c6be082e7f`
+
+A fresh extraction compiled successfully and both embedded supplements passed
+from the extraction root (3 exact-nuisance tests and 6 P19 tests). The extracted
+PDF has 47 unencrypted US-Letter pages, no fatal/undefined/overfull log match,
+and SHA-256
+`578766a2fc52e3983fecf971b2669e14dca3656c198506698c79ab95d41fcec4`.
+All 47 pages were rendered; the changed main-text and appendix pages received
+full-resolution visual inspection. A convenience copy is
+`TFOESUU_STOC2027_AUDITED_RELEASE_2026-10-15.pdf` beside the ZIP.

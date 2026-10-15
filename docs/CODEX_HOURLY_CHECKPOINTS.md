@@ -1089,3 +1089,14 @@
   and the reproducible CPU study dominate additional Monte Carlo evidence.
 - Next: freeze the source ZIP, compile it from a clean extraction, commit and
   push the feature branch, then report human/external submission blockers.
+
+### Definitive release sub-checkpoint
+
+- Clean-root supplement testing found and fixed one packaging-only import-path
+  defect (`37a9197`); Overleaf instructions/counts were refreshed (`d9d963c`).
+- Final 45-file ZIP: `TFOESUU_STOC2027_OVERLEAF_P19_NUISANCE_RELEASE_2026-10-15.zip`,
+  163,783 bytes, SHA-256 `badca88c...82e7f`.
+- Fresh extraction: exact-nuisance 3/3 and P19 6/6 tests passed; Tectonic built
+  47 unencrypted Letter pages with zero fatal/undefined/overfull log matches.
+  Extracted PDF SHA-256 `578766a2...1fcec4`; all 47 pages rendered and changed
+  pages visually inspected.
