@@ -1,4 +1,4 @@
-# TFOESUU — STOC 2027 independently audited review release (2026-10-13)
+# TFOESUU — STOC 2027 independently audited review release (2026-10-15)
 
 ## What to compile
 
@@ -15,6 +15,9 @@ This release was reconciled with the research branch rather than replacing it.
 It separates Gaussian delta observations from raw Bernoulli replay transcripts,
 repairs the active-vertex domain of the Gaussian allocation, preserves the
 scoped P12--P19 hypotheses, and removes duplicated theorem/proof inclusions.
+The 2026-10-15 audit also adds a narrowly scoped exact shared-nuisance witness,
+its shifted-support counterexample, and a reproduced P19 stopping-time check.
+These additions do not promote the open P20 composite-nuisance conjecture.
 No experimental value was inferred from a PDF, log message, or unit-test count.
 
 ## Verified mechanical checks in the editorial environment
@@ -23,12 +26,17 @@ No experimental value was inferred from a PDF, log message, or unit-test count.
   execution ledger and release manifest.
 - Citation keys, referenced labels, duplicate labels, and bibliography output
   are checked on the final TeX closure.
-- All 130 displayed equations are numbered and uniquely labeled; the review
+- All 136 displayed equations are numbered and uniquely labeled; the review
   static gate rejects raw unnumbered display blocks and unlabeled numbered
   environments.
 - Every final PDF page is rendered for visual inspection before packaging.
 
-If local latexmk cannot invoke BibTeX, check that the BibTeX executable is installed and on PATH. This release does not contain any compiled binaries. In the editorial container, `/usr/bin/bibtex` was a broken symlink, while the installed `bibtex.original` executable worked; this was a toolchain issue, not a source-code citation error.
+If local latexmk cannot invoke BibTeX, check that the BibTeX executable is
+installed and on PATH. The only compiled input is the source-backed P19 PDF
+figure under `figures/`; the manuscript PDF itself is not bundled. The exact
+figure data, generator, seeds, and tests are under
+`supplemental/p19_simple_null_20261014/`. The dependency-free nuisance audit is
+under `supplemental/unknown_shared_nuisance/`.
 
 ## Scientific conditions not certified by this package
 
