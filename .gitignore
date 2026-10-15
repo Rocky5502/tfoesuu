@@ -27,6 +27,7 @@ paper/**/*.out
 paper/**/*.toc
 paper/**/*.pdf
 output/
+tmp/
 *.egg-info/
 build/
 dist/
