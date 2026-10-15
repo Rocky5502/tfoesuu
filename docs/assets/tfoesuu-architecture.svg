@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="450" viewBox="0 0 1120 450" role="img" aria-labelledby="t d">
+<title id="t">TFOESUU version-aware fairness testing architecture</title>
+<desc id="d">A certified baseline and patched program enter sound change-impact localization. Residual obligations are evaluated using legal tape replay groups, scope-matched tests and a recorded execution-cost audit.</desc>
+<rect width="1120" height="450" rx="26" fill="#0b1526"/>
+<text x="50" y="62" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#f8fafc">TFOESUU</text>
+<text x="50" y="91" font-family="Arial,sans-serif" font-size="15" fill="#94a3b8">Version-aware fairness regression testing · explicit oracle semantics</text>
+<path d="M50 113 H1070" stroke="#34465e" stroke-width="1"/>
+<rect x="49" y="145" width="214" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
+<rect x="297" y="145" width="214" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
+<rect x="545" y="145" width="214" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
+<rect x="793" y="145" width="278" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
+<text x="68" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">01 / VERSION INPUTS</text>
+<text x="68" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">P₀ → P₁</text>
+<text x="68" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Certified baseline</text>
+<text x="68" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">and software patch</text>
+<text x="316" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">02 / SOUND LOCALIZATION</text>
+<text x="316" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Residual graph</text>
+<text x="316" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Prune only provably</text>
+<text x="316" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">safe comparisons</text>
+<text x="564" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">03 / LEGAL REPLAY</text>
+<text x="564" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Tape groups</text>
+<text x="564" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Paired · four-way</text>
+<text x="564" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Partial · full suite</text>
+<text x="812" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">04 / AUDIT AND DECIDE</text>
+<text x="812" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Scope-aware test</text>
+<text x="812" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Risk bound + assumptions</text>
+<text x="812" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Concrete execution count</text>
+<g fill="none" stroke="#5eead4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<path d="M272 225 H286 l-7 -7 M286 225 l-7 7"/>
+<path d="M520 225 H534 l-7 -7 M534 225 l-7 7"/>
+<path d="M768 225 H782 l-7 -7 M782 225 l-7 7"/>
+</g>
+<rect x="49" y="345" width="1022" height="54" rx="12" fill="#112b37" stroke="#25665f" stroke-width="1"/>
+<text x="72" y="378" font-family="Arial,sans-serif" font-size="15" fill="#d1fae5">Research principle: stronger replay is useful only when the observation model and null assumptions permit it.</text>
+<text x="50" y="431" font-family="Arial,sans-serif" font-size="12" fill="#8396b0">Architecture overview · not a measured speedup or a universal fairness guarantee</text>
+</svg>
