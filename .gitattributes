@@ -2,3 +2,4 @@
 data/*.jsonl text eol=lf
 *.sh text eol=lf
 *.pdf binary
+paper/stoc2027_review/supplemental/p19_simple_null_20261014/p19_sequential_audit.py text eol=lf
