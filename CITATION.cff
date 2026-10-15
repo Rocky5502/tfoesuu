@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: "Testing Fairness of Evolving Software under Uncertainty"
-message: "If you use this repository, please cite the eventual archival paper."
+message: "If you use TFOESUU research software, please cite this repository version and any associated published work."
 type: software
 authors:
   - family-names: "Sah"
@@ -8,3 +8,4 @@ authors:
 repository-code: "https://github.com/Rocky5502/tfoesuu"
 version: "0.1.0"
 date-released: "2026-10-04"
+license: MIT
