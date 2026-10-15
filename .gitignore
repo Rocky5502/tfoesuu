@@ -37,3 +37,17 @@ data/public_cache/
 data/public_prepared/
 data/public_prepared_v2/
 data/.public_prepared_v2.staging-*/
+
+# Local credentials and machine-specific secrets; never check in
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.pem
+*.key
+**/id_ed25519
+**/id_rsa
+**/.ssh/
+.secrets/
+secrets.local.*
+credentials.local.*
