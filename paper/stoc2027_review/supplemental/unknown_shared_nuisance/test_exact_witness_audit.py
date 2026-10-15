@@ -1,6 +1,10 @@
 import math
+import sys
 import unittest
 from fractions import Fraction as F
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
 
 from exact_witness_audit import (
     run,
