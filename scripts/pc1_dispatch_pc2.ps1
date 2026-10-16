@@ -3,12 +3,18 @@
 param(
     [ValidateSet("status", "preflight", "smoke-p12", "smoke-p15", "smoke-gaussian")]
     [string]$Mode = "status",
-    [string]$PC2Host = "192.168.103.117",
-    [string]$RemoteUser = "Administrator",
+    [string]$PC2Host = $env:TFOESUU_PC2_HOST,
+    [string]$RemoteUser = $env:TFOESUU_PC2_USER,
     [string]$KeyFile = "$env:USERPROFILE\.ssh\id_ed25519"
 )
 
 $ErrorActionPreference = "Stop"
+if ([string]::IsNullOrWhiteSpace($PC2Host) -or [string]::IsNullOrWhiteSpace($RemoteUser)) {
+    throw "Set TFOESUU_PC2_HOST and TFOESUU_PC2_USER or pass -PC2Host and -RemoteUser explicitly"
+}
+if ($PC2Host -notmatch "^[A-Za-z0-9][A-Za-z0-9.:-]*$" -or $RemoteUser -notmatch "^[A-Za-z_][A-Za-z0-9_.-]*$") {
+    throw "Invalid PC2 host or remote user argument"
+}
 if (-not (Test-Path -LiteralPath $KeyFile)) {
     throw "SSH private key not found at $KeyFile"
 }
