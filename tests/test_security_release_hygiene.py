@@ -18,6 +18,7 @@ def test_replication_script_requires_preverified_uv() -> None:
     assert 'uv 0.12.20' in text
     assert 'Unexpected uv version' in text
     assert "curl --proto" not in text
+    assert "command -v curl" not in text
     assert "uv-installer.sh" not in text
 
 
