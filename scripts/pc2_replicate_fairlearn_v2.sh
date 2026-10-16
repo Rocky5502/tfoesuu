@@ -64,13 +64,17 @@ if command -v docker >/dev/null; then
 else
   command -v curl >/dev/null || { echo "curl is unavailable on PC2 WSL" >&2; exit 3; }
   [[ ! -e "$runtime" ]] || { echo "refusing to overwrite $runtime" >&2; exit 2; }
-  if [[ ! -x "$uv_root/uv" ]]; then
-    mkdir -p "$uv_root"
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://releases.astral.sh/github/uv/releases/download/0.12.20/uv-installer.sh | \
-      env UV_UNMANAGED_INSTALL="$uv_root" sh
-  fi
-  [[ "$($uv_root/uv --version)" == "uv 0.12.20"* ]]
+  # Do not execute a downloaded installer from a live network source.
+  # Install the reviewed uv binary outside this research script; verify its
+  # checksum against the upstream release before invoking this protocol.
+  [[ -x "$uv_root/uv" ]] || {
+    echo "Required uv 0.12.20 not installed at $uv_root/uv; manually install and verify it first" >&2
+    exit 3
+  }
+  [[ "$("$uv_root/uv" --version)" == "uv 0.12.20"* ]] || {
+    echo "Unexpected uv version; refusing to continue" >&2
+    exit 3
+  }
   mkdir -p "$runtime"
   export UV_PYTHON_INSTALL_DIR="$runtime/python"
   "$uv_root/uv" python install 3.8.20
