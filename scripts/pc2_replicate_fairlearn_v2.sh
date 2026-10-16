@@ -62,7 +62,6 @@ if command -v docker >/dev/null; then
   docker image inspect "$image" >"$results/image-inspect.json"
   docker run --rm "$image" python -m pip freeze >"$results/pip-freeze.txt"
 else
-  command -v curl >/dev/null || { echo "curl is unavailable on PC2 WSL" >&2; exit 3; }
   [[ ! -e "$runtime" ]] || { echo "refusing to overwrite $runtime" >&2; exit 2; }
   # Do not execute a downloaded installer from a live network source.
   # Install the reviewed uv binary outside this research script; verify its
