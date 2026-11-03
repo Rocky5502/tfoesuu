@@ -1,140 +1,98 @@
-import hashlib
-from pathlib import Path
+"""Reviewer-facing source, packaging, and frozen-evidence regression checks."""
 
+from __future__ import annotations
+
+import hashlib
 import tomllib
+from pathlib import Path
+from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_readme_names_authoritative_review_and_admitted_evidence():
+def _sha256(relative: str) -> str:
+    return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def test_code_only_tree_has_scoped_review_entrypoint() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "paper/stoc2027_review/main.tex" in readme
-    assert "requirements-public-v2.txt" in readme
-    assert "198 configurations" in readme
-    assert "594 exact-law comparisons" in readme
-    assert "preregistered TBD result templates" not in readme
+    guide = (ROOT / "docs/REVIEWER_GUIDE.md").read_text(encoding="utf-8")
+    assert not (ROOT / "paper").exists()
+    assert "reproducibility/p12_p15" in readme
+    assert "reproducibility/p19_simple_null" in readme
+    assert "198 archived configurations" in readme
+    assert "594 exact-law checks" in readme
+    assert "not" in guide.lower() and "causal" in guide.lower()
+    assert "python -m pytest -q" in readme
+    assert (ROOT / "LICENSE").is_file()
 
 
-def test_package_metadata_exposes_public_dependency_profiles():
-    metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
-    project = metadata["project"]
+def test_accessible_vector_diagram_is_valid_xml() -> None:
+    root = ElementTree.parse(ROOT / "docs/assets/tfoesuu-architecture.svg").getroot()
+    assert root.tag.endswith("svg")
+    assert root.attrib["viewBox"] == "0 0 1200 580"
+    tags = {element.tag.rsplit("}", 1)[-1] for element in root.iter()}
+    assert "title" in tags and "desc" in tags
+
+
+def test_dependency_profiles_match_pyproject() -> None:
+    data = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    project = data["project"]
     extras = project["optional-dependencies"]
 
-    def direct_requirements(filename: str) -> set[str]:
+    def direct_requirements(name: str) -> set[str]:
         return {
-            line.strip()
-            for line in (ROOT / filename).read_text(encoding="utf-8").splitlines()
-            if line.strip() and not line.lstrip().startswith(("#", "-r "))
+            item.strip()
+            for item in (ROOT / name).read_text(encoding="utf-8").splitlines()
+            if item.strip() and not item.lstrip().startswith(("#", "-r "))
         }
 
     assert set(project["dependencies"]) == direct_requirements("requirements.txt")
-    assert set(extras["dev"]) == direct_requirements("requirements-dev.txt")
-    assert set(extras["gpu"]) == direct_requirements("requirements-gpu.txt")
-    assert set(extras["public"]) == direct_requirements("requirements-public.txt")
+    for extra, file in (
+        ("dev", "requirements-dev.txt"),
+        ("gpu", "requirements-gpu.txt"),
+        ("public", "requirements-public.txt"),
+    ):
+        assert set(extras[extra]) == direct_requirements(file)
     assert set(extras["public-v2"]) == (
         direct_requirements("requirements-public.txt")
         | direct_requirements("requirements-public-v2.txt")
     )
 
 
-def test_ci_and_makefile_enforce_review_submission_gate():
-    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    paper = (ROOT / ".github" / "workflows" / "paper.yml").read_text(encoding="utf-8")
-    makefile = (ROOT / "Makefile").read_text(encoding="utf-8")
-
-    assert "python scripts/check_review_submission.py" in ci
-    assert "python scripts/check_review_submission.py" in paper
-    assert "paper/stoc2027_review" in paper
-    assert "python scripts/check_review_submission.py" in makefile
-    assert "cd paper/stoc2027_review" in makefile
-
-
-def test_generated_manuscript_artifacts_are_not_versioned():
-    ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
-    assert "paper/**/build*/" in ignore
-    assert "paper/**/*.pdf" in ignore
-    assert "output/" in ignore
+def test_ci_checks_code_and_frozen_evidence_not_manuscript() -> None:
+    ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    make = (ROOT / "Makefile").read_text(encoding="utf-8")
+    assert "python -m pytest -q" in ci
+    assert "reproducibility/p12_p15" in ci
+    assert "reproducibility/p19_simple_null" in ci
+    assert "paper/stoc2027_review" not in ci
+    assert "evidence-check:" in make
+    assert not (ROOT / ".github/workflows/paper.yml").exists()
 
 
-def test_hostile_novelty_audit_covers_every_replay_claim():
-    audit_path = ROOT / "docs" / "HOSTILE_NOVELTY_AUDIT_P12_P19.md"
-    assert audit_path.is_file()
-    audit = audit_path.read_text(encoding="utf-8")
-    lowered_audit = audit.lower()
-
-    for claim in ("P12", "P13", "P14", "P15", "P16", "P17", "P18", "P19"):
-        assert f"| {claim} |" in audit
-
-    for required_boundary in (
-        "specialized instantiation",
-        "scoped extension",
-        "not a novelty claim",
-        "human literature sign-off",
-    ):
-        assert required_boundary in lowered_audit
-
-    for primary_source in (
-        "10.2307/2531961",
-        "10.1214/13-AOS1144",
-        "10.1109/TAC.2013.2261188",
-        "10.1109/TIT.2014.2387857",
-        "10.1109/TIT.2014.2363846",
-        "10.1111/sjos.12757",
-        "proceedings.mlr.press/v54/malek17a.html",
-        "proceedings.mlr.press/v162/yan22c.html",
-    ):
-        assert primary_source in audit
-
-
-def test_review_submission_uses_narrow_novelty_language():
-    body = (ROOT / "paper" / "stoc2027_review" / "review_main_body.tex").read_text(
-        encoding="utf-8"
-    )
-    forbidden = ("first-ever", "unprecedented", "we invent", "we introduce pairing")
-    lowered = body.lower()
-    assert all(phrase not in lowered for phrase in forbidden)
-    assert "specialized instantiation" in body
-    assert "MalekEtAl2017" in body
-
-
-def test_p19_sequential_supplement_is_frozen_and_narrow():
-    root = (
-        ROOT
-        / "paper"
-        / "stoc2027_review"
-        / "supplemental"
-        / "p19_simple_null_20261014"
-    )
+def test_original_frozen_audits_preserved_byte_for_byte() -> None:
     expected = {
-        "p19_sequential_audit.py": (
-            "0f9ccd5f17f5dd4ea31829dfc82fb2ef855cab55fe99c5653a2c54bea26fc7f1"
-        ),
-        "results/p19_sequential_observations.csv": (
-            "3d59d674928bd93aab69dbb519ef2920aecc5c923afda43ec322a3c212089546"
-        ),
+        "reproducibility/p12_p15/results/preview100k-p12-pc2-149baf36-20261008T170650Z.jsonl":
+            "f00458f50d225c8c5bde5cb235c6f67fbc67102157768369df8cd350956f1035",
+        "reproducibility/p12_p15/results/preview100k-p15-pc1-149baf36-20261008T170640Z.jsonl":
+            "e0750e5d46215909aa710d83bca8ad748877e66f786aa9106e883ce94da274ab",
+        "reproducibility/p19_simple_null/p19_sequential_audit.py":
+            "0f9ccd5f17f5dd4ea31829dfc82fb2ef855cab55fe99c5653a2c54bea26fc7f1",
+        "reproducibility/p19_simple_null/results/p19_sequential_observations.csv":
+            "3d59d674928bd93aab69dbb519ef2920aecc5c923afda43ec322a3c212089546",
     }
-    for relative, digest in expected.items():
-        assert hashlib.sha256((root / relative).read_bytes()).hexdigest() == digest
-
-    readme = (root / "README_RESEARCH_AUDIT.md").read_text(encoding="utf-8")
-    assert "NOT the frozen PC1/PC2 P12/P15 campaign" in readme
-    assert "not a historical executable Fairlearn runtime" in readme
-    assert "not inferred theorem exponents" in readme
+    for path, digest in expected.items():
+        assert _sha256(path) == digest, path
 
 
-def test_unknown_shared_nuisance_manuscript_fences_support_and_domain():
-    appendix = (
-        ROOT
-        / "paper"
-        / "stoc2027_review"
-        / "appendix"
-        / "09_robust_matched_nuisance.tex"
-    ).read_text(encoding="utf-8")
-    body = (ROOT / "paper" / "stoc2027_review" / "review_main_body.tex").read_text(
+def test_scope_fences_remain_explicit() -> None:
+    p19 = (ROOT / "reproducibility/p19_simple_null/README_RESEARCH_AUDIT.md").read_text(
         encoding="utf-8"
     )
-
-    assert "0<p<p+\\eta<p+s<p+s+\\eta<1" in appendix
-    assert "D(P_{1,p,h}\\Vert P_{0,p,h})=\\infty" in appendix
-    assert "not a general" in appendix
-    assert "does not extend the P19" in body
+    nuisance = (ROOT / "reproducibility/unknown_shared_nuisance/README.md").read_text(
+        encoding="utf-8"
+    )
+    assert "not a historical executable Fairlearn runtime" in p19
+    assert "not inferred theorem exponents" in p19
+    assert "not a general composite-nuisance theorem" in nuisance
