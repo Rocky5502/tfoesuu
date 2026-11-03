@@ -35,7 +35,7 @@ pass:
 6. prior-art collision audit;
 7. implementation correspondence;
 8. tests;
-9. manuscript synchronization.
+9. research software and reproducibility documentation.
 
 The authoritative claim ledger is `docs/PROOF_STATUS.md`.
 
@@ -57,7 +57,7 @@ Prefer small pure functions and explicit immutable data structures.
 Every experiment must be tied to a scientific question. Do not add datasets or
 sweeps only to increase counts.
 
-Submission-facing empirical artifacts require:
+Released empirical artifacts require:
 
 - exact source commit;
 - frozen benchmark/configuration;
@@ -82,7 +82,7 @@ When a mathematical object changes, inspect and synchronize:
 - relevant proof-audit notes;
 - README/reproducibility documentation;
 - code and tests;
-- manuscript text only after the promotion gate passes.
+- reviewer reproduction notes only after the validation gate passes.
 
 Do not claim CI passed unless an actual workflow run executed successfully.
 

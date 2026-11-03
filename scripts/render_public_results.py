@@ -190,8 +190,8 @@ def render(rows, output: Path, png_output: Path | None = None) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", type=Path, required=True)
-    ap.add_argument("--output", type=Path, default=Path("paper/figures/public_results.pdf"))
-    ap.add_argument("--png-output", type=Path, default=Path("paper/figures/public_results.png"))
+    ap.add_argument("--output", type=Path, default=Path("results/figures/public_results.pdf"))
+    ap.add_argument("--png-output", type=Path, default=Path("results/figures/public_results.png"))
     args = ap.parse_args()
     rows = read_public_results(args.results)
     render(rows, args.output, args.png_output)

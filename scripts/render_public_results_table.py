@@ -145,7 +145,7 @@ def main() -> None:
     ap.add_argument(
         "--output",
         type=Path,
-        default=Path("paper/generated/public_results_table.tex"),
+        default=Path("results/tables/public_results_table.tex"),
     )
     ap.add_argument("--patch-size", type=float)
     ap.add_argument(
@@ -157,10 +157,10 @@ def main() -> None:
     rows = read_public_results(args.results)
 
     # Exploratory output to an external path may use partial matrices, but
-    # anything written into the tracked manuscript-generated directory must
+    # any table emitted into the publication-release directory must
     # first pass the strict seven-dataset publication release gate.
-    manuscript_generated_dir = Path("paper/generated").resolve()
-    if args.output.resolve().is_relative_to(manuscript_generated_dir):
+    release_table_dir = Path("results/published_tables").resolve()
+    if args.output.resolve().is_relative_to(release_table_dir):
         registry_rows = [
             json.loads(line)
             for line in args.registry.read_text(encoding="utf-8").splitlines()

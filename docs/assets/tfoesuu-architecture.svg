@@ -1,36 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="450" viewBox="0 0 1120 450" role="img" aria-labelledby="t d">
-<title id="t">TFOESUU version-aware fairness testing architecture</title>
-<desc id="d">A certified baseline and patched program enter sound change-impact localization. Residual obligations are evaluated using legal tape replay groups, scope-matched tests and a recorded execution-cost audit.</desc>
-<rect width="1120" height="450" rx="26" fill="#0b1526"/>
-<text x="50" y="62" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#f8fafc">TFOESUU</text>
-<text x="50" y="91" font-family="Arial,sans-serif" font-size="15" fill="#94a3b8">Version-aware fairness regression testing · explicit oracle semantics</text>
-<path d="M50 113 H1070" stroke="#34465e" stroke-width="1"/>
-<rect x="49" y="145" width="214" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
-<rect x="297" y="145" width="214" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
-<rect x="545" y="145" width="214" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
-<rect x="793" y="145" width="278" height="170" rx="17" fill="#14253d" stroke="#486481" stroke-width="1.4"/>
-<text x="68" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">01 / VERSION INPUTS</text>
-<text x="68" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">P₀ → P₁</text>
-<text x="68" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Certified baseline</text>
-<text x="68" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">and software patch</text>
-<text x="316" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">02 / SOUND LOCALIZATION</text>
-<text x="316" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Residual graph</text>
-<text x="316" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Prune only provably</text>
-<text x="316" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">safe comparisons</text>
-<text x="564" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">03 / LEGAL REPLAY</text>
-<text x="564" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Tape groups</text>
-<text x="564" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Paired · four-way</text>
-<text x="564" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Partial · full suite</text>
-<text x="812" y="180" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#5eead4">04 / AUDIT AND DECIDE</text>
-<text x="812" y="214" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Scope-aware test</text>
-<text x="812" y="244" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Risk bound + assumptions</text>
-<text x="812" y="265" font-family="Arial,sans-serif" font-size="14" fill="#cbd5e1">Concrete execution count</text>
-<g fill="none" stroke="#5eead4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-<path d="M272 225 H286 l-7 -7 M286 225 l-7 7"/>
-<path d="M520 225 H534 l-7 -7 M534 225 l-7 7"/>
-<path d="M768 225 H782 l-7 -7 M782 225 l-7 7"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="580" viewBox="0 0 1200 580" role="img" aria-labelledby="title desc">
+<title id="title">TFOESUU: scope-aware fairness regression testing</title>
+<desc id="desc">The workflow reuses a certified baseline, prunes provably safe comparisons, declares a legal replay observation contract, and applies only a valid statistical test. Three distinct families are Gaussian paired differences, synchronized Bernoulli replay, and legal partial-replay groups.</desc>
+<rect width="1200" height="580" fill="#ffffff"/>
+<text x="36" y="45" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="700" fill="#112334">Certificate-aware fairness testing</text>
+<text x="36" y="70" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#475569">Reuse prior evidence only when change bounds and legal replay semantics justify it.</text>
+<path d="M36 88 H1164" stroke="#d9e2e8" stroke-width="1.5"/>
+<g font-family="Arial,Helvetica,sans-serif">
+<rect x="36" y="118" width="264" height="166" rx="10" fill="#f8fafc" stroke="#b9c8d0" stroke-width="1.6"/>
+<rect x="324" y="118" width="264" height="166" rx="10" fill="#effcf8" stroke="#0f766e" stroke-width="1.8"/>
+<rect x="612" y="118" width="264" height="166" rx="10" fill="#effcf8" stroke="#0f766e" stroke-width="1.8"/>
+<rect x="900" y="118" width="264" height="166" rx="10" fill="#f8fafc" stroke="#b9c8d0" stroke-width="1.6"/>
+<g fill="none" stroke="#0f766e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="57" y="137" width="25" height="31" rx="3"/><path d="M64 146 H75 M64 152 H75 M64 158 H72 M75 162 L81 168 L93 153"/>
+<circle cx="353" cy="145" r="5"/><circle cx="378" cy="145" r="5"/><circle cx="365" cy="165" r="5"/><path d="M357 147 L361 161 M374 149 L369 161 M358 145 H373"/>
+<path d="M634 145 H678 M634 155 H678 M634 165 H678"/><path d="M646 139 V171 M665 139 V171" stroke-dasharray="3 4"/>
+<path d="M926 138 L948 145 V159 C948 169 935 174 926 179 C917 174 904 169 904 159 V145 Z M917 158 L924 165 L936 151"/>
 </g>
-<rect x="49" y="345" width="1022" height="54" rx="12" fill="#112b37" stroke="#25665f" stroke-width="1"/>
-<text x="72" y="378" font-family="Arial,sans-serif" font-size="15" fill="#d1fae5">Research principle: stronger replay is useful only when the observation model and null assumptions permit it.</text>
-<text x="50" y="431" font-family="Arial,sans-serif" font-size="12" fill="#8396b0">Architecture overview · not a measured speedup or a universal fairness guarantee</text>
-</svg>
+<text x="56" y="196" font-size="18" font-weight="700" fill="#172b3a">Certified context</text>
+<text x="56" y="219" font-size="14" fill="#334155">Old version P₀ and patch P₁</text>
+<text x="56" y="240" font-size="14" fill="#334155">Fairness obligation graph</text>
+<text x="56" y="261" font-size="14" fill="#334155">Sound change information</text>
+<text x="344" y="196" font-size="18" font-weight="700" fill="#172b3a">Sound reduction</text>
+<text x="344" y="219" font-size="14" fill="#334155">Eliminate provably safe edges</text>
+<text x="344" y="240" font-size="14" fill="#334155">Retain residual graph H</text>
+<text x="344" y="261" font-size="14" fill="#334155">Never prune by conjecture</text>
+<text x="632" y="196" font-size="18" font-weight="700" fill="#172b3a">Replay-law contract</text>
+<text x="632" y="219" font-size="14" fill="#334155">Declare shared-tape access</text>
+<text x="632" y="240" font-size="14" fill="#334155">Null family and observations</text>
+<text x="632" y="261" font-size="14" fill="#334155">Concrete execution cost</text>
+<text x="920" y="196" font-size="18" font-weight="700" fill="#172b3a">Scope-matched test</text>
+<text x="920" y="219" font-size="14" fill="#334155">Apply a valid risk guarantee</text>
+<text x="920" y="240" font-size="14" fill="#334155">Record decision and cost</text>
+<text x="920" y="261" font-size="14" fill="#334155">State assumptions explicitly</text>
+<g fill="none" stroke="#657786" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M303 201 H317 M311 195 L317 201 L311 207 M591 201 H605 M599 195 L605 201 L599 207 M879 201 H893 M887 195 L893 201 L887 207"/>
+</g>
+<text x="36" y="330" font-size="17" font-weight="700" fill="#172b3a">Distinct legal observation families</text>
+<path d="M36 346 H1164" stroke="#d9e2e8" stroke-width="1.5"/>
+<rect x="36" y="367" width="360" height="122" rx="9" fill="#f8fafc" stroke="#b9c8d0"/>
+<rect x="420" y="367" width="360" height="122" rx="9" fill="#f8fafc" stroke="#b9c8d0"/>
+<rect x="804" y="367" width="360" height="122" rx="9" fill="#f8fafc" stroke="#b9c8d0"/>
+<g fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="61" cy="397" r="5"/><circle cx="91" cy="397" r="5"/><circle cx="76" cy="424" r="5"/><path d="M66 397 H86 M64 402 L73 420 M88 402 L79 420"/>
+<path d="M446 393 H494 M446 408 H494 M446 423 H494 M456 386 V430 M478 386 V430" stroke-dasharray="3 4"/>
+<rect x="831" y="388" width="18" height="18" rx="3"/><rect x="858" y="388" width="18" height="18" rx="3"/><rect x="844" y="415" width="18" height="18" rx="3"/><path d="M840 406 L851 415 M867 406 L856 415"/>
+</g>
+<text x="110" y="402" font-size="17" font-weight="700" fill="#172b3a">Gaussian differences</text>
+<text x="56" y="460" font-size="14" fill="#334155">Graph-aware allocation Ψ(H,ν)</text>
+<text x="511" y="402" font-size="17" font-weight="700" fill="#172b3a">Synchronized replay</text>
+<text x="440" y="460" font-size="14" fill="#334155">Rare-witness and tolerance regimes</text>
+<text x="889" y="402" font-size="17" font-weight="700" fill="#172b3a">Partial replay groups</text>
+<text x="824" y="460" font-size="14" fill="#334155">Legal coupling and cover geometry</text>
+<rect x="36" y="512" width="1128" height="40" rx="7" fill="#e9f6f4"/>
+<text x="53" y="538" font-size="14" fill="#07594f" font-weight="700">Theorem guarantees do not transfer between observation families without an explicit proof.</text>
+</g></svg>

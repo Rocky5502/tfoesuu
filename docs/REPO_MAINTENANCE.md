@@ -1,38 +1,38 @@
-# Repository maintenance and publication separation
+# Repository maintenance and source archive boundary
 
-This repository is an executable research software workspace, not a published
-paper archive. The root README presents its code, limitations, and reproducibility.
+The current working tree is a **code-only research artifact**: packages, tests,
+synthetic benchmark specifications, reproducibility evidence, and reviewer guidance.
+The manuscript/Overleaf source is intentionally maintained separately.
 
-## Branches
+## Scientific immutability
 
-- `main`: maintained integration branch. Do not force-push or silently rewrite
-  previously reported scientific experiments.
-- `research/*`: theorem proposals, assumptions, proof attacks, and controlled
-  experiments. Not automatically a validated result.
-- `docs/*`: documentation and repository maintenance changes. Review with a
-  pull request prior to merge.
+Do not silently edit frozen JSONL/CSV result rows, original source snapshots,
+manifest identities, or declared theorem assumptions. Changes to these require
+a new independently labeled release and a verified provenance comparison.
 
-## Paper separation
+The archived manuscript remains retrievable from the history of the private
+research repository. **Deleting `paper/` from the current tree does not erase
+historical Git blobs.** A public release with a clean history is a separate,
+permission-gated operation. Third-party datasets, Fairlearn software, and ACM
+publisher templates have their own rights and terms; the root MIT license does
+not override them.
 
-At the October 2026 checkpoint, **tracked `paper/` sources and some validation
-scripts still exist** because the scientific freeze, exact evidence, and CI
-checks depend on them. This maintenance change intentionally does not delete
-those files or reconfigure their integrity checks.
+## Code review and release branch policy
 
-For a future code-only public repository, perform an independent separation:
-(1) preserve the existing freeze and hashes in an access-controlled archive,
-(2) identify imports, tests and workflows that reference `paper/`,
-(3) move manuscript-specific source/validation to the archival workspace,
-(4) update code-only CI, (5) run the full local test and reproducibility checks,
-and (6) remove manuscript files in a separately reviewed PR. **Do not assume
-`.gitignore` removes already tracked files or old Git history.**
+- `main`: reviewed working tree with the current implementation and frozen inputs.
+- `research/*`: proposed theory, falsification tests, and bounded experiments.
+- `release/*`: documentation, artifact relocation, and reviewer-readiness changes.
 
-If manuscript details must remain confidential, maintain private visibility
-until a properly reviewed redaction and history audit is complete. A deletion
-commit cannot erase previously accessible Git blobs or forks.
+Reviewers should start with [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md). CI must run
+the code-only tests and independent evidence checks; no paper compilation
+belongs in the code-release workflow. A new public repository must be
+constructed from a verified allowlist and a fresh Git history, after full
+license, secret-history, and dependency scanning.
 
-## Release gate
+## Prohibited release shortcuts
 
-Review licenses, dependency security, source hashes, historical datasets,
-reproducibility constraints, and coauthor publication rights before any public
-release. The software MIT license does not supersede manuscript or dataset terms.
+Never claim that paper deletion rewrites history, that a configured CI
+workflow passed, that fixed-budget simulations measure sample-complexity
+slopes, or that historical Fairlearn grouping differences measure causal
+discrimination. Code-only maintenance must not silently revise the research
+claims or the submission archive.
