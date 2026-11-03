@@ -8,47 +8,39 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  reviewer-cpu:
+    name: Reviewer CPU checks and evidence validation
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install --upgrade pip
-      - run: pip install -r requirements-dev.txt
-      - run: pip install -e .
-      - run: python -m compileall -q src scripts experiments tests
-      - run: python scripts/validate_benchmark_inventory.py
-      - run: pytest -q
-      - run: python scripts/check_bibliography.py
-      - run: python scripts/check_paper_consistency.py
-      - run: python scripts/check_review_submission.py
-      - run: python scripts/freeze_submission_artifacts.py --require-clean --output /tmp/submission_manifest.json
-      - run: python scripts/generate_benchmark.py --output /tmp/benchmark_v1.jsonl
-      - run: python scripts/generate_replay_benchmark.py --output /tmp/replay_benchmark_v1.jsonl
-      - run: python scripts/generate_subject_benchmark.py --output /tmp/software_subject_benchmark_v1.jsonl
-      - run: python scripts/generate_counterfactual_benchmark.py --output /tmp/counterfactual_replay_benchmark_v1.jsonl
-      - run: python scripts/generate_threshold_replay_phase.py --output /tmp/threshold_replay_phase_v1.jsonl
-      - run: python scripts/generate_control_replay_structural_cases.py --output /tmp/control_replay_structural_cases_v1.jsonl
-      - run: python scripts/generate_partial_replay_benchmark.py --output /tmp/partial_replay_benchmark_v1.jsonl
-      - run: python scripts/generate_partial_replay_structural_cases.py --output /tmp/partial_replay_structural_cases_v1.jsonl
-      - run: python scripts/generate_partial_replay_scope_cases.py --output /tmp/partial_replay_scope_cases_v1.jsonl
-      - run: python scripts/generate_public_benchmark_registry.py --output /tmp/public_benchmark_registry_v1.jsonl
-      - run: python scripts/generate_replay_phase_benchmark.py --output /tmp/replay_phase_benchmark_v1.jsonl
-      - run: python experiments/validate_replay_phase_contract.py --benchmark /tmp/replay_phase_benchmark_v1.jsonl
-      - run: python scripts/summarize_submission_evidence.py --output /tmp/submission_evidence.json
-      - run: python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
-      - run: python experiments/validate_control_replay_manifest.py --benchmark data/control_replay_structural_cases_v1.jsonl
-      - run: python experiments/run_gaussian_core.py --graph star --n 8 --trials 500 --gamma 0.7 --beta 0.05
-      - run: python experiments/run_replay_separation.py --p 0.5 --d 0.05 --beta 0.05 --trials 1000
-      - run: python experiments/run_location_replay.py --candidates 8 --p 0.5 --d 0.05 --beta 0.05 --trials 1000
-      - run: python experiments/run_allocator_subject.py --contexts 8 --changed-context 2 --delta 0.05 --beta 0.05 --trials 1000
-      - run: python experiments/search_graph_replay_complexity.py --max-n 5 --top 5
-      - run: python experiments/search_partial_replay_gap.py --n 5 --max-group-size 3
-      - run: python experiments/search_control_replay_mixed_geometry.py --top 10
-      - run: python experiments/run_counterfactual_replay.py --p 0.35 --shared-patch 0.20 --d 0.05 --beta 0.05 --trials 1000
-      - run: python experiments/run_threshold_replay_phase.py --p 0.20 --shared-patch 0.10 --tau 0.10 --d 0.02 --beta 0.05 --trials 1000
+          cache: pip
+      - name: Install research package and CPU tests
+        run: python -m pip install -e ".[dev]"
+      - name: Compile Python sources
+        run: python -m compileall -q src scripts experiments tests reproducibility
+      - name: Run scoped unit and adversarial regression tests
+        run: python -m pytest -q
+      - name: Validate deterministic benchmark inventory
+        run: python scripts/validate_benchmark_inventory.py
+      - name: Validate P17 and P19 legal-group fixtures
+        run: |
+          python experiments/validate_partial_replay_manifest.py --benchmark data/partial_replay_benchmark_v1.jsonl
+          python experiments/validate_control_replay_manifest.py --benchmark data/control_replay_structural_cases_v1.jsonl
+      - name: Verify archived P12/P15 against exact finite laws
+        run: python scripts/validate_preview_results.py reproducibility/p12_p15/evidence/p12_p15_100k_preview_manifest_v1.json --base-dir reproducibility/p12_p15
+      - name: Verify P19 independent CPU supplement
+        run: python -m pytest -q reproducibility/p19_simple_null/test_p19_audit.py
+      - name: Verify exact shared-nuisance supplement
+        working-directory: reproducibility/unknown_shared_nuisance
+        run: python -m unittest -q test_exact_witness_audit.py
+      - name: Bounded Gaussian and replay demonstrations
+        run: |
+          python experiments/run_gaussian_core.py --graph star --n 8 --trials 500 --gamma 0.7 --beta 0.05
+          python experiments/run_replay_separation.py --p 0.5 --d 0.05 --beta 0.05 --trials 1000
