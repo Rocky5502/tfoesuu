@@ -1,3 +1,9 @@
+> **Reviewer note (code-only working tree):** The manuscript source is
+> maintained separately. Frozen P12/P15 evidence and P19 supplements are under
+> [`reproducibility/`](../reproducibility/README.md); executable commands are
+> in [the reviewer guide](REVIEWER_GUIDE.md). Historical references to paper
+> figures or submission bundles below refer to the archived research record.
+
 # Reproducibility protocol
 
 ## Portable and byte-exact hashes
