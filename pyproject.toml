@@ -7,6 +7,8 @@ name = "tfoesuu"
 version = "0.1.0"
 description = "Theory and reproducibility code for testing fairness of evolving software under uncertainty"
 readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["fairness regression", "randomized software", "testing", "replay", "reproducibility"]
 requires-python = ">=3.10"
 dependencies = [
   "numpy>=2.0",
@@ -15,6 +17,11 @@ dependencies = [
   "matplotlib>=3.8",
   "tqdm>=4.66",
 ]
+
+[project.urls]
+Repository = "https://github.com/Rocky5502/tfoesuu"
+Documentation = "https://github.com/Rocky5502/tfoesuu/blob/main/docs/REVIEWER_GUIDE.md"
+Issues = "https://github.com/Rocky5502/tfoesuu/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
