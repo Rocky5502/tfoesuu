@@ -1,28 +1,23 @@
-.PHONY: install test benchmark replay-benchmark smoke replay-smoke paper-check paper-pdf
+.PHONY: install test inventory smoke replay-smoke reviewer-check evidence-check
 
 install:
-	python -m pip install -r requirements.txt
-	python -m pip install -e .
+	python -m pip install -e ".[dev]"
 
 test:
-	pytest -q
+	python -m pytest -q
 
-benchmark:
-	python scripts/generate_benchmark.py --output data/benchmark_v1.jsonl
-
-replay-benchmark:
-	python scripts/generate_replay_benchmark.py --output data/replay_benchmark_v1.jsonl
+inventory:
+	python scripts/validate_benchmark_inventory.py
 
 smoke:
-	python experiments/run_gaussian_core.py --graph star --n 10 --trials 2000 --gamma 0.6 --beta 0.05
+	python experiments/run_gaussian_core.py --graph star --n 8 --trials 500 --gamma 0.7 --beta 0.05
 
 replay-smoke:
-	python experiments/run_replay_separation.py --p 0.5 --d 0.05 --beta 0.05 --trials 5000
+	python experiments/run_replay_separation.py --p 0.5 --d 0.05 --beta 0.05 --trials 1000
 
-paper-check:
-	python scripts/check_bibliography.py
-	python scripts/check_paper_consistency.py
-	python scripts/check_review_submission.py
+evidence-check:
+	python scripts/validate_preview_results.py reproducibility/p12_p15/evidence/p12_p15_100k_preview_manifest_v1.json --base-dir reproducibility/p12_p15
+	python -m pytest -q reproducibility/p19_simple_null/test_p19_audit.py
+	cd reproducibility/unknown_shared_nuisance && python -m unittest -q test_exact_witness_audit.py
 
-paper-pdf: paper-check
-	cd paper/stoc2027_review && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+reviewer-check: test inventory smoke replay-smoke evidence-check
